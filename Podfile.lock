@@ -1,0 +1,42 @@
+PODS:
+  - AEPCore (0.0.1):
+    - AEPRulesEngine
+    - AEPServices
+  - AEPRulesEngine (0.0.1)
+  - AEPServices (0.0.1)
+
+DEPENDENCIES:
+  - AEPCore (from `https://github.com/adobe/aepsdk-core-ios.git`, branch `main`)
+  - AEPRulesEngine (from `https://github.com/adobe/aepsdk-rulesengine-ios.git`, branch `main`)
+  - AEPServices (from `https://github.com/adobe/aepsdk-core-ios.git`, branch `main`)
+
+EXTERNAL SOURCES:
+  AEPCore:
+    :branch: main
+    :git: https://github.com/adobe/aepsdk-core-ios.git
+  AEPRulesEngine:
+    :branch: main
+    :git: https://github.com/adobe/aepsdk-rulesengine-ios.git
+  AEPServices:
+    :branch: main
+    :git: https://github.com/adobe/aepsdk-core-ios.git
+
+CHECKOUT OPTIONS:
+  AEPCore:
+    :commit: 3e3a8ed7e5209966d4c31c120a86d06594d332c8
+    :git: https://github.com/adobe/aepsdk-core-ios.git
+  AEPRulesEngine:
+    :commit: b7e2b7d778b07be8fccd6641e8119767bfc26b1f
+    :git: https://github.com/adobe/aepsdk-rulesengine-ios.git
+  AEPServices:
+    :commit: 3e3a8ed7e5209966d4c31c120a86d06594d332c8
+    :git: https://github.com/adobe/aepsdk-core-ios.git
+
+SPEC CHECKSUMS:
+  AEPCore: e8ddaae01a787926fde35cfcc24770b26a765e58
+  AEPRulesEngine: 5742652bd7ab65aa7325f731725d995947e41db8
+  AEPServices: ad642c76cede1c7babb61e6804198ded4317d74f
+
+PODFILE CHECKSUM: 20892fdf1916c4d2c97090005985919ed5dce9ad
+
+COCOAPODS: 1.9.3
