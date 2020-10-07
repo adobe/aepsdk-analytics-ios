@@ -15,7 +15,7 @@ import AEPServices
 import Foundation
 
 /// Analytics extension for the Adobe Experience Platform SDK
-@objc(AEPAnalytics)
+@objc(AEPMobileAnalytics)
 public class Analytics: NSObject, Extension {
     public let runtime: ExtensionRuntime
 
