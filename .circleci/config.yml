@@ -1,0 +1,78 @@
+# For a detailed guide to building and testing on iOS, read the docs:
+# https://circleci.com/docs/2.0/testing-ios/
+
+version: 2.1
+
+# Workflows orchestrate a set of jobs to be run;
+workflows:
+  version: 2
+  build-test-deploy:
+    jobs:
+      - build-and-test
+
+jobs:
+
+  build-and-test:
+    macos:
+      xcode: 11.1.0 # Specify the Xcode version to use
+
+    steps:
+      - checkout
+
+      # restore pods related caches
+      - restore_cache:
+          keys:
+            - cocoapods-cache-v4-{{ arch }}-{{ .Branch }}-{{ checksum "Podfile.lock" }}
+            - cocoapods-cache-v4-{{ arch }}-{{ .Branch }}
+            - cocoapods-cache-v4
+
+      # install CocoaPods - using default CocoaPods version, not the bundle
+      - run:
+          name: Repo Update & Install CocoaPods
+          command: make pod-install
+
+      # save pods related files
+      - save_cache:
+          name: Saving CocoaPods Cache
+          key: cocoapods-cache-v4-{{ arch }}-{{ .Branch }}-{{ checksum "Podfile.lock" }}
+          paths:
+            - ./Pods
+            - ~/.cocoapods
+
+      - run:
+          name: Install SwiftLint
+          command: make install-swiftlint
+
+      - run:
+          name: Lint Source Code
+          command: make lint
+      
+      - run:
+          name: Install nicklockwood/SwiftFormat
+          command: brew install swiftformat
+
+      - run: 
+          name: Swift Formating
+          command: swiftformat . --lint --swiftversion 5.2
+
+      # pre-start the simulator to prevent timeouts
+      - run:
+          name: Pre-start Simulator
+          command: xcrun instruments -w "iPhone 8 (13.1) [" || true
+
+      - run:
+          name: Run Tests
+          command: make test
+
+      # code coverage
+      - run:
+          name: Upload Code Coverage Report
+          command: bash <(curl -s https://codecov.io/bash) -v -X s3 -c -D "./build/out" -J "AEPAnalytics" -t ${CODECOV_TOKEN}
+
+      # verify XCFramework archive builds
+      - run:
+          name: Build XCFramework
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "main" ]; then
+              make archive
+            fi
