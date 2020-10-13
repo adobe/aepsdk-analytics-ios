@@ -151,7 +151,7 @@ class AnalyticsAPITests: XCTestCase {
         }
 
         // test
-        Analytics.setVisitorIdentifier(visitorIdentifier: "vi")
+        Analytics.setVisitorIdentifier(visitorIdentifier: "vid")
 
         // verify
         wait(for: [expectation], timeout: 1.0)
