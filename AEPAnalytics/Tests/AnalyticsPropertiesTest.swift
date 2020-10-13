@@ -18,7 +18,11 @@ class AnalyticsPropertiesTest: XCTestCase {
     
     func testTimezoneOffsetFormat() {
         
-        XCTAssertTrue(analyticsProperties.timezoneOffset.starts(with: "00/00/0000 00:00:00 0"))
+        let timezoneOffsetString = analyticsProperties.timezoneOffset
+        let range = NSRange(location: 0, length: timezoneOffsetString.count)
+        let regex = try! NSRegularExpression(pattern: "00/00/0000 00:00:00 0 \\d{1,}")
+        
+        XCTAssertTrue(regex.firstMatch(in: timezoneOffsetString, options: [], range: range) != nil)
     }
     
     func testCancelReffererTimer() {
