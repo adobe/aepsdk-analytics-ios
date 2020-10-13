@@ -54,5 +54,106 @@ class AnalyticsAPITests: XCTestCase {
         wait(for: [expectation], timeout: 1.0)
     }
 
+    func testGetQueueSize() {
+        // setup
+        let expectation = XCTestExpectation(description: "getQueueSize should dispatch an event")
+        expectation.assertForOverFulfill = true
 
+        registerMockExtension(MockExtension.self)
+        EventHub.shared.start()
+
+
+        EventHub.shared.getExtensionContainer(MockExtension.self)?.registerListener(type: EventType.analytics, source: EventSource.requestContent) { (event) in
+            XCTAssertTrue(event.data?[AnalyticsConstants.EventDataKeys.GET_QUEUE_SIZE] as! Bool)
+            expectation.fulfill()
+        }
+
+        // test
+        Analytics.getQueueSize(){ (queueSize, error) in }
+
+        // verify
+        wait(for: [expectation], timeout: 1.0)
+    }
+
+    func testSendQueuedHits() {
+        // setup
+        let expectation = XCTestExpectation(description: "sendQueuedHits should dispatch an event")
+        expectation.assertForOverFulfill = true
+
+        registerMockExtension(MockExtension.self)
+        EventHub.shared.start()
+
+
+        EventHub.shared.getExtensionContainer(MockExtension.self)?.registerListener(type: EventType.analytics, source: EventSource.requestContent) { (event) in
+            XCTAssertTrue(event.data?[AnalyticsConstants.EventDataKeys.FORCE_KICK_HITS] as! Bool)
+            expectation.fulfill()
+        }
+
+        // test
+        Analytics.sendQueuedHits()
+
+        // verify
+        wait(for: [expectation], timeout: 1.0)
+    }
+
+    func testGetTrackingIdentifier() {
+        // setup
+        let expectation = XCTestExpectation(description: "getTrackingIdentifier should dispatch an event")
+        expectation.assertForOverFulfill = true
+
+        registerMockExtension(MockExtension.self)
+        EventHub.shared.start()
+
+
+        EventHub.shared.getExtensionContainer(MockExtension.self)?.registerListener(type: EventType.analytics, source: EventSource.requestIdentity) { (event) in
+            expectation.fulfill()
+        }
+
+        // test
+        Analytics.getTrackingIdentifier(){(identifier, error) in }
+
+        // verify
+        wait(for: [expectation], timeout: 1.0)
+    }
+
+    func testGetVisitorIdentifier() {
+        // setup
+        let expectation = XCTestExpectation(description: "getVisitoridentifier should dispatch an event")
+        expectation.assertForOverFulfill = true
+
+        registerMockExtension(MockExtension.self)
+        EventHub.shared.start()
+
+
+        EventHub.shared.getExtensionContainer(MockExtension.self)?.registerListener(type: EventType.analytics, source: EventSource.requestIdentity) { (event) in
+            expectation.fulfill()
+        }
+
+        // test
+        Analytics.getVisitorIdentifier(){(identifier, error) in }
+
+        // verify
+        wait(for: [expectation], timeout: 1.0)
+    }
+
+    func testSetVisitorIdentifier() {
+        // setup
+        let expectation = XCTestExpectation(description: "setVisitoridentifier should dispatch an event")
+        expectation.assertForOverFulfill = true
+
+        registerMockExtension(MockExtension.self)
+        EventHub.shared.start()
+
+
+        EventHub.shared.getExtensionContainer(MockExtension.self)?.registerListener(type: EventType.analytics, source: EventSource.requestIdentity) { (event) in
+            XCTAssertEqual(event.data?[AnalyticsConstants.EventDataKeys.VISITOR_IDENTIFIER] as! String, "vid")
+            expectation.fulfill()
+        }
+
+        // test
+        Analytics.setVisitorIdentifier(visitorIdentifier: "vi")
+
+        // verify
+        wait(for: [expectation], timeout: 1.0)
+    }
 }
