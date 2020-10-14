@@ -13,10 +13,11 @@
 import Foundation
 import AEPCore
 
-/// Represents a type which contains instances variables for the Analytics extension
+/// Represents a type which contains instances variables for the Analytics extension.
 struct AnalyticsProperties {
     
-    var locale: String?
+    /// Current locale of the user
+    var locale: Locale?
     
     /// Analytics AID (legacy)
     var aid: String?
@@ -24,19 +25,25 @@ struct AnalyticsProperties {
     /// Analytics VID (legacy)
     var vid: String?
     
+    /// Time in seconds when previous lifecycle session was paused.
     var lifecyclePreviousSessionPauseTimestamp: Date?
     
-    /**
-      Refers to a timestamp String contains timezone offset. All other fields in timestamp except timezone offset are 0.
-     */
-    lazy var timezoneOffset = TimeZone.current.getOffsetFromGmtInMinutes()
     
+     /// Timestamp String contains timezone offset. All other fields in timestamp except timezone offset are set to 0.
+    var timezoneOffset: String {
+        return TimeZone.current.getOffsetFromGmtInMinutes()
+    }
+    
+    /// Indicates if referrer timer is running.
     var referrerTimerRunning = false
     
+    /// Indicates if lifecycle timer is running.
     var lifecycleTimerRunning = false
     
+    /// Timer use to wait for acquisition data before executing task.
     var referrerTimer: Timer?
-                    
+    
+    /// Timer use to wait for lifecycle data before executing task.
     var lifecycleTimer: Timer?
                         
     /// Cancels the referrer timer. Sets referrerTimerRunning flag to false. Sets referrerTimer to nil.
@@ -59,7 +66,8 @@ struct AnalyticsProperties {
         }
     }
     
-    /// Return true If either referrer timer or lifecycle timer is running else return false.
+    /// Verifies if the referrer or lifecycle timer are running.
+    /// - Returns `True` if either of the timer is running.
     func isDatabaseWaiting() -> Bool {
         return (referrerTimer != nil && referrerTimerRunning) || (lifecycleTimer != nil && lifecycleTimerRunning)
     }
@@ -67,10 +75,9 @@ struct AnalyticsProperties {
 
 extension TimeZone {
 
-    /**
-     Returns all 0 timestamp string except for the timezoneOffset
-     backend platform only processes timezone offset from this string.
-     */
+    /// Creates timestamp string, with all fields set as 0 except timezone offset.
+    /// All fields other than timezone offset are set to 0 because backend only process timezone offset from this value.
+    /// - Return: `String` Time stamp with all fields except timezone offset set to 0.
     internal func getOffsetFromGmtInMinutes() -> String {
                                  
         let gmtOffsetInMinutes = (secondsFromGMT() / 60) * -1
