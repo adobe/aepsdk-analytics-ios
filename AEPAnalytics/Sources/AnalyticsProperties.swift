@@ -78,7 +78,7 @@ extension TimeZone {
     /// Creates timestamp string, with all fields set as 0 except timezone offset.
     /// All fields other than timezone offset are set to 0 because backend only process timezone offset from this value.
     /// - Return: `String` Time stamp with all fields except timezone offset set to 0.
-    internal func getOffsetFromGmtInMinutes() -> String {
+    func getOffsetFromGmtInMinutes() -> String {
                                  
         let gmtOffsetInMinutes = (secondsFromGMT() / 60) * -1
         return "00/00/0000 00:00:00 0 \(gmtOffsetInMinutes)"
