@@ -10,24 +10,11 @@
  governing permissions and limitations under the License.
  */
 
-import XCTest
-@testable import AEPAnalytics
 @testable import AEPCore
-@testable import AEPServices
+import Foundation
 
-class AnalyticsTests: XCTestCase {
-    var analytics: Analytics!
-    var mockRuntime: TestableExtensionRuntime!
-
-    override func setUp() {
-        MobileCore.setLogLevel(level: .error) // reset log level to error before each test
-        mockRuntime = TestableExtensionRuntime()
-        analytics = Analytics(runtime: mockRuntime)
-        analytics.onRegistered()
+extension EventHub {
+    static func reset() {
+        shared = EventHub()
     }
-
-    /// Tests analytics clears queue
-    func testAnalyticsClearQueue() {        
-    }
-
 }
