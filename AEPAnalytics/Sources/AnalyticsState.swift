@@ -18,7 +18,7 @@ class AnalyticsState {
     
     private let LOG_TAG = "AnalyticsState"
     
-//    std::shared_ptr<AnalyticsRequestSerializer> request_serializer_; // TODO
+    private let analyticsRequestSerializer = AnalyticsRequestSerializer()
     
     // MARK: BEGIN: Use the defaults value from Analytics constants for variables declared below
     var analyticForwardingEnabled: Bool = false
@@ -39,27 +39,27 @@ class AnalyticsState {
     
     var host: String = ""
     
-    var marketingCloudId: String = ""
+    private(set) var marketingCloudId: String = ""
     
-    var locationHint: String = ""
+    private var locationHint: String = ""
     
-    var blob: String = ""
+    private var blob: String = ""
     
-    var serializedVisitorIdsList: String = ""
+    private(set) var serializedVisitorIdsList: String = ""
     
     var applicationId: String = ""
     
-    var advertisingId: String = ""
+    private(set) var advertisingId: String = ""
     
-    var assuranceSessionActive: Bool = false
+    private(set) var assuranceSessionActive: Bool = false
     
-    var lifecycleMaxSessionLength: Date = Date.init()
+    private(set) var lifecycleMaxSessionLength: Date = Date.init()
     
-    var lifecycleSessionStartTimestamp: Date = Date.init()
+    private(set) var lifecycleSessionStartTimestamp: Date = Date.init()
     
     // MARK: END: Use the defaults value from Analytics constants for variables declared below
     
-    var defaultData: [String: String]?
+    private(set) var defaultData: [String: String] = [String: String]()
     
     init(dataMap: [String: [String: Any]]) {
         
@@ -88,9 +88,9 @@ class AnalyticsState {
         }
     }
     
-    func extractConfigurationInfo(from data: [String: Any]?) -> Void {
+    func extractConfigurationInfo(from configurationData: [String: Any]?) -> Void {
         
-        guard let configurationData = data else{
+        guard let configurationData = configurationData else {
             Log.trace(label: LOG_TAG, "ExtractConfigurationInfo - Failed to extract configuration data (event data was null).")
             return
         }
@@ -107,19 +107,156 @@ class AnalyticsState {
         privacyStatus = PrivacyStatus.init(rawValue: configurationData["placeholder for privacy status"] as? PrivacyStatus.RawValue ?? PrivacyStatus.unknown.rawValue) ?? PrivacyStatus.unknown
     }
     
-    func extractLifecycleInfo(from data: [String: Any]?) -> Void {
+    func extractLifecycleInfo(from lifecycleData: [String: Any]?) -> Void {
         
+        guard let lifecycleData = lifecycleData else {
+            Log.trace(label: LOG_TAG, "ExtractLifecycleInfo - Failed to extract lifecycle data (event data was null).")
+            return
+        }
+        
+        
+        if let lifecycleSessionStartTime = lifecycleData[""] as? TimeInterval {
+            lifecycleSessionStartTimestamp = Date.init(timeIntervalSince1970: lifecycleSessionStartTime)
+        }
+        
+        if let lifecycleMaxSessionLen = lifecycleData[""] as? TimeInterval {
+            lifecycleMaxSessionLength = Date.init(timeIntervalSince1970: lifecycleMaxSessionLen)
+        }
+        
+        if let lifecyleContextData = lifecycleData["lifecycle context data"] as? [String: String] {
+                        
+            if let operatingSystem = lifecyleContextData["operating system"] {
+                defaultData["operating system"] = operatingSystem
+            }
+            
+            if let deviceName = lifecyleContextData["device name"] {
+                defaultData["device name"] = deviceName
+            }
+            
+            if let deviceResolution = lifecyleContextData["device resolution"] {
+                defaultData["device resolution"] = deviceResolution
+            }
+            
+            if let carrierName = lifecyleContextData["carrier name"] {
+                defaultData["carrier name"] = carrierName
+            }
+            
+            if let runMode = lifecyleContextData["run mode"] {
+                defaultData["run mode"] = runMode
+            }
+            
+            if let applicationId = lifecyleContextData["application id"] {
+                defaultData["application id"] = applicationId
+            }
+        }
     }
     
-    func extractIdentityInfo(from data: [String: Any]?) -> Void {
+    func extractIdentityInfo(from identityData: [String: Any]?) -> Void {
+         
+        guard let identityData = identityData else {
+            Log.trace(label: LOG_TAG, "ExtractIdentityInfo - Failed to extract identity data (event data was null).")
+            return
+        }
         
+        if let marketingCloudId = identityData["visitor id mid"] as? String {
+            self.marketingCloudId = marketingCloudId
+        }
+        
+        if let blob = identityData["visitor id blob"] as? String {
+            self.blob = blob
+        }
+        
+        if let locationHint = identityData["visitor id location hint"] as? String {
+            self.locationHint = locationHint
+        }
+        
+        if let advertisingId = identityData["visitor id advertising id"] as? String {
+            self.advertisingId = advertisingId
+        }
+                
+        if let visitorIdArray = identityData["Visitor id array key"] as? [String] {
+            // MARK: TODO:: Implement the serialization part
+//            serializedVisitorIdsList = requestSerailizar.generateSerailizedVisitorIdList()
+        }
     }
     
-    func extractPlacesInfo(from data: [String: Any]?) -> Void {
+    func extractPlacesInfo(from placesData: [String: Any]?) -> Void {
+        guard let placesData = placesData else {
+            Log.trace(label: LOG_TAG, "ExtractPlacesInfo - Failed to extract places data (event data was null).")
+            return
+        }
         
+        if let placesContextData = placesData["current poi key"] as? [String: String] {
+            
+            if let regionId = placesContextData["region id key"] {
+                defaultData["region id"] = regionId
+            }
+            
+            if let regionName = placesContextData["region name"] {
+                defaultData["region name"] = regionName
+            }
+        }
     }
     
-    func extractAssuranceInfo(from data: [String: Any]?) -> Void {
+    func extractAssuranceInfo(from assuranceData: [String: Any]?) -> Void {
         
+        guard let assuranceData = assuranceData else {
+            Log.trace(label: LOG_TAG, "ExtractAssuranceInfo - Failed to extract Assurance data (event data was null).")
+            return
+        }
+        
+        if let assuranceSessionId = assuranceData["assurance session id"] as? String {
+            assuranceSessionActive = !assuranceSessionId.isEmpty
+        }
+    }
+    
+    func getAnalyticsIdVisitorParameters() -> [String: String] {
+        
+        var analyticsIdVisitorParameters = [String: String]()
+        
+        guard !marketingCloudId.isEmpty else {
+            return analyticsIdVisitorParameters
+        }
+                
+        analyticsIdVisitorParameters["ANALYTICS_PARAMETER_KEY_MID"] = marketingCloudId
+                
+        if !blob.isEmpty {
+            analyticsIdVisitorParameters["ANALYTICS_PARAMETER_KEY_Blob"] = blob
+        }
+        
+        if !locationHint.isEmpty {
+            analyticsIdVisitorParameters["ANALYTICS_PARAMETER_Location_hint"] = locationHint
+        }
+                        
+        return analyticsIdVisitorParameters
+    }
+    
+    func isAnalyticsConfigured() -> Bool {
+        return !rsids.isEmpty && !host.isEmpty
+    }
+    
+    func getBaseUrl(sdkVersion: String) -> URL? {
+
+        var urlComponent = URLComponents()
+        urlComponent.scheme = "https"
+        urlComponent.host = host
+        urlComponent.path = "\\b\\ss\\\(rsids)\\\(getAnalyticsResponseType())\\\(sdkVersion)\\s"
+        guard let url = urlComponent.url else {
+            Log.debug(label: LOG_TAG, "Error in creating Analytics base URL.")
+            return nil
+        }
+        return url
+    }
+    
+    func isVisistorIdServiceEnabled() -> Bool {
+        return !marketingCloudOrganizationId.isEmpty
+    }
+    
+    func getAnalyticsResponseType() -> String {
+        return analyticForwardingEnabled ? "10" : "0"
+    }
+    
+    func isOptIn() -> Bool {
+        return privacyStatus == PrivacyStatus.optedIn
     }
 }

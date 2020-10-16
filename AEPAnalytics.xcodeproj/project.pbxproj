@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		2EBEE77A2525A35400880E72 /* AEPAnalytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2EBEE7702525A35400880E72 /* AEPAnalytics.framework */; };
 		3D1D45AD2537B0990053CB47 /* AnalyticsState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1D45AC2537B0990053CB47 /* AnalyticsState.swift */; };
+		3D1D45AF25391B410053CB47 /* AnalyticsRequestSerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1D45AE25391B410053CB47 /* AnalyticsRequestSerializer.swift */; };
 		5BA64E41C29F7102192BE4B4 /* Pods_AEPAnalytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F767704A064CF60AEEE2A5C0 /* Pods_AEPAnalytics.framework */; };
 		AC277CFE252C23E600987C67 /* Analytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC277CF5252C23E600987C67 /* Analytics.swift */; };
 		AC277CFF252C23E600987C67 /* AnalyticsConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC277CF6252C23E600987C67 /* AnalyticsConstants.swift */; };
@@ -36,6 +37,7 @@
 		2EBEE7702525A35400880E72 /* AEPAnalytics.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AEPAnalytics.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2EBEE7792525A35400880E72 /* AEPAnalyticsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AEPAnalyticsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3D1D45AC2537B0990053CB47 /* AnalyticsState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsState.swift; sourceTree = "<group>"; };
+		3D1D45AE25391B410053CB47 /* AnalyticsRequestSerializer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsRequestSerializer.swift; sourceTree = "<group>"; };
 		5EA1DFBFE6C9A3FB433F813B /* Pods_AEPAnalyticsTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AEPAnalyticsTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7B5BA9A0A1849B0ACEE7FD24 /* Pods-AEPAnalyticsTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AEPAnalyticsTests.debug.xcconfig"; path = "Target Support Files/Pods-AEPAnalyticsTests/Pods-AEPAnalyticsTests.debug.xcconfig"; sourceTree = "<group>"; };
 		AC277CEE252C23E600987C67 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -147,6 +149,7 @@
 				AC277CF8252C23E600987C67 /* Analytics+PublicAPI.swift */,
 				AC277CF9252C23E600987C67 /* Info.plist */,
 				3D1D45AC2537B0990053CB47 /* AnalyticsState.swift */,
+				3D1D45AE25391B410053CB47 /* AnalyticsRequestSerializer.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -359,6 +362,7 @@
 				3D1D45AD2537B0990053CB47 /* AnalyticsState.swift in Sources */,
 				AC277CFF252C23E600987C67 /* AnalyticsConstants.swift in Sources */,
 				AC277CFE252C23E600987C67 /* Analytics.swift in Sources */,
+				3D1D45AF25391B410053CB47 /* AnalyticsRequestSerializer.swift in Sources */,
 				AC277D01252C23E600987C67 /* Analytics+PublicAPI.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
