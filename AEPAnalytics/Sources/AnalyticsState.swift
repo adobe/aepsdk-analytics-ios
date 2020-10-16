@@ -12,6 +12,7 @@
 
 import AEPCore
 import AEPServices
+import AEPIdentity
 import Foundation
 
 class AnalyticsState {
@@ -173,10 +174,9 @@ class AnalyticsState {
         if let advertisingId = identityData["visitor id advertising id"] as? String {
             self.advertisingId = advertisingId
         }
-                
-        if let visitorIdArray = identityData["Visitor id array key"] as? [String] {
-            // MARK: TODO:: Implement the serialization part
-//            serializedVisitorIdsList = requestSerailizar.generateSerailizedVisitorIdList()
+                   
+        if let identifiableArray = identityData["Visitor id array key"] as? [Identifiable] {
+            serializedVisitorIdsList = analyticsRequestSerializer.generateAnalyticsCustomerIdString(from: identifiableArray)
         }
     }
     
@@ -256,7 +256,7 @@ class AnalyticsState {
         return analyticForwardingEnabled ? "10" : "0"
     }
     
-    func isOptIn() -> Bool {
+    func isOptIn() -> Bool {        
         return privacyStatus == PrivacyStatus.optedIn
     }
 }

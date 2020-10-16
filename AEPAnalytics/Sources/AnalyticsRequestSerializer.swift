@@ -10,8 +10,36 @@
  governing permissions and limitations under the License.
  */
 
+import AEPIdentity
 import Foundation
 
-class AnalyticsRequestSerializer {
 
+class AnalyticsRequestSerializer {
+    
+    func generateAnalyticsCustomerIdString(from identifiableList: [Identifiable?]) -> String {
+        
+        guard !identifiableList.isEmpty else {
+            return ""
+        }
+                
+        var visitorDataMap: [String: String] = [String: String]()
+        for identifiable in identifiableList {
+            if let identifiable = identifiable, let type = identifiable.type {
+                visitorDataMap[serializeIdentifierKeyForAnalyticsId(idType: type)] = identifiable.identifier
+                visitorDataMap[serializeAuthenticationKeyForAnalyticsId(idType: type)] = "\(identifiable.authenticationState.rawValue)"
+            }
+        }
+        
+        // MARK: TODO implement class ContextData in AEPCore. Call ContextData::EncodeContextData(visitorDataMap) in place of placeholder.
+        
+        return "&cid.\("Placeholder")&.cid"
+    }
+    
+    private func serializeIdentifierKeyForAnalyticsId(idType: String) -> String {
+        return "\(idType).id"
+    }
+    
+    private func serializeAuthenticationKeyForAnalyticsId(idType: String) -> String {
+        return "\(idType).as"
+    }
 }
