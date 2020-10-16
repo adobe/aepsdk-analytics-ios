@@ -17,4 +17,28 @@ enum AnalyticsConstants {
     static let FRIENDLY_NAME = "Analytics"
     static let EXTENSION_VERSION = "0.0.1"
     static let DATASTORE_NAME = EXTENSION_NAME
+
+    enum EventDataKeys {
+        static let EXTENSION_NAME = "com.adobe.module.analytics"
+        static let FORCE_KICK_HITS  = "forcekick"
+        static let CLEAR_HITS_QUEUE = "clearhitsqueue"
+        static let ANALYTICS_ID     = "aid"
+        static let GET_QUEUE_SIZE   = "getqueuesize"
+        static let QUEUE_SIZE       = "queuesize"
+        static let TRACK_INTERNAL   = "trackinternal"
+        static let TRACK_ACTION     = "action"
+        static let TRACK_STATE      = "state"
+        static let CONTEXT_DATA = "contextdata"
+        static let ANALYTICS_SERVER_RESPONSE = "analyticsserverresponse"
+        static let VISITOR_IDENTIFIER = "vid"
+        static let RULES_CONSEQUENCE_TYPE_TRACK = "an"
+        static let HEADERS_RESPONSE = "headers"
+        static let ETAG_HEADER = "ETag"
+        static let SERVER_HEADER = "Server"
+        static let CONTENT_TYPE_HEADER = "Content-Type"
+        static let REQUEST_EVENT_IDENTIFIER = "requestEventIdentifier"
+        static let HIT_HOST = "hitHost"
+        static let HIT_URL = "hitUrl"
+    }
+
 }

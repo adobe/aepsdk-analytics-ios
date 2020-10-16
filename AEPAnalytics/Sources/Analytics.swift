@@ -23,7 +23,7 @@ public class Analytics: NSObject, Extension {
     public let friendlyName = AnalyticsConstants.FRIENDLY_NAME
     public static let extensionVersion = AnalyticsConstants.EXTENSION_VERSION
     public let metadata: [String: String]? = nil
-
+    //private(set) var state: AnalyticsState?
     // MARK: Extension
 
     public required init(runtime: ExtensionRuntime) {
@@ -31,8 +31,17 @@ public class Analytics: NSObject, Extension {
         super.init()
     }
 
-    /// Invoked when the `EventHub` has successfully registered the Analytics extension.
-    public func onRegistered() {}
+    public func onRegistered() {
+        registerListener(type: EventType.genericTrack, source: EventSource.requestContent, listener: handleAnalyticsRequest)
+//        registerListener(type: EventType.rulesEngine, source: EventSource.responseContent, listener: handleAnalyticsRequest)
+//        registerListener(type: EventType.analytics, source: EventSource.requestContent, listener: handleAnalyticsRequest)
+//        registerListener(type: EventType.analytics, source: EventSource.requestIdentity, listener: handleAnalyticsRequest)
+//        registerListener(type: EventType.configuration, source: EventSource.responseContent, listener: handleAnalyticsRequest)
+//        registerListener(type: EventType.acquisition, source: EventSource.responseContent, listener: handleAnalyticsRequest)
+//        registerListener(type: EventType.lifecycle, source: EventSource.responseContent, listener: handleAnalyticsRequest)
+//        registerListener(type: EventType.genericLifecycle, source: EventSource.requestContent, listener: handleAnalyticsRequest)
+//        registerListener(type: EventType.hub, source: EventSource.sharedState, listener: handleAnalyticsRequest)
+    }
 
     public func onUnregistered() {}
 
@@ -41,4 +50,7 @@ public class Analytics: NSObject, Extension {
     }
 
     // MARK: Event Listeners
+    private func handleAnalyticsRequest(event: Event) {
+
+    }
 }
