@@ -15,50 +15,50 @@ import AEPServices
 import AEPIdentity
 import Foundation
 
+/// This class encapsulates the analytics config properties used across the analytics handlers.
+/// These properties are retrieved from the shared states.
 class AnalyticsState {
     
     private let LOG_TAG = "AnalyticsState"
     
+    /// Instance of AnalyticsRequestSerializer, use to serialize visitor id's.
     private let analyticsRequestSerializer = AnalyticsRequestSerializer()
     
-    // MARK: BEGIN: Use the defaults value from Analytics constants for variables declared below
-    var analyticForwardingEnabled: Bool = false
+    var analyticForwardingEnabled: Bool = AnalyticsConstants.Default.DEFAULT_FORWARDING_ENABLED
 
-    var offlineEnabled: Bool = false
+    var offlineEnabled: Bool = AnalyticsConstants.Default.DEFAULT_OFFLINE_ENABLED
     
-    var batchLimit: Int32 = 0
+    var batchLimit: Int = AnalyticsConstants.Default.DEFAULT_BATCH_LIMIT
     
-    var privacyStatus: PrivacyStatus = PrivacyStatus.unknown
+    var privacyStatus: PrivacyStatus = AnalyticsConstants.Default.DEFAULT_PRIVACY_STATUS
     
-    var launchHitDelay: Date = Date.init()
+    var launchHitDelay: Date = AnalyticsConstants.Default.DEFAULT_LAUNCH_HIT_DELAY
     
-    var backDateSessionInfoEnabled: Bool = false
+    var backDateSessionInfoEnabled: Bool = AnalyticsConstants.Default.DEFAULT_BACKDATE_SESSION_INFO_ENABLED
     
-    var marketingCloudOrganizationId: String = ""
+    var marketingCloudOrganizationId: String?
     
-    var rsids: String = ""
+    var rsids: String?
     
-    var host: String = ""
+    var host: String?
     
-    private(set) var marketingCloudId: String = ""
+    private(set) var marketingCloudId: String?
     
-    private var locationHint: String = ""
+    private var locationHint: String?
     
-    private var blob: String = ""
+    private var blob: String?
     
-    private(set) var serializedVisitorIdsList: String = ""
+    private(set) var serializedVisitorIdsList: String?
     
-    var applicationId: String = ""
+    var applicationId: String?
     
-    private(set) var advertisingId: String = ""
+    private(set) var advertisingId: String?
     
-    private(set) var assuranceSessionActive: Bool = false
+    private(set) var assuranceSessionActive: Bool?
     
-    private(set) var lifecycleMaxSessionLength: Date = Date.init()
+    private(set) var lifecycleMaxSessionLength: Date = AnalyticsConstants.Default.DEFAULT_LIFECYCLE_MAX_SESSION_LENGTH
     
-    private(set) var lifecycleSessionStartTimestamp: Date = Date.init()
-    
-    // MARK: END: Use the defaults value from Analytics constants for variables declared below
+    private(set) var lifecycleSessionStartTimestamp: Date = AnalyticsConstants.Default.DEFAULT_LIFECYCLE_SESSION_START_TIMESTAMP
     
     private(set) var defaultData: [String: String] = [String: String]()
     
@@ -66,21 +66,20 @@ class AnalyticsState {
         
         for key in dataMap.keys {
             
-            switch key {
-            // MARK: TODO replace all the placeholder strings in case values with the corresponding shared state name in AnalyticsConstants.
-            case "configuration shared state name":
+            switch key {            
+            case AnalyticsConstants.Configuration.EventDataKeys.SHARED_STATE_NAME:
                 extractConfigurationInfo(from: dataMap[key])
                 break
-            case "lifecycle shared state name":
+            case AnalyticsConstants.Lifecycle.EventDataKeys.SHARED_STATE_NAME:
                 extractLifecycleInfo(from: dataMap[key])
                 break
-            case "identity shared state name":
+            case AnalyticsConstants.Identity.EventDataKeys.SHARED_STATE_NAME:
                 extractIdentityInfo(from: dataMap[key])
                 break
-            case "places shared state name":
+            case AnalyticsConstants.Places.EventDataKeys.SHARED_STATE_NAME:
                 extractPlacesInfo(from: dataMap[key])
                 break
-            case "assurance shared state name":
+            case AnalyticsConstants.Assurance.EventDataKeys.SHARED_STATE_NAME:
                 extractAssuranceInfo(from: dataMap[key])
                 break
             default:
@@ -96,16 +95,15 @@ class AnalyticsState {
             return
         }
         
-        // MARK: Replace the placeholders keys with values in AnalyticsConstants.
-        host = configurationData["placeholder for ANALYTICS_SERVER"] as? String ?? "placeholder default value"
-        rsids = configurationData["placeholder for ANALYTICS_REPORT_SUITES"] as? String ?? "placeholder default value"
-        analyticForwardingEnabled = configurationData["placeholder for ANALYTICS_AAMForwarding"] as? Bool ?? false
-        offlineEnabled = configurationData["placeholder for ANALYTICS_OFFLINE_TRACKING"] as? Bool ?? false
-        batchLimit = configurationData["placeholder for ANALYTICS_BATCH_LIMIT"] as? Int32 ?? 0
-        launchHitDelay = Date.init(timeIntervalSince1970: TimeInterval.init(configurationData["placeholder for ANALYTICS_BATCH_LIMIT"] as? Double ?? 0))
-        marketingCloudOrganizationId = configurationData["placeholder for marketingCloudOrganizationId"] as? String ?? ""
-        backDateSessionInfoEnabled = configurationData["placeholder for backDateSessionInfoEnabled"] as? Bool ?? false
-        privacyStatus = PrivacyStatus.init(rawValue: configurationData["placeholder for privacy status"] as? PrivacyStatus.RawValue ?? PrivacyStatus.unknown.rawValue) ?? PrivacyStatus.unknown
+        host = configurationData[AnalyticsConstants.Configuration.EventDataKeys.ANALYTICS_SERVER] as? String ?? "placeholder default value"
+        rsids = configurationData[AnalyticsConstants.Configuration.EventDataKeys.ANALYTICS_REPORT_SUITES] as? String ?? "placeholder default value"
+        analyticForwardingEnabled = configurationData[AnalyticsConstants.Configuration.EventDataKeys.ANALYTICS_AAMFORWARDING] as? Bool ?? false
+        offlineEnabled = configurationData[AnalyticsConstants.Configuration.EventDataKeys.ANALYTICS_OFFLINE_TRACKING] as? Bool ?? false
+        batchLimit = configurationData[AnalyticsConstants.Configuration.EventDataKeys.ANALYTICS_BATCH_LIMIT] as? Int ?? 0
+        launchHitDelay = Date.init(timeIntervalSince1970: TimeInterval.init(configurationData[AnalyticsConstants.Configuration.EventDataKeys.ANALYTICS_LAUNCH_HIT_DELAY] as? Double ?? 0))
+        marketingCloudOrganizationId = configurationData[AnalyticsConstants.Configuration.EventDataKeys.MARKETING_CLOUD_ORGID_KEY] as? String ?? ""
+        backDateSessionInfoEnabled = configurationData[AnalyticsConstants.Configuration.EventDataKeys.ANALYTICS_BACKDATE_PREVIOUS_SESSION] as? Bool ?? false
+        privacyStatus = PrivacyStatus.init(rawValue: configurationData[AnalyticsConstants.Configuration.EventDataKeys.GLOBAL_PRIVACY] as? PrivacyStatus.RawValue ?? PrivacyStatus.unknown.rawValue) ?? PrivacyStatus.unknown
     }
     
     func extractLifecycleInfo(from lifecycleData: [String: Any]?) -> Void {
@@ -214,17 +212,17 @@ class AnalyticsState {
         
         var analyticsIdVisitorParameters = [String: String]()
         
-        guard !marketingCloudId.isEmpty else {
+        guard let marketingCloudId = marketingCloudId, !marketingCloudId.isEmpty else {
             return analyticsIdVisitorParameters
         }
                 
         analyticsIdVisitorParameters["ANALYTICS_PARAMETER_KEY_MID"] = marketingCloudId
                 
-        if !blob.isEmpty {
+        if let blob = blob, !blob.isEmpty {
             analyticsIdVisitorParameters["ANALYTICS_PARAMETER_KEY_Blob"] = blob
         }
         
-        if !locationHint.isEmpty {
+        if let locationHint = locationHint, !locationHint.isEmpty {
             analyticsIdVisitorParameters["ANALYTICS_PARAMETER_Location_hint"] = locationHint
         }
                         
@@ -232,6 +230,9 @@ class AnalyticsState {
     }
     
     func isAnalyticsConfigured() -> Bool {
+        guard let rsids = rsids, let host = host else {
+            return false
+        }
         return !rsids.isEmpty && !host.isEmpty
     }
     
@@ -240,7 +241,7 @@ class AnalyticsState {
         var urlComponent = URLComponents()
         urlComponent.scheme = "https"
         urlComponent.host = host
-        urlComponent.path = "\\b\\ss\\\(rsids)\\\(getAnalyticsResponseType())\\\(sdkVersion)\\s"
+        urlComponent.path = "\\b\\ss\\\(String(describing:rsids))\\\(getAnalyticsResponseType())\\\(sdkVersion)\\s"
         guard let url = urlComponent.url else {
             Log.debug(label: LOG_TAG, "Error in creating Analytics base URL.")
             return nil
@@ -249,6 +250,9 @@ class AnalyticsState {
     }
     
     func isVisistorIdServiceEnabled() -> Bool {
+        guard let marketingCloudOrganizationId = marketingCloudOrganizationId else {
+            return false
+        }
         return !marketingCloudOrganizationId.isEmpty
     }
     
