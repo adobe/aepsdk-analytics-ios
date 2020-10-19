@@ -18,6 +18,9 @@ enum AnalyticsConstants {
     static let FRIENDLY_NAME = "Analytics"
     static let EXTENSION_VERSION = "0.0.1"
     static let DATASTORE_NAME = EXTENSION_NAME
+    static let ANALYTICS_PARAMETER_KEY_MID = "mid"
+    static let ANALYTICS_PARAMETER_KEY_BLOB = "aamb"
+    static let ANALYTICS_PARAMETER_KEY_LOCATION_HINT = "aamlh"
     
     enum EventDataKeys {
         static let STATE_OWNER = ""
@@ -45,9 +48,33 @@ enum AnalyticsConstants {
         static let SERVER_RESPONSE = ""
     }
     
+    enum ContextDataKeys {
+        static let OPERATING_SYSTEM = "a.OSVersion"
+        static let DEVICE_NAME = "a.DeviceName"
+        static let DEVICE_RESOLUTION = "a.Resolution"
+        static let CARRIER_NAME = "a.CarrierName"
+        static let RUN_MODE = "a.RunMode"
+        static let APPLICATION_IDENTIFIER = "a.AppID"
+        static let REGION_ID = "a.loc.poi.id"
+        static let REGION_NAME = "a.loc.poi"
+    }
+    
+    enum Default {
+        static let DEFAULT_PRIVACY_STATUS: PrivacyStatus = .optedIn
+        static let DEFAULT_FORWARDING_ENABLED = false
+        static let DEFAULT_OFFLINE_ENABLED = false
+        static let DEFAULT_BACKDATE_SESSION_INFO_ENABLED = false
+        static let DEFAULT_BATCH_LIMIT = 0
+        static let DEFAULT_LAUNCH_HIT_DELAY = Date.init()
+        static let DEFAULT_LIFECYCLE_RESPONSE_WAIT_TIMEOUT = Date.init()
+        static let DEFAULT_LAUNCH_DEEPLINK_DATA_WAIT_TIMEOUT = Date.init()
+        static let DEFAULT_ASSURANCE_SESSION_ENABLED = false
+        static let DEFAULT_LIFECYCLE_MAX_SESSION_LENGTH = Date.init()
+        static let DEFAULT_LIFECYCLE_SESSION_START_TIMESTAMP = Date.init()
+    }
+    
     // acquisition keys
     enum Acquisition {
-        
         static let SHARED_STATE_NAME = ""
         static let CONTEXT_DATA = "contextdata"
         static let REFERRER_DATA = "referrerdata"
@@ -57,7 +84,6 @@ enum AnalyticsConstants {
     
     // configuration keys
     enum Configuration {
-        
         enum EventDataKeys {
             static let SHARED_STATE_NAME = "com.adobe.module.configuration"
             static let GLOBAL_PRIVACY = "global.privacy"
@@ -74,7 +100,6 @@ enum AnalyticsConstants {
     
     // identity keys
     enum Identity {
-        
         enum EventDataKeys {
             static let SHARED_STATE_NAME = "com.adobe.module.identity"
             static let VISITOR_ID_MID = "mid"
@@ -88,50 +113,47 @@ enum AnalyticsConstants {
     
     // lifecycle keys
     enum Lifecycle {
-        
         enum EventDataKeys {
-        
-        static let SHARED_STATE_NAME = "com.adobe.module.lifecycle"
-        static let ADDITIONAL_CONTEXT_DATA = "additionalcontextdata"
-        static let APP_ID = "appid"
-        static let CARRIER_NAME = "carriername"
-        static let CRASH_EVENT = "crashevent"
-        static let DAILY_ENGAGED_EVENT = "dailyenguserevent"
-        static let DAY_OF_WEEK = "dayofweek"
-        static let DAYS_SINCE_FIRST_LAUNCH = "dayssincefirstuse"
-        static let DAYS_SINCE_LAST_LAUNCH = "dayssincelastuse"
-        static let DAYS_SINCE_LAST_UPGRADE = "dayssincelastupgrade"
-        static let DEVICE_NAME = "devicename"
-        static let DEVICE_RESOLUTION = "resolution"
-        static let HOUR_OF_DAY = "hourofday"
-        static let IGNORED_SESSION_LENGTH = "ignoredsessionlength"
-        static let INSTALL_DATE = "installdate"
-        static let INSTALL_EVENT = "installevent"
-        static let LAUNCH_EVENT = "launchevent"
-        static let LAUNCHES = "launches"
-        static let LAUNCHES_SINCE_UPGRADE = "launchessinceupgrade"
-        static let LIFECYCLE_ACTION_KEY = "action"
-        static let LIFECYCLE_CONTEXT_DATA = "lifecyclecontextdata"
-        static let LIFECYCLE_PAUSE = "pause"
-        static let LIFECYCLE_START = "start"
-        static let LOCALE = "locale"
-        static let MAX_SESSION_LENGTH = "maxsessionlength"
-        static let MONTHLY_ENGAGED_EVENT = "monthlyenguserevent"
-        static let OPERATING_SYSTEM = "osversion"
-        static let PREVIOUS_SESSION_LENGTH = "prevsessionlength"
-        static let PREVIOUS_SESSION_PAUSE_TIMESTAMP = "previoussessionpausetimestampseconds"
-        static let PREVIOUS_SESSION_START_TIMESTAMP = "previoussessionstarttimestampseconds"
-        static let RUN_MODE = "runmode"
-        static let SESSION_EVENT = "sessionevent"
-        static let SESSION_START_TIMESTAMP = "starttimestampseconds"
-        static let UPGRADE_EVENT = "upgradeevent"
-        static let PREVIOUS_OS_VERSION = "previousosversion"
-        static let PREVIOUS_APP_ID = "previousappid"
+            static let SHARED_STATE_NAME = "com.adobe.module.lifecycle"
+            static let ADDITIONAL_CONTEXT_DATA = "additionalcontextdata"
+            static let APP_ID = "appid"
+            static let CARRIER_NAME = "carriername"
+            static let CRASH_EVENT = "crashevent"
+            static let DAILY_ENGAGED_EVENT = "dailyenguserevent"
+            static let DAY_OF_WEEK = "dayofweek"
+            static let DAYS_SINCE_FIRST_LAUNCH = "dayssincefirstuse"
+            static let DAYS_SINCE_LAST_LAUNCH = "dayssincelastuse"
+            static let DAYS_SINCE_LAST_UPGRADE = "dayssincelastupgrade"
+            static let DEVICE_NAME = "devicename"
+            static let DEVICE_RESOLUTION = "resolution"
+            static let HOUR_OF_DAY = "hourofday"
+            static let IGNORED_SESSION_LENGTH = "ignoredsessionlength"
+            static let INSTALL_DATE = "installdate"
+            static let INSTALL_EVENT = "installevent"
+            static let LAUNCH_EVENT = "launchevent"
+            static let LAUNCHES = "launches"
+            static let LAUNCHES_SINCE_UPGRADE = "launchessinceupgrade"
+            static let LIFECYCLE_ACTION_KEY = "action"
+            static let LIFECYCLE_CONTEXT_DATA = "lifecyclecontextdata"
+            static let LIFECYCLE_PAUSE = "pause"
+            static let LIFECYCLE_START = "start"
+            static let LOCALE = "locale"
+            static let MAX_SESSION_LENGTH = "maxsessionlength"
+            static let MONTHLY_ENGAGED_EVENT = "monthlyenguserevent"
+            static let OPERATING_SYSTEM = "osversion"
+            static let PREVIOUS_SESSION_LENGTH = "prevsessionlength"
+            static let PREVIOUS_SESSION_PAUSE_TIMESTAMP = "previoussessionpausetimestampseconds"
+            static let PREVIOUS_SESSION_START_TIMESTAMP = "previoussessionstarttimestampseconds"
+            static let RUN_MODE = "runmode"
+            static let SESSION_EVENT = "sessionevent"
+            static let SESSION_START_TIMESTAMP = "starttimestampseconds"
+            static let UPGRADE_EVENT = "upgradeevent"
+            static let PREVIOUS_OS_VERSION = "previousosversion"
+            static let PREVIOUS_APP_ID = "previousappid"                    
         }
     }
     
     enum Places {
-        
         enum EventDataKeys {
             static let SHARED_STATE_NAME = "com.adobe.module.places"
             static let CURRENT_POI = "currentpoi"
@@ -141,25 +163,9 @@ enum AnalyticsConstants {
     }
     
     enum Assurance {
-        
         enum EventDataKeys {
             static let SHARED_STATE_NAME = "com.adobe.assurance"
             static let SESSION_ID = "sessionid"
         }
-    }
-    
-    
-    enum Default {
-        static let DEFAULT_PRIVACY_STATUS: PrivacyStatus = .optedIn
-        static let DEFAULT_FORWARDING_ENABLED = false
-        static let DEFAULT_OFFLINE_ENABLED = false
-        static let DEFAULT_BACKDATE_SESSION_INFO_ENABLED = false
-        static let DEFAULT_BATCH_LIMIT = 0
-        static let DEFAULT_LAUNCH_HIT_DELAY = Date.init()
-        static let DEFAULT_LIFECYCLE_RESPONSE_WAIT_TIMEOUT = Date.init()
-        static let DEFAULT_LAUNCH_DEEPLINK_DATA_WAIT_TIMEOUT = Date.init()
-        static let DEFAULT_ASSURANCE_SESSION_ENABLED = false
-        static let DEFAULT_LIFECYCLE_MAX_SESSION_LENGTH = Date.init()
-        static let DEFAULT_LIFECYCLE_SESSION_START_TIMESTAMP = Date.init()
     }
 }
