@@ -19,33 +19,43 @@ import Foundation
 /// These properties are retrieved from the shared states.
 class AnalyticsState {
     private let LOG_TAG = "AnalyticsState"
-    /// Instance of `AnalyticsRequestSerializer`, use to serialize visitor id's.
+    /// Instance of `AnalyticsRequestSerializer`, use to serialize visitor id's List.
     private let analyticsRequestSerializer = AnalyticsRequestSerializer()
+    /// Configuration setting for forwarding Analytics hits to Audience manager.
     var analyticForwardingEnabled: Bool = AnalyticsConstants.Default.DEFAULT_FORWARDING_ENABLED
-    /// Analytics Configuration setting for offline enabled or not
+    /// `Offline enabled` configuration setting. If true analytics hits are queued when device is offline and sent when device is online.
     var offlineEnabled: Bool = AnalyticsConstants.Default.DEFAULT_OFFLINE_ENABLED
-    /// Analytics Configuration setting for batch limit
+    /// `Batch limit` configuration setting. Number of hits to queue before sending to Analytics.
     var batchLimit: Int = AnalyticsConstants.Default.DEFAULT_BATCH_LIMIT
     /// Holds the value for privacy status opted by the user.
     var privacyStatus: PrivacyStatus = AnalyticsConstants.Default.DEFAULT_PRIVACY_STATUS
+    /// `Launch hit delay` configuration setting. Number of seconds to wait before Analytics launch hits are sent.
     var launchHitDelay: Date = AnalyticsConstants.Default.DEFAULT_LAUNCH_HIT_DELAY
-    /// Whether to send backdate lifecycle session info or not.
+    /// `Backdate Previous Session Info` configuration setting. If enable backdates session information hits.
     var backDateSessionInfoEnabled: Bool = AnalyticsConstants.Default.DEFAULT_BACKDATE_SESSION_INFO_ENABLED
+    /// Id for `Marketing cloud organization`.
     var marketingCloudOrganizationId: String?
-    /// rsid Analytics configuration settings.
+    /// `RSID` configuration settings. Id of report suites to which data should be send.
     var rsids: String?
     /// Analytics Server url.
     var host: String?
-    /// Holds the value for MCID.
+    /// Unique id for device.
     private(set) var marketingCloudId: String?
+    /// The location hint value.
     private var locationHint: String?
+    /// The blob value.
     private var blob: String?
+    /// A serialized form of list of visitor identifiers.
     private(set) var serializedVisitorIdsList: String?
+    /// Stores the Application name and version.
     var applicationId: String?
+    /// The value of advertising identifier.
     private(set) var advertisingId: String?
     /// Whether or not Assurance session is active.
     private(set) var assuranceSessionActive: Bool?
+    /// Maximum time in ms before a session times out.
     private(set) var lifecycleMaxSessionLength: Date = AnalyticsConstants.Default.DEFAULT_LIFECYCLE_MAX_SESSION_LENGTH
+    /// Start timestamp of new session.
     private(set) var lifecycleSessionStartTimestamp: Date = AnalyticsConstants.Default.DEFAULT_LIFECYCLE_SESSION_START_TIMESTAMP
     private(set) var defaultData: [String: String] = [String: String]()
     /// Typealias for Lifecycle Event Data keys.

@@ -11,6 +11,8 @@
 		2FBC2E5752E860AAB4C519F1 /* Pods_AEPAnalytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 56DA22A3CE773DE7E7380769 /* Pods_AEPAnalytics.framework */; };
 		3D1D45AD2537B0990053CB47 /* AnalyticsState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1D45AC2537B0990053CB47 /* AnalyticsState.swift */; };
 		3D1D45AF25391B410053CB47 /* AnalyticsRequestSerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1D45AE25391B410053CB47 /* AnalyticsRequestSerializer.swift */; };
+		3D1D45B2253F99130053CB47 /* AnalyticsStateTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1D45B1253F99120053CB47 /* AnalyticsStateTest.swift */; };
+		3D1D45B4253F9EE60053CB47 /* AnalyticsTestConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1D45B3253F9EE60053CB47 /* AnalyticsTestConstants.swift */; };
 		3DCDB3DF252E853200ABA819 /* AnalyticsProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DCDB3DE252E853200ABA819 /* AnalyticsProperties.swift */; };
 		3DD0693F253516EC00877781 /* AnalyticsPropertiesTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DD0693E253516EC00877781 /* AnalyticsPropertiesTest.swift */; };
 		AC277CFE252C23E600987C67 /* Analytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC277CF5252C23E600987C67 /* Analytics.swift */; };
@@ -42,6 +44,8 @@
 		2EBEE7792525A35400880E72 /* AEPAnalyticsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AEPAnalyticsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3D1D45AC2537B0990053CB47 /* AnalyticsState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsState.swift; sourceTree = "<group>"; };
 		3D1D45AE25391B410053CB47 /* AnalyticsRequestSerializer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsRequestSerializer.swift; sourceTree = "<group>"; };
+		3D1D45B1253F99120053CB47 /* AnalyticsStateTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsStateTest.swift; sourceTree = "<group>"; };
+		3D1D45B3253F9EE60053CB47 /* AnalyticsTestConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsTestConstants.swift; sourceTree = "<group>"; };
 		3DCDB3DE252E853200ABA819 /* AnalyticsProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsProperties.swift; sourceTree = "<group>"; };
 		3DD0693E253516EC00877781 /* AnalyticsPropertiesTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsPropertiesTest.swift; sourceTree = "<group>"; };
 		56DA22A3CE773DE7E7380769 /* Pods_AEPAnalytics.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AEPAnalytics.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -136,6 +140,7 @@
 				AC277CF0252C23E600987C67 /* AnalyticsAPITests.swift */,
 				AC277CF3252C23E600987C67 /* Info.plist */,
 				3DD0693E253516EC00877781 /* AnalyticsPropertiesTest.swift */,
+				3D1D45B1253F99120053CB47 /* AnalyticsStateTest.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -162,6 +167,7 @@
 				AC76C1632534D66300211DE2 /* .swiftlint.yml */,
 				AC76C1612534D66300211DE2 /* TestableExtensionRuntime.swift */,
 				AC33336C253651DA00BF8A56 /* EventHub+Test.swift */,
+				3D1D45B3253F9EE60053CB47 /* AnalyticsTestConstants.swift */,
 			);
 			path = TestHelper;
 			sourceTree = "<group>";
@@ -387,7 +393,9 @@
 			files = (
 				AC277D03252C23F400987C67 /* AnalyticsAPITests.swift in Sources */,
 				AC3333702536590600BF8A56 /* MockExtension.swift in Sources */,
+				3D1D45B2253F99130053CB47 /* AnalyticsStateTest.swift in Sources */,
 				AC33336E253651E000BF8A56 /* EventHub+Test.swift in Sources */,
+				3D1D45B4253F9EE60053CB47 /* AnalyticsTestConstants.swift in Sources */,
 				3DD0693F253516EC00877781 /* AnalyticsPropertiesTest.swift in Sources */,
 				AC277D03252C23F400987C67 /* AnalyticsAPITests.swift in Sources */,
 			);
