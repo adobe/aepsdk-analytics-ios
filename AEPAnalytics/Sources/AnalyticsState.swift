@@ -42,9 +42,17 @@ class AnalyticsState {
     /// Unique id for device.
     private(set) var marketingCloudId: String?
     /// The location hint value.
-    private var locationHint: String?
+    #if DEBUG
+        var locationHint: String?
+    #else
+        private var locationHint: String?
+    #endif
     /// The blob value.
-    private var blob: String?
+    #if DEBUG
+        var blob: String?
+    #else
+        private var blob: String?
+    #endif
     /// A serialized form of list of visitor identifiers.
     private(set) var serializedVisitorIdsList: String?
     /// Stores the Application name and version.
@@ -226,7 +234,7 @@ class AnalyticsState {
         var urlComponent = URLComponents()
         urlComponent.scheme = "https"
         urlComponent.host = host
-        urlComponent.path = "\\b\\ss\\\(String(describing: rsids))\\\(getAnalyticsResponseType())\\\(sdkVersion)\\s"
+        urlComponent.path = "/b/ss/\(rsids ?? "")/\(getAnalyticsResponseType())/\(sdkVersion)/s"
         guard let url = urlComponent.url else {
             Log.debug(label: LOG_TAG, "Error in creating Analytics base URL.")
             return nil

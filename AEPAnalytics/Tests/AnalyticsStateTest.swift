@@ -67,4 +67,196 @@ class AnalyticsStateTest : XCTestCase {
 
     }
 
+    func testExtractLifecycleInfoHappyFlow() {
+
+        let sessionStartTimestamp: TimeInterval = 1000
+        let lifecycleMaxSessionLength: TimeInterval = 2000
+        let os = "Android"
+        let deviceName = "Pixel"
+        let deviceResolution = "1024 * 1024"
+        let carrierName = "Verizon"
+        let runMode = "run mode"
+        let appId = "1234"
+
+        var lifecycleContextData = [String: String]()
+        lifecycleContextData[AnalyticsTestConstants.Lifecycle.EventDataKeys.OPERATING_SYSTEM] = os
+        lifecycleContextData[AnalyticsTestConstants.Lifecycle.EventDataKeys.DEVICE_NAME] = deviceName
+        lifecycleContextData[AnalyticsTestConstants.Lifecycle.EventDataKeys.DEVICE_RESOLUTION] = deviceResolution
+        lifecycleContextData[AnalyticsTestConstants.Lifecycle.EventDataKeys.CARRIER_NAME] = carrierName
+        lifecycleContextData[AnalyticsTestConstants.Lifecycle.EventDataKeys.RUN_MODE] = runMode
+        lifecycleContextData[AnalyticsTestConstants.Lifecycle.EventDataKeys.APP_ID] = appId
+
+        var lifecycleData = [String: Any]()
+        lifecycleData[AnalyticsTestConstants.Lifecycle.EventDataKeys.SESSION_START_TIMESTAMP] = sessionStartTimestamp
+        lifecycleData[AnalyticsTestConstants.Lifecycle.EventDataKeys.MAX_SESSION_LENGTH] = lifecycleMaxSessionLength
+        lifecycleData[AnalyticsConstants.Lifecycle.EventDataKeys.LIFECYCLE_CONTEXT_DATA] = lifecycleContextData
+
+        var dataMap = [String: [String: Any]]()
+        dataMap[AnalyticsTestConstants.Lifecycle.EventDataKeys.SHARED_STATE_NAME] = lifecycleData
+        let analyticsState = AnalyticsState.init(dataMap: dataMap)
+
+        typealias AnalyticContextDataKeys = AnalyticsTestConstants.ContextDataKeys
+
+        XCTAssertTrue(analyticsState.lifecycleSessionStartTimestamp.timeIntervalSince1970 == sessionStartTimestamp)
+
+        XCTAssertTrue(analyticsState.lifecycleMaxSessionLength.timeIntervalSince1970 == lifecycleMaxSessionLength)
+        XCTAssertEqual(analyticsState.defaultData[AnalyticContextDataKeys.OPERATING_SYSTEM], os)
+        XCTAssertEqual(analyticsState.defaultData[AnalyticContextDataKeys.DEVICE_NAME], deviceName)
+        XCTAssertEqual(analyticsState.defaultData[AnalyticContextDataKeys.DEVICE_RESOLUTION], deviceResolution)
+        XCTAssertEqual(analyticsState.defaultData[AnalyticContextDataKeys.CARRIER_NAME], carrierName)
+        XCTAssertEqual(analyticsState.defaultData[AnalyticContextDataKeys.RUN_MODE], runMode)
+        XCTAssertEqual(analyticsState.defaultData[AnalyticContextDataKeys.APPLICATION_IDENTIFIER], appId)
+    }
+
+    func testAnalyticsStateReturnsDefaultLifecycleValuesWhenLifeycleDataIsEmpty() {
+
+        var dataMap = [String: [String: Any]]()
+        dataMap[AnalyticsTestConstants.Lifecycle.EventDataKeys.SHARED_STATE_NAME] = [String: Any]()
+        let analyticsState = AnalyticsState.init(dataMap: dataMap)
+
+        XCTAssertTrue(analyticsState.defaultData.isEmpty)
+        // MARK: TODO Fix the below two Asserts.
+//        XCTAssertEqual(analyticsState.lifecycleSessionStartTimestamp, Date.init())
+//        XCTAssertEqual(analyticsState.lifecycleMaxSessionLength, Date.init())
+    }
+
+    func testExtractIdentityInfoHappyFlow() {
+
+        let marketingCloudId = "marketingCloudId"
+        let blob = "blob"
+        let locationHint = "locationHint"
+        let advertisingId = "advertisingId"
+
+        typealias IdentityEventDataKeys = AnalyticsTestConstants.Identity.EventDataKeys
+        var identityData = [String: Any]()
+
+        identityData[IdentityEventDataKeys.VISITOR_ID_MID] = marketingCloudId
+        identityData[IdentityEventDataKeys.VISITOR_ID_BLOB] = blob
+        identityData[IdentityEventDataKeys.VISITOR_ID_LOCATION_HINT] = locationHint
+        identityData[IdentityEventDataKeys.ADVERTISING_IDENTIFIER] = advertisingId
+        //MARK: TODO update the unit test below.
+//        if let identifiableArray = identityData[IdentityEventDataKeys.VISITOR_IDS_LIST] as? [Identifiable] {
+//            serializedVisitorIdsList = analyticsRequestSerializer.generateAnalyticsCustomerIdString(from: identifiableArray)
+//        }
+        var dataMap = [String: [String: Any]]()
+        dataMap[AnalyticsTestConstants.Identity.EventDataKeys.SHARED_STATE_NAME] = identityData
+        let analyticsState = AnalyticsState.init(dataMap: dataMap)
+
+        XCTAssertEqual(analyticsState.marketingCloudId, marketingCloudId)
+        XCTAssertEqual(analyticsState.blob, blob)
+        XCTAssertEqual(analyticsState.locationHint, locationHint)
+        XCTAssertEqual(analyticsState.advertisingId, advertisingId)
+    }
+
+    func testAnalyticsStateReturnsDefaultIdentityValuesWhenIdentityInfoIsEmpty() {
+        var dataMap = [String: [String: Any]]()
+        dataMap[AnalyticsTestConstants.Identity.EventDataKeys.SHARED_STATE_NAME] = [String: Any]()
+        let analyticsState = AnalyticsState.init(dataMap: dataMap)
+
+        XCTAssertNil(analyticsState.marketingCloudId)
+        XCTAssertNil(analyticsState.blob)
+        XCTAssertNil(analyticsState.locationHint)
+        XCTAssertNil(analyticsState.advertisingId)
+        XCTAssertNil(analyticsState.serializedVisitorIdsList)
+    }
+
+    func testExtractPlacesInfoHappyFlow() {
+
+        let regionId = "regionId"
+        let regionName = "regionName"
+        typealias PlacesEventDataKeys = AnalyticsTestConstants.Places.EventDataKeys
+
+        var placesContextData = [String: String]()
+        placesContextData[PlacesEventDataKeys.REGION_ID] = regionId
+        placesContextData[PlacesEventDataKeys.REGION_NAME] = regionName
+
+        var placesData = [String: Any]()
+        placesData[PlacesEventDataKeys.CURRENT_POI] =  placesContextData
+
+        var dataMap = [String: [String: Any]]()
+        dataMap[AnalyticsTestConstants.Places.EventDataKeys.SHARED_STATE_NAME] = placesData
+
+        let analyticsState = AnalyticsState.init(dataMap: dataMap)
+        XCTAssertEqual(analyticsState.defaultData[AnalyticsTestConstants.ContextDataKeys.REGION_ID], regionId)
+        XCTAssertEqual(analyticsState.defaultData[AnalyticsTestConstants.ContextDataKeys.REGION_NAME], regionName)
+
+    }
+
+    func testAnalyticsStateReturnsDefaultPlacesValueWhenPlacesInfoIsEmpty() {
+
+        var dataMap = [String: [String: Any]]()
+        dataMap[AnalyticsTestConstants.Places.EventDataKeys.SHARED_STATE_NAME] = [String: Any]()
+
+        let analyticsState = AnalyticsState.init(dataMap: dataMap)
+
+        XCTAssertNil(analyticsState.defaultData[AnalyticsTestConstants.ContextDataKeys.REGION_ID])
+        XCTAssertNil(analyticsState.defaultData[AnalyticsTestConstants.ContextDataKeys.REGION_NAME])
+    }
+
+    func testExtractAssuranceInfoHappyFlow() {
+
+        let sessionId = "sessionId"
+        typealias AssuranceEventDataKeys = AnalyticsTestConstants.Assurance.EventDataKeys
+
+        var assuranceData = [String: String]()
+        assuranceData[AssuranceEventDataKeys.SESSION_ID] = sessionId
+
+        var dataMap = [String: [String: Any]]()
+        dataMap[AssuranceEventDataKeys.SHARED_STATE_NAME] = assuranceData
+
+        let analyticsState = AnalyticsState.init(dataMap: dataMap)
+
+        XCTAssertTrue(analyticsState.assuranceSessionActive ?? false)
+    }
+
+    func testAnalyticsStateReturnsAssuranceStateInactiveWithEmptyAssuranceInfo() {
+
+        typealias AssuranceEventDataKeys = AnalyticsTestConstants.Assurance.EventDataKeys
+
+        var dataMap = [String: [String: Any]]()
+        dataMap[AssuranceEventDataKeys.SHARED_STATE_NAME] = [String: String]()
+
+        let analyticsState = AnalyticsState.init(dataMap: dataMap)
+
+        XCTAssertFalse(analyticsState.assuranceSessionActive ?? false)
+    }
+
+    func testGetBaseUrlWhenSSLAndForwarding() {
+        let analyticsState = AnalyticsState.init(dataMap: [String: [String: Any]]())
+        analyticsState.analyticForwardingEnabled = true
+        analyticsState.host = "test.com"
+        analyticsState.rsids = "rsid1,rsid2"
+
+        XCTAssertEqual("https://test.com/b/ss/rsid1,rsid2/10/version1.0/s", analyticsState.getBaseUrl(sdkVersion: "version1.0")?.absoluteString)
+    }
+
+    func testGetBaseUrlWhenSSLAndNotForwarding() {
+        let analyticsState = AnalyticsState.init(dataMap: [String: [String: Any]]())
+        analyticsState.analyticForwardingEnabled = false
+        analyticsState.host = "test.com"
+        analyticsState.rsids = "rsid1,rsid2"
+
+        XCTAssertEqual("https://test.com/b/ss/rsid1,rsid2/0/version1.0/s", analyticsState.getBaseUrl(sdkVersion: "version1.0")?.absoluteString)
+    }
+
+    func testIsAnalyticsConfiguredHappyFlow() {
+        let analyticsState = AnalyticsState.init(dataMap: [String: [String: Any]]())
+        analyticsState.host = "test.com"
+        analyticsState.rsids = "rsid1,rsid2"
+        XCTAssertTrue(analyticsState.isAnalyticsConfigured())
+    }
+
+    func testIsAnalyticsConfiguredReturnsFalseWhenNoServerIds() {
+        let analyticsState = AnalyticsState.init(dataMap: [String: [String: Any]]())
+        analyticsState.host = ""
+        analyticsState.rsids = "rsid1,rsid2"
+        XCTAssertFalse(analyticsState.isAnalyticsConfigured())
+    }
+
+    func testIsAnalyticsConfiguredReturnsFalseWhenNoRsids() {
+        let analyticsState = AnalyticsState.init(dataMap: [String: [String: Any]]())
+        analyticsState.host = "serverId"
+        analyticsState.rsids = ""
+        XCTAssertFalse(analyticsState.isAnalyticsConfigured())
+    }
 }
