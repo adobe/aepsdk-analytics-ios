@@ -62,9 +62,9 @@ class AnalyticsState {
     /// Whether or not Assurance session is active.
     private(set) var assuranceSessionActive: Bool?
     /// Maximum time in ms before a session times out.
-    private(set) var lifecycleMaxSessionLength: Date = AnalyticsConstants.Default.DEFAULT_LIFECYCLE_MAX_SESSION_LENGTH
+    private(set) var lifecycleMaxSessionLength: TimeInterval = AnalyticsConstants.Default.DEFAULT_LIFECYCLE_MAX_SESSION_LENGTH
     /// Start timestamp of new session.
-    private(set) var lifecycleSessionStartTimestamp: Date = AnalyticsConstants.Default.DEFAULT_LIFECYCLE_SESSION_START_TIMESTAMP
+    private(set) var lifecycleSessionStartTimestamp: TimeInterval = AnalyticsConstants.Default.DEFAULT_LIFECYCLE_SESSION_START_TIMESTAMP
     private(set) var defaultData: [String: String] = [String: String]()
     /// Typealias for Lifecycle Event Data keys.
     private typealias LifeCycleEventDataKeys = AnalyticsConstants.Lifecycle.EventDataKeys
@@ -124,10 +124,10 @@ class AnalyticsState {
             return
         }
         if let lifecycleSessionStartTime = lifecycleData[LifeCycleEventDataKeys.SESSION_START_TIMESTAMP] as? TimeInterval {
-            lifecycleSessionStartTimestamp = Date.init(timeIntervalSince1970: lifecycleSessionStartTime)
+            lifecycleSessionStartTimestamp = lifecycleSessionStartTime
         }
         if let lifecycleMaxSessionLen = lifecycleData[LifeCycleEventDataKeys.MAX_SESSION_LENGTH] as? TimeInterval {
-            lifecycleMaxSessionLength = Date.init(timeIntervalSince1970: lifecycleMaxSessionLen)
+            lifecycleMaxSessionLength = lifecycleMaxSessionLen
         }
         if let lifecyleContextData = lifecycleData[LifeCycleEventDataKeys.LIFECYCLE_CONTEXT_DATA] as? [String: String] {
             if let operatingSystem = lifecyleContextData[LifeCycleEventDataKeys.OPERATING_SYSTEM] {

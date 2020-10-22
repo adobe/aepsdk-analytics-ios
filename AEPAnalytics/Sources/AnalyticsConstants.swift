@@ -69,8 +69,8 @@ enum AnalyticsConstants {
         static let DEFAULT_LIFECYCLE_RESPONSE_WAIT_TIMEOUT = Date.init()
         static let DEFAULT_LAUNCH_DEEPLINK_DATA_WAIT_TIMEOUT = Date.init()
         static let DEFAULT_ASSURANCE_SESSION_ENABLED = false
-        static let DEFAULT_LIFECYCLE_MAX_SESSION_LENGTH = Date.init()
-        static let DEFAULT_LIFECYCLE_SESSION_START_TIMESTAMP = Date.init()
+        static let DEFAULT_LIFECYCLE_MAX_SESSION_LENGTH = TimeInterval.init()
+        static let DEFAULT_LIFECYCLE_SESSION_START_TIMESTAMP = TimeInterval.init()
     }
     
     // acquisition keys

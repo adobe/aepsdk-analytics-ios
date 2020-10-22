@@ -97,9 +97,9 @@ class AnalyticsStateTest : XCTestCase {
 
         typealias AnalyticContextDataKeys = AnalyticsTestConstants.ContextDataKeys
 
-        XCTAssertTrue(analyticsState.lifecycleSessionStartTimestamp.timeIntervalSince1970 == sessionStartTimestamp)
+        XCTAssertEqual(analyticsState.lifecycleSessionStartTimestamp, sessionStartTimestamp)
 
-        XCTAssertTrue(analyticsState.lifecycleMaxSessionLength.timeIntervalSince1970 == lifecycleMaxSessionLength)
+        XCTAssertEqual(analyticsState.lifecycleMaxSessionLength, lifecycleMaxSessionLength)
         XCTAssertEqual(analyticsState.defaultData[AnalyticContextDataKeys.OPERATING_SYSTEM], os)
         XCTAssertEqual(analyticsState.defaultData[AnalyticContextDataKeys.DEVICE_NAME], deviceName)
         XCTAssertEqual(analyticsState.defaultData[AnalyticContextDataKeys.DEVICE_RESOLUTION], deviceResolution)
@@ -115,9 +115,8 @@ class AnalyticsStateTest : XCTestCase {
         let analyticsState = AnalyticsState.init(dataMap: dataMap)
 
         XCTAssertTrue(analyticsState.defaultData.isEmpty)
-        // MARK: TODO Fix the below two Asserts.
-//        XCTAssertEqual(analyticsState.lifecycleSessionStartTimestamp, Date.init())
-//        XCTAssertEqual(analyticsState.lifecycleMaxSessionLength, Date.init())
+        XCTAssertEqual(analyticsState.lifecycleSessionStartTimestamp, TimeInterval.init())
+        XCTAssertEqual(analyticsState.lifecycleMaxSessionLength, TimeInterval.init())
     }
 
     func testExtractIdentityInfoHappyFlow() {
