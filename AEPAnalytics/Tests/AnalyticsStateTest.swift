@@ -24,7 +24,7 @@ class AnalyticsStateTest : XCTestCase {
         let rsids = "rsid1, rsid2"
         let marketingCloudOrgId = "marketingserver"
         let privacyStatusString = "optedout"
-        let launchHitDelay : Double = 300
+        let launchHitDelay : TimeInterval = 300
 
         var configurationData = [String: Any]()
         configurationData[AnalyticsTestConstants.Configuration.EventDataKeys.ANALYTICS_SERVER] = server
@@ -44,7 +44,7 @@ class AnalyticsStateTest : XCTestCase {
         XCTAssertEqual(analyticsState.rsids, rsids)
         XCTAssertTrue(analyticsState.analyticForwardingEnabled)
         XCTAssertTrue(analyticsState.offlineEnabled)
-        XCTAssertEqual(analyticsState.launchHitDelay.timeIntervalSince1970, launchHitDelay, accuracy: 0)
+        XCTAssertEqual(analyticsState.launchHitDelay, launchHitDelay, accuracy: 0)
         XCTAssertEqual(analyticsState.marketingCloudOrganizationId, marketingCloudOrgId)
         XCTAssertTrue(analyticsState.backDateSessionInfoEnabled)
         XCTAssertEqual(analyticsState.privacyStatus, PrivacyStatus.optedOut)
@@ -57,13 +57,12 @@ class AnalyticsStateTest : XCTestCase {
 
         XCTAssertNil(analyticsState.host)
         XCTAssertNil(analyticsState.rsids)
-        XCTAssertTrue(analyticsState.analyticForwardingEnabled == AnalyticsTestConstants.Default.DEFAULT_FORWARDING_ENABLED)
-        XCTAssertTrue(analyticsState.offlineEnabled == AnalyticsConstants.Default.DEFAULT_OFFLINE_ENABLED)
-        // MARK: Fix the below commented Assert.
-//        XCTAssertEqual(analyticsState.launchHitDelay.timeIntervalSince1970, launchHitDelay, accuracy: 0)
+        XCTAssertTrue(analyticsState.analyticForwardingEnabled == AnalyticsTestConstants.Default.FORWARDING_ENABLED)
+        XCTAssertTrue(analyticsState.offlineEnabled == AnalyticsConstants.Default.OFFLINE_ENABLED)
+        XCTAssertEqual(analyticsState.launchHitDelay, 0, accuracy: 0)
         XCTAssertNil(analyticsState.marketingCloudOrganizationId)
-        XCTAssertTrue(analyticsState.backDateSessionInfoEnabled == AnalyticsTestConstants.Default.DEFAULT_BACKDATE_SESSION_INFO_ENABLED)
-        XCTAssertEqual(analyticsState.privacyStatus, AnalyticsTestConstants.Default.DEFAULT_PRIVACY_STATUS)
+        XCTAssertTrue(analyticsState.backDateSessionInfoEnabled == AnalyticsTestConstants.Default.BACKDATE_SESSION_INFO_ENABLED)
+        XCTAssertEqual(analyticsState.privacyStatus, AnalyticsTestConstants.Default.PRIVACY_STATUS)
 
     }
 
@@ -252,10 +251,48 @@ class AnalyticsStateTest : XCTestCase {
         XCTAssertFalse(analyticsState.isAnalyticsConfigured())
     }
 
+//    var analyticsIdVisitorParameters = [String: String]()
+//    guard let marketingCloudId = marketingCloudId, !marketingCloudId.isEmpty else {
+//        return analyticsIdVisitorParameters
+//    }
+//    analyticsIdVisitorParameters[AnalyticsConstants.ParameterKeys.KEY_MID] = marketingCloudId
+//    if let blob = blob, !blob.isEmpty {
+//        analyticsIdVisitorParameters[AnalyticsConstants.ParameterKeys.KEY_BLOB] = blob
+//    }
+//    if let locationHint = locationHint, !locationHint.isEmpty {
+//        analyticsIdVisitorParameters[AnalyticsConstants.ParameterKeys.KEY_LOCATION_HINT] = locationHint
+//    }
+//    return analyticsIdVisitorParameters
+
     func testIsAnalyticsConfiguredReturnsFalseWhenNoRsids() {
         let analyticsState = AnalyticsState.init(dataMap: [String: [String: Any]]())
         analyticsState.host = "serverId"
         analyticsState.rsids = ""
         XCTAssertFalse(analyticsState.isAnalyticsConfigured())
+    }
+
+    func testGetAnalyticsIdVisitorParameters() {
+
+        let marketingCloudId = "marketingCloudId"
+        let blob = "blob"
+        let locationHint = "locationHint"
+
+        let analyticsState = AnalyticsState.init(dataMap: [String: [String: Any]]())
+        analyticsState.marketingCloudId = marketingCloudId
+        analyticsState.blob = blob
+        analyticsState.locationHint = locationHint
+
+        let visitorParameterMap = analyticsState.getAnalyticsIdVisitorParameters()
+
+        XCTAssertEqual(visitorParameterMap[AnalyticsTestConstants.ParameterKeys.KEY_MID], marketingCloudId)
+        XCTAssertEqual(visitorParameterMap[AnalyticsTestConstants.ParameterKeys.KEY_BLOB], blob)
+        XCTAssertEqual(visitorParameterMap[AnalyticsTestConstants.ParameterKeys.KEY_LOCATION_HINT], locationHint)
+
+    }
+
+    func testGetAnalyticsIdVisitorParametersWhenVisitorDataIsAbsent() {
+        let analyticsState = AnalyticsState.init(dataMap: [String: [String: Any]]())
+        XCTAssertTrue(analyticsState.getAnalyticsIdVisitorParameters().isEmpty)
+
     }
 }

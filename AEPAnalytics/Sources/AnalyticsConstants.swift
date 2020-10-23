@@ -18,9 +18,6 @@ enum AnalyticsConstants {
     static let FRIENDLY_NAME = "Analytics"
     static let EXTENSION_VERSION = "0.0.1"
     static let DATASTORE_NAME = EXTENSION_NAME
-    static let ANALYTICS_PARAMETER_KEY_MID = "mid"
-    static let ANALYTICS_PARAMETER_KEY_BLOB = "aamb"
-    static let ANALYTICS_PARAMETER_KEY_LOCATION_HINT = "aamlh"
     
     enum EventDataKeys {
         static let STATE_OWNER = ""
@@ -60,17 +57,23 @@ enum AnalyticsConstants {
     }
     
     enum Default {
-        static let DEFAULT_PRIVACY_STATUS: PrivacyStatus = .optedIn
-        static let DEFAULT_FORWARDING_ENABLED = false
-        static let DEFAULT_OFFLINE_ENABLED = false
-        static let DEFAULT_BACKDATE_SESSION_INFO_ENABLED = false
-        static let DEFAULT_BATCH_LIMIT = 0
-        static let DEFAULT_LAUNCH_HIT_DELAY = Date.init()
-        static let DEFAULT_LIFECYCLE_RESPONSE_WAIT_TIMEOUT = Date.init()
-        static let DEFAULT_LAUNCH_DEEPLINK_DATA_WAIT_TIMEOUT = Date.init()
-        static let DEFAULT_ASSURANCE_SESSION_ENABLED = false
-        static let DEFAULT_LIFECYCLE_MAX_SESSION_LENGTH = TimeInterval.init()
-        static let DEFAULT_LIFECYCLE_SESSION_START_TIMESTAMP = TimeInterval.init()
+        static let PRIVACY_STATUS: PrivacyStatus = .optedIn
+        static let FORWARDING_ENABLED = false
+        static let OFFLINE_ENABLED = false
+        static let BACKDATE_SESSION_INFO_ENABLED = false
+        static let BATCH_LIMIT = 0
+        static let LAUNCH_HIT_DELAY = TimeInterval.init()
+        static let LIFECYCLE_RESPONSE_WAIT_TIMEOUT = Date.init()
+        static let LAUNCH_DEEPLINK_DATA_WAIT_TIMEOUT = Date.init()
+        static let ASSURANCE_SESSION_ENABLED = false
+        static let LIFECYCLE_MAX_SESSION_LENGTH = TimeInterval.init()
+        static let LIFECYCLE_SESSION_START_TIMESTAMP = TimeInterval.init()
+    }
+    
+    enum ParameterKeys {
+        static let KEY_MID = "mid"
+        static let KEY_BLOB = "aamb"
+        static let KEY_LOCATION_HINT = "aamlh"
     }
     
     // acquisition keys

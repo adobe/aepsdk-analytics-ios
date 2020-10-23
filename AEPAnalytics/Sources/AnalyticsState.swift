@@ -22,35 +22,34 @@ class AnalyticsState {
     /// Instance of `AnalyticsRequestSerializer`, use to serialize visitor id's List.
     private let analyticsRequestSerializer = AnalyticsRequestSerializer()
     /// Configuration setting for forwarding Analytics hits to Audience manager.
-    var analyticForwardingEnabled: Bool = AnalyticsConstants.Default.DEFAULT_FORWARDING_ENABLED
+    var analyticForwardingEnabled: Bool = AnalyticsConstants.Default.FORWARDING_ENABLED
     /// `Offline enabled` configuration setting. If true analytics hits are queued when device is offline and sent when device is online.
-    var offlineEnabled: Bool = AnalyticsConstants.Default.DEFAULT_OFFLINE_ENABLED
+    var offlineEnabled: Bool = AnalyticsConstants.Default.OFFLINE_ENABLED
     /// `Batch limit` configuration setting. Number of hits to queue before sending to Analytics.
-    var batchLimit: Int = AnalyticsConstants.Default.DEFAULT_BATCH_LIMIT
+    var batchLimit: Int = AnalyticsConstants.Default.BATCH_LIMIT
     /// Holds the value for privacy status opted by the user.
-    var privacyStatus: PrivacyStatus = AnalyticsConstants.Default.DEFAULT_PRIVACY_STATUS
+    var privacyStatus: PrivacyStatus = AnalyticsConstants.Default.PRIVACY_STATUS
     /// `Launch hit delay` configuration setting. Number of seconds to wait before Analytics launch hits are sent.
-    var launchHitDelay: Date = AnalyticsConstants.Default.DEFAULT_LAUNCH_HIT_DELAY
+    var launchHitDelay: TimeInterval = AnalyticsConstants.Default.LAUNCH_HIT_DELAY
     /// `Backdate Previous Session Info` configuration setting. If enable backdates session information hits.
-    var backDateSessionInfoEnabled: Bool = AnalyticsConstants.Default.DEFAULT_BACKDATE_SESSION_INFO_ENABLED
+    var backDateSessionInfoEnabled: Bool = AnalyticsConstants.Default.BACKDATE_SESSION_INFO_ENABLED
     /// Id for `Marketing cloud organization`.
     var marketingCloudOrganizationId: String?
     /// `RSID` configuration settings. Id of report suites to which data should be send.
     var rsids: String?
     /// Analytics Server url.
     var host: String?
-    /// Unique id for device.
-    private(set) var marketingCloudId: String?
-    /// The location hint value.
+    
     #if DEBUG
+        var marketingCloudId: String?
         var locationHint: String?
-    #else
-        private var locationHint: String?
-    #endif
-    /// The blob value.
-    #if DEBUG
         var blob: String?
     #else
+        /// Unique id for device.
+        private(set) var marketingCloudId: String?
+        /// The location hint value.
+        private var locationHint: String?
+        /// The blob value.
         private var blob: String?
     #endif
     /// A serialized form of list of visitor identifiers.
@@ -62,9 +61,9 @@ class AnalyticsState {
     /// Whether or not Assurance session is active.
     private(set) var assuranceSessionActive: Bool?
     /// Maximum time in ms before a session times out.
-    private(set) var lifecycleMaxSessionLength: TimeInterval = AnalyticsConstants.Default.DEFAULT_LIFECYCLE_MAX_SESSION_LENGTH
+    private(set) var lifecycleMaxSessionLength: TimeInterval = AnalyticsConstants.Default.LIFECYCLE_MAX_SESSION_LENGTH
     /// Start timestamp of new session.
-    private(set) var lifecycleSessionStartTimestamp: TimeInterval = AnalyticsConstants.Default.DEFAULT_LIFECYCLE_SESSION_START_TIMESTAMP
+    private(set) var lifecycleSessionStartTimestamp: TimeInterval = AnalyticsConstants.Default.LIFECYCLE_SESSION_START_TIMESTAMP
     private(set) var defaultData: [String: String] = [String: String]()
     /// Typealias for Lifecycle Event Data keys.
     private typealias LifeCycleEventDataKeys = AnalyticsConstants.Lifecycle.EventDataKeys
@@ -107,13 +106,13 @@ class AnalyticsState {
         }
         host = configurationData[ConfigurationEventDataKeys.ANALYTICS_SERVER] as? String
         rsids = configurationData[ConfigurationEventDataKeys.ANALYTICS_REPORT_SUITES] as? String
-        analyticForwardingEnabled = configurationData[ConfigurationEventDataKeys.ANALYTICS_AAMFORWARDING] as? Bool ?? AnalyticsConstants.Default.DEFAULT_FORWARDING_ENABLED
-        offlineEnabled = configurationData[ConfigurationEventDataKeys.ANALYTICS_OFFLINE_TRACKING] as? Bool ?? AnalyticsConstants.Default.DEFAULT_OFFLINE_ENABLED
-        batchLimit = configurationData[ConfigurationEventDataKeys.ANALYTICS_BATCH_LIMIT] as? Int ?? AnalyticsConstants.Default.DEFAULT_BATCH_LIMIT
-        launchHitDelay = Date.init(timeIntervalSince1970: TimeInterval.init(configurationData[ConfigurationEventDataKeys.ANALYTICS_LAUNCH_HIT_DELAY] as? Double ?? AnalyticsConstants.Default.DEFAULT_LAUNCH_HIT_DELAY.timeIntervalSince1970))
+        analyticForwardingEnabled = configurationData[ConfigurationEventDataKeys.ANALYTICS_AAMFORWARDING] as? Bool ?? AnalyticsConstants.Default.FORWARDING_ENABLED
+        offlineEnabled = configurationData[ConfigurationEventDataKeys.ANALYTICS_OFFLINE_TRACKING] as? Bool ?? AnalyticsConstants.Default.OFFLINE_ENABLED
+        batchLimit = configurationData[ConfigurationEventDataKeys.ANALYTICS_BATCH_LIMIT] as? Int ?? AnalyticsConstants.Default.BATCH_LIMIT
+        launchHitDelay =  TimeInterval.init(configurationData[ConfigurationEventDataKeys.ANALYTICS_LAUNCH_HIT_DELAY] as? Double ?? AnalyticsConstants.Default.LAUNCH_HIT_DELAY)
         marketingCloudOrganizationId = configurationData[ConfigurationEventDataKeys.MARKETING_CLOUD_ORGID_KEY] as? String
-        backDateSessionInfoEnabled = configurationData[ConfigurationEventDataKeys.ANALYTICS_BACKDATE_PREVIOUS_SESSION] as? Bool ?? AnalyticsConstants.Default.DEFAULT_BACKDATE_SESSION_INFO_ENABLED
-        privacyStatus = PrivacyStatus.init(rawValue: configurationData[ConfigurationEventDataKeys.GLOBAL_PRIVACY] as? PrivacyStatus.RawValue ?? AnalyticsConstants.Default.DEFAULT_PRIVACY_STATUS.rawValue) ?? AnalyticsConstants.Default.DEFAULT_PRIVACY_STATUS
+        backDateSessionInfoEnabled = configurationData[ConfigurationEventDataKeys.ANALYTICS_BACKDATE_PREVIOUS_SESSION] as? Bool ?? AnalyticsConstants.Default.BACKDATE_SESSION_INFO_ENABLED
+        privacyStatus = PrivacyStatus.init(rawValue: configurationData[ConfigurationEventDataKeys.GLOBAL_PRIVACY] as? PrivacyStatus.RawValue ?? AnalyticsConstants.Default.PRIVACY_STATUS.rawValue) ?? AnalyticsConstants.Default.PRIVACY_STATUS
     }
     
     /// Extracts the `Lifecycle` data from the provided shared state data.
@@ -211,12 +210,12 @@ class AnalyticsState {
         guard let marketingCloudId = marketingCloudId, !marketingCloudId.isEmpty else {
             return analyticsIdVisitorParameters
         }
-        analyticsIdVisitorParameters[AnalyticsConstants.ANALYTICS_PARAMETER_KEY_MID] = marketingCloudId
+        analyticsIdVisitorParameters[AnalyticsConstants.ParameterKeys.KEY_MID] = marketingCloudId
         if let blob = blob, !blob.isEmpty {
-            analyticsIdVisitorParameters[AnalyticsConstants.ANALYTICS_PARAMETER_KEY_BLOB] = blob
+            analyticsIdVisitorParameters[AnalyticsConstants.ParameterKeys.KEY_BLOB] = blob
         }
         if let locationHint = locationHint, !locationHint.isEmpty {
-            analyticsIdVisitorParameters[AnalyticsConstants.ANALYTICS_PARAMETER_KEY_LOCATION_HINT] = locationHint
+            analyticsIdVisitorParameters[AnalyticsConstants.ParameterKeys.KEY_LOCATION_HINT] = locationHint
         }
         return analyticsIdVisitorParameters
     }
@@ -248,7 +247,9 @@ class AnalyticsState {
         return !(marketingCloudOrganizationId?.isEmpty ?? true)
     }
     
-    func getAnalyticsResponseType() -> String {
+    /// Returns the response type for analytics request url on basis of whether aam forwarding is enabled or not.
+    /// - Returns 10 if aam forwarding is enabled in configuration else returns 0
+    private func getAnalyticsResponseType() -> String {
         return analyticForwardingEnabled ? "10" : "0"
     }
     
