@@ -22,23 +22,23 @@ class AnalyticsState {
     /// Instance of `AnalyticsRequestSerializer`, use to serialize visitor id's List.
     private let analyticsRequestSerializer = AnalyticsRequestSerializer()
     /// Configuration setting for forwarding Analytics hits to Audience manager.
-    var analyticForwardingEnabled: Bool = AnalyticsConstants.Default.FORWARDING_ENABLED
+    private(set) var analyticForwardingEnabled: Bool = AnalyticsConstants.Default.FORWARDING_ENABLED
     /// `Offline enabled` configuration setting. If true analytics hits are queued when device is offline and sent when device is online.
-    var offlineEnabled: Bool = AnalyticsConstants.Default.OFFLINE_ENABLED
+    private(set) var offlineEnabled: Bool = AnalyticsConstants.Default.OFFLINE_ENABLED
     /// `Batch limit` configuration setting. Number of hits to queue before sending to Analytics.
-    var batchLimit: Int = AnalyticsConstants.Default.BATCH_LIMIT
+    private(set) var batchLimit: Int = AnalyticsConstants.Default.BATCH_LIMIT
     /// Holds the value for privacy status opted by the user.
-    var privacyStatus: PrivacyStatus = AnalyticsConstants.Default.PRIVACY_STATUS
+    private(set) var privacyStatus: PrivacyStatus = AnalyticsConstants.Default.PRIVACY_STATUS
     /// `Launch hit delay` configuration setting. Number of seconds to wait before Analytics launch hits are sent.
-    var launchHitDelay: TimeInterval = AnalyticsConstants.Default.LAUNCH_HIT_DELAY
+    private(set) var launchHitDelay: TimeInterval = AnalyticsConstants.Default.LAUNCH_HIT_DELAY
     /// `Backdate Previous Session Info` configuration setting. If enable backdates session information hits.
-    var backDateSessionInfoEnabled: Bool = AnalyticsConstants.Default.BACKDATE_SESSION_INFO_ENABLED
+    private(set) var backDateSessionInfoEnabled: Bool = AnalyticsConstants.Default.BACKDATE_SESSION_INFO_ENABLED
     /// Id for `Marketing cloud organization`.
-    var marketingCloudOrganizationId: String?
+    private(set) var marketingCloudOrganizationId: String?
     /// `RSID` configuration settings. Id of report suites to which data should be send.
-    var rsids: String?
+    private(set) var rsids: String?
     /// Analytics Server url.
-    var host: String?
+    private(set) var host: String?
     
     #if DEBUG
         var marketingCloudId: String?
@@ -55,7 +55,7 @@ class AnalyticsState {
     /// A serialized form of list of visitor identifiers.
     private(set) var serializedVisitorIdsList: String?
     /// Stores the Application name and version.
-    var applicationId: String?
+    private(set) var applicationId: String?
     /// The value of advertising identifier.
     private(set) var advertisingId: String?
     /// Whether or not Assurance session is active.
