@@ -13,12 +13,12 @@
 import Foundation
 import AEPCore
 
-enum AnalyticsConstants {
+enum AnalyticsTestConstants {
     static let EXTENSION_NAME = "com.adobe.module.analytics"
     static let FRIENDLY_NAME = "Analytics"
     static let EXTENSION_VERSION = "0.0.1"
     static let DATASTORE_NAME = EXTENSION_NAME
-    
+        
     enum EventDataKeys {
         static let STATE_OWNER = ""
         static let EXTENSION_NAME = "com.adobe.module.analytics"
@@ -152,7 +152,7 @@ enum AnalyticsConstants {
             static let SESSION_START_TIMESTAMP = "starttimestampseconds"
             static let UPGRADE_EVENT = "upgradeevent"
             static let PREVIOUS_OS_VERSION = "previousosversion"
-            static let PREVIOUS_APP_ID = "previousappid"                    
+            static let PREVIOUS_APP_ID = "previousappid"
         }
     }
     
