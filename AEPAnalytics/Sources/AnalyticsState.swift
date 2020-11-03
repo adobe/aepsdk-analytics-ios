@@ -78,19 +78,22 @@ class AnalyticsState {
     
     /// Initializer that takes the shared states map and initialize the properties.
     /// - Parameter dataMap: The map contains the shared state data required by the Analytics SDK.
-    init(dataMap: [String: [String: Any]]) {
+    init(dataMap: [String: [String: Any]?]) {
         for key in dataMap.keys {
+            guard let sharedState = dataMap[key] else {
+                continue
+            }
             switch key {
             case ConfigurationEventDataKeys.SHARED_STATE_NAME:
-                extractConfigurationInfo(from: dataMap[key])
+                extractConfigurationInfo(from: sharedState)
             case LifeCycleEventDataKeys.SHARED_STATE_NAME:
-                extractLifecycleInfo(from: dataMap[key])
+                extractLifecycleInfo(from: sharedState)
             case IdentityEventDataKeys.SHARED_STATE_NAME:
-                extractIdentityInfo(from: dataMap[key])
+                extractIdentityInfo(from: sharedState)
             case PlacesEventDataKeys.SHARED_STATE_NAME:
-                extractPlacesInfo(from: dataMap[key])
+                extractPlacesInfo(from: sharedState)
             case AssuranceEventDataKeys.SHARED_STATE_NAME:
-                extractAssuranceInfo(from: dataMap[key])
+                extractAssuranceInfo(from: sharedState)
             default:
                 break
             }

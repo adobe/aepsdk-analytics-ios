@@ -63,11 +63,12 @@ enum AnalyticsConstants {
         static let BACKDATE_SESSION_INFO_ENABLED = false
         static let BATCH_LIMIT = 0
         static let LAUNCH_HIT_DELAY = TimeInterval.init()
-        static let LIFECYCLE_RESPONSE_WAIT_TIMEOUT = Date.init()
+        static let LIFECYCLE_RESPONSE_WAIT_TIMEOUT = TimeInterval.init(1000)
         static let LAUNCH_DEEPLINK_DATA_WAIT_TIMEOUT = Date.init()
         static let ASSURANCE_SESSION_ENABLED = false
         static let LIFECYCLE_MAX_SESSION_LENGTH = TimeInterval.init()
         static let LIFECYCLE_SESSION_START_TIMESTAMP = TimeInterval.init()
+        static let LIFECYCLE_PAUSE_START_TIMEOUT = TimeInterval.init(1000)
     }
     
     enum ParameterKeys {
