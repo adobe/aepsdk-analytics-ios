@@ -61,22 +61,6 @@ public class Analytics: NSObject, Extension {
 
         return sharedStates
     }
-    
-    private func waitForLifecycleData() {
-        analyticsProperties.lifecycleTimerRunning = true
-        analyticsProperties.dispatchQueue.asyncAfter(deadline: DispatchTime.now() + AnalyticsConstants.Default.LIFECYCLE_RESPONSE_WAIT_TIMEOUT){
-            Log.warning(label: self.LOG_TAG, "waitForLifecycleData - Lifecycle timeout has expired without Lifecycle data")
-            /// - TODO: Kick the database hits.
-        }
-    }
-
-    private func waitForAcquisitionData(state: AnalyticsState, timeout: TimeInterval) {
-        analyticsProperties.referrerTimerRunning = true
-        analyticsProperties.dispatchQueue.asyncAfter(deadline: DispatchTime.now() + timeout) {
-            Log.warning(label: self.LOG_TAG, "waitForAcquisitionData - Referrer timeout has expired without referrer data")
-            /// - TODO: Kick the database hits.
-        }
-    }
 }
 
 /// Event Listeners
@@ -144,6 +128,21 @@ extension Analytics {
     private func handleAcquisitionEvent(_ event: Event){
         
         if analyticsProperties.referrerTimerRunning {
+            Log.debug(label: LOG_TAG, "handleAcquisitionResponseEvent - Acquisition response received with referrer data.")
+            let configSharedState = getSharedStateForEvent(extensionNames: [AnalyticsConstants.Configuration.EventDataKeys.EXTENSION_NAME], event: event)
+            let analyticsState = AnalyticsState.init(dataMap: configSharedState)
+            analyticsProperties.cancelReferrerTimer()
+            
+/// - TODO: Implement the AnalyticsHitDatabase operation below.
+//                        final AnalyticsHitsDatabase analyticsHitsDatabase = getHitDatabase();
+//
+//                        if (analyticsHitsDatabase != null) {
+//                            analyticsHitsDatabase.kickWithAdditionalData(state, acquisitionEvent.getData() != null ?
+//                                    acquisitionEvent.getData().optStringMap(AnalyticsConstants.EventDataKeys.Analytics.CONTEXT_DATA, null) : null);
+//                        } else {
+//                            Log.warning(LOG_TAG,
+//                                        "handleAcquisitionResponseEvent - Unable to kick analytic hit with referrer data. Database Service is unavailable");
+//                        }
             
         }
         else {
@@ -276,9 +275,15 @@ extension Analytics {
         }
 
         var analyticsData : [String:String] = [:]
-        analyticsData.addAll(analyticsState.defaultData)
+        analyticsData.merge(analyticsState.defaultData) {
+            key1, key2 in
+            return key1
+        }
         if let contextData = trackEventData[AnalyticsConstants.EventDataKeys.CONTEXT_DATA] as? [String:String] {
-            analyticsData.addAll(contextData)
+            analyticsData.merge(contextData) {
+                key1, key2 in
+                return key1
+            }
         }
         if let actionName = trackEventData[AnalyticsConstants.EventDataKeys.TRACK_ACTION] as? String {
             let isInternalAction = trackEventData[AnalyticsConstants.EventDataKeys.TRACK_INTERNAL] as? Bool ?? false
@@ -335,18 +340,19 @@ extension Analytics {
         }
 
         if analyticsState.isVisitorIdServiceEnabled() {
-            analyticsVars.addAll(analyticsState.getAnalyticsIdVisitorParameters())
+            analyticsVars.merge(analyticsState.getAnalyticsIdVisitorParameters()) {
+                key1, key2 in
+                return key1
+            }
         }
-
-        /// - TODO: Implement the swift implementaion of code below once ui service is added to core.
-
-//        if (ui_service != nullptr && ui_service->GetAppState() == AppState::BACKGROUND) {
-//            analytics_vars[AnalyticsConstants::ANALYTICS_REQUEST_CUSTOMER_PERSPECTIVE_KEY] =
-//                        AnalyticsConstants::APP_STATE_BACKGROUND;
-//        } else {
-//            analytics_vars[AnalyticsConstants::ANALYTICS_REQUEST_CUSTOMER_PERSPECTIVE_KEY] =
-//                        AnalyticsConstants::APP_STATE_FOREGROUND;
-//        }
+        
+        if UIApplication.shared.applicationState == .background {
+            analyticsVars[AnalyticsConstants.ANALYTICS_REQUEST_CUSTOMER_PERSPECTIVE_KEY] =
+                AnalyticsConstants.APP_STATE_BACKGROUND;
+        } else {
+            analyticsVars[AnalyticsConstants.ANALYTICS_REQUEST_CUSTOMER_PERSPECTIVE_KEY] =
+                AnalyticsConstants.APP_STATE_FOREGROUND;
+        }
         return analyticsVars
     }
 }
@@ -396,15 +402,23 @@ extension Analytics {
         let backDateTimeStamp = max(Date.init(timeIntervalSince1970: analyticsProperties.getMostRecentHitTimestamp()), analyticsProperties.lifecyclePreviousSessionPauseTimestamp ?? Date.init(timeIntervalSince1970: 0))
         track(analyticsState: analyticsState, trackEventData: lifecycleSessionData, timeStampInSeconds: backDateTimeStamp.timeIntervalSince1970 + 1, appendToPlaceHolder: true, eventUniqueIdentifier: eventUniqueIdentifier)
     }
-
 }
 
-/// It's applicable for Dictionaries that can accept `Key` of type `String` and `Value` of Type `String`.
-extension Dictionary where Key == String , Value == String {
-    mutating func addAll(_ other: [String: String]) {
-        other.forEach {
-            key,value in
-            self[key] = value
+/// Timeout timers.
+extension Analytics {
+    private func waitForLifecycleData() {
+        analyticsProperties.lifecycleTimerRunning = true
+        analyticsProperties.dispatchQueue.asyncAfter(deadline: DispatchTime.now() + AnalyticsConstants.Default.LIFECYCLE_RESPONSE_WAIT_TIMEOUT){
+            Log.warning(label: self.LOG_TAG, "waitForLifecycleData - Lifecycle timeout has expired without Lifecycle data")
+            /// - TODO: Kick the database hits.
+        }
+    }
+
+    private func waitForAcquisitionData(state: AnalyticsState, timeout: TimeInterval) {
+        analyticsProperties.referrerTimerRunning = true
+        analyticsProperties.dispatchQueue.asyncAfter(deadline: DispatchTime.now() + timeout) {
+            Log.warning(label: self.LOG_TAG, "waitForAcquisitionData - Referrer timeout has expired without referrer data")
+            /// - TODO: Kick the database hits.
         }
     }
 }

@@ -69,38 +69,33 @@ struct AnalyticsProperties {
             dataStore.set(key: AnalyticsConstants.DataStoreKeys.MOST_RECENT_HIT_TIMESTAMP_SECONDS, value: timestampInSeconds)
         }
     }
+    
+    /// `DispatchWorkItem` use to wait for `acquisition` data before executing task.
+    var referrerDispatchWorkItem: DispatchWorkItem?
 
-    /// Timer use to wait for acquisition data before executing task.
-//    var referrerTimer: Timer?
-
-//    /// Timer use to wait for lifecycle data before executing task.
-//    var lifecycleTimer: Timer?
-
+    /// `DispatchWorkItem` use to wait for `lifecycle` data before executing task.
+    var lifecycleDispatchWorkItem: DispatchWorkItem?
+    
     /// Cancels the referrer timer. Sets referrerTimerRunning flag to false. Sets referrerTimer to nil.
-//    mutating func cancelReferrerTimer() {
-//
-//        referrerTimerRunning = false
-//        if let timer = referrerTimer {
-//            timer.invalidate()
-//            referrerTimer = nil
-//        }
-//    }
+    mutating func cancelReferrerTimer() {
+
+        referrerTimerRunning = false
+        referrerDispatchWorkItem?.cancel()
+        referrerDispatchWorkItem = nil
+    }
 
     /// Cancels the lifecycle timer. Sets lifecycleTimerRunning flag to false. Sets lifecycleTimer to nil.
-//    mutating func cancelLifecycleTimer() {
-//
-//        lifecycleTimerRunning = false
-//        if let timer = lifecycleTimer {
-//            timer.invalidate()
-//            lifecycleTimer = nil
-//        }
-//    }
+    mutating func cancelLifecycleTimer() {
+
+        lifecycleTimerRunning = false
+        lifecycleDispatchWorkItem?.cancel()
+        lifecycleDispatchWorkItem = nil
+    }
 
     /// Verifies if the referrer or lifecycle timer are running.
     /// - Returns `True` if either of the timer is running.
     func isDatabaseWaiting() -> Bool {
-//        return (referrerTimer != nil && referrerTimerRunning) || (lifecycleTimer != nil && lifecycleTimerRunning)
-        return referrerTimerRunning || lifecycleTimerRunning
+        return (!(referrerDispatchWorkItem?.isCancelled ?? true) && referrerTimerRunning) || (!(lifecycleDispatchWorkItem?.isCancelled ?? true) && lifecycleTimerRunning)
     }
 }
 

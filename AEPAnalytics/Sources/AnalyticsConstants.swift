@@ -35,6 +35,9 @@ enum AnalyticsConstants {
     static let VAR_ESCAPE_PREFIX                         = "&&"
     static let ANALYTICS_REQUEST_CONTEXT_DATA_KEY        = "c"
     static let TRACK_INTERNAL_ADOBE_LINK                 = "AdobeLink"
+    static let ANALYTICS_REQUEST_CUSTOMER_PERSPECTIVE_KEY = "cp"
+    static let APP_STATE_FOREGROUND                       = "foreground"
+    static let APP_STATE_BACKGROUND                       = "background"
     
     enum EventDataKeys {
         static let STATE_OWNER      = ""
@@ -171,6 +174,7 @@ enum AnalyticsConstants {
     enum Configuration {
         enum EventDataKeys {
             static let SHARED_STATE_NAME = "com.adobe.module.configuration"
+            static let EXTENSION_NAME = "com.adobe.module.configuration"
             static let GLOBAL_PRIVACY = "global.privacy"
             static let MARKETING_CLOUD_ORGID_KEY = "experienceCloud.org"
             static let ANALYTICS_AAMFORWARDING = "analytics.aamForwardingEnabled"
