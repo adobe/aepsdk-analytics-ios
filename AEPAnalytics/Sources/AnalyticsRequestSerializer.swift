@@ -33,6 +33,35 @@ class AnalyticsRequestSerializer {
         return "&cid.\(ContextDataUtil.EncodeContextData(data: visitorDataMap))&.cid"
     }
 
+    func buildRequest(analyticsState: AnalyticsState, data: [String:String]?, vars:[String:String]?) -> String {
+        var analyticsVars: [String: Any] = [:]
+
+        if let vars = vars, !vars.isEmpty {
+            vars.forEach {
+                key, value in
+                analyticsVars[key] = value
+            }
+        }
+
+        if let data = data, !data.isEmpty {
+            for (key,value) in data {
+                if key.hasPrefix(AnalyticsConstants.VAR_ESCAPE_PREFIX) {
+                    analyticsVars[String(key.suffix(from: AnalyticsConstants.VAR_ESCAPE_PREFIX.endIndex))] = value
+                }
+            }
+        }
+
+        analyticsVars[AnalyticsConstants.ANALYTICS_REQUEST_CONTEXT_DATA_KEY] = ContextDataUtil.translateContextData(data: data)
+
+        var requestString = "ndh=1"
+        if analyticsState.isVisitorIdServiceEnabled(), let serializedVisitorIdList = analyticsState.serializedVisitorIdsList {
+            requestString += serializedVisitorIdList
+        }
+
+        ContextDataUtil.serializeToQueryString(map: &analyticsVars, requestString: &requestString)
+        return requestString
+    }
+
     /// Serialize data into analytics format.
     /// - Parameter idType the idType value from the visitor ID service.
     /// - Returns idType.id, serialized indentifier key for AID

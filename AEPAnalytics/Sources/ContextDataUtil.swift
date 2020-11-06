@@ -132,4 +132,13 @@ class ContextDataUtil {
         }
         return cleanedKey
     }
+    
+    static func translateContextData(data:[String:String]?) -> ContextData {
+        /// - TODO: Need to implement this function.
+        return ContextData.init()
+    }
+    
+    static func serializeToQueryString(map: inout [String:Any], requestString: inout String){
+        /// - TODO: Implement this function
+    }
 }

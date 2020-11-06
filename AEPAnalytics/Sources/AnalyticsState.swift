@@ -60,7 +60,7 @@ class AnalyticsState {
     private(set) var advertisingId: String?
     /// Whether or not Assurance session is active.
     private(set) var assuranceSessionActive: Bool?
-    /// Maximum time in ms before a session times out.
+    /// Maximum time in seconds before a session times out.
     private(set) var lifecycleMaxSessionLength: TimeInterval = AnalyticsConstants.Default.LIFECYCLE_MAX_SESSION_LENGTH
     /// Start timestamp of new session.
     private(set) var lifecycleSessionStartTimestamp: TimeInterval = AnalyticsConstants.Default.LIFECYCLE_SESSION_START_TIMESTAMP
