@@ -41,9 +41,9 @@ public class Analytics: NSObject, Extension {
 //        registerListener(type: EventType.analytics, source: EventSource.requestContent, listener: handleAnalyticsRequest)
 //        registerListener(type: EventType.analytics, source: EventSource.requestIdentity, listener: handleAnalyticsRequest)
 //        registerListener(type: EventType.configuration, source: EventSource.responseContent, listener: handleAnalyticsRequest)
-        registerListener(type: EventType.acquisition, source: EventSource.responseContent, listener: handleAcquisitionEvent)
+        registerListener(type: EventType.acquisition, source: EventSource.responseContent, listener: handleAnalyticsRequest)
         registerListener(type: EventType.lifecycle, source: EventSource.responseContent, listener: handleLifecycleEvents)
-        registerListener(type: EventType.genericLifecycle, source: EventSource.requestContent, listener: handleLifecycleEvents)
+        registerListener(type: EventType.genericLifecycle, source: EventSource.requestContent, listener: handleAnalyticsRequest)
 //        registerListener(type: EventType.hub, source: EventSource.sharedState, listener: handleAnalyticsRequest)
     }
 
@@ -52,7 +52,7 @@ public class Analytics: NSObject, Extension {
     public func readyForEvent(_ event: Event) -> Bool {
         return isReadyToForNextEvent
     }
-    
+
     private func getSharedStateForEvent(extensionNames: [String], event: Event? = nil) -> [String: [String: Any]?] {
         var sharedStates = [String: [String: Any]?]()
         for extensionName in extensionNames {
@@ -65,13 +65,25 @@ public class Analytics: NSObject, Extension {
 
 /// Event Listeners
 extension Analytics {
-    
+
     // MARK: Event Listeners
     private func handleAnalyticsRequest(event: Event) {
-
-
+        switch event.type {
+        case EventType.lifecycle:
+            analyticsProperties.dispatchQueue.async {
+                self.handleLifecycleEvents(event)
+            }
+            break
+        case EventType.acquisition:
+            analyticsProperties.dispatchQueue.async {
+                self.handleAcquisitionEvent(event)
+            }
+            break
+        default:
+            break
+        }
     }
-    
+
     /// Handles the following events
     /// `EventType.genericLifecycle` and `EventSource.requestContent`
     /// `EventType.lifecycle` and `EventSource.responseContent`
@@ -97,7 +109,6 @@ extension Analytics {
                     return
                 }
 
-
                 waitForLifecycleData()
                 /// - TODO: Implement the code for adding a placeholder hit in db using AnalyticsHitDB.
 
@@ -121,19 +132,19 @@ extension Analytics {
             trackLifecycle(analyticsState: AnalyticsState(dataMap: sharedStates), event: event)
         }
     }
-    
+
     /// Handles the following events
     /// `EventType.acquisition` and `EventSource.responseContent`
     /// - Parameter event: The `Event` object to be handled
     private func handleAcquisitionEvent(_ event: Event){
-        
+
         if analyticsProperties.referrerTimerRunning {
             Log.debug(label: LOG_TAG, "handleAcquisitionResponseEvent - Acquisition response received with referrer data.")
             let configSharedState = getSharedStateForEvent(extensionNames: [AnalyticsConstants.Configuration.EventDataKeys.EXTENSION_NAME], event: event)
             let analyticsState = AnalyticsState.init(dataMap: configSharedState)
             analyticsProperties.cancelReferrerTimer()
-            
-/// - TODO: Implement the AnalyticsHitDatabase operation below.
+
+            /// - TODO: Implement the AnalyticsHitDatabase operation below.
 //                        final AnalyticsHitsDatabase analyticsHitsDatabase = getHitDatabase();
 //
 //                        if (analyticsHitsDatabase != null) {
@@ -143,7 +154,7 @@ extension Analytics {
 //                            Log.warning(LOG_TAG,
 //                                        "handleAcquisitionResponseEvent - Unable to kick analytic hit with referrer data. Database Service is unavailable");
 //                        }
-            
+
         }
         else {
             let softDependencies : [String] = [
@@ -159,13 +170,13 @@ extension Analytics {
 
 /// Track call functions.
 extension Analytics {
-    
+
     func trackAcquisitionData(analyticsState: AnalyticsState, event: Event) {
         var acquisitionContextData = event.data?[AnalyticsConstants.EventDataKeys.CONTEXT_DATA] ?? [String:String]()
-        
+
         if analyticsProperties.referrerTimerRunning {
             analyticsProperties.referrerTimerRunning = false
-            
+
             /// - TODO: Implement the hit database as commented below.
 //            final AnalyticsHitsDatabase analyticsHitsDatabase = getHitDatabase();
 //
@@ -182,10 +193,10 @@ extension Analytics {
             acquisitionEventData[AnalyticsConstants.EventDataKeys.TRACK_ACTION] = AnalyticsConstants.TRACK_INTERNAL_ADOBE_LINK
             acquisitionEventData[AnalyticsConstants.EventDataKeys.CONTEXT_DATA] = acquisitionContextData
             acquisitionEventData[AnalyticsConstants.EventDataKeys.TRACK_INTERNAL] = true
-            
+
             track(analyticsState: analyticsState, trackEventData: acquisitionEventData, timeStampInSeconds: event.timestamp.timeIntervalSince1970, appendToPlaceHolder: false, eventUniqueIdentifier: "\(event.id)")
-            
-            
+
+
         }
     }
 
@@ -219,7 +230,7 @@ extension Analytics {
 //                                                    false, eventUniqueIdentifier);
 //                    }
     }
-    
+
     private func trackLifecycle(analyticsState: AnalyticsState?, event: Event) {
         guard let analyticsState = analyticsState else {
             Log.debug(label: LOG_TAG, "trackLifecycle - Failed to track lifecycle event (invalid state)")
@@ -345,7 +356,7 @@ extension Analytics {
                 return key1
             }
         }
-        
+
         if UIApplication.shared.applicationState == .background {
             analyticsVars[AnalyticsConstants.ANALYTICS_REQUEST_CUSTOMER_PERSPECTIVE_KEY] =
                 AnalyticsConstants.APP_STATE_BACKGROUND;
@@ -359,7 +370,7 @@ extension Analytics {
 
 /// Backdate handling.
 extension Analytics {
-    
+
     private func backadateLifecycleCrash(analyticsState: AnalyticsState, previousOSVersion: String?, previousAppIdVersion: String?, eventUniqueIdentifier: String) {
         var crashContextData : [String : String] = [:]
         crashContextData[AnalyticsConstants.ContextDataKeys.CRASH_EVENT_KEY] = AnalyticsConstants.ContextDataValues.CRASH_EVENT
@@ -379,18 +390,18 @@ extension Analytics {
 
         track(analyticsState: analyticsState, trackEventData: lifecycleSessionData, timeStampInSeconds: analyticsProperties.getMostRecentHitTimestamp() + 1, appendToPlaceHolder: true, eventUniqueIdentifier: eventUniqueIdentifier)
     }
-    
+
     private func backdateLifecycleSessionInfo(analyticsState: AnalyticsState, previousSessionLength: String?, previousOSVersion: String?, previousAppIdVersion: String?, eventUniqueIdentifier: String) {
         var sessionContextData : [String : String] = [:]
-        
+
         if let previousSessionLength = previousSessionLength {
             sessionContextData[AnalyticsConstants.ContextDataKeys.PREVIOUS_SESSION_LENGTH] = previousSessionLength
         }
-        
+
         if let previousOSVersion = previousOSVersion {
             sessionContextData[AnalyticsConstants.ContextDataKeys.OPERATING_SYSTEM] = previousOSVersion
         }
-                        
+
         if let previousAppIdVersion = previousAppIdVersion {
             sessionContextData[AnalyticsConstants.ContextDataKeys.APPLICATION_IDENTIFIER] = previousAppIdVersion
         }
@@ -408,17 +419,21 @@ extension Analytics {
 extension Analytics {
     private func waitForLifecycleData() {
         analyticsProperties.lifecycleTimerRunning = true
-        analyticsProperties.dispatchQueue.asyncAfter(deadline: DispatchTime.now() + AnalyticsConstants.Default.LIFECYCLE_RESPONSE_WAIT_TIMEOUT){
+        let lifecycleWorkItem = DispatchWorkItem {
             Log.warning(label: self.LOG_TAG, "waitForLifecycleData - Lifecycle timeout has expired without Lifecycle data")
             /// - TODO: Kick the database hits.
         }
+        analyticsProperties.dispatchQueue.asyncAfter(deadline: DispatchTime.now() + AnalyticsConstants.Default.LIFECYCLE_RESPONSE_WAIT_TIMEOUT, execute: lifecycleWorkItem)
+        analyticsProperties.lifecycleDispatchWorkItem = lifecycleWorkItem
     }
 
     private func waitForAcquisitionData(state: AnalyticsState, timeout: TimeInterval) {
         analyticsProperties.referrerTimerRunning = true
-        analyticsProperties.dispatchQueue.asyncAfter(deadline: DispatchTime.now() + timeout) {
+        let referrerDispatchWorkItem = DispatchWorkItem {
             Log.warning(label: self.LOG_TAG, "waitForAcquisitionData - Referrer timeout has expired without referrer data")
             /// - TODO: Kick the database hits.
         }
+        analyticsProperties.dispatchQueue.asyncAfter(deadline: DispatchTime.now() + timeout, execute: referrerDispatchWorkItem)
+        analyticsProperties.referrerDispatchWorkItem = referrerDispatchWorkItem
     }
 }
