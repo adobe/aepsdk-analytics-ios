@@ -39,7 +39,7 @@ class AnalyticsState {
     private(set) var rsids: String?
     /// Analytics Server url.
     private(set) var host: String?
-    
+
     #if DEBUG
         var marketingCloudId: String?
         var locationHint: String?
@@ -75,7 +75,7 @@ class AnalyticsState {
     private typealias PlacesEventDataKeys = AnalyticsConstants.Places.EventDataKeys
     /// Typealias for Assurance Event Data keys.
     private typealias AssuranceEventDataKeys = AnalyticsConstants.Assurance.EventDataKeys
-    
+
     /// Initializer that takes the shared states map and initialize the properties.
     /// - Parameter dataMap: The map contains the shared state data required by the Analytics SDK.
     init(dataMap: [String: [String: Any]]) {
@@ -96,7 +96,7 @@ class AnalyticsState {
             }
         }
     }
-    
+
     /// Extracts the configuration data from the provided shared state data.
     /// - Parameter configurationData the data map from `Configuration` shared state.
     func extractConfigurationInfo(from configurationData: [String: Any]?) {
@@ -114,7 +114,7 @@ class AnalyticsState {
         backDateSessionInfoEnabled = configurationData[ConfigurationEventDataKeys.ANALYTICS_BACKDATE_PREVIOUS_SESSION] as? Bool ?? AnalyticsConstants.Default.BACKDATE_SESSION_INFO_ENABLED
         privacyStatus = PrivacyStatus.init(rawValue: configurationData[ConfigurationEventDataKeys.GLOBAL_PRIVACY] as? PrivacyStatus.RawValue ?? AnalyticsConstants.Default.PRIVACY_STATUS.rawValue) ?? AnalyticsConstants.Default.PRIVACY_STATUS
     }
-    
+
     /// Extracts the `Lifecycle` data from the provided shared state data.
     /// - Parameter lifecycleData the data map from `Lifecycle` shared state.
     func extractLifecycleInfo(from lifecycleData: [String: Any]?) {
@@ -149,7 +149,7 @@ class AnalyticsState {
             }
         }
     }
-    
+
     /// Extracts the `Identity` data from the provided shared state data.
     /// - Parameter identityData the data map from `Identity` shared state.
     func extractIdentityInfo(from identityData: [String: Any]?) {
@@ -173,7 +173,7 @@ class AnalyticsState {
             serializedVisitorIdsList = analyticsRequestSerializer.generateAnalyticsCustomerIdString(from: identifiableArray)
         }
     }
-    
+
     /// Extracts the `Places` data from the provided shared state data.
     /// - Parameter placesData the data map from `Places` shared state.
     func extractPlacesInfo(from placesData: [String: Any]?) {
@@ -190,7 +190,7 @@ class AnalyticsState {
             }
         }
     }
-    
+
     /// Extracts the `Assurance` data from the provided shared state data.
     /// - Parameter assuranceData the data map from `Assurance` shared state.
     func extractAssuranceInfo(from assuranceData: [String: Any]?) {
@@ -202,7 +202,7 @@ class AnalyticsState {
             assuranceSessionActive = !assuranceSessionId.isEmpty
         }
     }
-    
+
     /// Extracts the `visitor ID blob`, `locationHint` and `Experience Cloud ID (MID)` in a map if `MID` is not null
     /// - Returns: the resulted map or an empty map if MID is null.
     func getAnalyticsIdVisitorParameters() -> [String: String] {
@@ -219,13 +219,13 @@ class AnalyticsState {
         }
         return analyticsIdVisitorParameters
     }
-    
+
     /// Check if `rsids` and `tracking server` is configure for analytics module.
     /// - Returns: true of both conditions are met false otherwise.
     func isAnalyticsConfigured() -> Bool {
         return !(rsids?.isEmpty ?? true) && !(host?.isEmpty ?? true)
     }
-    
+
     /// Creates and returns the base url for analytics requests.
     /// - Parameter sdkVersion: the version of the SDK.
     /// - Returns the base URL for an Analytics request.
@@ -240,19 +240,19 @@ class AnalyticsState {
         }
         return url
     }
-    
+
     /// Determines and return whether visitor id service is enabled or not.
     /// - Returns true if enabled else false.
     func isVisitorIdServiceEnabled() -> Bool {
         return !(marketingCloudOrganizationId?.isEmpty ?? true)
     }
-    
+
     /// Returns the response type for analytics request url on basis of whether aam forwarding is enabled or not.
     /// - Returns 10 if aam forwarding is enabled in configuration else returns 0
     private func getAnalyticsResponseType() -> String {
         return analyticForwardingEnabled ? "10" : "0"
     }
-    
+
     /// Determines and returns whether user is opted in or not.
     /// - Returns true of user's privacy statues is optedIn else retuerns false.
     func isOptIn() -> Bool {
