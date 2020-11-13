@@ -18,7 +18,7 @@ enum AnalyticsConstants {
     static let FRIENDLY_NAME = "Analytics"
     static let EXTENSION_VERSION = "0.0.1"
     static let DATASTORE_NAME = EXTENSION_NAME
-    
+
     enum EventDataKeys {
         static let STATE_OWNER = ""
         static let EXTENSION_NAME = "com.adobe.module.analytics"
@@ -44,7 +44,7 @@ enum AnalyticsConstants {
         static let SHARED_STATE_NAME = ""
         static let SERVER_RESPONSE = ""
     }
-    
+
     enum ContextDataKeys {
         static let OPERATING_SYSTEM = "a.OSVersion"
         static let DEVICE_NAME = "a.DeviceName"
@@ -55,13 +55,14 @@ enum AnalyticsConstants {
         static let REGION_ID = "a.loc.poi.id"
         static let REGION_NAME = "a.loc.poi"
     }
-    
+
     enum Default {
         static let PRIVACY_STATUS: PrivacyStatus = .optedIn
         static let FORWARDING_ENABLED = false
         static let OFFLINE_ENABLED = false
         static let BACKDATE_SESSION_INFO_ENABLED = false
         static let BATCH_LIMIT = 0
+        static let CONNECTION_TIMEOUT = TimeInterval(2000)
         static let LAUNCH_HIT_DELAY = TimeInterval.init()
         static let LIFECYCLE_RESPONSE_WAIT_TIMEOUT = Date.init()
         static let LAUNCH_DEEPLINK_DATA_WAIT_TIMEOUT = Date.init()
@@ -69,13 +70,13 @@ enum AnalyticsConstants {
         static let LIFECYCLE_MAX_SESSION_LENGTH = TimeInterval.init()
         static let LIFECYCLE_SESSION_START_TIMESTAMP = TimeInterval.init()
     }
-    
+
     enum ParameterKeys {
         static let KEY_MID = "mid"
         static let KEY_BLOB = "aamb"
         static let KEY_LOCATION_HINT = "aamlh"
     }
-    
+
     // acquisition keys
     enum Acquisition {
         static let SHARED_STATE_NAME = ""
@@ -84,7 +85,7 @@ enum AnalyticsConstants {
         static let DATA_PUSH_MESSAGE_ID = "a.push.payloadId"
         static let DATA_LOCAL_NOTIFICATION_ID = "a.message.id"
     }
-    
+
     // configuration keys
     enum Configuration {
         enum EventDataKeys {
@@ -100,7 +101,7 @@ enum AnalyticsConstants {
             static let ANALYTICS_BACKDATE_PREVIOUS_SESSION = "analytics.backdatePreviousSessionInfo"
         }
     }
-    
+
     // identity keys
     enum Identity {
         enum EventDataKeys {
@@ -113,7 +114,7 @@ enum AnalyticsConstants {
             static let USER_IDENTIFIER = "vid"
         }
     }
-    
+
     // lifecycle keys
     enum Lifecycle {
         enum EventDataKeys {
@@ -152,10 +153,10 @@ enum AnalyticsConstants {
             static let SESSION_START_TIMESTAMP = "starttimestampseconds"
             static let UPGRADE_EVENT = "upgradeevent"
             static let PREVIOUS_OS_VERSION = "previousosversion"
-            static let PREVIOUS_APP_ID = "previousappid"                    
+            static let PREVIOUS_APP_ID = "previousappid"
         }
     }
-    
+
     enum Places {
         enum EventDataKeys {
             static let SHARED_STATE_NAME = "com.adobe.module.places"
@@ -164,7 +165,7 @@ enum AnalyticsConstants {
             static let REGION_NAME = "regionname"
         }
     }
-    
+
     enum Assurance {
         enum EventDataKeys {
             static let SHARED_STATE_NAME = "com.adobe.assurance"
