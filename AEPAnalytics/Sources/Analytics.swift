@@ -53,9 +53,17 @@ public class Analytics: NSObject, Extension {
         return isReadyToForNextEvent
     }
 
-    private func getSharedStateForEvent(extensionNames: [String], event: Event? = nil) -> [String: [String: Any]?] {
+    /**
+     Tries to retrieve the shared data for all the dependencies of the given event. When all the dependencies are resolved, it will return the map with the shared states.
+     - Parameters:
+          - event: The `Event` for which shared state is to be retrieved.
+          - dependencies: An array of names of event's dependencies.
+
+     - Returns: A map with shared state of all dependecies.
+     */
+    private func getSharedStateForEvent(event: Event? = nil, dependencies: [String]) -> [String: [String: Any]?] {
         var sharedStates = [String: [String: Any]?]()
-        for extensionName in extensionNames {
+        for extensionName in dependencies {
             sharedStates[extensionName] = runtime.getSharedState(extensionName: extensionName, event: event, barrier: true)?.value
         }
 
@@ -66,7 +74,8 @@ public class Analytics: NSObject, Extension {
 /// Event Listeners
 extension Analytics {
 
-    // MARK: Event Listeners
+    /// Listener for handling Analytics `Events`.
+    /// - Parameter event: The instance of `Event` that needs to be processed.
     private func handleAnalyticsRequest(event: Event) {
         switch event.type {
         case EventType.lifecycle:
@@ -84,14 +93,14 @@ extension Analytics {
         }
     }
 
-    /// Handles the following events
+    ///  Handles the following events
     /// `EventType.genericLifecycle` and `EventSource.requestContent`
     /// `EventType.lifecycle` and `EventSource.responseContent`
-    /// - Parameter event: the `Event` object to be handled
+    ///  - Parameter event: the `Event` to be processed
     private func handleLifecycleEvents(_ event: Event) {
 
         if event.type == EventType.genericLifecycle && event.source == EventSource.requestContent {
-            let sharedStates : [String: [String: Any]?] = getSharedStateForEvent(extensionNames: analyticsHardDependencies, event: event)
+            let sharedStates : [String: [String: Any]?] = getSharedStateForEvent(event: event, dependencies: analyticsHardDependencies)
 
             let analyticsState = AnalyticsState.init(dataMap: sharedStates)
             let lifecycleAction = event.data?[AnalyticsConstants.Lifecycle.EventDataKeys.LIFECYCLE_ACTION_KEY] as? String
@@ -125,7 +134,7 @@ extension Analytics {
             var softDependencies : [String] = [AnalyticsConstants.Lifecycle.EventDataKeys.SHARED_STATE_NAME, AnalyticsConstants.Assurance.EventDataKeys.SHARED_STATE_NAME,
                                                AnalyticsConstants.Places.EventDataKeys.SHARED_STATE_NAME]
 
-            let sharedStates : [String: [String: Any]?] = getSharedStateForEvent(extensionNames: analyticsHardDependencies + softDependencies, event: event)
+            let sharedStates : [String: [String: Any]?] = getSharedStateForEvent(event: event, dependencies: analyticsHardDependencies + softDependencies)
 
             analyticsProperties.lifecyclePreviousSessionPauseTimestamp = event.data?[AnalyticsConstants.Lifecycle.EventDataKeys.PREVIOUS_SESSION_PAUSE_TIMESTAMP] as? Date
 
@@ -135,12 +144,12 @@ extension Analytics {
 
     /// Handles the following events
     /// `EventType.acquisition` and `EventSource.responseContent`
-    /// - Parameter event: The `Event` object to be handled
+    /// - Parameter event: The `Event` to be processed.
     private func handleAcquisitionEvent(_ event: Event){
 
         if analyticsProperties.referrerTimerRunning {
             Log.debug(label: LOG_TAG, "handleAcquisitionResponseEvent - Acquisition response received with referrer data.")
-            let configSharedState = getSharedStateForEvent(extensionNames: [AnalyticsConstants.Configuration.EventDataKeys.EXTENSION_NAME], event: event)
+            let configSharedState = getSharedStateForEvent(event: event, dependencies: [AnalyticsConstants.Configuration.EventDataKeys.EXTENSION_NAME])
             let analyticsState = AnalyticsState.init(dataMap: configSharedState)
             analyticsProperties.cancelReferrerTimer()
 
@@ -160,7 +169,7 @@ extension Analytics {
             let softDependencies : [String] = [
                 AnalyticsConstants.Lifecycle.EventDataKeys.EXTENSION_NAME,
                 AnalyticsConstants.Assurance.EventDataKeys.EXTENSION_NAME]
-            let sharedStates = getSharedStateForEvent(extensionNames: analyticsHardDependencies + softDependencies, event: event)
+            let sharedStates = getSharedStateForEvent(event: event, dependencies: analyticsHardDependencies + softDependencies)
             if event.type == EventType.acquisition && event.source == EventSource.responseContent {
                 trackAcquisitionData(analyticsState: AnalyticsState.init(dataMap: sharedStates), event: event)
             }
@@ -171,6 +180,14 @@ extension Analytics {
 /// Track call functions.
 extension Analytics {
 
+    /// Processes the Acquisition event.
+    /// If we are waiting for the acquisition data, then try to append it to a exiting hit. Otherwise, send a
+    /// new hit for acquisition data, and cancel the acquisition timer to mark that the acquisition data has
+    /// been received and processed.
+    /// - Parameters:
+    ///     - analyticsState: The `AnalyticsState` object representing shared states of other dependent
+    ///      extensions
+    ///     - event: The `acquisition event` to process
     func trackAcquisitionData(analyticsState: AnalyticsState, event: Event) {
         var acquisitionContextData = event.data?[AnalyticsConstants.EventDataKeys.CONTEXT_DATA] ?? [String:String]()
 
@@ -200,6 +217,14 @@ extension Analytics {
         }
     }
 
+    /// Track analytics requests for actions/states
+    /// - Parameters:
+    ///     - analyticsState: current `AnalyticsState` object containing shared state of dependencies.
+    ///     - trackEventData: `EventData` object containing tracking data
+    ///     - timeStampInSeconds: current event timestamp used for tracking
+    ///     - appendToPlaceHolder: a boolean indicating whether the data should be appended to a placeholder
+    ///      hit; the placeholder hit is currently used for backdated session hits
+    ///     - eventUniqueIdentifier: the event unique identifier responsible for this track
     func track(analyticsState: AnalyticsState, trackEventData: [String : Any]?, timeStampInSeconds: TimeInterval, appendToPlaceHolder: Bool, eventUniqueIdentifier: String) {
         guard trackEventData != nil else {
             Log.debug(label: LOG_TAG, "track - Dropping the Analytics track request, request was null.")
@@ -230,7 +255,16 @@ extension Analytics {
 //                                                    false, eventUniqueIdentifier);
 //                    }
     }
-
+    ///Converts the lifecycle event in internal analytics action. If backdate session and offline tracking are
+    /// enabled,
+    ///and previous session length is present in the contextData map, we send a separate hit with the previous
+    /// session
+    /// information and the rest of the keys as a Lifecycle action hit.
+    /// If ignored session is present, it will be sent as part of the Lifecycle hit and no SessionInfo hit will
+    ///  be sent.
+    /// - Parameters:
+    ///     - analyticsState: shared state values
+    ///     - event: the `Lifecycle Event` to process.
     private func trackLifecycle(analyticsState: AnalyticsState?, event: Event) {
         guard let analyticsState = analyticsState else {
             Log.debug(label: LOG_TAG, "trackLifecycle - Failed to track lifecycle event (invalid state)")
@@ -278,6 +312,11 @@ extension Analytics {
         }
     }
 
+    /// Creates the context data map from the `EventData` map and the current `AnalyticsState`.
+    /// - Parameters:
+    ///     - analyticsState: The current `AnalyticsState`
+    ///     - trackEventData: Map containing tracking data
+    ///     - Returns a map contains the context data.
     func processAnalyticsContextData(analyticsState: AnalyticsState, trackEventData: [String: Any]?) -> [String:String] {
 
         guard let trackEventData = trackEventData else {
@@ -319,6 +358,12 @@ extension Analytics {
         return analyticsData
     }
 
+    /// Creates the vars map from the `EventData` map and the current `AnalyticsState`.
+    /// - Parameters:
+    ///     - analyticsState: The current `AnalyticsState`
+    ///     - trackData: Map containing tracking data
+    ///     - timestamp: timestamp to use for tracking
+    ///     - Returns a map contains the vars data
     func processAnalyticsVars(analyticsState: AnalyticsState, trackData: [String:Any]?, timestamp:TimeInterval) -> [String:String] {
         guard let trackData = trackData else {
             Log.debug(label: LOG_TAG, "processAnalyticsVars - trackevendata is nil.")
@@ -371,6 +416,12 @@ extension Analytics {
 /// Backdate handling.
 extension Analytics {
 
+    /// Creates an internal analytics event with the crash session data
+    /// - Parameters:
+    ///      - analyticsState: The current `AnalyticsState`.
+    ///      - previousOSVersion: The OS version in the backdated session
+    ///      - previousAppIdVersion: The App Id in the backdate session
+    ///      - eventUniqueIdentifier: The event identifier of backdated Lifecycle session event.
     private func backadateLifecycleCrash(analyticsState: AnalyticsState, previousOSVersion: String?, previousAppIdVersion: String?, eventUniqueIdentifier: String) {
         var crashContextData : [String : String] = [:]
         crashContextData[AnalyticsConstants.ContextDataKeys.CRASH_EVENT_KEY] = AnalyticsConstants.ContextDataValues.CRASH_EVENT
@@ -391,6 +442,13 @@ extension Analytics {
         track(analyticsState: analyticsState, trackEventData: lifecycleSessionData, timeStampInSeconds: analyticsProperties.getMostRecentHitTimestamp() + 1, appendToPlaceHolder: true, eventUniqueIdentifier: eventUniqueIdentifier)
     }
 
+    /// Creates an internal analytics event with the previous lifecycle session info.
+    /// - Parameters:
+    ///      - analyticsState: The current `AnalyticsState`.
+    ///      - previousSessionLength: The length of previous session
+    ///      - previousOSVersion: The OS version in the backdated session
+    ///      - previousAppIdVersion: The App Id in the backdate session
+    ///      - eventUniqueIdentifier: The event identifier of backdated Lifecycle session event.
     private func backdateLifecycleSessionInfo(analyticsState: AnalyticsState, previousSessionLength: String?, previousOSVersion: String?, previousAppIdVersion: String?, eventUniqueIdentifier: String) {
         var sessionContextData : [String : String] = [:]
 
@@ -417,6 +475,8 @@ extension Analytics {
 
 /// Timeout timers.
 extension Analytics {
+
+    /// Wait for lifecycle data after receiving Lifecycle Request event.
     private func waitForLifecycleData() {
         analyticsProperties.lifecycleTimerRunning = true
         let lifecycleWorkItem = DispatchWorkItem {
@@ -427,6 +487,7 @@ extension Analytics {
         analyticsProperties.lifecycleDispatchWorkItem = lifecycleWorkItem
     }
 
+    /// Wait for Acquisition data after receiving Lifecycle Response event.
     private func waitForAcquisitionData(state: AnalyticsState, timeout: TimeInterval) {
         analyticsProperties.referrerTimerRunning = true
         let referrerDispatchWorkItem = DispatchWorkItem {

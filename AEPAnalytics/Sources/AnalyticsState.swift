@@ -21,8 +21,6 @@ class AnalyticsState {
     private let LOG_TAG = "AnalyticsState"
     /// Instance of `AnalyticsRequestSerializer`, use to serialize visitor id's List.
     private let analyticsRequestSerializer = AnalyticsRequestSerializer()
-    /// Configuration setting for forwarding Analytics hits to Audience manager.
-    private(set) var analyticForwardingEnabled: Bool = AnalyticsConstants.Default.FORWARDING_ENABLED
     /// `Offline enabled` configuration setting. If true analytics hits are queued when device is offline and sent when device is online.
     private(set) var offlineEnabled: Bool = AnalyticsConstants.Default.OFFLINE_ENABLED
     /// `Batch limit` configuration setting. Number of hits to queue before sending to Analytics.
@@ -35,22 +33,27 @@ class AnalyticsState {
     private(set) var backDateSessionInfoEnabled: Bool = AnalyticsConstants.Default.BACKDATE_SESSION_INFO_ENABLED
     /// Id for `Marketing cloud organization`.
     private(set) var marketingCloudOrganizationId: String?
-    /// `RSID` configuration settings. Id of report suites to which data should be send.
-    private(set) var rsids: String?
-    /// Analytics Server url.
-    private(set) var host: String?
     
     #if DEBUG
+        var analyticForwardingEnabled: Bool = AnalyticsConstants.Default.FORWARDING_ENABLED
         var marketingCloudId: String?
         var locationHint: String?
         var blob: String?
+        var rsids: String?
+        var host: String?
     #else
+        /// Configuration setting for forwarding Analytics hits to Audience manager.
+        private(set) var analyticForwardingEnabled: Bool = AnalyticsConstants.Default.FORWARDING_ENABLED
         /// Unique id for device.
         private(set) var marketingCloudId: String?
         /// The location hint value.
         private var locationHint: String?
         /// The blob value.
         private var blob: String?
+        /// `RSID` configuration settings. Id of report suites to which data should be send.
+        private(set) var rsids: String?
+        /// Analytics Server url.
+        private(set) var host: String?
     #endif
     /// A serialized form of list of visitor identifiers.
     private(set) var serializedVisitorIdsList: String?
