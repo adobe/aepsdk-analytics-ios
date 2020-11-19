@@ -111,12 +111,12 @@ enum AnalyticsConstants {
         static let BACKDATE_SESSION_INFO_ENABLED = false
         static let BATCH_LIMIT = 0
         static let LAUNCH_HIT_DELAY = TimeInterval.init()
-        static let LIFECYCLE_RESPONSE_WAIT_TIMEOUT = TimeInterval.init(1000)
-        static let LAUNCH_DEEPLINK_DATA_WAIT_TIMEOUT = TimeInterval.init(500)
+        static let LIFECYCLE_RESPONSE_WAIT_TIMEOUT = TimeInterval.init(1)
+        static let LAUNCH_DEEPLINK_DATA_WAIT_TIMEOUT = TimeInterval.init(0.5)
         static let ASSURANCE_SESSION_ENABLED = false
         static let LIFECYCLE_MAX_SESSION_LENGTH = TimeInterval.init()
         static let LIFECYCLE_SESSION_START_TIMESTAMP = TimeInterval.init()
-        static let LIFECYCLE_PAUSE_START_TIMEOUT = TimeInterval.init(1000)
+        static let LIFECYCLE_PAUSE_START_TIMEOUT = TimeInterval.init(1)
     }
     
     enum ParameterKeys {
@@ -174,7 +174,6 @@ enum AnalyticsConstants {
     enum Configuration {
         enum EventDataKeys {
             static let SHARED_STATE_NAME = "com.adobe.module.configuration"
-            static let EXTENSION_NAME = "com.adobe.module.configuration"
             static let GLOBAL_PRIVACY = "global.privacy"
             static let MARKETING_CLOUD_ORGID_KEY = "experienceCloud.org"
             static let ANALYTICS_AAMFORWARDING = "analytics.aamForwardingEnabled"
@@ -204,7 +203,6 @@ enum AnalyticsConstants {
     enum Lifecycle {
         enum EventDataKeys {
             static let SHARED_STATE_NAME = "com.adobe.module.lifecycle"
-            static let EXTENSION_NAME = "com.adobe.module.lifecycle"
             static let ADDITIONAL_CONTEXT_DATA = "additionalcontextdata"
             static let APP_ID = "appid"
             static let CARRIER_NAME = "carriername"
@@ -255,7 +253,6 @@ enum AnalyticsConstants {
     enum Assurance {
         enum EventDataKeys {
             static let SHARED_STATE_NAME = "com.adobe.assurance"
-            static let EXTENSION_NAME = "com.adobe.assurance"
             static let SESSION_ID = "sessionid"
         }
     }
