@@ -61,7 +61,8 @@ public class Analytics: NSObject, Extension {
 
      - Returns: A map with shared state of all dependecies.
      */
-    private func getSharedStateForEvent(event: Event? = nil, dependencies: [String]) -> [String: [String: Any]?] {
+
+    func getSharedStateForEvent(event: Event? = nil, dependencies: [String]) -> [String: [String: Any]?] {
         var sharedStates = [String: [String: Any]?]()
         for extensionName in dependencies {
             sharedStates[extensionName] = runtime.getSharedState(extensionName: extensionName, event: event, barrier: true)?.value
@@ -401,6 +402,7 @@ extension Analytics {
             }
         }
 
+        /// - TODO: Put it on main thread.
         if UIApplication.shared.applicationState == .background {
             analyticsVars[AnalyticsConstants.ANALYTICS_REQUEST_CUSTOMER_PERSPECTIVE_KEY] =
                 AnalyticsConstants.APP_STATE_BACKGROUND;

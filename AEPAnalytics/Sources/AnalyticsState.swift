@@ -41,6 +41,9 @@ class AnalyticsState {
         var blob: String?
         var rsids: String?
         var host: String?
+        var defaultData: [String: String] = [String: String]()
+        var lifecycleMaxSessionLength: TimeInterval = AnalyticsConstants.Default.LIFECYCLE_MAX_SESSION_LENGTH
+        var lifecycleSessionStartTimestamp: TimeInterval = AnalyticsConstants.Default.LIFECYCLE_SESSION_START_TIMESTAMP
     #else
         /// Configuration setting for forwarding Analytics hits to Audience manager.
         private(set) var analyticForwardingEnabled: Bool = AnalyticsConstants.Default.FORWARDING_ENABLED
@@ -54,6 +57,11 @@ class AnalyticsState {
         private(set) var rsids: String?
         /// Analytics Server url.
         private(set) var host: String?
+        private(set) var defaultData: [String: String] = [:]
+        /// Maximum time in seconds before a session times out.
+        private(set) var lifecycleMaxSessionLength: TimeInterval = AnalyticsConstants.Default.LIFECYCLE_MAX_SESSION_LENGTH
+        /// Start timestamp of new session.
+        private(set) var lifecycleSessionStartTimestamp: TimeInterval = AnalyticsConstants.Default.LIFECYCLE_SESSION_START_TIMESTAMP
     #endif
     /// A serialized form of list of visitor identifiers.
     private(set) var serializedVisitorIdsList: String?
@@ -63,11 +71,6 @@ class AnalyticsState {
     private(set) var advertisingId: String?
     /// Whether or not Assurance session is active.
     private(set) var assuranceSessionActive: Bool?
-    /// Maximum time in seconds before a session times out.
-    private(set) var lifecycleMaxSessionLength: TimeInterval = AnalyticsConstants.Default.LIFECYCLE_MAX_SESSION_LENGTH
-    /// Start timestamp of new session.
-    private(set) var lifecycleSessionStartTimestamp: TimeInterval = AnalyticsConstants.Default.LIFECYCLE_SESSION_START_TIMESTAMP
-    private(set) var defaultData: [String: String] = [String: String]()
     /// Typealias for Lifecycle Event Data keys.
     private typealias LifeCycleEventDataKeys = AnalyticsConstants.Lifecycle.EventDataKeys
     /// Typealias for Configuration Event Data keys.
