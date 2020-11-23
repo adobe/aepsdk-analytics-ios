@@ -19,23 +19,12 @@ enum AnalyticsConstants {
     static let EXTENSION_VERSION                        = "0.0.1"
     static let DATASTORE_NAME                           = EXTENSION_NAME
     static let CRASH_INTERNAL_ACTION_NAME               = "Crash"
-    static let ANALYTICS_REQUEST_PRIVACY_MODE_KEY       = "a.privacy.mode"
-    static let ANALYTICS_REQUEST_PRIVACY_MODE_UNKNOWN   = "unknown"
-    static let ANALYTICS_REQUEST_IGNORE_PAGE_NAME_KEY   = "pe"
     static let IGNORE_PAGE_NAME_VALUE                   = "lnk_o"
-    static let ANALYTICS_REQUEST_ACTION_NAME_KEY        = "pev2"
     static let ACTION_PREFIX                            = "AMACTION:"
     static let INTERNAL_ACTION_PREFIX                   = "ADBINTERNAL:"
-    static let ANALYTICS_REQUEST_PAGE_NAME_KEY          = "pageName"
-    static let ANALYTICS_REQUEST_ANALYTICS_ID_KEY       = "aid"
-    static let ANALYTICS_REQUEST_CHARSET_KEY            = "ce"
-    static let ANALYTICS_REQUEST_VISITOR_ID_KEY         = "vid"
-    static let ANALYTICS_REQUEST_FORMATTED_TIMESTAMP_KEY = "t"
-    static let ANALYTICS_REQUEST_STRING_TIMESTAMP_KEY    = "ts"
     static let VAR_ESCAPE_PREFIX                         = "&&"
     static let ANALYTICS_REQUEST_CONTEXT_DATA_KEY        = "c"
     static let TRACK_INTERNAL_ADOBE_LINK                 = "AdobeLink"
-    static let ANALYTICS_REQUEST_CUSTOMER_PERSPECTIVE_KEY = "cp"
     static let APP_STATE_FOREGROUND                       = "foreground"
     static let APP_STATE_BACKGROUND                       = "background"
 
@@ -130,6 +119,20 @@ enum AnalyticsConstants {
         static let AID_KEY                = "ADOBEMOBILE_STOREDDEFAULTS_AID"
         static let AID_IGNORE_KEY         = "ADOBEMOBILE_STOREDDEFAULTS_IGNORE_AID"
         static let VISITOR_IDENTIFIER_KEY = "ADOBEMOBILE_STOREDDEFAULTS_VISITOR_IDENTIFIER"
+    }
+
+    enum Request {
+        static let PRIVACY_MODE_KEY         = "a.privacy.mode"
+        static let PRIVACY_MODE_UNKNOWN     = "unknown"
+        static let IGNORE_PAGE_NAME_KEY     = "pe"
+        static let ACTION_NAME_KEY          = "pev2"
+        static let PAGE_NAME_KEY            = "pageName"
+        static let ANALYTICS_ID_KEY         = "aid"
+        static let CHARSET_KEY              = "ce"
+        static let VISITOR_ID_KEY           = "vid"
+        static let FORMATTED_TIMESTAMP_KEY  = "t"
+        static let STRING_TIMESTAMP_KEY     = "ts"
+        static let CUSTOMER_PERSPECTIVE_KEY = "cp"
     }
 
     static let MAP_EVENT_DATA_KEYS_TO_CONTEXT_DATA_KEYS: [String: String] = [
