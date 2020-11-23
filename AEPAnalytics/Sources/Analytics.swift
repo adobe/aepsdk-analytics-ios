@@ -391,14 +391,16 @@ extension Analytics {
             }
         }
 
-        /// - TODO: Put it on main thread.
-        if UIApplication.shared.applicationState == .background {
-            analyticsVars[AnalyticsConstants.Request.CUSTOMER_PERSPECTIVE_KEY] =
-                AnalyticsConstants.APP_STATE_BACKGROUND
-        } else {
-            analyticsVars[AnalyticsConstants.Request.CUSTOMER_PERSPECTIVE_KEY] =
-                AnalyticsConstants.APP_STATE_FOREGROUND
+        DispatchQueue.main.sync {
+            if UIApplication.shared.applicationState == .background {
+                analyticsVars[AnalyticsConstants.Request.CUSTOMER_PERSPECTIVE_KEY] =
+                    AnalyticsConstants.APP_STATE_BACKGROUND
+            } else {
+                analyticsVars[AnalyticsConstants.Request.CUSTOMER_PERSPECTIVE_KEY] =
+                    AnalyticsConstants.APP_STATE_FOREGROUND
+            }
         }
+
         return analyticsVars
     }
 }
