@@ -131,7 +131,7 @@ extension Analytics {
         } else if event.type == EventType.lifecycle && event.source == EventSource.responseContent {
             //Soft dependecies list.
             var softDependencies: [String] = [AnalyticsConstants.Lifecycle.EventDataKeys.SHARED_STATE_NAME, AnalyticsConstants.Assurance.EventDataKeys.SHARED_STATE_NAME,
-                                               AnalyticsConstants.Places.EventDataKeys.SHARED_STATE_NAME]
+                                              AnalyticsConstants.Places.EventDataKeys.SHARED_STATE_NAME]
 
             let sharedStates: [String: [String: Any]?] = getSharedStateForEvent(event: event, dependencies: analyticsHardDependencies + softDependencies)
 
