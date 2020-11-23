@@ -38,7 +38,7 @@ enum AnalyticsConstants {
     static let ANALYTICS_REQUEST_CUSTOMER_PERSPECTIVE_KEY = "cp"
     static let APP_STATE_FOREGROUND                       = "foreground"
     static let APP_STATE_BACKGROUND                       = "background"
-    
+
     enum EventDataKeys {
         static let STATE_OWNER      = ""
         static let EXTENSION_NAME   = "com.adobe.module.analytics"
@@ -64,7 +64,7 @@ enum AnalyticsConstants {
         static let SHARED_STATE_NAME = ""
         static let SERVER_RESPONSE = ""
     }
-    
+
     enum ContextDataKeys {
         static let INSTALL_EVENT_KEY = "a.InstallEvent"
         static let LAUNCH_EVENT_KEY = "a.LaunchEvent"
@@ -97,13 +97,13 @@ enum AnalyticsConstants {
         static let REGION_NAME = "a.loc.poi"
         static let EVENT_IDENTIFIER_KEY = "a.DebugEventIdentifier"
     }
-    
+
     enum ContextDataValues {
         static let CRASH_EVENT = "CrashEvent"
         static let ACTION_KEY = "a.action"
         static let INTERNAL_ACTION_KEY = "a.internalaction"
     }
-    
+
     enum Default {
         static let PRIVACY_STATUS: PrivacyStatus = .optedIn
         static let FORWARDING_ENABLED = false
@@ -118,49 +118,49 @@ enum AnalyticsConstants {
         static let LIFECYCLE_SESSION_START_TIMESTAMP = TimeInterval.init()
         static let LIFECYCLE_PAUSE_START_TIMEOUT = TimeInterval.init(1)
     }
-    
+
     enum ParameterKeys {
         static let KEY_MID = "mid"
         static let KEY_BLOB = "aamb"
         static let KEY_LOCATION_HINT = "aamlh"
     }
-    
+
     enum DataStoreKeys {
         static let MOST_RECENT_HIT_TIMESTAMP_SECONDS = "mostRecentHitTimestampSeconds"
         static let AID_KEY                = "ADOBEMOBILE_STOREDDEFAULTS_AID"
         static let AID_IGNORE_KEY         = "ADOBEMOBILE_STOREDDEFAULTS_IGNORE_AID"
         static let VISITOR_IDENTIFIER_KEY = "ADOBEMOBILE_STOREDDEFAULTS_VISITOR_IDENTIFIER"
     }
-    
-    static let MAP_EVENT_DATA_KEYS_TO_CONTEXT_DATA_KEYS : [String:String] = [
-        Identity.EventDataKeys.ADVERTISING_IDENTIFIER : ContextDataKeys.ADVERTISING_IDENTIFIER,
-        Lifecycle.EventDataKeys.APP_ID : ContextDataKeys.APPLICATION_IDENTIFIER,
-        Lifecycle.EventDataKeys.CARRIER_NAME : ContextDataKeys.CARRIER_NAME,
-        Lifecycle.EventDataKeys.CRASH_EVENT : ContextDataKeys.CRASH_EVENT_KEY,
-        Lifecycle.EventDataKeys.DAILY_ENGAGED_EVENT : ContextDataKeys.DAILY_ENGAGED_EVENT_KEY,
-        Lifecycle.EventDataKeys.DAY_OF_WEEK : ContextDataKeys.DAY_OF_WEEK,
-        Lifecycle.EventDataKeys.DAYS_SINCE_FIRST_LAUNCH : ContextDataKeys.DAYS_SINCE_FIRST_LAUNCH,
-        Lifecycle.EventDataKeys.DAYS_SINCE_LAST_LAUNCH : ContextDataKeys.DAYS_SINCE_LAST_LAUNCH,
-        Lifecycle.EventDataKeys.DAYS_SINCE_LAST_UPGRADE : ContextDataKeys.DAYS_SINCE_LAST_UPGRADE,
-        Lifecycle.EventDataKeys.DEVICE_NAME : ContextDataKeys.DEVICE_NAME,
-        Lifecycle.EventDataKeys.DEVICE_RESOLUTION : ContextDataKeys.DEVICE_RESOLUTION,
-        Lifecycle.EventDataKeys.HOUR_OF_DAY : ContextDataKeys.HOUR_OF_DAY,
-        Lifecycle.EventDataKeys.IGNORED_SESSION_LENGTH : ContextDataKeys.IGNORED_SESSION_LENGTH,
-        Lifecycle.EventDataKeys.INSTALL_DATE : ContextDataKeys.INSTALL_DATE,
-        Lifecycle.EventDataKeys.INSTALL_EVENT : ContextDataKeys.INSTALL_EVENT_KEY,
-        Lifecycle.EventDataKeys.LAUNCH_EVENT : ContextDataKeys.LAUNCH_EVENT_KEY,
-        Lifecycle.EventDataKeys.LAUNCHES : ContextDataKeys.LAUNCHES,
-        Lifecycle.EventDataKeys.LAUNCHES_SINCE_UPGRADE : ContextDataKeys.LAUNCHES_SINCE_UPGRADE,
-        Lifecycle.EventDataKeys.LOCALE : ContextDataKeys.LOCALE,
-        Lifecycle.EventDataKeys.MONTHLY_ENGAGED_EVENT : ContextDataKeys.MONTHLY_ENGAGED_EVENT_KEY,
-        Lifecycle.EventDataKeys.OPERATING_SYSTEM : ContextDataKeys.OPERATING_SYSTEM,
-        Lifecycle.EventDataKeys.PREVIOUS_SESSION_LENGTH : ContextDataKeys.PREVIOUS_SESSION_LENGTH,
-        Lifecycle.EventDataKeys.RUN_MODE : ContextDataKeys.RUN_MODE,
-        Lifecycle.EventDataKeys.UPGRADE_EVENT : ContextDataKeys.UPGRADE_EVENT_KEY,
-        Lifecycle.EventDataKeys.PREVIOUS_OS_VERSION : ContextDataKeys.OPERATING_SYSTEM,
-        Lifecycle.EventDataKeys.PREVIOUS_APP_ID : ContextDataKeys.APPLICATION_IDENTIFIER
+
+    static let MAP_EVENT_DATA_KEYS_TO_CONTEXT_DATA_KEYS: [String: String] = [
+        Identity.EventDataKeys.ADVERTISING_IDENTIFIER: ContextDataKeys.ADVERTISING_IDENTIFIER,
+        Lifecycle.EventDataKeys.APP_ID: ContextDataKeys.APPLICATION_IDENTIFIER,
+        Lifecycle.EventDataKeys.CARRIER_NAME: ContextDataKeys.CARRIER_NAME,
+        Lifecycle.EventDataKeys.CRASH_EVENT: ContextDataKeys.CRASH_EVENT_KEY,
+        Lifecycle.EventDataKeys.DAILY_ENGAGED_EVENT: ContextDataKeys.DAILY_ENGAGED_EVENT_KEY,
+        Lifecycle.EventDataKeys.DAY_OF_WEEK: ContextDataKeys.DAY_OF_WEEK,
+        Lifecycle.EventDataKeys.DAYS_SINCE_FIRST_LAUNCH: ContextDataKeys.DAYS_SINCE_FIRST_LAUNCH,
+        Lifecycle.EventDataKeys.DAYS_SINCE_LAST_LAUNCH: ContextDataKeys.DAYS_SINCE_LAST_LAUNCH,
+        Lifecycle.EventDataKeys.DAYS_SINCE_LAST_UPGRADE: ContextDataKeys.DAYS_SINCE_LAST_UPGRADE,
+        Lifecycle.EventDataKeys.DEVICE_NAME: ContextDataKeys.DEVICE_NAME,
+        Lifecycle.EventDataKeys.DEVICE_RESOLUTION: ContextDataKeys.DEVICE_RESOLUTION,
+        Lifecycle.EventDataKeys.HOUR_OF_DAY: ContextDataKeys.HOUR_OF_DAY,
+        Lifecycle.EventDataKeys.IGNORED_SESSION_LENGTH: ContextDataKeys.IGNORED_SESSION_LENGTH,
+        Lifecycle.EventDataKeys.INSTALL_DATE: ContextDataKeys.INSTALL_DATE,
+        Lifecycle.EventDataKeys.INSTALL_EVENT: ContextDataKeys.INSTALL_EVENT_KEY,
+        Lifecycle.EventDataKeys.LAUNCH_EVENT: ContextDataKeys.LAUNCH_EVENT_KEY,
+        Lifecycle.EventDataKeys.LAUNCHES: ContextDataKeys.LAUNCHES,
+        Lifecycle.EventDataKeys.LAUNCHES_SINCE_UPGRADE: ContextDataKeys.LAUNCHES_SINCE_UPGRADE,
+        Lifecycle.EventDataKeys.LOCALE: ContextDataKeys.LOCALE,
+        Lifecycle.EventDataKeys.MONTHLY_ENGAGED_EVENT: ContextDataKeys.MONTHLY_ENGAGED_EVENT_KEY,
+        Lifecycle.EventDataKeys.OPERATING_SYSTEM: ContextDataKeys.OPERATING_SYSTEM,
+        Lifecycle.EventDataKeys.PREVIOUS_SESSION_LENGTH: ContextDataKeys.PREVIOUS_SESSION_LENGTH,
+        Lifecycle.EventDataKeys.RUN_MODE: ContextDataKeys.RUN_MODE,
+        Lifecycle.EventDataKeys.UPGRADE_EVENT: ContextDataKeys.UPGRADE_EVENT_KEY,
+        Lifecycle.EventDataKeys.PREVIOUS_OS_VERSION: ContextDataKeys.OPERATING_SYSTEM,
+        Lifecycle.EventDataKeys.PREVIOUS_APP_ID: ContextDataKeys.APPLICATION_IDENTIFIER
     ]
-    
+
     // acquisition keys
     enum Acquisition {
         static let SHARED_STATE_NAME = ""
@@ -169,7 +169,7 @@ enum AnalyticsConstants {
         static let DATA_PUSH_MESSAGE_ID = "a.push.payloadId"
         static let DATA_LOCAL_NOTIFICATION_ID = "a.message.id"
     }
-    
+
     // configuration keys
     enum Configuration {
         enum EventDataKeys {
@@ -185,7 +185,7 @@ enum AnalyticsConstants {
             static let ANALYTICS_BACKDATE_PREVIOUS_SESSION = "analytics.backdatePreviousSessionInfo"
         }
     }
-    
+
     // identity keys
     enum Identity {
         enum EventDataKeys {
@@ -198,7 +198,7 @@ enum AnalyticsConstants {
             static let USER_IDENTIFIER = "vid"
         }
     }
-    
+
     // lifecycle keys
     enum Lifecycle {
         enum EventDataKeys {
@@ -237,10 +237,10 @@ enum AnalyticsConstants {
             static let SESSION_START_TIMESTAMP = "starttimestampseconds"
             static let UPGRADE_EVENT = "upgradeevent"
             static let PREVIOUS_OS_VERSION = "previousosversion"
-            static let PREVIOUS_APP_ID = "previousappid"                    
+            static let PREVIOUS_APP_ID = "previousappid"
         }
     }
-    
+
     enum Places {
         enum EventDataKeys {
             static let SHARED_STATE_NAME = "com.adobe.module.places"
@@ -249,7 +249,7 @@ enum AnalyticsConstants {
             static let REGION_NAME = "regionname"
         }
     }
-    
+
     enum Assurance {
         enum EventDataKeys {
             static let SHARED_STATE_NAME = "com.adobe.assurance"

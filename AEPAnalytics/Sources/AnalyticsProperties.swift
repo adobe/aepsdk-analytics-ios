@@ -49,7 +49,7 @@ struct AnalyticsProperties {
     /// Instance of `AnalyticsRequestSerializer` used for creating track request.
     var analyticsRequestSerializer = AnalyticsRequestSerializer()
 
-    lazy var dataStore : NamedCollectionDataStore = {
+    lazy var dataStore: NamedCollectionDataStore = {
         return NamedCollectionDataStore(name: AnalyticsConstants.DATASTORE_NAME)
     }()
 

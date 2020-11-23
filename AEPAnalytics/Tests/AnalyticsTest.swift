@@ -91,7 +91,7 @@ class AnalyticsTest : XCTestCase {
         //Assert that Analytics Data is an empty dictionary.
         XCTAssertEqual(analyticsData.count, 0, "analyticsData data is expected to be empty dictionary.")
     }
-    
+
 //    func testprocessAnalyticsVars() {
 //        /// - TODO: Implement this test after visitor id serialization.
 //    }

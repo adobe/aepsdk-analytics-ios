@@ -33,7 +33,7 @@ class AnalyticsRequestSerializer {
         return "&cid.\(ContextDataUtil.EncodeContextData(data: visitorDataMap))&.cid"
     }
 
-    func buildRequest(analyticsState: AnalyticsState, data: [String:String]?, vars:[String:String]?) -> String {
+    func buildRequest(analyticsState: AnalyticsState, data: [String: String]?, vars: [String: String]?) -> String {
         var analyticsVars: [String: Any] = [:]
 
         if let vars = vars, !vars.isEmpty {
@@ -44,7 +44,7 @@ class AnalyticsRequestSerializer {
         }
 
         if let data = data, !data.isEmpty {
-            for (key,value) in data {
+            for (key, value) in data {
                 if key.hasPrefix(AnalyticsConstants.VAR_ESCAPE_PREFIX) {
                     analyticsVars[String(key.suffix(from: AnalyticsConstants.VAR_ESCAPE_PREFIX.endIndex))] = value
                 }

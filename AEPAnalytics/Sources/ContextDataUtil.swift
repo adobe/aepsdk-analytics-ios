@@ -13,15 +13,15 @@
 import Foundation
 
 class ContextDataUtil {
-    
+
     private static let contextDataMask: [Bool] = [
         false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,
         false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,
-        false, false, false, false, false, false, false, false, false, false, false, false, false, false,  true, false,
-        true,  true,  true,  true,  true,  true,  true,  true,  true,  true, false, false, false, false, false, false,
-        false,  true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  true,
-        true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  true, false, false, false, false,  true, false,  true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  true,
-        true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  true, false, false, false, false, false,
+        false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false,
+        true, true, true, true, true, true, true, true, true, true, false, false, false, false, false, false,
+        false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true,
+        true, true, true, true, true, true, true, true, true, true, true, false, false, false, false, true, false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true,
+        true, true, true, true, true, true, true, true, true, true, true, false, false, false, false, false,
         false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,
         false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,
         false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,
@@ -31,85 +31,83 @@ class ContextDataUtil {
         false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,
         false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false
     ]
-    
+
     static func EncodeContextData(data contextData: [String: String]) -> String {
         let cleanedDataMap: [String: String] = cleanDictionaryKeys(contextData: contextData)
 
         var encodedMap = [String: ContextData]()
-        
+
         for (key, value) in cleanedDataMap {
             encodeValueIntoMap(value: value, contextDataMap: &encodedMap, keys: key.split(separator: ".", omittingEmptySubsequences: true), index: 0)
         }
-        
+
         return serializeMapToQueryString(map: encodedMap)
     }
-    
+
     private static func serializeMapToQueryString(map: [String: Any]) -> String {
-        
+
         var queryParams = String.init()
-        
+
         for (key, value) in map {
             guard !key.isEmpty else {
                 continue
             }
-            
+
             var urlEncodedKey = key.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
-            
+
             if let contextData = value as? ContextData {
-            
+
                 if let value = contextData.value, !value.isEmpty {
                     queryParams.append(String(format: "&%@=%@", key, value.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) as! CVarArg))
                 }
-            
+
                 if contextData.data.count > 0 {
-                    queryParams.append(String(format: "&%@.%@&.%@", urlEncodedKey as! CVarArg, serializeMapToQueryString(map: contextData.data),urlEncodedKey as! CVarArg))
+                    queryParams.append(String(format: "&%@.%@&.%@", urlEncodedKey as! CVarArg, serializeMapToQueryString(map: contextData.data), urlEncodedKey as! CVarArg))
                 }
-            }
-            else { //Value is of type String.
-                queryParams.append(String(format: "&%@.%@&.%@", urlEncodedKey as! CVarArg, "\(key)=\(value)",urlEncodedKey as! CVarArg))
+            } else { //Value is of type String.
+                queryParams.append(String(format: "&%@.%@&.%@", urlEncodedKey as! CVarArg, "\(key)=\(value)", urlEncodedKey as! CVarArg))
             }
         }
-        
+
         return queryParams
     }
-    
+
     private static func encodeValueIntoMap(value: String, contextDataMap: inout [String: ContextData], keys: [String.SubSequence], index: Int) {
-        
+
         guard index < keys.count else {
             return
         }
-       
+
         var keyName = String(keys[index])
-        
+
         if keys.count - 1 == index {
-            let contextData : ContextData = contextDataMap[keyName] ?? ContextData.init()
+            let contextData: ContextData = contextDataMap[keyName] ?? ContextData.init()
             contextData.value = value
             contextDataMap[keyName] = contextData
-        }
-        else {
-            let contextData : ContextData = contextDataMap[keyName] ?? ContextData.init()
+        } else {
+            let contextData: ContextData = contextDataMap[keyName] ?? ContextData.init()
             contextDataMap[keyName] = contextData
             encodeValueIntoMap(value: value, contextDataMap: &contextDataMap, keys: keys, index: index + 1)
         }
     }
-    
+
     private static func cleanDictionaryKeys(contextData: [String: String]) -> [String: String] {
         var cleanDictionary = [String: String]()
         for (key, value) in contextData {
-            
+
             let cleanedKey = cleanKey(key: key)
-            if !cleanedKey.isEmpty{
+            if !cleanedKey.isEmpty {
                 cleanDictionary[cleanedKey] = value
             }
         }
         return cleanDictionary
     }
-    
+
     private static func cleanKey(key: String) -> String {
         guard !key.isEmpty else {
             return ""
         }
-        
+
         var cleanedKey = ""
         let period: Character = "."
 
@@ -117,7 +115,7 @@ class ContextDataUtil {
             if char == period && cleanedKey.last == period {
                 continue
             }
-            
+
             let scalars = String(char).unicodeScalars
             if contextDataMask[Int(scalars[scalars.startIndex].value)] {
                 cleanedKey.append(char)
@@ -126,19 +124,19 @@ class ContextDataUtil {
         if cleanedKey.first == period {
             cleanedKey.remove(at: cleanedKey.startIndex)
         }
-            
+
         if cleanedKey.last == period {
             cleanedKey.popLast()
         }
         return cleanedKey
     }
-    
-    static func translateContextData(data:[String:String]?) -> ContextData {
+
+    static func translateContextData(data: [String: String]?) -> ContextData {
         /// - TODO: Need to implement this function.
         return ContextData.init()
     }
-    
-    static func serializeToQueryString(map: inout [String:Any], requestString: inout String){
+
+    static func serializeToQueryString(map: inout [String: Any], requestString: inout String) {
         /// - TODO: Implement this function
     }
 }
