@@ -51,14 +51,14 @@ class AnalyticsRequestSerializer {
             }
         }
 
-        analyticsVars[AnalyticsConstants.ANALYTICS_REQUEST_CONTEXT_DATA_KEY] = ContextDataUtil.translateContextData(data: data)
+        analyticsVars[AnalyticsConstants.Request.CONTEXT_DATA_KEY] = ContextDataUtil.translateContextData(data: data)
 
         var requestString = "ndh=1"
         if analyticsState.isVisitorIdServiceEnabled(), let serializedVisitorIdList = analyticsState.serializedVisitorIdsList {
             requestString += serializedVisitorIdList
         }
 
-        ContextDataUtil.serializeToQueryString(map: &analyticsVars, requestString: &requestString)
+        ContextDataUtil.serializeToQueryString(parameters: analyticsVars, requestString: &requestString)
         return requestString
     }
 

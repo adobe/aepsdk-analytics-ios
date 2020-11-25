@@ -15,5 +15,5 @@ import Foundation
 class ContextData {
 
     var value: String?
-    var data = [String: Any]()
+    var data = [String: ContextData]()
 }

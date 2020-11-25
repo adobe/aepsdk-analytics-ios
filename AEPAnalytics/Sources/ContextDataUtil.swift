@@ -11,8 +11,12 @@
  */
 
 import Foundation
+import AEPServices
 
 class ContextDataUtil {
+
+    static let LOG_TAG = "ContextDataUtil"
+
 
     private static let contextDataMask: [Bool] = [
         false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,
@@ -33,6 +37,7 @@ class ContextDataUtil {
     ]
 
     static func EncodeContextData(data contextData: [String: String]) -> String {
+
         let cleanedDataMap: [String: String] = cleanDictionaryKeys(contextData: contextData)
 
         var encodedMap = [String: ContextData]()
@@ -131,12 +136,81 @@ class ContextDataUtil {
         return cleanedKey
     }
 
+
+    /**
+     Translates string based context data into a nested dictionary format for serializing to query string.
+     This method contains a recursive block.
+     - Parameters:
+         - data: the data Dictionary that we want to process.
+     - Returns: a new `ContextData` object containing the provided data.
+     */
     static func translateContextData(data: [String: String]?) -> ContextData {
-        /// - TODO: Need to implement this function.
-        return ContextData.init()
+        let contextData = ContextData()
+        guard let data = data else {
+            Log.debug(label: LOG_TAG, "translateContextData - data is nil.")
+            return contextData
+        }
+        let cleanData = cleanDictionaryKeys(contextData: data)
+        cleanData.forEach {
+            key , value in
+            let subKeys = key.split(separator: ".")
+            addValueToContextData(value: key, inContextData: contextData, subkeys: subKeys, index: 0)
+        }
+        return contextData
     }
 
-    static func serializeToQueryString(map: inout [String: Any], requestString: inout String) {
-        /// - TODO: Implement this function
+    /**
+     Serializes a Dictionary to key value pairs for url string.
+     This method is recursive to handle the nested data objects.
+     - Parameters:
+          - parameters: the query parameters that we want to serialize
+          - requestString: The query String. Used for recursivity.
+     */
+    static func serializeToQueryString(parameters: [String: Any]?, requestString: inout String) {
+
+        guard let parameters = parameters else {
+            Log.debug(label: LOG_TAG, "serializeToQueryString - parameters is nil.")
+            return
+        }
+
+        parameters.forEach {
+            key , value in
+            let encodedKey = key.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
+            if encodedKey != nil {
+                if let contextData = value as? ContextData {
+                    if let value = contextData.value, !key.isEmpty  {
+                        requestString.append("&\(key)=\(value)")
+                    }
+
+                    if !contextData.data.isEmpty {
+                        requestString.append("&\(key).\(serializeToQueryString(parameters: contextData.data, requestString: &requestString))&.\(key)")
+                    }
+                }
+                else if let value = value as? String {
+                    requestString.append("&\(key)=\(value)")
+                }
+            }
+        }
+    }
+
+    private static func addValueToContextData(value: String, inContextData contextData: ContextData, subkeys: [Substring]?, index: Int) {
+        guard let subkeys = subkeys, index < subkeys.count else {
+            Log.debug(label: LOG_TAG, "addValueToContextData - subkeys is nil.")
+            return
+        }
+
+        let keyName = subkeys[index].description
+        var data : ContextData = contextData.data[keyName] ?? ContextData.init()
+
+        if subkeys.count - 1 == index {
+            // last node in the array
+            data.value = value
+            contextData.data[keyName] = data
+        }
+        else {
+            // more nodes to go through, add a HashMap to the caller if necessary
+            contextData.data[keyName] = data
+            addValueToContextData(value: value, inContextData: data, subkeys: subkeys, index: index + 1)
+        }
     }
 }

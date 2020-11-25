@@ -23,7 +23,6 @@ enum AnalyticsConstants {
     static let ACTION_PREFIX                            = "AMACTION:"
     static let INTERNAL_ACTION_PREFIX                   = "ADBINTERNAL:"
     static let VAR_ESCAPE_PREFIX                         = "&&"
-    static let ANALYTICS_REQUEST_CONTEXT_DATA_KEY        = "c"
     static let TRACK_INTERNAL_ADOBE_LINK                 = "AdobeLink"
     static let APP_STATE_FOREGROUND                       = "foreground"
     static let APP_STATE_BACKGROUND                       = "background"
@@ -133,6 +132,7 @@ enum AnalyticsConstants {
         static let FORMATTED_TIMESTAMP_KEY  = "t"
         static let STRING_TIMESTAMP_KEY     = "ts"
         static let CUSTOMER_PERSPECTIVE_KEY = "cp"
+        static let CONTEXT_DATA_KEY         = "c"
     }
 
     static let MAP_EVENT_DATA_KEYS_TO_CONTEXT_DATA_KEYS: [String: String] = [
