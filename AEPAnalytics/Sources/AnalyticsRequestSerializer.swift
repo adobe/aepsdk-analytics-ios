@@ -39,13 +39,15 @@ class AnalyticsRequestSerializer {
         if let vars = vars, !vars.isEmpty {
             vars.forEach {
                 key, value in
-                analyticsVars[key] = value
+                if !key.isEmpty{
+                    analyticsVars[key] = value
+                }
             }
         }
 
         if let data = data, !data.isEmpty {
             for (key, value) in data {
-                if key.hasPrefix(AnalyticsConstants.VAR_ESCAPE_PREFIX) {
+                if !key.isEmpty && key.hasPrefix(AnalyticsConstants.VAR_ESCAPE_PREFIX) {
                     analyticsVars[String(key.suffix(from: AnalyticsConstants.VAR_ESCAPE_PREFIX.endIndex))] = value
                 }
             }
