@@ -36,12 +36,15 @@ class ContextDataUtil {
         false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false
     ]
 
+    /**
+     Encodes the given map into the context data string format for inclusion in a URL.  Keys will be modified
+     (by removing unsupported characters) to match the context data requirements.  Values will be URL Encoded.
+     */
     static func EncodeContextData(data contextData: [String: String]) -> String {
 
         let cleanedDataMap: [String: String] = cleanDictionaryKeys(contextData: contextData)
 
         var encodedMap = [String: ContextData]()
-
         for (key, value) in cleanedDataMap {
             encodeValueIntoMap(value: value, contextDataMap: &encodedMap, keys: key.split(separator: ".", omittingEmptySubsequences: true), index: 0)
         }
@@ -54,23 +57,23 @@ class ContextDataUtil {
         var queryParams = String.init()
 
         for (key, value) in map {
-            guard !key.isEmpty else {
+            guard let urlEncodedKey = key.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed), !urlEncodedKey.isEmpty else {
                 continue
             }
 
-            var urlEncodedKey = key.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
-
             if let contextData = value as? ContextData {
 
-                if let value = contextData.value, !value.isEmpty {
-                    queryParams.append(String(format: "&%@=%@", key, value.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) as! CVarArg))
+                if let value = contextData.value, let urlEncodedValue = value.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed), !urlEncodedValue.isEmpty {
+                    queryParams.append(String(format: "&%@=%@", urlEncodedKey, urlEncodedValue))
                 }
 
                 if contextData.data.count > 0 {
-                    queryParams.append(String(format: "&%@.%@&.%@", urlEncodedKey as! CVarArg, serializeMapToQueryString(map: contextData.data), urlEncodedKey as! CVarArg))
+                    queryParams.append(String(format: "&%@.%@&.%@", urlEncodedKey, serializeMapToQueryString(map: contextData.data), urlEncodedKey))
                 }
             } else { //Value is of type String.
-                queryParams.append(String(format: "&%@.%@&.%@", urlEncodedKey as! CVarArg, "\(key)=\(value)", urlEncodedKey as! CVarArg))
+                if let value = value as? String, let urlEncodedValue = value.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed), !urlEncodedValue.isEmpty {
+                    queryParams.append(String(format: "&%@.%@&.%@", urlEncodedKey, "\(urlEncodedKey)=\(urlEncodedValue)", urlEncodedKey))
+                }
             }
         }
 
@@ -83,15 +86,19 @@ class ContextDataUtil {
             return
         }
 
-        var keyName = String(keys[index])
+        let keyName = String(keys[index])
 
         if keys.count - 1 == index {
-            let contextData: ContextData = contextDataMap[keyName] ?? ContextData.init()
+            let contextData = contextDataMap[keyName] ?? ContextData.init()
             contextData.value = value
-            contextDataMap[keyName] = contextData
+            if !contextDataMap.keys.contains(keyName) {
+                contextDataMap[keyName] = contextData
+            }
         } else {
-            let contextData: ContextData = contextDataMap[keyName] ?? ContextData.init()
-            contextDataMap[keyName] = contextData
+            let contextData = contextDataMap[keyName] ?? ContextData.init()
+            if !contextDataMap.keys.contains(keyName) {
+                contextDataMap[keyName] = contextData
+            }
             encodeValueIntoMap(value: value, contextDataMap: &contextDataMap, keys: keys, index: index + 1)
         }
     }
