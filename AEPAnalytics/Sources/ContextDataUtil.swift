@@ -37,8 +37,11 @@ class ContextDataUtil {
     ]
 
     /**
-     Encodes the given map into the context data string format for inclusion in a URL.  Keys will be modified
-     (by removing unsupported characters) to match the context data requirements.  Values will be URL Encoded.
+     Encodes the given map into the context data string format for inclusion in a URL. Keys will be modified
+     (by removing unsupported characters) to match the context data requirements. Values will be URL Encoded.
+     - Parameters:
+          - data: Map contains the context data.
+     - Returns: Encoded Context data String.
      */
     static func EncodeContextData(data contextData: [String: String]) -> String {
 
@@ -49,14 +52,20 @@ class ContextDataUtil {
             encodeValueIntoMap(value: value, contextDataMap: &encodedMap, keys: key.split(separator: ".", omittingEmptySubsequences: true), index: 0)
         }
 
-        return serializeMapToQueryString(map: encodedMap)
+        return serializeMapToQueryString(dictionary: encodedMap)
     }
 
-    private static func serializeMapToQueryString(map: [String: Any]) -> String {
+    /**
+     Serializes the entries of Dictionary to query string format for url String.
+     This method is recursive to handle the nested data objects.
+     - Parameters dictionary: The dictionary to serialize.
+     - Returns: The serialized String.
+     */
+    private static func serializeMapToQueryString(dictionary: [String: Any]) -> String {
 
         var queryParams = String.init()
 
-        for (key, value) in map {
+        for (key, value) in dictionary {
             guard let urlEncodedKey = key.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed), !urlEncodedKey.isEmpty else {
                 continue
             }
@@ -80,7 +89,17 @@ class ContextDataUtil {
         return queryParams
     }
 
-    private static func encodeValueIntoMap(value: String, contextDataMap: inout [String: ContextData], keys: [String.SubSequence], index: Int) {
+    
+    /**
+     Encodes the arguement `value` into `ContextData` Dictionary.
+     This function process `keys` recursively.
+     - Parameters:
+        - value: The String to be encoded.
+        - contextDataDictionary: The Dictionary that will contain the encoded `ContextData`.
+        - keys: Array containing the splitted key.
+        - index: index of the `keys` array.     
+     */
+    private static func encodeValueIntoMap(value: String, contextDataDictionary: inout [String: ContextData], keys: [String.SubSequence], index: Int) {
 
         guard index < keys.count else {
             return
@@ -89,20 +108,25 @@ class ContextDataUtil {
         let keyName = String(keys[index])
 
         if keys.count - 1 == index {
-            let contextData = contextDataMap[keyName] ?? ContextData.init()
+            let contextData = contextDataDictionary[keyName] ?? ContextData.init()
             contextData.value = value
-            if !contextDataMap.keys.contains(keyName) {
-                contextDataMap[keyName] = contextData
+            if !contextDataDictionary.keys.contains(keyName) {
+                contextDataDictionary[keyName] = contextData
             }
         } else {
-            let contextData = contextDataMap[keyName] ?? ContextData.init()
-            if !contextDataMap.keys.contains(keyName) {
-                contextDataMap[keyName] = contextData
+            let contextData = contextDataDictionary[keyName] ?? ContextData.init()
+            if !contextDataDictionary.keys.contains(keyName) {
+                contextDataDictionary[keyName] = contextData
             }
-            encodeValueIntoMap(value: value, contextDataMap: &contextDataMap, keys: keys, index: index + 1)
+            encodeValueIntoMap(value: value, contextDataDictionary: &contextDataDictionary, keys: keys, index: index + 1)
         }
     }
 
+    /**
+     Takes dictionary as an argument, clean the keys and returns the dictionary with cleaned keys.
+     - Parameters contextData: The dictionary to be cleaned.
+     - Returns: Dictionary with clean keys.
+     */
     private static func cleanDictionaryKeys(contextData: [String: String]) -> [String: String] {
         var cleanDictionary = [String: String]()
         for (key, value) in contextData {
@@ -115,6 +139,11 @@ class ContextDataUtil {
         return cleanDictionary
     }
 
+    /**
+     Cleans the `key` passed as an arguement using the contextDataMask. Only the characters which are enabled in `contextDataMask` are allowed in the cleaned key.
+     - Parameters key: The key to be cleaned.
+     - Returns: The cleaned key.
+     */
     private static func cleanKey(key: String) -> String {
         guard !key.isEmpty else {
             return ""
@@ -134,11 +163,11 @@ class ContextDataUtil {
             }
         }
         if cleanedKey.first == period {
-            cleanedKey.remove(at: cleanedKey.startIndex)
+            cleanedKey.removeFirst()
         }
 
         if cleanedKey.last == period {
-            cleanedKey.popLast()
+            cleanedKey.removeLast()
         }
         return cleanedKey
     }
