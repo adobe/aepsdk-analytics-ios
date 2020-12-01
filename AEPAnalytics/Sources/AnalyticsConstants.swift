@@ -112,6 +112,7 @@ enum AnalyticsConstants {
         static let KEY_MID = "mid"
         static let KEY_BLOB = "aamb"
         static let KEY_LOCATION_HINT = "aamlh"
+        static let KEY_ORG = "mcorgid"
     }
 
     enum DataStoreKeys {

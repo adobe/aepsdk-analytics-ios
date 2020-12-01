@@ -37,7 +37,7 @@ public class Analytics: NSObject, Extension {
         registerListener(type: EventType.genericTrack, source: EventSource.requestContent, listener: handleAnalyticsRequest)
 //        registerListener(type: EventType.rulesEngine, source: EventSource.responseContent, listener: handleAnalyticsRequest)
 //        registerListener(type: EventType.analytics, source: EventSource.requestContent, listener: handleAnalyticsRequest)
-//        registerListener(type: EventType.analytics, source: EventSource.requestIdentity, listener: handleAnalyticsRequest)
+        registerListener(type: EventType.analytics, source: EventSource.requestIdentity, listener: handleAnalyticsRequest)
 //        registerListener(type: EventType.configuration, source: EventSource.responseContent, listener: handleAnalyticsRequest)
         registerListener(type: EventType.acquisition, source: EventSource.responseContent, listener: handleAnalyticsRequest)
         registerListener(type: EventType.lifecycle, source: EventSource.responseContent, listener: handleLifecycleEvents)
@@ -85,6 +85,13 @@ extension Analytics {
         case EventType.acquisition:
             analyticsProperties.dispatchQueue.async {
                 self.handleAcquisitionEvent(event)
+            }
+            break
+        case EventType.analytics:
+            if event.source == EventSource.requestIdentity {
+                analyticsProperties.dispatchQueue.async {
+                    self.handleAnalyticsRequestIdentityEvent(event)
+                }
             }
             break
         default:
@@ -166,6 +173,60 @@ extension Analytics {
             }
         }
     }
+
+    /// Handles the following events
+    /// `EventType.analytics` and `EventSource.requestIdentity`
+    /// - Parameter event: The `Event` to be processed.
+    private func handleAnalyticsRequestIdentityEvent(_ event: Event) {
+        if let eventData = event.data ?? [:], !eventData.isEmpty {
+            if let vid = eventData[AnalyticsConstants.EventDataKeys.VISITOR_IDENTIFIER] as? String, !vid.isEmpty {
+                // Update VID request
+                handleVisitorIdentifierRequest(event: event, vid: vid)
+            } else { // AID/VID request
+                handleAnalyticsIdRequest(event: event)
+            }
+        }
+    }
+
+    private func handleVisitorIdentifierRequest(event: Event, vid: String) {
+        let analyticsState = createAnalyticsState(forEvent: event, dependencies: [AnalyticsConstants.Configuration.EventDataKeys.SHARED_STATE_NAME])
+        if analyticsState.privacyStatus == .optedOut {
+            Log.debug(label: LOG_TAG, "handleVisitorIdentifierRequest - Privacy is opted out, ignoring the Visitor Identifier Request.")
+            return
+        }
+
+        // persist the visitor identifier
+        analyticsProperties.updateAnalyticsVisitorIdentifier(vid: vid)
+
+        // update analytics shared state
+        let stateData = getStateData()
+        createSharedState(data: stateData, event: event)
+
+        // dispatch unpaired response for any extensions listening for AID/VID change
+        let responseIdentityEvent = event.createResponseEvent(name: "TrackingIdentifierValue", type: EventType.analytics, source: EventSource.responseIdentity, data: stateData)
+        dispatch(event: responseIdentityEvent)
+    }
+
+    private func handleAnalyticsIdRequest(event: Event) {
+
+    }
+
+    /// Get the data for the Analytics extension share with other extensions.
+    /// The state data is only populated if the set privacy status is not `PrivacyStatus.optedOut`.
+    /// - Returns: A dictionary containing the event data to store in the analytics shared state
+    func getStateData() -> [String: Any] {
+        var data = [String: Any]()
+        if let aid = analyticsProperties.getAnalyticsIdentifier() ?? "", !aid.isEmpty {
+            data[AnalyticsConstants.EventDataKeys.ANALYTICS_ID] = aid
+        }
+
+        if let vid = analyticsProperties.getVisitorIdentifier() ?? "", !vid.isEmpty {
+            data[AnalyticsConstants.EventDataKeys.VISITOR_IDENTIFIER] = vid
+        }
+
+        return data
+    }
+
 }
 
 /// Timeout timers.

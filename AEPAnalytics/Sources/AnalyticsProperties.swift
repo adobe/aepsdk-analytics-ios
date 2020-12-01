@@ -22,10 +22,10 @@ struct AnalyticsProperties {
     var locale: Locale?
 
     /// Analytics AID (legacy)
-    var aid: String?
+    private var aid: String?
 
     /// Analytics VID (legacy)
-    var vid: String?
+    private var vid: String?
 
     /// Time in seconds when previous lifecycle session was paused.
     var lifecyclePreviousSessionPauseTimestamp: Date?
@@ -96,6 +96,48 @@ struct AnalyticsProperties {
     /// - Returns `True` if either of the timer is running.
     func isDatabaseWaiting() -> Bool {
         return (!(referrerDispatchWorkItem?.isCancelled ?? true) && referrerTimerRunning) || (!(lifecycleDispatchWorkItem?.isCancelled ?? true) && lifecycleTimerRunning)
+    }
+
+    mutating func updateAnalyticsIdentifier(aid: String?) {
+        if aid != nil {
+            dataStore.remove(key: AnalyticsConstants.DataStoreKeys.AID_KEY)
+        } else {
+            dataStore.set(key: AnalyticsConstants.DataStoreKeys.AID_KEY, value: aid)
+        }
+
+        self.aid = aid
+    }
+
+    /// Returns the `aid` from the AnalyticsProperties instance.
+    /// If there is no `aid` value in memory, this method attempts to find one from the DataStore.
+    /// - Returns: A string containing the `aid`
+    mutating func getAnalyticsIdentifier() -> String? {
+        if self.aid == nil {
+            // check data store to see if we can return a visitor identifier from persistence
+            self.aid = (dataStore.getString(key: AnalyticsConstants.DataStoreKeys.AID_KEY))
+        }
+        return self.aid ?? ""
+    }
+
+    mutating func updateAnalyticsVisitorIdentifier(vid: String?) {
+        if vid != nil {
+            dataStore.remove(key: AnalyticsConstants.DataStoreKeys.VISITOR_IDENTIFIER_KEY)
+        } else {
+            dataStore.set(key: AnalyticsConstants.DataStoreKeys.VISITOR_IDENTIFIER_KEY, value: vid)
+        }
+
+        self.vid = vid
+    }
+
+    /// Returns the `vid` from the AnalyticsProperties instance.
+    /// If there is no `vid` value in memory, this method attempts to find one from the DataStore.
+    /// - Returns: A string containing the `vid`
+    mutating func getVisitorIdentifier() -> String? {
+        if self.vid == nil {
+            // check data store to see if we can return a visitor identifier from persistence
+            self.vid = (dataStore.getString(key: AnalyticsConstants.DataStoreKeys.VISITOR_IDENTIFIER_KEY))
+        }
+        return self.vid ?? ""
     }
 }
 
