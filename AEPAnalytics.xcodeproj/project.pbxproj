@@ -14,6 +14,7 @@
 		3D1D45B2253F99130053CB47 /* AnalyticsStateTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1D45B1253F99120053CB47 /* AnalyticsStateTest.swift */; };
 		3D1D45B625425F240053CB47 /* ContextDataUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1D45B525425F230053CB47 /* ContextDataUtil.swift */; };
 		3DAA40BB2548C58100703509 /* ContextData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DAA40BA2548C58100703509 /* ContextData.swift */; };
+		3DC1E0242575CB5100E0AA16 /* AnalyticsRequestSerializeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DC1E0232575CB5100E0AA16 /* AnalyticsRequestSerializeTests.swift */; };
 		3DCDB3DF252E853200ABA819 /* AnalyticsProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DCDB3DE252E853200ABA819 /* AnalyticsProperties.swift */; };
 		3DD0693F253516EC00877781 /* AnalyticsPropertiesTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DD0693E253516EC00877781 /* AnalyticsPropertiesTest.swift */; };
 		3DD8E6E82566FDEB009234FD /* AnalyticsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DD8E6E72566FDEB009234FD /* AnalyticsTest.swift */; };
@@ -53,6 +54,7 @@
 		3D1D45B3253F9EE60053CB47 /* AnalyticsTestConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsTestConstants.swift; sourceTree = "<group>"; };
 		3D1D45B525425F230053CB47 /* ContextDataUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextDataUtil.swift; sourceTree = "<group>"; };
 		3DAA40BA2548C58100703509 /* ContextData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextData.swift; sourceTree = "<group>"; };
+		3DC1E0232575CB5100E0AA16 /* AnalyticsRequestSerializeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsRequestSerializeTests.swift; sourceTree = "<group>"; };
 		3DCDB3DE252E853200ABA819 /* AnalyticsProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsProperties.swift; sourceTree = "<group>"; };
 		3DD0693E253516EC00877781 /* AnalyticsPropertiesTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsPropertiesTest.swift; sourceTree = "<group>"; };
 		3DD8E6E72566FDEB009234FD /* AnalyticsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsTest.swift; sourceTree = "<group>"; };
@@ -151,6 +153,7 @@
 				3DD0693E253516EC00877781 /* AnalyticsPropertiesTest.swift */,
 				3D1D45B1253F99120053CB47 /* AnalyticsStateTest.swift */,
 				3DD8E6E72566FDEB009234FD /* AnalyticsTest.swift */,
+				3DC1E0232575CB5100E0AA16 /* AnalyticsRequestSerializeTests.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -415,6 +418,7 @@
 				AC33336E253651E000BF8A56 /* EventHub+Test.swift in Sources */,
 				3DD0693F253516EC00877781 /* AnalyticsPropertiesTest.swift in Sources */,
 				3DD8E6E82566FDEB009234FD /* AnalyticsTest.swift in Sources */,
+				3DC1E0242575CB5100E0AA16 /* AnalyticsRequestSerializeTests.swift in Sources */,
 				AC277D03252C23F400987C67 /* AnalyticsAPITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

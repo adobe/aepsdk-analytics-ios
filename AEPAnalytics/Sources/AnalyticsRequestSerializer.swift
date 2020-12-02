@@ -19,8 +19,9 @@ class AnalyticsRequestSerializer {
     /// - Parameter identifiableList an array of Identifiable Type that we want to process in the analytics format.
     /// - Returns the serialized String of Indentifiable VisitorId's. Retuns empty string if Identifiable Array is empty.
     func generateAnalyticsCustomerIdString(from identifiableList: [Identifiable?]) -> String {
+        var analyticsCustomerIdString = ""
         guard !identifiableList.isEmpty else {
-            return ""
+            return analyticsCustomerIdString
         }
         var visitorDataMap = [String: String]()
         for identifiable in identifiableList {
@@ -30,16 +31,28 @@ class AnalyticsRequestSerializer {
             }
         }
 
-        return "&cid.\(ContextDataUtil.EncodeContextData(data: visitorDataMap))&.cid"
+        var translateIds : [String:ContextData] = [:]
+        translateIds["cid"] = ContextDataUtil.translateContextData(data: visitorDataMap)
+
+        ContextDataUtil.serializeToQueryString(parameters: translateIds, requestString: &analyticsCustomerIdString)
+        return analyticsCustomerIdString
     }
 
+    /**
+     Serializes the analytics data and vars into the request string that will be later on stored in
+     database as a new hit to be processed.
+     - Parameters:
+        - analyticsState: object represents the shared state of other dependent modules.
+        - data: Analytics data map computed with `Analytics.processAnalyticsContextData`.
+        - vars: analytics vars map computed with  `Analytics.processAnalyticsVars`.
+     - Returns: A serialized String.
+     */
     func buildRequest(analyticsState: AnalyticsState, data: [String: String]?, vars: [String: String]?) -> String {
         var analyticsVars: [String: Any] = [:]
 
         if let vars = vars, !vars.isEmpty {
-            vars.forEach {
-                key, value in
-                if !key.isEmpty{
+            vars.forEach { key, value in
+                if !key.isEmpty {
                     analyticsVars[key] = value
                 }
             }
