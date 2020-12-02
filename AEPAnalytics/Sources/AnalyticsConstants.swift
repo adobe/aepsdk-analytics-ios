@@ -107,6 +107,7 @@ enum AnalyticsConstants {
         static let LIFECYCLE_MAX_SESSION_LENGTH = TimeInterval.init()
         static let LIFECYCLE_SESSION_START_TIMESTAMP = TimeInterval.init()
         static let LIFECYCLE_PAUSE_START_TIMEOUT = TimeInterval.init(1)
+        static let ANALYTICS_CONNECTION_TIMEOUT = TimeInterval.init(5)
     }
 
     enum ParameterKeys {
@@ -135,6 +136,10 @@ enum AnalyticsConstants {
         static let FORMATTED_TIMESTAMP_KEY  = "t"
         static let STRING_TIMESTAMP_KEY     = "ts"
         static let CUSTOMER_PERSPECTIVE_KEY = "cp"
+    }
+
+    enum HttpConnection {
+        static let HTTP_HEADER_KEY_ACCEPT_LANGUAGE = "Accept-Language"
     }
 
     static let MAP_EVENT_DATA_KEYS_TO_CONTEXT_DATA_KEYS: [String: String] = [

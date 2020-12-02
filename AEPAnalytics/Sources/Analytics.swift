@@ -191,6 +191,10 @@ extension Analytics {
         }
     }
 
+    /// Stores the passed in visitor identifier in the analytics datastore via the `AnalyticsProperties`.
+    /// - Parameters:
+    ///     - event: The `Event` which triggered the visitor identifier update.
+    ///     - vid: The visitor identifier to be persisted in the datastore.
     private func updateVisitorIdentifier(event: Event, vid: String) {
         let analyticsState = createAnalyticsState(forEvent: event, dependencies: [AnalyticsConstants.Configuration.EventDataKeys.SHARED_STATE_NAME])
         if analyticsState.privacyStatus == .optedOut {
@@ -201,14 +205,13 @@ extension Analytics {
         // persist the visitor identifier
         analyticsProperties.setAnalyticsVisitorIdentifier(vid: vid)
 
-        // update analytics shared state
-        let stateData = getStateData()
-        createSharedState(data: stateData, event: event)
-
-        // dispatch response for any extensions listening for AID/VID change
-        dispatchAnalyticsIdentityResponse(event: event, stateData: stateData)
+        // create a new analytics shared state and dispatch response for any extensions listening for AID/VID change
+        dispatchAnalyticsIdentityResponse(event: event)
     }
 
+    /// Sends an analytics id request and processes the response from the server.
+    /// - Parameters:
+    ///     - event: The `Event` which triggered the sending of the analytics id request.
     private func sendAnalyticsIdRequest(event: Event) {
         let analyticsState = createAnalyticsState(forEvent: event, dependencies: [AnalyticsConstants.Configuration.EventDataKeys.SHARED_STATE_NAME])
 
@@ -217,16 +220,14 @@ extension Analytics {
             Log.debug(label: LOG_TAG, "sendAnalyticsIdRequest - Analytics is not configured or privacy is opted out, the analytics identifier request will not be sent.")
             analyticsProperties.setAnalyticsIdentifier(aid: nil)
             analyticsProperties.setAnalyticsVisitorIdentifier(vid: nil)
-            // the created shared state will contain nil data. dispatch this data in a response event for any extensions listening for AID/VID change
-            let stateData = getStateData()
-            createSharedState(data: stateData, event: event)
-            dispatchAnalyticsIdentityResponse(event: event, stateData: stateData)
+            // create nil shared state  and dispatch this data in a response event for any extensions listening for AID/VID change
+            dispatchAnalyticsIdentityResponse(event: event)
             return
         }
 
         // two conditions where we need to retrieve aid
-        // 1. no saved AID & no marketing cloud org id, we need to get one from visitor ID service  (otherwise we should be using MID from AAM)
-        // 2. visitorIdServiceEnabled is NO and ignoreAID is YES
+        // 1. no saved AID & no marketing cloud org id, we need to get one from visitor ID service  (otherwise we should be using ECID from AAM)
+        // 2. isVisitorIdServiceEnabled is false and ignoreAidStatus is true
         let ignoreAidStatus = analyticsProperties.getIgnoreAidStatus()
         var aid = analyticsProperties.getAnalyticsIdentifier() ?? ""
         if (!ignoreAidStatus && aid.isEmpty)
@@ -239,11 +240,30 @@ extension Analytics {
                     analyticsProperties.setAnalyticsIdentifier(aid: aid)
                 }
 
-                let stateData = getStateData()
-                createSharedState(data: stateData, event: event)
-                dispatchAnalyticsIdentityResponse(event: event, stateData: stateData)
+                dispatchAnalyticsIdentityResponse(event: event)
                 return
             }
+
+            guard let url = analyticsState.buildAnalyticsIdRequestURL(properties: analyticsProperties) else {
+                return
+            }
+
+            Log.debug(label: LOG_TAG, "sendAnalyticsIdRequest - Sending Analytics ID call (\(url)).")
+            ServiceProvider.shared.networkService.connectAsync(networkRequest: buildAnalyticsIdentityRequest(url: url)) { (connection) in
+                if connection.response == nil {
+                    Log.debug(label: self.LOG_TAG, "sendAnalyticsIdRequest - Unable to read response for AID request, connection was nil.")
+                } else if connection.responseCode != 200 {
+                    Log.debug(label: self.LOG_TAG, "sendAnalyticsIdRequest - Unable to read response for AID request. Connection response code = \(String(describing: connection.responseCode)).")
+                } else {
+                    guard let responseData = connection.data, let aid = self.parseIdentifier(state: analyticsState, response: responseData) else { return }
+                    Log.debug(label: self.LOG_TAG, "sendAnalyticsIdRequest - Successfully sent the AID request, received response.")
+                    self.analyticsProperties.setAnalyticsIdentifier(aid: aid)
+                    self.dispatchAnalyticsIdentityResponse(event: event)
+                }
+            }
+            return
+        } else {
+            dispatchAnalyticsIdentityResponse(event: event)
         }
     }
 
@@ -260,13 +280,46 @@ extension Analytics {
         return data
     }
 
-    /// Dispatches a analytics response identity event.
+    /// Creates a new analytics shared state then dispatches a analytics response identity event.
     /// - Parameters:
     ///   - event: the event which triggered the analytics identity request.
-    ///   - stateData: the analytics data to be shared.
-    private func dispatchAnalyticsIdentityResponse(event: Event, stateData: [String: Any]) {
+    private func dispatchAnalyticsIdentityResponse(event: Event) {
+        let stateData = getStateData()
+        createSharedState(data: stateData, event: event)
         let responseIdentityEvent = event.createResponseEvent(name: "TrackingIdentifierValue", type: EventType.analytics, source: EventSource.responseIdentity, data: stateData)
         dispatch(event: responseIdentityEvent)
+    }
+
+    /// Builds an analytics identity `NetworkRequest`.
+    /// - Parameters:
+    ///   - url: the url of the analytics identity request.
+    /// - Returns: the built analytics identity `NetworkRequest`.
+    private func buildAnalyticsIdentityRequest(url: URL) -> NetworkRequest {
+        var headers = [String: String]()
+        let locale = ServiceProvider.shared.systemInfoService.getActiveLocaleName()
+        if !locale.isEmpty {
+            headers[AnalyticsConstants.HttpConnection.HTTP_HEADER_KEY_ACCEPT_LANGUAGE] = locale
+        }
+
+        return NetworkRequest(url: url, httpMethod: .get, connectPayload: "", httpHeaders: headers, connectTimeout: AnalyticsConstants.Default.ANALYTICS_CONNECTION_TIMEOUT, readTimeout: AnalyticsConstants.Default.ANALYTICS_CONNECTION_TIMEOUT)
+    }
+
+    /// Parses the analytics id present in a response received from analytics.
+    /// - Parameters:
+    ///     - state: The current `AnalyticsState`.
+    ///     - response: The response received from analytics.
+    /// - Returns: a string containing the analytcs id contained in the response.
+    private func parseIdentifier(state: AnalyticsState, response: Data) -> String? {
+        var aid = String()
+        guard let jsonResponse = try? JSONDecoder().decode(AnalyticsHitResponse.self, from: response) else {
+            Log.debug(label: self.LOG_TAG, "parseIdentifier - Failed to parse analytics server response.")
+            return nil
+        }
+        aid = jsonResponse.aid ?? ""
+        if aid.isEmpty {
+            aid = state.isVisitorIdServiceEnabled() ? "" : generateAID()
+        }
+        return aid
     }
 
     /// Generates a random Analytics ID.
@@ -280,8 +333,8 @@ extension Analytics {
 
         uuid = uuid.replacingOccurrences(of: "-", with: "", options: .literal, range: nil).uppercased()
 
-        let firstPattern = try! NSRegularExpression(pattern: "^[89A-F]")
-        let secondPattern = try! NSRegularExpression(pattern: "^[4-9A-F]")
+        guard let firstPattern = try? NSRegularExpression(pattern: "^[89A-F]") else { return "" }
+        guard let secondPattern = try? NSRegularExpression(pattern: "^[4-9A-F]") else { return "" }
 
         var substring = uuid.prefix(halfAidLength)
         var firstPartUuid = String(substring)

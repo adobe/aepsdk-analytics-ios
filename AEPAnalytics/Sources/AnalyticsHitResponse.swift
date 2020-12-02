@@ -9,15 +9,14 @@
  governing permissions and limitations under the License.
  */
 
-import AEPServices
 import Foundation
 
-extension Networking {
-    /// Sends the `NetworkRequest` containing the Analytics ID request
-    /// - Parameters:
-    ///   - url: The Analytics Identity Request URL
-    func sendAnalyticsIdRequest(url: URL) {
-        Log.debug(label: "Networking+Analytics:\(#function)", "Sending Analytics ID call to \(url)")
-        ServiceProvider.shared.networkService.connectAsync(networkRequest: NetworkRequest(url: url), completionHandler: nil) // todo: handle response: need to get AID
+/// Struct to represent Analytics Extension network call json response.
+struct AnalyticsHitResponse: Codable {
+    /// AID value as received in the analytics network response json
+    let aid: String?
+
+    enum CodingKeys: String, CodingKey {
+        case aid = "id"
     }
 }
