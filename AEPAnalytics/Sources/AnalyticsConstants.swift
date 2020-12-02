@@ -22,11 +22,12 @@ enum AnalyticsConstants {
     static let IGNORE_PAGE_NAME_VALUE                   = "lnk_o"
     static let ACTION_PREFIX                            = "AMACTION:"
     static let INTERNAL_ACTION_PREFIX                   = "ADBINTERNAL:"
-    static let VAR_ESCAPE_PREFIX                         = "&&"
-    static let ANALYTICS_REQUEST_CONTEXT_DATA_KEY        = "c"
-    static let TRACK_INTERNAL_ADOBE_LINK                 = "AdobeLink"
-    static let APP_STATE_FOREGROUND                       = "foreground"
-    static let APP_STATE_BACKGROUND                       = "background"
+    static let VAR_ESCAPE_PREFIX                        = "&&"
+    static let ANALYTICS_REQUEST_CONTEXT_DATA_KEY       = "c"
+    static let TRACK_INTERNAL_ADOBE_LINK                = "AdobeLink"
+    static let APP_STATE_FOREGROUND                     = "foreground"
+    static let APP_STATE_BACKGROUND                     = "background"
+    static let AID_LENGTH                               = 33
 
     enum EventDataKeys {
         static let STATE_OWNER      = ""
@@ -106,12 +107,14 @@ enum AnalyticsConstants {
         static let LIFECYCLE_MAX_SESSION_LENGTH = TimeInterval.init()
         static let LIFECYCLE_SESSION_START_TIMESTAMP = TimeInterval.init()
         static let LIFECYCLE_PAUSE_START_TIMEOUT = TimeInterval.init(1)
+        static let ANALYTICS_CONNECTION_TIMEOUT = TimeInterval.init(5)
     }
 
     enum ParameterKeys {
         static let KEY_MID = "mid"
         static let KEY_BLOB = "aamb"
         static let KEY_LOCATION_HINT = "aamlh"
+        static let KEY_ORG = "mcorgid"
     }
 
     enum DataStoreKeys {
@@ -133,6 +136,10 @@ enum AnalyticsConstants {
         static let FORMATTED_TIMESTAMP_KEY  = "t"
         static let STRING_TIMESTAMP_KEY     = "ts"
         static let CUSTOMER_PERSPECTIVE_KEY = "cp"
+    }
+
+    enum HttpConnection {
+        static let HTTP_HEADER_KEY_ACCEPT_LANGUAGE = "Accept-Language"
     }
 
     static let MAP_EVENT_DATA_KEYS_TO_CONTEXT_DATA_KEYS: [String: String] = [
