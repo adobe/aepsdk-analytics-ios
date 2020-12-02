@@ -67,7 +67,11 @@ class AnalyticsRequestSerializeTests : XCTestCase {
         XCTAssertTrue(contextData.contains("&testKey1=val1"))
         XCTAssertTrue(contextData.contains("&testKey2=val2"))
         let additionalData = getAdditionalData(source: result)
-        XCTAssertEqual("ndh=1&v2=evar2Value&v1=evar1Value", additionalData)
+        let splittedAddionalData = additionalData.split(separator: "&")
+        XCTAssertTrue(splittedAddionalData.count == 3)
+        XCTAssertTrue(additionalData.starts(with: "ndh=1"))
+        XCTAssertTrue(additionalData.contains("&v2=evar2Value"))
+        XCTAssertTrue(additionalData.contains("&v1=evar1Value"))
         XCTAssertTrue(getCidData(source: result).isEmpty)
     }
 
@@ -148,7 +152,12 @@ class AnalyticsRequestSerializeTests : XCTestCase {
         vars["v1"] = "evar1Value"
 
         let result = analyticsRequestSerializer.buildRequest(analyticsState: analyticsState, data: data, vars: vars)
-        XCTAssertEqual("ndh=1&key1=val1&v1=evar1Value", getAdditionalData(source: result))
+        let additionalData = getAdditionalData(source: result)
+        let splittedAddionalData = additionalData.split(separator: "&")
+        XCTAssertTrue(splittedAddionalData.count == 3)
+        XCTAssertTrue(additionalData.starts(with: "ndh=1"))
+        XCTAssertTrue(additionalData.contains("&key1=val1"))
+        XCTAssertTrue(additionalData.contains("&v1=evar1Value"))        
         XCTAssertEqual("&c.&key2=val2&.c", getContextData(source: result))
         XCTAssertTrue(getCidData(source: result).isEmpty)
     }
@@ -175,7 +184,16 @@ class AnalyticsRequestSerializeTests : XCTestCase {
         let result = analyticsRequestSerializer.buildRequest(analyticsState: analyticsState, data: data, vars: vars)
         XCTAssertEqual("ndh=1&v1=evar1Value", getAdditionalData(source: result))
         XCTAssertEqual("&c.&key1=val1&.c", getContextData(source: result))
-        XCTAssertEqual("&cid.&type1.&as=1&id=97717&.type1&.cid", getCidData(source: result))
+        let cidData = getCidData(source: result)
+        let splittedCidData = cidData.split(separator: "&")
+        XCTAssertTrue(splittedCidData.count == 6)
+        XCTAssertTrue(cidData.starts(with: "&cid."))
+
+        XCTAssertTrue(cidData.contains("type1."))
+        XCTAssertTrue(cidData.contains("as=1"))
+        XCTAssertTrue(cidData.contains("id=97717"))
+        XCTAssertTrue(cidData.contains(".type1"))
+        XCTAssertTrue(cidData.contains("&.cid"))
     }
 }
 

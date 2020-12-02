@@ -94,7 +94,7 @@ enum AnalyticsTestConstants {
     }
     
     enum Default {
-        static let PRIVACY_STATUS: PrivacyStatus = .optedIn
+        static let PRIVACY_STATUS: PrivacyStatus = .unknown
         static let FORWARDING_ENABLED = false
         static let OFFLINE_ENABLED = false
         static let BACKDATE_SESSION_INFO_ENABLED = false
