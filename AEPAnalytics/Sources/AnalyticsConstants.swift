@@ -22,11 +22,12 @@ enum AnalyticsConstants {
     static let IGNORE_PAGE_NAME_VALUE                   = "lnk_o"
     static let ACTION_PREFIX                            = "AMACTION:"
     static let INTERNAL_ACTION_PREFIX                   = "ADBINTERNAL:"
-    static let VAR_ESCAPE_PREFIX                         = "&&"
-    static let ANALYTICS_REQUEST_CONTEXT_DATA_KEY        = "c"
-    static let TRACK_INTERNAL_ADOBE_LINK                 = "AdobeLink"
-    static let APP_STATE_FOREGROUND                       = "foreground"
-    static let APP_STATE_BACKGROUND                       = "background"
+    static let VAR_ESCAPE_PREFIX                        = "&&"
+    static let ANALYTICS_REQUEST_CONTEXT_DATA_KEY       = "c"
+    static let TRACK_INTERNAL_ADOBE_LINK                = "AdobeLink"
+    static let APP_STATE_FOREGROUND                     = "foreground"
+    static let APP_STATE_BACKGROUND                     = "background"
+    static let AID_LENGTH                               = 33
 
     enum EventDataKeys {
         static let STATE_OWNER      = ""

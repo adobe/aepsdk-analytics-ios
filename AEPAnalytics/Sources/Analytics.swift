@@ -42,7 +42,7 @@ public class Analytics: NSObject, Extension {
         registerListener(type: EventType.acquisition, source: EventSource.responseContent, listener: handleAnalyticsRequest)
         registerListener(type: EventType.lifecycle, source: EventSource.responseContent, listener: handleLifecycleEvents)
         registerListener(type: EventType.genericLifecycle, source: EventSource.requestContent, listener: handleAnalyticsRequest)
-//        registerListener(type: EventType.hub, source: EventSource.sharedState, listener: handleAnalyticsRequest)
+        registerListener(type: EventType.hub, source: EventSource.sharedState, listener: handleAnalyticsRequest)
     }
 
     public func onUnregistered() {}
@@ -81,19 +81,22 @@ extension Analytics {
             analyticsProperties.dispatchQueue.async {
                 self.handleLifecycleEvents(event)
             }
-            break
         case EventType.acquisition:
             analyticsProperties.dispatchQueue.async {
                 self.handleAcquisitionEvent(event)
             }
-            break
         case EventType.analytics:
             if event.source == EventSource.requestIdentity {
                 analyticsProperties.dispatchQueue.async {
                     self.handleAnalyticsRequestIdentityEvent(event)
                 }
             }
-            break
+        case EventType.hub:
+            if event.source == EventSource.sharedState {
+                analyticsProperties.dispatchQueue.async {
+                    self.sendAnalyticsIdRequest(event: event)
+                }
+            }
         default:
             break
         }
@@ -181,50 +184,123 @@ extension Analytics {
         if let eventData = event.data ?? [:], !eventData.isEmpty {
             if let vid = eventData[AnalyticsConstants.EventDataKeys.VISITOR_IDENTIFIER] as? String, !vid.isEmpty {
                 // Update VID request
-                handleVisitorIdentifierRequest(event: event, vid: vid)
+                updateVisitorIdentifier(event: event, vid: vid)
             } else { // AID/VID request
-                handleAnalyticsIdRequest(event: event)
+                sendAnalyticsIdRequest(event: event)
             }
         }
     }
 
-    private func handleVisitorIdentifierRequest(event: Event, vid: String) {
+    private func updateVisitorIdentifier(event: Event, vid: String) {
         let analyticsState = createAnalyticsState(forEvent: event, dependencies: [AnalyticsConstants.Configuration.EventDataKeys.SHARED_STATE_NAME])
         if analyticsState.privacyStatus == .optedOut {
-            Log.debug(label: LOG_TAG, "handleVisitorIdentifierRequest - Privacy is opted out, ignoring the Visitor Identifier Request.")
+            Log.debug(label: LOG_TAG, "updateVisitorIdentifier - Privacy is opted out, ignoring the update visitor identifier request.")
             return
         }
 
         // persist the visitor identifier
-        analyticsProperties.updateAnalyticsVisitorIdentifier(vid: vid)
+        analyticsProperties.setAnalyticsVisitorIdentifier(vid: vid)
 
         // update analytics shared state
         let stateData = getStateData()
         createSharedState(data: stateData, event: event)
 
-        // dispatch unpaired response for any extensions listening for AID/VID change
+        // dispatch response for any extensions listening for AID/VID change
+        dispatchAnalyticsIdentityResponse(event: event, stateData: stateData)
+    }
+
+    private func sendAnalyticsIdRequest(event: Event) {
+        let analyticsState = createAnalyticsState(forEvent: event, dependencies: [AnalyticsConstants.Configuration.EventDataKeys.SHARED_STATE_NAME])
+
+        // check if analytics disabled or privacy opt-out and update shared state with empty id
+        if !analyticsState.isAnalyticsConfigured() || analyticsState.privacyStatus == .optedOut {
+            Log.debug(label: LOG_TAG, "sendAnalyticsIdRequest - Analytics is not configured or privacy is opted out, the analytics identifier request will not be sent.")
+            analyticsProperties.setAnalyticsIdentifier(aid: nil)
+            analyticsProperties.setAnalyticsVisitorIdentifier(vid: nil)
+            // the created shared state will contain nil data. dispatch this data in a response event for any extensions listening for AID/VID change
+            let stateData = getStateData()
+            createSharedState(data: stateData, event: event)
+            dispatchAnalyticsIdentityResponse(event: event, stateData: stateData)
+            return
+        }
+
+        // two conditions where we need to retrieve aid
+        // 1. no saved AID & no marketing cloud org id, we need to get one from visitor ID service  (otherwise we should be using MID from AAM)
+        // 2. visitorIdServiceEnabled is NO and ignoreAID is YES
+        let ignoreAidStatus = analyticsProperties.getIgnoreAidStatus()
+        var aid = analyticsProperties.getAnalyticsIdentifier() ?? ""
+        if (!ignoreAidStatus && aid.isEmpty)
+            || (ignoreAidStatus && !analyticsState.isVisitorIdServiceEnabled()) {
+            // if privacy is unknown, don't initiate network call with AID
+            // return current stored AID if have one, otherwise generate one
+            if analyticsState.privacyStatus == .unknown {
+                if aid.isEmpty {
+                    aid = generateAID()
+                    analyticsProperties.setAnalyticsIdentifier(aid: aid)
+                }
+
+                let stateData = getStateData()
+                createSharedState(data: stateData, event: event)
+                dispatchAnalyticsIdentityResponse(event: event, stateData: stateData)
+                return
+            }
+        }
+    }
+
+    /// Get the data for the analytics extension to be shared with other extensions.
+    /// - Returns: The analytics data to be shared.
+    private func getStateData() -> [String: Any] {
+        var data = [String: Any]()
+        let aid = analyticsProperties.getAnalyticsIdentifier() ?? ""
+        data[AnalyticsConstants.EventDataKeys.ANALYTICS_ID] = aid
+
+        let vid = analyticsProperties.getVisitorIdentifier() ?? ""
+        data[AnalyticsConstants.EventDataKeys.VISITOR_IDENTIFIER] = vid
+
+        return data
+    }
+
+    /// Dispatches a analytics response identity event.
+    /// - Parameters:
+    ///   - event: the event which triggered the analytics identity request.
+    ///   - stateData: the analytics data to be shared.
+    private func dispatchAnalyticsIdentityResponse(event: Event, stateData: [String: Any]) {
         let responseIdentityEvent = event.createResponseEvent(name: "TrackingIdentifierValue", type: EventType.analytics, source: EventSource.responseIdentity, data: stateData)
         dispatch(event: responseIdentityEvent)
     }
 
-    private func handleAnalyticsIdRequest(event: Event) {
+    /// Generates a random Analytics ID.
+    /// This method should be used if the analytics server response will be null or invalid.
+    /// - Returns: a string containing a random analytics identifier.
+    private func generateAID() -> String {
+        let halfAidLength = AnalyticsConstants.AID_LENGTH / 2
+        let highBound = 7
+        let lowBound = 3
+        var uuid = UUID().uuidString
 
-    }
+        uuid = uuid.replacingOccurrences(of: "-", with: "", options: .literal, range: nil).uppercased()
 
-    /// Get the data for the Analytics extension share with other extensions.
-    /// The state data is only populated if the set privacy status is not `PrivacyStatus.optedOut`.
-    /// - Returns: A dictionary containing the event data to store in the analytics shared state
-    func getStateData() -> [String: Any] {
-        var data = [String: Any]()
-        if let aid = analyticsProperties.getAnalyticsIdentifier() ?? "", !aid.isEmpty {
-            data[AnalyticsConstants.EventDataKeys.ANALYTICS_ID] = aid
+        let firstPattern = try! NSRegularExpression(pattern: "^[89A-F]")
+        let secondPattern = try! NSRegularExpression(pattern: "^[4-9A-F]")
+
+        var substring = uuid.prefix(halfAidLength)
+        var firstPartUuid = String(substring)
+        substring = uuid.suffix(halfAidLength)
+        var secondPartUuid = String(substring)
+
+        var matches = firstPattern.matches(in: firstPartUuid, range: NSRange(0..<firstPartUuid.count-1))
+        if matches.count != 0 {
+            let range = firstPartUuid.startIndex..<firstPartUuid.index(after: firstPartUuid.startIndex)
+            firstPartUuid = firstPartUuid.replacingCharacters(in: range, with: String(Int.random(in: 1 ..< highBound)))
         }
 
-        if let vid = analyticsProperties.getVisitorIdentifier() ?? "", !vid.isEmpty {
-            data[AnalyticsConstants.EventDataKeys.VISITOR_IDENTIFIER] = vid
+        matches = secondPattern.matches(in: secondPartUuid, range: NSRange(0..<secondPartUuid.count-1))
+        if matches.count != 0 {
+            let range = firstPartUuid.startIndex..<firstPartUuid.index(after: firstPartUuid.startIndex)
+            secondPartUuid = secondPartUuid.replacingCharacters(in: range, with: String(Int.random(in: 1 ..< lowBound)))
         }
 
-        return data
+        return firstPartUuid + "-" + secondPartUuid
     }
 
 }
