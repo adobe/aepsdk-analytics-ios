@@ -124,7 +124,7 @@ class ContextDataUtil {
             if let urlEncodedKey = key.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) {
                 if let contextData = value as? ContextData {
                     if let urlEncodedValue = contextData.value?.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed), !urlEncodedKey.isEmpty {
-                        requestString.append("&\(urlEncodedKey)=\(urlEncodedValue)")                        
+                        requestString.append("&\(urlEncodedKey)=\(urlEncodedValue)")
                     }
 
                     if !contextData.data.isEmpty {
@@ -139,6 +139,14 @@ class ContextDataUtil {
         }
     }
 
+    /**
+     Recursively add the `subkeys` and `value` to `contextData` passed as an arguement.
+     - Parameters:
+         - value: The `String` value to be added.
+         - inContextData: The `ContextData` object in which subkeys and value has to be added.
+         - subkeys: An `Array` of keys to be added.
+         - index: The index pointing to `subkeys` array elements.
+     */
     private static func addValueToContextData(value: String, inContextData contextData: inout ContextData, subkeys: [Substring]?, index: Int) {
         guard let subkeys = subkeys, index < subkeys.count else {
             Log.debug(label: LOG_TAG, "addValueToContextData - subkeys is nil.")

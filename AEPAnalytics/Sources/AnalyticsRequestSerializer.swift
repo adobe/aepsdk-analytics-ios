@@ -31,7 +31,7 @@ class AnalyticsRequestSerializer {
             }
         }
 
-        var translateIds : [String:ContextData] = [:]
+        var translateIds: [String:ContextData] = [:]
         translateIds["cid"] = ContextDataUtil.translateContextData(data: visitorDataMap)
 
         ContextDataUtil.serializeToQueryString(parameters: translateIds, requestString: &analyticsCustomerIdString)
@@ -58,10 +58,12 @@ class AnalyticsRequestSerializer {
             }
         }
 
-        if let data = data, !data.isEmpty {
+        var data: [String: String] = data ?? [:]
+        if !data.isEmpty {
             for (key, value) in data {
-                if !key.isEmpty && key.hasPrefix(AnalyticsConstants.VAR_ESCAPE_PREFIX) {
+                if key.hasPrefix(AnalyticsConstants.VAR_ESCAPE_PREFIX) {
                     analyticsVars[String(key.suffix(from: AnalyticsConstants.VAR_ESCAPE_PREFIX.endIndex))] = value
+                    data.removeValue(forKey: key)
                 }
             }
         }

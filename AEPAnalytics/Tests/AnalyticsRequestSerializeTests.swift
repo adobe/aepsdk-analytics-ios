@@ -137,31 +137,52 @@ class AnalyticsRequestSerializeTests : XCTestCase {
         XCTAssertTrue(result.contains("&testKey2=val2"))
     }
 
-//    func testBuildRequestMovesToVarsWhenDataKeysPrefixed() {
-//        let analyticsRequestSerializer = AnalyticsRequestSerializer.init()
-//        let analyticsState = AnalyticsState.init(dataMap: [String:[String:Any]]())
-//        var data: [String:String] = [:]
-//        data["&&key1"] = "val1"
-//        data["key2"] = "val2"
-//
-//        var vars = [String:String]()
-//        vars["v1"] = "evar1Value"
-//
-//        let result = analyticsRequestSerializer.buildRequest(analyticsState: analyticsState, data: data, vars: vars)
-//        XCTAssertEqual("&c.&key2=val2&.c", getContextData(source: result))
-////        XCTAssertEqual("ndh=1&key1=val1&v1=evar1Value", getAdditionalData(source: result))
-////        XCTAssertEqual(, <#T##expression2: Equatable##Equatable#>)
-//        XCTAssertTrue(getCidData(source: result).isEmpty)
-//
-//
-//    }
+    func testBuildRequestMovesToVarsWhenDataKeysPrefixed() {
+        let analyticsRequestSerializer = AnalyticsRequestSerializer.init()
+        let analyticsState = AnalyticsState.init(dataMap: [String:[String:Any]]())
+        var data: [String:String] = [:]
+        data["&&key1"] = "val1"
+        data["key2"] = "val2"
 
+        var vars = [String:String]()
+        vars["v1"] = "evar1Value"
+
+        let result = analyticsRequestSerializer.buildRequest(analyticsState: analyticsState, data: data, vars: vars)
+        XCTAssertEqual("ndh=1&key1=val1&v1=evar1Value", getAdditionalData(source: result))
+        XCTAssertEqual("&c.&key2=val2&.c", getContextData(source: result))
+        XCTAssertTrue(getCidData(source: result).isEmpty)
+    }
+
+    func testBuildRequestWithVisitorIdList() {
+        let analyticsRequestSerializer = AnalyticsRequestSerializer.init()
+
+        var vars = [String:String]()
+        vars["v1"] = "evar1Value"
+
+        var data: [String:String] = [:]
+        data["key1"] = "val1"
+        var visitorIdList = [Identifiable]()
+        visitorIdList.append(TestIdentifiableImplemetation.init(origin: "orig1", type: "type1", identifier: "97717", authenticationState: MobileVisitorAuthenticationState.authenticated))
+
+        var identityData: [String:Any] = [:]
+        identityData["visitoridslist"] = visitorIdList
+
+        var sharedStates = [String: [String: Any]]()
+        sharedStates[AnalyticsTestConstants.Identity.EventDataKeys.SHARED_STATE_NAME] = identityData
+        let analyticsState = AnalyticsState.init(dataMap: sharedStates)
+        analyticsState.marketingCloudOrganizationId = "orgID"
+
+        let result = analyticsRequestSerializer.buildRequest(analyticsState: analyticsState, data: data, vars: vars)
+        XCTAssertEqual("ndh=1&v1=evar1Value", getAdditionalData(source: result))
+        XCTAssertEqual("&c.&key1=val1&.c", getContextData(source: result))
+        XCTAssertEqual("&cid.&type1.&as=1&id=97717&.type1&.cid", getCidData(source: result))
+    }
 }
 
 //Helper Functions
 extension AnalyticsRequestSerializeTests {
     func getCidData(source: String) -> String {
-        var regex = ".*(&cid\\.(.*)&\\.cid).*"
+        let regex = "&cid\\.(.*)&\\.cid"
         if let range = source.range(of: regex, options: .regularExpression) {
             return String(source[range])
         }
@@ -169,7 +190,7 @@ extension AnalyticsRequestSerializeTests {
     }
 
     func getContextData(source: String) -> String {
-        var regex = "(&c\\.(.*)&\\.c)"
+        let regex = "(&c\\.(.*)&\\.c)"
         if let range = source.range(of: regex, options: .regularExpression) {
             return String(source[range])
         }
