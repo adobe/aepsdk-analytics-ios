@@ -32,28 +32,28 @@ class AnalyticsPropertiesTest: XCTestCase {
     func testCancelReffererTimer() {
         
         analyticsProperties.referrerTimerRunning = true
-        analyticsProperties.referrerTimer = Timer.init(fire: Date.init(), interval: 1000, repeats: false, block: {timer in })
+        analyticsProperties.referrerDispatchWorkItem = DispatchWorkItem{}
         
-        XCTAssertNotNil(analyticsProperties.referrerTimer)
+        XCTAssertNotNil(analyticsProperties.referrerDispatchWorkItem)
         XCTAssertTrue(analyticsProperties.referrerTimerRunning)
                                 
         analyticsProperties.cancelReferrerTimer()
         
-        XCTAssertNil(analyticsProperties.referrerTimer)
+        XCTAssertNil(analyticsProperties.referrerDispatchWorkItem)
         XCTAssertFalse(analyticsProperties.referrerTimerRunning)
     }
     
     func testCancelLifecycleTimer() {
 
         analyticsProperties.lifecycleTimerRunning = true
-        analyticsProperties.lifecycleTimer = Timer.init(fire: Date.init(), interval: 1000, repeats: false, block: {timer in })
+        analyticsProperties.lifecycleDispatchWorkItem = DispatchWorkItem{}
         
-        XCTAssertNotNil(analyticsProperties.lifecycleTimer)
+        XCTAssertNotNil(analyticsProperties.lifecycleDispatchWorkItem)
         XCTAssertTrue(analyticsProperties.lifecycleTimerRunning)
                                 
         analyticsProperties.cancelLifecycleTimer()
         
-        XCTAssertNil(analyticsProperties.lifecycleTimer)
+        XCTAssertNil(analyticsProperties.lifecycleDispatchWorkItem)
         XCTAssertFalse(analyticsProperties.lifecycleTimerRunning)
     }
 }
