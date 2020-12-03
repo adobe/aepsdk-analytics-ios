@@ -151,7 +151,7 @@ struct AnalyticsProperties {
     /// - Parameter:
     ///   - status: The value for the new `vid`.
     mutating func setAnalyticsVisitorIdentifier(vid: String?) {
-        if vid != nil {
+        if vid == nil {
             dataStore.remove(key: AnalyticsConstants.DataStoreKeys.VISITOR_IDENTIFIER_KEY)
         } else {
             dataStore.set(key: AnalyticsConstants.DataStoreKeys.VISITOR_IDENTIFIER_KEY, value: vid)

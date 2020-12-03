@@ -14,15 +14,24 @@ import Foundation
 import XCTest
 @testable import AEPCore
 @testable import AEPAnalytics
-
+@testable import AEPServices
 
 class AnalyticsTest : XCTestCase {
 
-    private var testableExtensionRuntime = TestableExtensionRuntime()
+    var testableExtensionRuntime: TestableExtensionRuntime!
+    var analytics:Analytics!
+    let dataStore = NamedCollectionDataStore(name: AnalyticsConstants.DATASTORE_NAME)
+    var analyticsProperties: AnalyticsProperties!
+
+    override func setUp() {
+        MobileCore.setLogLevel(.error) // reset log level to error before each test
+        testableExtensionRuntime = TestableExtensionRuntime()
+        analytics = Analytics.init(runtime: testableExtensionRuntime)
+        analyticsProperties = AnalyticsProperties.init()
+        analytics.onRegistered()
+    }
 
     func testGetSharedStateForEventWithNoDependencies() {
-
-        let analytics: Analytics = Analytics.init(runtime: testableExtensionRuntime)
         let emptyDependenciesList = [String]()
         let analyticsState = analytics.createAnalyticsState(forEvent: Event.init(name: "", type: "", source: "", data: nil), dependencies: emptyDependenciesList)
 
@@ -33,7 +42,6 @@ class AnalyticsTest : XCTestCase {
     func testGetSharedStateForEvent() {
         let event : Event? = Event.init(name: "", type: "", source: "", data: nil)
         testableExtensionRuntime.otherSharedStates["\(AnalyticsTestConstants.Assurance.EventDataKeys.SHARED_STATE_NAME)-\(String(describing: event?.id))"] = SharedStateResult.init(status: SharedStateStatus.set, value: [AnalyticsTestConstants.Assurance.EventDataKeys.SESSION_ID:"assuranceId"])
-        let analytics: Analytics = Analytics.init(runtime: testableExtensionRuntime)
         let dependenciesList : [String] = [AnalyticsTestConstants.Assurance.EventDataKeys.SHARED_STATE_NAME]
         let analyticsState : AnalyticsState = analytics.createAnalyticsState(forEvent: event!, dependencies: dependenciesList)
 
@@ -43,7 +51,6 @@ class AnalyticsTest : XCTestCase {
     }
 
     func testProcessAnalyticsContextDataShouldReturnEmpty() {
-        let analytics: Analytics = Analytics.init(runtime: testableExtensionRuntime)
         let analyticsState = AnalyticsState.init(dataMap: [String:[String:Any]]())
         let analyticsData : [String:String] = analytics.processAnalyticsContextData(analyticsState: analyticsState, trackEventData: nil)
 
@@ -52,7 +59,6 @@ class AnalyticsTest : XCTestCase {
     }
 
     func testProcessAnalyticsContextData() {
-        let analytics: Analytics = Analytics.init(runtime: testableExtensionRuntime)
         let analyticsState = AnalyticsState.init(dataMap: [String:[String:Any]]())
         let defaultDataKey = "defaultDataKey"
         let defaultDataValue = "defaultDatavalue"
@@ -86,13 +92,35 @@ class AnalyticsTest : XCTestCase {
     }
 
     func testProcessAnalyticsVarsShouldReturnEmpty() {
-        var analyticsProperties = AnalyticsProperties.init()
-        let analytics: Analytics = Analytics.init(runtime: testableExtensionRuntime)
         let analyticsState = AnalyticsState.init(dataMap: [String:[String:Any]]())
         let analyticsData : [String:String] = analytics.processAnalyticsVars(analyticsState: analyticsState, trackData: nil, timestamp: Date.init().timeIntervalSince1970, analyticsProperties: &analyticsProperties)
 
         //Assert that Analytics Data is an empty dictionary.
         XCTAssertEqual(analyticsData.count, 0, "analyticsData data is expected to be empty dictionary.")
+    }
+
+    // ==========================================================================
+    // handleAnalyticsRequestIdentityEvent
+    // ==========================================================================
+    func testHandleAnalyticsRequestIdentityEventWithValidVid() {
+        // setup
+        let data = [AnalyticsConstants.EventDataKeys.VISITOR_IDENTIFIER: "testVid"] as [String: Any]
+        // create the analytics request identity event with the data
+        let event = Event(name: "Test Analytics request identity", type: EventType.analytics, source: EventSource.requestIdentity, data: data)
+        let _ = analytics.readyForEvent(event)
+
+        // test
+        testableExtensionRuntime.simulateComingEvent(event: event)
+        usleep(500)
+
+        // verify shared state was created
+        XCTAssertEqual(1, testableExtensionRuntime.createdSharedStates.count)
+        // verify vid was added to the datastore
+        XCTAssertEqual("testVid", dataStore.getString(key: AnalyticsConstants.DataStoreKeys.VISITOR_IDENTIFIER_KEY))
+        // verify the analytics identity response event was dispatched
+        let responseEvent = testableExtensionRuntime.dispatchedEvents.first(where: { $0.responseID == event.id })
+        XCTAssertNotNil(responseEvent)
+        XCTAssertEqual("testVid", responseEvent?.data?[AnalyticsConstants.EventDataKeys.VISITOR_IDENTIFIER] as? String)
     }
 
 //    func testprocessAnalyticsVars() {

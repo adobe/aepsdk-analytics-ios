@@ -194,7 +194,7 @@ extension Analytics {
     /// Stores the passed in visitor identifier in the analytics datastore via the `AnalyticsProperties`.
     /// - Parameters:
     ///     - event: The `Event` which triggered the visitor identifier update.
-    ///     - vid: The visitor identifier to be persisted in the datastore.
+    ///     - vid: The visitor identifier that was set.
     private func updateVisitorIdentifier(event: Event, vid: String) {
         let analyticsState = createAnalyticsState(forEvent: event, dependencies: [AnalyticsConstants.Configuration.EventDataKeys.SHARED_STATE_NAME])
         if analyticsState.privacyStatus == .optedOut {
