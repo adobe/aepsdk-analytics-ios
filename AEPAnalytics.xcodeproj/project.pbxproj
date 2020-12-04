@@ -25,10 +25,11 @@
 		AC277D00252C23E600987C67 /* AEPAnalytics.h in Headers */ = {isa = PBXBuildFile; fileRef = AC277CF7252C23E600987C67 /* AEPAnalytics.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		AC277D01252C23E600987C67 /* Analytics+PublicAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC277CF8252C23E600987C67 /* Analytics+PublicAPI.swift */; };
 		AC277D03252C23F400987C67 /* AnalyticsAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC277CF0252C23E600987C67 /* AnalyticsAPITests.swift */; };
-		AC33336E253651E000BF8A56 /* EventHub+Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC33336C253651DA00BF8A56 /* EventHub+Test.swift */; };
 		AC3333702536590600BF8A56 /* MockExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC33336F2536590600BF8A56 /* MockExtension.swift */; };
 		AC76C17B2534D67B00211DE2 /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = AC76C1632534D66300211DE2 /* .swiftlint.yml */; };
 		D67AC98C2578285F000FA306 /* AnalyticsHitResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67AC98B2578285F000FA306 /* AnalyticsHitResponse.swift */; };
+		D67AC99B257874C2000FA306 /* TestHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67AC995257874BE000FA306 /* TestHelper.swift */; };
+		D67AC9A12579663E000FA306 /* MockNetworking.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67AC9A02579663E000FA306 /* MockNetworking.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -67,11 +68,12 @@
 		AC277CF7252C23E600987C67 /* AEPAnalytics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AEPAnalytics.h; sourceTree = "<group>"; };
 		AC277CF8252C23E600987C67 /* Analytics+PublicAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Analytics+PublicAPI.swift"; sourceTree = "<group>"; };
 		AC277CF9252C23E600987C67 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		AC33336C253651DA00BF8A56 /* EventHub+Test.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "EventHub+Test.swift"; sourceTree = "<group>"; };
 		AC33336F2536590600BF8A56 /* MockExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockExtension.swift; sourceTree = "<group>"; };
 		AC76C1612534D66300211DE2 /* TestableExtensionRuntime.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestableExtensionRuntime.swift; sourceTree = "<group>"; };
 		AC76C1632534D66300211DE2 /* .swiftlint.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
 		D67AC98B2578285F000FA306 /* AnalyticsHitResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsHitResponse.swift; sourceTree = "<group>"; };
+		D67AC995257874BE000FA306 /* TestHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestHelper.swift; sourceTree = "<group>"; };
+		D67AC9A02579663E000FA306 /* MockNetworking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockNetworking.swift; sourceTree = "<group>"; };
 		E274320DD947E7BB2B2E8A33 /* Pods-AEPAnalyticsTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AEPAnalyticsTests.release.xcconfig"; path = "Target Support Files/Pods-AEPAnalyticsTests/Pods-AEPAnalyticsTests.release.xcconfig"; sourceTree = "<group>"; };
 		EF12C9A6B24908684CC8EA6C /* Pods-AEPAnalytics.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AEPAnalytics.release.xcconfig"; path = "Target Support Files/Pods-AEPAnalytics/Pods-AEPAnalytics.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -182,8 +184,9 @@
 				AC33336F2536590600BF8A56 /* MockExtension.swift */,
 				AC76C1632534D66300211DE2 /* .swiftlint.yml */,
 				AC76C1612534D66300211DE2 /* TestableExtensionRuntime.swift */,
-				AC33336C253651DA00BF8A56 /* EventHub+Test.swift */,
 				3D1D45B3253F9EE60053CB47 /* AnalyticsTestConstants.swift */,
+				D67AC995257874BE000FA306 /* TestHelper.swift */,
+				D67AC9A02579663E000FA306 /* MockNetworking.swift */,
 			);
 			path = TestHelper;
 			sourceTree = "<group>";
@@ -412,12 +415,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				3DD8E6F025676159009234FD /* AnalyticsTestConstants.swift in Sources */,
+				D67AC99B257874C2000FA306 /* TestHelper.swift in Sources */,
 				3DD8E6EB25673BE3009234FD /* TestableExtensionRuntime.swift in Sources */,
 				AC277D03252C23F400987C67 /* AnalyticsAPITests.swift in Sources */,
 				AC3333702536590600BF8A56 /* MockExtension.swift in Sources */,
 				3D1D45B2253F99130053CB47 /* AnalyticsStateTest.swift in Sources */,
-				AC33336E253651E000BF8A56 /* EventHub+Test.swift in Sources */,
 				3DD0693F253516EC00877781 /* AnalyticsPropertiesTest.swift in Sources */,
+				D67AC9A12579663E000FA306 /* MockNetworking.swift in Sources */,
 				3DD8E6E82566FDEB009234FD /* AnalyticsTest.swift in Sources */,
 				AC277D03252C23F400987C67 /* AnalyticsAPITests.swift in Sources */,
 			);

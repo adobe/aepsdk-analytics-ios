@@ -20,15 +20,22 @@ class AnalyticsTest : XCTestCase {
 
     var testableExtensionRuntime: TestableExtensionRuntime!
     var analytics:Analytics!
-    let dataStore = NamedCollectionDataStore(name: AnalyticsConstants.DATASTORE_NAME)
+    var dataStore: NamedCollectionDataStore!
     var analyticsProperties: AnalyticsProperties!
 
     override func setUp() {
+        ServiceProvider.shared.networkService = MockNetworking()
         MobileCore.setLogLevel(.error) // reset log level to error before each test
         testableExtensionRuntime = TestableExtensionRuntime()
-        analytics = Analytics.init(runtime: testableExtensionRuntime)
         analyticsProperties = AnalyticsProperties.init()
+        analytics = Analytics.init(runtime: testableExtensionRuntime)
+        dataStore = analyticsProperties.dataStore
         analytics.onRegistered()
+    }
+
+    override func tearDown() {
+        // clean the defaults after each test
+        UserDefaults.clear()
     }
 
     func testGetSharedStateForEventWithNoDependencies() {
@@ -102,6 +109,7 @@ class AnalyticsTest : XCTestCase {
     // ==========================================================================
     // handleAnalyticsRequestIdentityEvent
     // ==========================================================================
+    // setVisitorIdentifier happy path test
     func testHandleAnalyticsRequestIdentityEventWithValidVid() {
         // setup
         let data = [AnalyticsConstants.EventDataKeys.VISITOR_IDENTIFIER: "testVid"] as [String: Any]
@@ -111,7 +119,7 @@ class AnalyticsTest : XCTestCase {
 
         // test
         testableExtensionRuntime.simulateComingEvent(event: event)
-        usleep(500)
+        sleep(1)
 
         // verify shared state was created
         XCTAssertEqual(1, testableExtensionRuntime.createdSharedStates.count)
@@ -123,7 +131,104 @@ class AnalyticsTest : XCTestCase {
         XCTAssertEqual("testVid", responseEvent?.data?[AnalyticsConstants.EventDataKeys.VISITOR_IDENTIFIER] as? String)
     }
 
-//    func testprocessAnalyticsVars() {
-//        /// - TODO: Implement this test after visitor id serialization.
-//    }
+    // setVisitorIdentifier when privacy status = opted out
+    func testHandleAnalyticsRequestIdentityEventWithValidVid_WhenPrivacyOptedOut() {
+        // setup
+        let configData = [AnalyticsConstants.Configuration.EventDataKeys.GLOBAL_PRIVACY: PrivacyStatus.optedOut.rawValue] as [String: Any]
+        let data = [AnalyticsConstants.EventDataKeys.VISITOR_IDENTIFIER: "testVid"] as [String: Any]
+        // create the analytics request identity event with the data
+        let event = Event(name: "Test Analytics request identity", type: EventType.analytics, source: EventSource.requestIdentity, data: data)
+        testableExtensionRuntime.simulateSharedState(extensionName: AnalyticsConstants.Configuration.EventDataKeys.SHARED_STATE_NAME, event: event, data: (configData, .set))
+
+        let _ = analytics.readyForEvent(event)
+
+        // test
+        testableExtensionRuntime.simulateComingEvent(event: event)
+        sleep(1)
+
+        // verify shared state was not created
+        XCTAssertEqual(0, testableExtensionRuntime.createdSharedStates.count)
+        // verify vid was not added to the datastore
+        XCTAssertEqual(nil, dataStore.getString(key: AnalyticsConstants.DataStoreKeys.VISITOR_IDENTIFIER_KEY))
+        // verify the analytics identity response event was not dispatched
+        let responseEvent = testableExtensionRuntime.dispatchedEvents.first(where: { $0.responseID == event.id })
+        XCTAssertNil(responseEvent)
+    }
+
+    // getVisitorIdentifier happy path test
+    func testHandleAnalyticsRequestIdentityEventWithNoVid() {
+        // setup
+        let mockNetworkService = ServiceProvider.shared.networkService as! MockNetworking
+        let configData = [AnalyticsConstants.Configuration.EventDataKeys.GLOBAL_PRIVACY: PrivacyStatus.optedIn.rawValue, AnalyticsConstants.Configuration.EventDataKeys.ANALYTICS_REPORT_SUITES: "testRsid", AnalyticsConstants.Configuration.EventDataKeys.ANALYTICS_SERVER: "testAnalyticsServer.com"] as [String: Any]
+        // create the analytics request identity event with the data
+        let event = Event(name: "Test Analytics request identity", type: EventType.analytics, source: EventSource.requestIdentity, data: nil)
+        testableExtensionRuntime.simulateSharedState(extensionName: AnalyticsConstants.Configuration.EventDataKeys.SHARED_STATE_NAME, event: event, data: (configData, .set))
+        let _ = analytics.readyForEvent(event)
+
+        // test
+        testableExtensionRuntime.simulateComingEvent(event: event)
+        sleep(1)
+
+        // verify
+        XCTAssertEqual(1, mockNetworkService.calledNetworkRequests.count)
+        XCTAssertEqual("https://testAnalyticsServer.com/id?", mockNetworkService.calledNetworkRequests[0]?.url.absoluteString)
+    }
+
+    // getVisitorIdentifier when privacy opted out
+    func testHandleAnalyticsRequestIdentityEventWithNoVid_WhenPrivacyOptedOut() {
+        // setup
+        let mockNetworkService = ServiceProvider.shared.networkService as! MockNetworking
+        let configData = [AnalyticsConstants.Configuration.EventDataKeys.GLOBAL_PRIVACY: PrivacyStatus.optedOut.rawValue, AnalyticsConstants.Configuration.EventDataKeys.ANALYTICS_REPORT_SUITES: "testRsid", AnalyticsConstants.Configuration.EventDataKeys.ANALYTICS_SERVER: "testAnalyticsServer.com"] as [String: Any]
+        // create the analytics request identity event with the data
+        let event = Event(name: "Test Analytics request identity", type: EventType.analytics, source: EventSource.requestIdentity, data: nil)
+        testableExtensionRuntime.simulateSharedState(extensionName: AnalyticsConstants.Configuration.EventDataKeys.SHARED_STATE_NAME, event: event, data: (configData, .set))
+        let _ = analytics.readyForEvent(event)
+
+        // test
+        testableExtensionRuntime.simulateComingEvent(event: event)
+        sleep(1)
+
+        // verify no network request sent
+        XCTAssertEqual(0, mockNetworkService.calledNetworkRequests.count)
+        // verify shared state with empty VID/AID was created
+        XCTAssertEqual(1, testableExtensionRuntime.createdSharedStates.count)
+        let sharedState = testableExtensionRuntime.createdSharedStates[0]
+        XCTAssertNil(sharedState?[AnalyticsConstants.EventDataKeys.ANALYTICS_ID])
+        XCTAssertNil(sharedState?[AnalyticsConstants.EventDataKeys.VISITOR_IDENTIFIER])
+        // verify identifiers were not added to the datastore
+        XCTAssertEqual(nil, dataStore.getString(key: AnalyticsConstants.DataStoreKeys.VISITOR_IDENTIFIER_KEY))
+        XCTAssertEqual(nil, dataStore.getString(key: AnalyticsConstants.DataStoreKeys.AID_KEY))
+        // verify an analytics identity response event with no data was dispatched
+        let responseEvent = testableExtensionRuntime.dispatchedEvents.first(where: { $0.responseID == event.id })
+        XCTAssertEqual(0, responseEvent?.data?.count)
+    }
+
+    // getVisitorIdentifier when privacy unknown
+    func testHandleAnalyticsRequestIdentityEventWithNoVid_WhenPrivacyUnknown() {
+        // setup
+        let mockNetworkService = ServiceProvider.shared.networkService as! MockNetworking
+        let configData = [AnalyticsConstants.Configuration.EventDataKeys.GLOBAL_PRIVACY: PrivacyStatus.unknown.rawValue, AnalyticsConstants.Configuration.EventDataKeys.ANALYTICS_REPORT_SUITES: "testRsid", AnalyticsConstants.Configuration.EventDataKeys.ANALYTICS_SERVER: "testAnalyticsServer.com"] as [String: Any]
+        // create the analytics request identity event with the data
+        let event = Event(name: "Test Analytics request identity", type: EventType.analytics, source: EventSource.requestIdentity, data: nil)
+        testableExtensionRuntime.simulateSharedState(extensionName: AnalyticsConstants.Configuration.EventDataKeys.SHARED_STATE_NAME, event: event, data: (configData, .set))
+        let _ = analytics.readyForEvent(event)
+
+        // test
+        testableExtensionRuntime.simulateComingEvent(event: event)
+        sleep(1)
+
+        // verify no network request sent
+        XCTAssertEqual(0, mockNetworkService.calledNetworkRequests.count)
+        // verify shared state with AID was created
+        XCTAssertEqual(1, testableExtensionRuntime.createdSharedStates.count)
+        let sharedState = testableExtensionRuntime.createdSharedStates[0]
+        XCTAssertEqual(33, (sharedState?[AnalyticsConstants.EventDataKeys.ANALYTICS_ID] as? String)?.count)
+        // verify identifiers were added to the datastore
+        XCTAssertEqual(nil, dataStore.getString(key: AnalyticsConstants.DataStoreKeys.VISITOR_IDENTIFIER_KEY))
+        XCTAssertEqual(nil, dataStore.getString(key: AnalyticsConstants.DataStoreKeys.AID_KEY))
+        // verify an analytics identity response event with identifiers was dispatched
+        let responseEvent = testableExtensionRuntime.dispatchedEvents.first(where: { $0.responseID == event.id })
+        XCTAssertEqual(1, responseEvent?.data?.count)
+        XCTAssertEqual(33, (responseEvent?.data?[AnalyticsConstants.EventDataKeys.ANALYTICS_ID] as? String)?.count)
+    }
 }

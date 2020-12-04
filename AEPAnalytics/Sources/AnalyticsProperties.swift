@@ -141,9 +141,9 @@ struct AnalyticsProperties {
     mutating func getAnalyticsIdentifier() -> String? {
         if self.aid == nil {
             // check data store to see if we can return a visitor identifier from persistence
-            self.aid = (dataStore.getString(key: AnalyticsConstants.DataStoreKeys.AID_KEY))
+            self.aid = dataStore.getString(key: AnalyticsConstants.DataStoreKeys.AID_KEY)
         }
-        return self.aid ?? ""
+        return self.aid
     }
 
     /// Sets the value of the `vid` in the `AnalyticsProperties` instance.
@@ -168,7 +168,7 @@ struct AnalyticsProperties {
             // check data store to see if we can return a visitor identifier from persistence
             self.vid = (dataStore.getString(key: AnalyticsConstants.DataStoreKeys.VISITOR_IDENTIFIER_KEY))
         }
-        return self.vid ?? ""
+        return self.vid
     }
 }
 

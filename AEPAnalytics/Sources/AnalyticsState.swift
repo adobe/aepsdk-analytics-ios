@@ -260,7 +260,7 @@ class AnalyticsState {
         var components = URLComponents()
         components.scheme = "https"
         components.host = host
-        components.path = "id"
+        components.path = "/id"
         components.queryItems = getMarketingCloudIdQueryParameters()
 
         guard let url = components.url else {

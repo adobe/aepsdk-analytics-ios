@@ -181,13 +181,13 @@ extension Analytics {
     /// `EventType.analytics` and `EventSource.requestIdentity`
     /// - Parameter event: The `Event` to be processed.
     private func handleAnalyticsRequestIdentityEvent(_ event: Event) {
-        if let eventData = event.data ?? [:], !eventData.isEmpty {
+        if let eventData = event.data, !eventData.isEmpty {
             if let vid = eventData[AnalyticsConstants.EventDataKeys.VISITOR_IDENTIFIER] as? String, !vid.isEmpty {
-                // Update VID request
+                // set VID request
                 updateVisitorIdentifier(event: event, vid: vid)
-            } else { // AID/VID request
-                sendAnalyticsIdRequest(event: event)
             }
+        } else { // get AID/VID request
+            sendAnalyticsIdRequest(event: event)
         }
     }
 
@@ -229,13 +229,13 @@ extension Analytics {
         // 1. no saved AID & no marketing cloud org id, we need to get one from visitor ID service  (otherwise we should be using ECID from AAM)
         // 2. isVisitorIdServiceEnabled is false and ignoreAidStatus is true
         let ignoreAidStatus = analyticsProperties.getIgnoreAidStatus()
-        var aid = analyticsProperties.getAnalyticsIdentifier() ?? ""
-        if (!ignoreAidStatus && aid.isEmpty)
+        var aid = analyticsProperties.getAnalyticsIdentifier()
+        if (!ignoreAidStatus && aid == nil)
             || (ignoreAidStatus && !analyticsState.isVisitorIdServiceEnabled()) {
             // if privacy is unknown, don't initiate network call with AID
             // return current stored AID if have one, otherwise generate one
             if analyticsState.privacyStatus == .unknown {
-                if aid.isEmpty {
+                if aid == nil {
                     aid = generateAID()
                     analyticsProperties.setAnalyticsIdentifier(aid: aid)
                 }
@@ -271,11 +271,8 @@ extension Analytics {
     /// - Returns: The analytics data to be shared.
     private func getStateData() -> [String: Any] {
         var data = [String: Any]()
-        let aid = analyticsProperties.getAnalyticsIdentifier() ?? ""
-        data[AnalyticsConstants.EventDataKeys.ANALYTICS_ID] = aid
-
-        let vid = analyticsProperties.getVisitorIdentifier() ?? ""
-        data[AnalyticsConstants.EventDataKeys.VISITOR_IDENTIFIER] = vid
+        data[AnalyticsConstants.EventDataKeys.ANALYTICS_ID] = analyticsProperties.getAnalyticsIdentifier()
+        data[AnalyticsConstants.EventDataKeys.VISITOR_IDENTIFIER] = analyticsProperties.getVisitorIdentifier()
 
         return data
     }
