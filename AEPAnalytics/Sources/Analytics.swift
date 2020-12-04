@@ -256,7 +256,7 @@ extension Analytics {
                     Log.debug(label: self.LOG_TAG, "sendAnalyticsIdRequest - Unable to read response for AID request. Connection response code = \(String(describing: connection.responseCode)).")
                 } else {
                     guard let responseData = connection.data, let aid = self.parseIdentifier(state: analyticsState, response: responseData) else { return }
-                    Log.debug(label: self.LOG_TAG, "sendAnalyticsIdRequest - Successfully sent the AID request, received response.")
+                    Log.debug(label: self.LOG_TAG, "sendAnalyticsIdRequest - Successfully sent the AID request, received response: \(aid)")
                     self.analyticsProperties.setAnalyticsIdentifier(aid: aid)
                     self.dispatchAnalyticsIdentityResponse(event: event)
                 }
@@ -309,8 +309,8 @@ extension Analytics {
     private func parseIdentifier(state: AnalyticsState, response: Data) -> String? {
         var aid = String()
         guard let jsonResponse = try? JSONDecoder().decode(AnalyticsHitResponse.self, from: response) else {
-            Log.debug(label: self.LOG_TAG, "parseIdentifier - Failed to parse analytics server response.")
-            return nil
+            Log.debug(label: self.LOG_TAG, "parseIdentifier - Failed to parse analytics server response. Generating an AID.")
+            return generateAID()
         }
         aid = jsonResponse.aid ?? ""
         if aid.isEmpty {
