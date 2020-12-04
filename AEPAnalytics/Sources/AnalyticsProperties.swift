@@ -126,10 +126,12 @@ struct AnalyticsProperties {
     /// - Parameter:
     ///   - status: The value for the new `aid`.
     mutating func setAnalyticsIdentifier(aid: String?) {
-        if aid != nil {
+        if aid == nil {
             dataStore.remove(key: AnalyticsConstants.DataStoreKeys.AID_KEY)
+            setIgnoreAidStatus(status: false)
         } else {
             dataStore.set(key: AnalyticsConstants.DataStoreKeys.AID_KEY, value: aid)
+            setIgnoreAidStatus(status: true)
         }
 
         self.aid = aid
