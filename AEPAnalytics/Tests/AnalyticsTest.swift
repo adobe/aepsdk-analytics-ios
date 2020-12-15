@@ -18,24 +18,35 @@ import XCTest
 
 class AnalyticsTest : XCTestCase {
 
-    private var testableExtensionRuntime = TestableExtensionRuntime()
+    private var testableExtensionRuntime: TestableExtensionRuntime!
+    private var analyticsState: AnalyticsState!
+    private var analyticsProperties: AnalyticsProperties!
+    private var analytics: Analytics!
+
+    override func setUp() {
+        MobileCore.setLogLevel(.error) // reset log level to error before each test
+        testableExtensionRuntime = TestableExtensionRuntime()
+        analyticsState = AnalyticsState()
+        analyticsProperties = AnalyticsProperties()
+        analytics = Analytics(runtime: testableExtensionRuntime, state: analyticsState)
+        analytics.onRegistered()
+    }
 
     func testGetSharedStateForEventWithNoDependencies() {
-
-        let analytics: Analytics = Analytics.init(runtime: testableExtensionRuntime)
+        let event = Event.init(name: "", type: "", source: "", data: nil)
         let emptyDependenciesList = [String]()
-        let analyticsState = analytics.createAnalyticsState(forEvent: Event.init(name: "", type: "", source: "", data: nil), dependencies: emptyDependenciesList)
+        analytics.updateAnalyticsState(forEvent: event, dependencies: emptyDependenciesList)
 
         //Assert that returned shared states Dictionary is empty.
         XCTAssertNotNil(analyticsState)
     }
 
     func testGetSharedStateForEvent() {
-        let event : Event? = Event.init(name: "", type: "", source: "", data: nil)
-        testableExtensionRuntime.otherSharedStates["\(AnalyticsTestConstants.Assurance.EventDataKeys.SHARED_STATE_NAME)-\(String(describing: event?.id))"] = SharedStateResult.init(status: SharedStateStatus.set, value: [AnalyticsTestConstants.Assurance.EventDataKeys.SESSION_ID:"assuranceId"])
-        let analytics: Analytics = Analytics.init(runtime: testableExtensionRuntime)
-        let dependenciesList : [String] = [AnalyticsTestConstants.Assurance.EventDataKeys.SHARED_STATE_NAME]
-        let analyticsState : AnalyticsState = analytics.createAnalyticsState(forEvent: event!, dependencies: dependenciesList)
+        let data = [AnalyticsTestConstants.Assurance.EventDataKeys.SESSION_ID: "assuranceId"] as [String: Any]
+        let event = Event.init(name: "", type: "", source: "", data: data)
+        testableExtensionRuntime.simulateSharedState(extensionName: AnalyticsTestConstants.Assurance.EventDataKeys.SHARED_STATE_NAME, event: event, data: (data, .set))
+        let dependenciesList = [AnalyticsTestConstants.Assurance.EventDataKeys.SHARED_STATE_NAME]
+        analytics.updateAnalyticsState(forEvent: event, dependencies: dependenciesList)
 
         //Assert that the size of returned shared state should be one.
         XCTAssertNotNil(analyticsState)
@@ -43,8 +54,6 @@ class AnalyticsTest : XCTestCase {
     }
 
     func testProcessAnalyticsContextDataShouldReturnEmpty() {
-        let analytics: Analytics = Analytics.init(runtime: testableExtensionRuntime)
-        let analyticsState = AnalyticsState.init(dataMap: [String:[String:Any]]())
         let analyticsData : [String:String] = analytics.processAnalyticsContextData(analyticsState: analyticsState, trackEventData: nil)
 
         //Assert that Analytics Data is an empty dictionary.
@@ -52,8 +61,6 @@ class AnalyticsTest : XCTestCase {
     }
 
     func testProcessAnalyticsContextData() {
-        let analytics: Analytics = Analytics.init(runtime: testableExtensionRuntime)
-        let analyticsState = AnalyticsState.init(dataMap: [String:[String:Any]]())
         let defaultDataKey = "defaultDataKey"
         let defaultDataValue = "defaultDatavalue"
         let contextDataKey = "contextDataKey"
@@ -86,9 +93,6 @@ class AnalyticsTest : XCTestCase {
     }
 
     func testProcessAnalyticsVarsShouldReturnEmpty() {
-        var analyticsProperties = AnalyticsProperties.init()
-        let analytics: Analytics = Analytics.init(runtime: testableExtensionRuntime)
-        let analyticsState = AnalyticsState.init(dataMap: [String:[String:Any]]())
         let analyticsData : [String:String] = analytics.processAnalyticsVars(analyticsState: analyticsState, trackData: nil, timestamp: Date.init().timeIntervalSince1970, analyticsProperties: &analyticsProperties)
 
         //Assert that Analytics Data is an empty dictionary.

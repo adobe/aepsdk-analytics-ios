@@ -33,6 +33,10 @@ class AnalyticsState {
     private(set) var backDateSessionInfoEnabled: Bool = AnalyticsConstants.Default.BACKDATE_SESSION_INFO_ENABLED
     /// Id for `Marketing cloud organization`.
     private(set) var marketingCloudOrganizationId: String?
+    /// If true, Configuration shared state data has been processed.
+    private(set) var isConfigurationReady: Bool = false
+    /// If true, Identity shared state data has been processed.
+    private(set) var isIdentityReady: Bool = false
 
     #if DEBUG
         var analyticForwardingEnabled: Bool = AnalyticsConstants.Default.FORWARDING_ENABLED
@@ -82,9 +86,9 @@ class AnalyticsState {
     /// Typealias for Assurance Event Data keys.
     private typealias AssuranceEventDataKeys = AnalyticsConstants.Assurance.EventDataKeys
 
-    /// Initializer that takes the shared states map and initialize the properties.
+    /// Takes the shared states map and updates the data within the Analytics State.
     /// - Parameter dataMap: The map contains the shared state data required by the Analytics SDK.
-    init(dataMap: [String: [String: Any]?]) {
+    func update(dataMap: [String: [String: Any]?]) {
         for key in dataMap.keys {
             guard let sharedState = dataMap[key] else {
                 continue
@@ -113,6 +117,11 @@ class AnalyticsState {
             Log.trace(label: LOG_TAG, "ExtractConfigurationInfo - Failed to extract configuration data (event data was null).")
             return
         }
+        privacyStatus = PrivacyStatus.init(rawValue: configurationData[ConfigurationEventDataKeys.GLOBAL_PRIVACY] as? PrivacyStatus.RawValue ?? AnalyticsConstants.Default.PRIVACY_STATUS.rawValue) ?? AnalyticsConstants.Default.PRIVACY_STATUS
+        if privacyStatus == .optedOut {
+            handleOptOut()
+            return
+        }
         host = configurationData[ConfigurationEventDataKeys.ANALYTICS_SERVER] as? String
         rsids = configurationData[ConfigurationEventDataKeys.ANALYTICS_REPORT_SUITES] as? String
         analyticForwardingEnabled = configurationData[ConfigurationEventDataKeys.ANALYTICS_AAMFORWARDING] as? Bool ?? AnalyticsConstants.Default.FORWARDING_ENABLED
@@ -121,7 +130,7 @@ class AnalyticsState {
         launchHitDelay =  TimeInterval.init(configurationData[ConfigurationEventDataKeys.ANALYTICS_LAUNCH_HIT_DELAY] as? Double ?? AnalyticsConstants.Default.LAUNCH_HIT_DELAY)
         marketingCloudOrganizationId = configurationData[ConfigurationEventDataKeys.MARKETING_CLOUD_ORGID_KEY] as? String
         backDateSessionInfoEnabled = configurationData[ConfigurationEventDataKeys.ANALYTICS_BACKDATE_PREVIOUS_SESSION] as? Bool ?? AnalyticsConstants.Default.BACKDATE_SESSION_INFO_ENABLED
-        privacyStatus = PrivacyStatus.init(rawValue: configurationData[ConfigurationEventDataKeys.GLOBAL_PRIVACY] as? PrivacyStatus.RawValue ?? AnalyticsConstants.Default.PRIVACY_STATUS.rawValue) ?? AnalyticsConstants.Default.PRIVACY_STATUS
+        isConfigurationReady = true
     }
 
     /// Extracts the `Lifecycle` data from the provided shared state data.
@@ -181,6 +190,7 @@ class AnalyticsState {
         if let identifiableArray = identityData[IdentityEventDataKeys.VISITOR_IDS_LIST] as? [Identifiable] {
             serializedVisitorIdsList = analyticsRequestSerializer.generateAnalyticsCustomerIdString(from: identifiableArray)
         }
+        isIdentityReady = true
     }
 
     /// Extracts the `Places` data from the provided shared state data.
@@ -229,7 +239,7 @@ class AnalyticsState {
         return analyticsIdVisitorParameters
     }
 
-    /// Check if `rsids` and `tracking server` is configure for analytics module.
+    /// Check if `rsids` and `tracking server` is configured for analytics module.
     /// - Returns: true of both conditions are met false otherwise.
     func isAnalyticsConfigured() -> Bool {
         return !(rsids?.isEmpty ?? true) && !(host?.isEmpty ?? true)
@@ -266,5 +276,34 @@ class AnalyticsState {
     /// - Returns true of user's privacy statues is optedIn else retuerns false.
     func isOptIn() -> Bool {
         return privacyStatus == PrivacyStatus.optedIn
+    }
+
+    /// Clears data stored and sets default values if possible in the Analytics State when privacy status is opted out.
+    private func handleOptOut() {
+        offlineEnabled = AnalyticsConstants.Default.OFFLINE_ENABLED
+        batchLimit = AnalyticsConstants.Default.BATCH_LIMIT
+        launchHitDelay = AnalyticsConstants.Default.LAUNCH_HIT_DELAY
+        backDateSessionInfoEnabled = AnalyticsConstants.Default.BACKDATE_SESSION_INFO_ENABLED
+        marketingCloudOrganizationId = nil
+        analyticForwardingEnabled = AnalyticsConstants.Default.FORWARDING_ENABLED
+        marketingCloudId = nil
+        locationHint = nil
+        blob = nil
+        rsids = nil
+        host = nil
+        defaultData = [String: String]()
+        lifecycleMaxSessionLength = AnalyticsConstants.Default.LIFECYCLE_MAX_SESSION_LENGTH
+        lifecycleSessionStartTimestamp = AnalyticsConstants.Default.LIFECYCLE_SESSION_START_TIMESTAMP
+        serializedVisitorIdsList = nil
+        applicationId = nil
+        advertisingId = nil
+        assuranceSessionActive = nil
+        isConfigurationReady = false
+        isIdentityReady = false
+    }
+
+    /// Returns true if Configuration and Identity shared states have been processed, false otherwise.
+    func areHardDependenciesReady() -> Bool {
+        return isConfigurationReady && isIdentityReady
     }
 }

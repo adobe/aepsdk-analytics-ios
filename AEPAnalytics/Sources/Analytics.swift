@@ -25,20 +25,31 @@ public class Analytics: NSObject, Extension {
     public static let extensionVersion = AnalyticsConstants.EXTENSION_VERSION
     public let metadata: [String: String]? = nil
     private var analyticsProperties = AnalyticsProperties.init()
+    private var analyticsState: AnalyticsState
     private let analyticsHardDependencies: [String] = [AnalyticsConstants.Configuration.EventDataKeys.SHARED_STATE_NAME, AnalyticsConstants.Identity.EventDataKeys.SHARED_STATE_NAME]
     // MARK: Extension
 
     public required init(runtime: ExtensionRuntime) {
         self.runtime = runtime
+        self.analyticsState = AnalyticsState()
         super.init()
     }
+
+    // internal init added for tests
+    #if DEBUG
+        internal init(runtime: ExtensionRuntime, state: AnalyticsState) {
+            self.runtime = runtime
+            self.analyticsState = state
+            super.init()
+        }
+    #endif
 
     public func onRegistered() {
         registerListener(type: EventType.genericTrack, source: EventSource.requestContent, listener: handleAnalyticsRequest)
 //        registerListener(type: EventType.rulesEngine, source: EventSource.responseContent, listener: handleAnalyticsRequest)
 //        registerListener(type: EventType.analytics, source: EventSource.requestContent, listener: handleAnalyticsRequest)
 //        registerListener(type: EventType.analytics, source: EventSource.requestIdentity, listener: handleAnalyticsRequest)
-//        registerListener(type: EventType.configuration, source: EventSource.responseContent, listener: handleAnalyticsRequest)
+        registerListener(type: EventType.configuration, source: EventSource.responseContent, listener: handleConfigurationResponse)
         registerListener(type: EventType.acquisition, source: EventSource.responseContent, listener: handleAnalyticsRequest)
         registerListener(type: EventType.lifecycle, source: EventSource.responseContent, listener: handleLifecycleEvents)
         registerListener(type: EventType.genericLifecycle, source: EventSource.requestContent, listener: handleAnalyticsRequest)
@@ -52,26 +63,31 @@ public class Analytics: NSObject, Extension {
     }
 
     /**
-     Tries to retrieve the shared data for all the dependencies of the given event. When all the dependencies are resolved, it will return the Dictionary with the shared states.
+     Tries to retrieve the shared data for all the dependencies of the given event. When all the dependencies are resolved, it will update the `AnalyticsState` with the shared states.
      - Parameters:
           - event: The `Event` for which shared state is to be retrieved.
           - dependencies: An array of names of event's dependencies.
-
-     - Returns: A `Dictionary` with shared state of all dependecies.
+     - Returns: The `AnalyticsState` instance which contains the shared state of all dependecies.
      */
-
-    func createAnalyticsState(forEvent event: Event, dependencies: [String]) -> AnalyticsState {
+    func updateAnalyticsState(forEvent event: Event, dependencies: [String]) {
         var sharedStates = [String: [String: Any]?]()
         for extensionName in dependencies {
             sharedStates[extensionName] = runtime.getSharedState(extensionName: extensionName, event: event, barrier: true)?.value
         }
-
-        return AnalyticsState.init(dataMap: sharedStates)
+        analyticsState.update(dataMap: sharedStates)
     }
 }
 
 /// Event Listeners_object    Builtin.BridgeObject    0x8000000126eca620
 extension Analytics {
+
+    /// Processes Configuration Response content events to retrieve the configuration data and privacy status settings.
+    /// - Parameter:
+    ///   - event: The configuration response event
+    private func handleConfigurationResponse(event: Event) {
+        Log.debug(label: LOG_TAG, "Received Configuration Response event, attempting to retrieve configuration settings.")
+        updateAnalyticsState(forEvent: event, dependencies: analyticsHardDependencies)
+    }
 
     /// Listener for handling Analytics `Events`.
     /// - Parameter event: The instance of `Event` that needs to be processed.
@@ -81,12 +97,10 @@ extension Analytics {
             analyticsProperties.dispatchQueue.async {
                 self.handleLifecycleEvents(event)
             }
-            break
         case EventType.acquisition:
             analyticsProperties.dispatchQueue.async {
                 self.handleAcquisitionEvent(event)
             }
-            break
         default:
             break
         }
@@ -97,9 +111,12 @@ extension Analytics {
     /// `EventType.lifecycle` and `EventSource.responseContent`
     ///  - Parameter event: the `Event` to be processed
     private func handleLifecycleEvents(_ event: Event) {
+        if analyticsState.areHardDependenciesReady() == false {
+            Log.debug(label: LOG_TAG, "Analytics State is not ready, ignoring the lifecycle event.")
+            return
+        }
 
         if event.type == EventType.genericLifecycle && event.source == EventSource.requestContent {
-            let analyticsState = createAnalyticsState(forEvent: event, dependencies: analyticsHardDependencies)
 
             let lifecycleAction = event.data?[AnalyticsConstants.Lifecycle.EventDataKeys.LIFECYCLE_ACTION_KEY] as? String
             if lifecycleAction == AnalyticsConstants.Lifecycle.EventDataKeys.LIFECYCLE_START {
@@ -127,12 +144,12 @@ extension Analytics {
 
         } else if event.type == EventType.lifecycle && event.source == EventSource.responseContent {
             //Soft dependecies list.
-            var softDependencies: [String] = [AnalyticsConstants.Lifecycle.EventDataKeys.SHARED_STATE_NAME, AnalyticsConstants.Assurance.EventDataKeys.SHARED_STATE_NAME,
+            let softDependencies: [String] = [AnalyticsConstants.Lifecycle.EventDataKeys.SHARED_STATE_NAME, AnalyticsConstants.Assurance.EventDataKeys.SHARED_STATE_NAME,
                                               AnalyticsConstants.Places.EventDataKeys.SHARED_STATE_NAME]
 
             analyticsProperties.lifecyclePreviousSessionPauseTimestamp = event.data?[AnalyticsConstants.Lifecycle.EventDataKeys.PREVIOUS_SESSION_PAUSE_TIMESTAMP] as? Date
-
-            trackLifecycle(analyticsState: createAnalyticsState(forEvent: event, dependencies: analyticsHardDependencies + softDependencies), event: event, analyticsProperties: &analyticsProperties)
+            updateAnalyticsState(forEvent: event, dependencies: analyticsHardDependencies + softDependencies)
+            trackLifecycle(analyticsState: analyticsState, event: event, analyticsProperties: &analyticsProperties)
         }
     }
 
@@ -140,10 +157,13 @@ extension Analytics {
     /// `EventType.acquisition` and `EventSource.responseContent`
     /// - Parameter event: The `Event` to be processed.
     private func handleAcquisitionEvent(_ event: Event) {
+        if analyticsState.areHardDependenciesReady() == false {
+            Log.debug(label: LOG_TAG, "Analytics State is not ready, ignoring the acquisiton event.")
+            return
+        }
 
         if analyticsProperties.referrerTimerRunning {
             Log.debug(label: LOG_TAG, "handleAcquisitionResponseEvent - Acquisition response received with referrer data.")
-            let analyticsState = createAnalyticsState(forEvent: event, dependencies: [AnalyticsConstants.Configuration.EventDataKeys.SHARED_STATE_NAME])
             analyticsProperties.cancelReferrerTimer()
 
             /// - TODO: Implement the AnalyticsHitDatabase operation below.
@@ -158,11 +178,12 @@ extension Analytics {
 //                        }
 
         } else {
-            let softDependencies: [String] = [
-                AnalyticsConstants.Lifecycle.EventDataKeys.SHARED_STATE_NAME,
-                AnalyticsConstants.Assurance.EventDataKeys.SHARED_STATE_NAME]
             if event.type == EventType.acquisition && event.source == EventSource.responseContent {
-                trackAcquisitionData(analyticsState: createAnalyticsState(forEvent: event, dependencies: analyticsHardDependencies + softDependencies), event: event, analyticsProperties: &analyticsProperties)
+                let softDependencies: [String] = [
+                    AnalyticsConstants.Lifecycle.EventDataKeys.SHARED_STATE_NAME,
+                    AnalyticsConstants.Assurance.EventDataKeys.SHARED_STATE_NAME]
+                updateAnalyticsState(forEvent: event, dependencies: analyticsHardDependencies + softDependencies)
+                trackAcquisitionData(analyticsState: analyticsState, event: event, analyticsProperties: &analyticsProperties)
             }
         }
     }
