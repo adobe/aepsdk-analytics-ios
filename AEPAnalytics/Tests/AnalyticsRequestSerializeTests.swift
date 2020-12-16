@@ -14,7 +14,7 @@ import XCTest
 import AEPIdentity
 @testable import AEPAnalytics
 
-class AnalyticsRequestSerializerTests : XCTestCase {
+class AnalyticsRequestSerializeTests : XCTestCase {
 
     var analyticsRequestSerializer = AnalyticsRequestSerializer.init()
 
