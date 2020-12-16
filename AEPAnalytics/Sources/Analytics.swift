@@ -85,8 +85,17 @@ extension Analytics {
     /// - Parameter:
     ///   - event: The configuration response event
     private func handleConfigurationResponse(event: Event) {
+        guard let configSharedState = getSharedState(extensionName: AnalyticsConstants.Configuration.EventDataKeys.SHARED_STATE_NAME, event: event)?.value else { return }
         Log.debug(label: LOG_TAG, "Received Configuration Response event, attempting to retrieve configuration settings.")
-        updateAnalyticsState(forEvent: event, dependencies: analyticsHardDependencies)
+        analyticsState.extractConfigurationInfo(from: configSharedState)
+        if analyticsState.privacyStatus == .optedOut {
+            Log.debug(label: LOG_TAG, "Privacy status is opted-out. Queued Analytics hits, stored state data, and properties will be cleared.")
+            // reset the AnalyticsProperties
+            analyticsProperties = AnalyticsProperties.init()
+            // TODO: clear hits database
+            // TODO: get empty data from analytics properties (AID and Visitor Identifier) and create shared state with that data.
+            createSharedState(data: [String:Any](), event: event)
+        }
     }
 
     /// Listener for handling Analytics `Events`.
