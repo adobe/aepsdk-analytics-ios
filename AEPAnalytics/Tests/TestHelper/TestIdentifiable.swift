@@ -10,10 +10,18 @@
  governing permissions and limitations under the License.
  */
 
-import Foundation
+import AEPIdentity
 
-class ContextData {
+class TestIdentifiable: Identifiable {
+    var origin: String?
+    var type: String?
+    var identifier: String?
+    var authenticationState: MobileVisitorAuthenticationState
 
-    var value: String?
-    var data = [String: ContextData]()
+    init(origin: String, type: String, identifier: String, authenticationState: MobileVisitorAuthenticationState) {
+        self.origin = origin
+        self.type = type
+        self.identifier = identifier
+        self.authenticationState = authenticationState
+    }
 }
