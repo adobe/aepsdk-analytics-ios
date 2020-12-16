@@ -277,7 +277,7 @@ extension Analytics {
         return data
     }
 
-    /// Creates a new analytics shared state then dispatches a analytics response identity event.
+    /// Creates a new analytics shared state then dispatches an analytics response identity event.
     /// - Parameters:
     ///   - event: the event which triggered the analytics identity request.
     private func dispatchAnalyticsIdentityResponse(event: Event) {
