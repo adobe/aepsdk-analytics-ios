@@ -81,12 +81,10 @@ extension Analytics {
             analyticsProperties.dispatchQueue.async {
                 self.handleLifecycleEvents(event)
             }
-            break
         case EventType.acquisition:
             analyticsProperties.dispatchQueue.async {
                 self.handleAcquisitionEvent(event)
             }
-            break
         default:
             break
         }

@@ -14,12 +14,15 @@
 		3D1D45B2253F99130053CB47 /* AnalyticsStateTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1D45B1253F99120053CB47 /* AnalyticsStateTest.swift */; };
 		3D1D45B625425F240053CB47 /* ContextDataUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1D45B525425F230053CB47 /* ContextDataUtil.swift */; };
 		3DAA40BB2548C58100703509 /* ContextData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DAA40BA2548C58100703509 /* ContextData.swift */; };
+		3DC1E0242575CB5100E0AA16 /* AnalyticsRequestSerializerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DC1E0232575CB5100E0AA16 /* AnalyticsRequestSerializerTests.swift */; };
 		3DCDB3DF252E853200ABA819 /* AnalyticsProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DCDB3DE252E853200ABA819 /* AnalyticsProperties.swift */; };
 		3DD0693F253516EC00877781 /* AnalyticsPropertiesTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DD0693E253516EC00877781 /* AnalyticsPropertiesTest.swift */; };
 		3DD8E6E82566FDEB009234FD /* AnalyticsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DD8E6E72566FDEB009234FD /* AnalyticsTest.swift */; };
 		3DD8E6EB25673BE3009234FD /* TestableExtensionRuntime.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC76C1612534D66300211DE2 /* TestableExtensionRuntime.swift */; };
 		3DD8E6F025676159009234FD /* AnalyticsTestConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1D45B3253F9EE60053CB47 /* AnalyticsTestConstants.swift */; };
 		3DD8E6FC256F0BC2009234FD /* Analytics+Track.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DD8E6FB256F0BC2009234FD /* Analytics+Track.swift */; };
+		3DDC3E8B258AA16700ED05BC /* AnalyticsRequestSerializerTests+Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DDC3E8A258AA16700ED05BC /* AnalyticsRequestSerializerTests+Helper.swift */; };
+		3DDC3E8F258AA1D400ED05BC /* TestIdentifiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DDC3E8E258AA1D400ED05BC /* TestIdentifiable.swift */; };
 		AC277CFE252C23E600987C67 /* Analytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC277CF5252C23E600987C67 /* Analytics.swift */; };
 		AC277CFF252C23E600987C67 /* AnalyticsConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC277CF6252C23E600987C67 /* AnalyticsConstants.swift */; };
 		AC277D00252C23E600987C67 /* AEPAnalytics.h in Headers */ = {isa = PBXBuildFile; fileRef = AC277CF7252C23E600987C67 /* AEPAnalytics.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -53,10 +56,13 @@
 		3D1D45B3253F9EE60053CB47 /* AnalyticsTestConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsTestConstants.swift; sourceTree = "<group>"; };
 		3D1D45B525425F230053CB47 /* ContextDataUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextDataUtil.swift; sourceTree = "<group>"; };
 		3DAA40BA2548C58100703509 /* ContextData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextData.swift; sourceTree = "<group>"; };
+		3DC1E0232575CB5100E0AA16 /* AnalyticsRequestSerializerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsRequestSerializerTests.swift; sourceTree = "<group>"; };
 		3DCDB3DE252E853200ABA819 /* AnalyticsProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsProperties.swift; sourceTree = "<group>"; };
 		3DD0693E253516EC00877781 /* AnalyticsPropertiesTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsPropertiesTest.swift; sourceTree = "<group>"; };
 		3DD8E6E72566FDEB009234FD /* AnalyticsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsTest.swift; sourceTree = "<group>"; };
 		3DD8E6FB256F0BC2009234FD /* Analytics+Track.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Analytics+Track.swift"; sourceTree = "<group>"; };
+		3DDC3E8A258AA16700ED05BC /* AnalyticsRequestSerializerTests+Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AnalyticsRequestSerializerTests+Helper.swift"; sourceTree = "<group>"; };
+		3DDC3E8E258AA1D400ED05BC /* TestIdentifiable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestIdentifiable.swift; sourceTree = "<group>"; };
 		56DA22A3CE773DE7E7380769 /* Pods_AEPAnalytics.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AEPAnalytics.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		AC277CEE252C23E600987C67 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AC277CF0252C23E600987C67 /* AnalyticsAPITests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsAPITests.swift; sourceTree = "<group>"; };
@@ -151,6 +157,7 @@
 				3DD0693E253516EC00877781 /* AnalyticsPropertiesTest.swift */,
 				3D1D45B1253F99120053CB47 /* AnalyticsStateTest.swift */,
 				3DD8E6E72566FDEB009234FD /* AnalyticsTest.swift */,
+				3DC1E0232575CB5100E0AA16 /* AnalyticsRequestSerializerTests.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -181,6 +188,8 @@
 				AC76C1612534D66300211DE2 /* TestableExtensionRuntime.swift */,
 				AC33336C253651DA00BF8A56 /* EventHub+Test.swift */,
 				3D1D45B3253F9EE60053CB47 /* AnalyticsTestConstants.swift */,
+				3DDC3E8A258AA16700ED05BC /* AnalyticsRequestSerializerTests+Helper.swift */,
+				3DDC3E8E258AA1D400ED05BC /* TestIdentifiable.swift */,
 			);
 			path = TestHelper;
 			sourceTree = "<group>";
@@ -411,10 +420,13 @@
 				3DD8E6EB25673BE3009234FD /* TestableExtensionRuntime.swift in Sources */,
 				AC277D03252C23F400987C67 /* AnalyticsAPITests.swift in Sources */,
 				AC3333702536590600BF8A56 /* MockExtension.swift in Sources */,
+				3DDC3E8B258AA16700ED05BC /* AnalyticsRequestSerializerTests+Helper.swift in Sources */,
 				3D1D45B2253F99130053CB47 /* AnalyticsStateTest.swift in Sources */,
 				AC33336E253651E000BF8A56 /* EventHub+Test.swift in Sources */,
 				3DD0693F253516EC00877781 /* AnalyticsPropertiesTest.swift in Sources */,
 				3DD8E6E82566FDEB009234FD /* AnalyticsTest.swift in Sources */,
+				3DDC3E8F258AA1D400ED05BC /* TestIdentifiable.swift in Sources */,
+				3DC1E0242575CB5100E0AA16 /* AnalyticsRequestSerializerTests.swift in Sources */,
 				AC277D03252C23F400987C67 /* AnalyticsAPITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
