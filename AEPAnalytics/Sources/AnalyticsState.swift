@@ -31,8 +31,6 @@ class AnalyticsState {
     private(set) var launchHitDelay: TimeInterval = AnalyticsConstants.Default.LAUNCH_HIT_DELAY
     /// `Backdate Previous Session Info` configuration setting. If enable backdates session information hits.
     private(set) var backDateSessionInfoEnabled: Bool = AnalyticsConstants.Default.BACKDATE_SESSION_INFO_ENABLED
-    /// Id for `Marketing cloud organization`.
-    private(set) var marketingCloudOrganizationId: String?
     /// If true, Configuration shared state data has been processed.
     private(set) var isConfigurationReady: Bool = false
     /// If true, Identity shared state data has been processed.
@@ -41,6 +39,7 @@ class AnalyticsState {
     #if DEBUG
         var analyticForwardingEnabled: Bool = AnalyticsConstants.Default.FORWARDING_ENABLED
         var marketingCloudId: String?
+        var marketingCloudOrganizationId: String?
         var locationHint: String?
         var blob: String?
         var rsids: String?
@@ -53,6 +52,8 @@ class AnalyticsState {
         private(set) var analyticForwardingEnabled: Bool = AnalyticsConstants.Default.FORWARDING_ENABLED
         /// Unique id for device.
         private(set) var marketingCloudId: String?
+        /// Id for `Marketing cloud organization`.
+        private(set) var marketingCloudOrganizationId: String?
         /// The location hint value.
         private var locationHint: String?
         /// The blob value.

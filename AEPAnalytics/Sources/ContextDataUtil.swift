@@ -11,8 +11,11 @@
  */
 
 import Foundation
+import AEPServices
 
 class ContextDataUtil {
+
+    static let LOG_TAG = "ContextDataUtil"
 
     private static let contextDataMask: [Bool] = [
         false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,
@@ -32,65 +35,11 @@ class ContextDataUtil {
         false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false
     ]
 
-    static func EncodeContextData(data contextData: [String: String]) -> String {
-        let cleanedDataMap: [String: String] = cleanDictionaryKeys(contextData: contextData)
-
-        var encodedMap = [String: ContextData]()
-
-        for (key, value) in cleanedDataMap {
-            encodeValueIntoMap(value: value, contextDataMap: &encodedMap, keys: key.split(separator: ".", omittingEmptySubsequences: true), index: 0)
-        }
-
-        return serializeMapToQueryString(map: encodedMap)
-    }
-
-    private static func serializeMapToQueryString(map: [String: Any]) -> String {
-
-        var queryParams = String.init()
-
-        for (key, value) in map {
-            guard !key.isEmpty else {
-                continue
-            }
-
-            var urlEncodedKey = key.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
-
-            if let contextData = value as? ContextData {
-
-                if let value = contextData.value, !value.isEmpty {
-                    queryParams.append(String(format: "&%@=%@", key, value.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) as! CVarArg))
-                }
-
-                if contextData.data.count > 0 {
-                    queryParams.append(String(format: "&%@.%@&.%@", urlEncodedKey as! CVarArg, serializeMapToQueryString(map: contextData.data), urlEncodedKey as! CVarArg))
-                }
-            } else { //Value is of type String.
-                queryParams.append(String(format: "&%@.%@&.%@", urlEncodedKey as! CVarArg, "\(key)=\(value)", urlEncodedKey as! CVarArg))
-            }
-        }
-
-        return queryParams
-    }
-
-    private static func encodeValueIntoMap(value: String, contextDataMap: inout [String: ContextData], keys: [String.SubSequence], index: Int) {
-
-        guard index < keys.count else {
-            return
-        }
-
-        var keyName = String(keys[index])
-
-        if keys.count - 1 == index {
-            let contextData: ContextData = contextDataMap[keyName] ?? ContextData.init()
-            contextData.value = value
-            contextDataMap[keyName] = contextData
-        } else {
-            let contextData: ContextData = contextDataMap[keyName] ?? ContextData.init()
-            contextDataMap[keyName] = contextData
-            encodeValueIntoMap(value: value, contextDataMap: &contextDataMap, keys: keys, index: index + 1)
-        }
-    }
-
+    /**
+     Takes dictionary as an argument, clean the keys and returns the dictionary with cleaned keys.
+     - Parameters contextData: The dictionary to be cleaned.
+     - Returns: Dictionary with clean keys.
+     */
     private static func cleanDictionaryKeys(contextData: [String: String]) -> [String: String] {
         var cleanDictionary = [String: String]()
         for (key, value) in contextData {
@@ -103,6 +52,11 @@ class ContextDataUtil {
         return cleanDictionary
     }
 
+    /**
+     Cleans the `key` passed as an arguement using the contextDataMask. Only the characters which are enabled in `contextDataMask` are allowed in the cleaned key.
+     - Parameters key: The key to be cleaned.
+     - Returns: The cleaned key.
+     */
     private static func cleanKey(key: String) -> String {
         guard !key.isEmpty else {
             return ""
@@ -122,21 +76,94 @@ class ContextDataUtil {
             }
         }
         if cleanedKey.first == period {
-            cleanedKey.remove(at: cleanedKey.startIndex)
+            cleanedKey.removeFirst()
         }
 
         if cleanedKey.last == period {
-            cleanedKey.popLast()
+            cleanedKey.removeLast()
         }
         return cleanedKey
     }
 
+    /**
+     Translates string based context data into a nested dictionary format for serializing to query string.
+     This method contains a recursive block.
+     - Parameters:
+         - data: the data Dictionary that we want to process.
+     - Returns: a new `ContextData` object containing the provided data.
+     */
     static func translateContextData(data: [String: String]?) -> ContextData {
-        /// - TODO: Need to implement this function.
-        return ContextData.init()
+        var contextData = ContextData()
+        guard let data = data else {
+            Log.debug(label: LOG_TAG, "translateContextData - data is nil.")
+            return contextData
+        }
+        let cleanData = cleanDictionaryKeys(contextData: data)
+        cleanData.forEach { key, value in
+            let subKeys = key.split(separator: ".")
+            addValueToContextData(value: value, inContextData: &contextData, subkeys: subKeys, index: 0)
+        }
+        return contextData
     }
 
-    static func serializeToQueryString(map: inout [String: Any], requestString: inout String) {
-        /// - TODO: Implement this function
+    /**
+     Serializes a Dictionary to key value pairs for url string.
+     This method is recursive to handle the nested data objects.
+     - Parameters:
+          - parameters: the query parameters that we want to serialize
+          - requestString: The query String. Used for recursivity.
+     */
+    static func serializeToQueryString(parameters: [String: Any]?, requestString: inout String) {
+
+        guard let parameters = parameters else {
+            Log.debug(label: LOG_TAG, "serializeToQueryString - parameters is nil.")
+            return
+        }
+
+        parameters.forEach { key, value in
+            if let urlEncodedKey = key.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) {
+                if let contextData = value as? ContextData {
+                    if let urlEncodedValue = contextData.value?.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed), !urlEncodedKey.isEmpty {
+                        requestString.append("&\(urlEncodedKey)=\(urlEncodedValue)")
+                    }
+
+                    if !contextData.data.isEmpty {
+                        requestString.append("&\(urlEncodedKey).")
+                        serializeToQueryString(parameters: contextData.data, requestString: &requestString)
+                        requestString.append("&.\(urlEncodedKey)")
+                    }
+                } else if let urlEncodedValue = (value as? String)?.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed), !urlEncodedKey.isEmpty, !urlEncodedValue.isEmpty {
+                    requestString.append("&\(urlEncodedKey)=\(urlEncodedValue)")
+                }
+            }
+        }
+    }
+
+    /**
+     Recursively add the `subkeys` and `value` to `contextData` passed as an arguement.
+     - Parameters:
+         - value: The `String` value to be added.
+         - inContextData: The `ContextData` object in which subkeys and value has to be added.
+         - subkeys: An `Array` of keys to be added.
+         - index: The index pointing to `subkeys` array elements.
+     */
+    private static func addValueToContextData(value: String, inContextData contextData: inout ContextData, subkeys: [Substring]?, index: Int) {
+        guard let subkeys = subkeys, index < subkeys.count else {
+            Log.debug(label: LOG_TAG, "addValueToContextData - subkeys is nil.")
+            return
+        }
+
+        let keyName = subkeys[index].description
+        var data: ContextData = contextData.data[keyName] ?? ContextData.init()
+
+        if subkeys.count - 1 == index {
+            // last node in the array
+            data.value = value
+            contextData.data[keyName] = data
+        } else {
+            // more nodes to go through, add a ContextData to the caller if necessary
+            contextData.data[keyName] = data
+            addValueToContextData(value: value, inContextData: &data, subkeys: subkeys, index: index + 1)
+        }
     }
 }
