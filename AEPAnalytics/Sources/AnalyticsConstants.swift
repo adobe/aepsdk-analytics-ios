@@ -133,6 +133,8 @@ enum AnalyticsConstants {
         static let STRING_TIMESTAMP_KEY     = "ts"
         static let CUSTOMER_PERSPECTIVE_KEY = "cp"
         static let CONTEXT_DATA_KEY         = "c"
+        static let CUSTOMER_ID_KEY          = "cid"
+        static let REQUEST_STRING_PREFIX    = "ndh=1"
     }
 
     static let MAP_EVENT_DATA_KEYS_TO_CONTEXT_DATA_KEYS: [String: String] = [

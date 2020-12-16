@@ -11,9 +11,12 @@
  */
 
 import Foundation
+import AEPServices
 import AEPIdentity
 
 class AnalyticsRequestSerializer {
+
+    private let TAG = "AnalyticsRequestSerializer"
 
     /// Creates a Map having the VisitorIDs information (types, ids and authentication state) and serializes it.
     /// - Parameter identifiableList an array of Identifiable Type that we want to process in the analytics format.
@@ -21,6 +24,7 @@ class AnalyticsRequestSerializer {
     func generateAnalyticsCustomerIdString(from identifiableList: [Identifiable?]) -> String {
         var analyticsCustomerIdString = ""
         guard !identifiableList.isEmpty else {
+            Log.debug(label: TAG, "generateAnalyticsCustomerIdString - Identifiable list is null. Returning empty string.")
             return analyticsCustomerIdString
         }
         var visitorDataMap = [String: String]()
@@ -31,8 +35,8 @@ class AnalyticsRequestSerializer {
             }
         }
 
-        var translateIds: [String:ContextData] = [:]
-        translateIds["cid"] = ContextDataUtil.translateContextData(data: visitorDataMap)
+        var translateIds: [String: ContextData] = [:]
+        translateIds[AnalyticsConstants.Request.CUSTOMER_ID_KEY] = ContextDataUtil.translateContextData(data: visitorDataMap)
 
         ContextDataUtil.serializeToQueryString(parameters: translateIds, requestString: &analyticsCustomerIdString)
         return analyticsCustomerIdString
@@ -70,7 +74,7 @@ class AnalyticsRequestSerializer {
 
         analyticsVars[AnalyticsConstants.Request.CONTEXT_DATA_KEY] = ContextDataUtil.translateContextData(data: data)
 
-        var requestString = "ndh=1"
+        var requestString = AnalyticsConstants.Request.REQUEST_STRING_PREFIX
         if analyticsState.isVisitorIdServiceEnabled(), let serializedVisitorIdList = analyticsState.serializedVisitorIdsList {
             requestString += serializedVisitorIdList
         }

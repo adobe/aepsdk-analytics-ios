@@ -14,16 +14,16 @@ import XCTest
 import AEPIdentity
 @testable import AEPAnalytics
 
+class AnalyticsRequestSerializerTests : XCTestCase {
 
-class AnalyticsRequestSerializeTests : XCTestCase {
+    var analyticsRequestSerializer = AnalyticsRequestSerializer.init()
 
     func testGenerateAnalyticsCustomerIdString() {
-        let analyticsRequestSerializer = AnalyticsRequestSerializer.init()
         var visitorIdList = [Identifiable]()
-        visitorIdList.append(TestIdentifiableImplemetation.init(origin: "d_cid_ic", type: "loginidhash", identifier: "97717", authenticationState: MobileVisitorAuthenticationState.unknown))
-        visitorIdList.append(TestIdentifiableImplemetation.init(origin: "d_cid_ic", type: "xboxlivehash", identifier: "1629158955", authenticationState: MobileVisitorAuthenticationState.authenticated))
-        visitorIdList.append(TestIdentifiableImplemetation.init(origin: "d_cid_ic", type: "psnidhash", identifier: "1144032295", authenticationState: MobileVisitorAuthenticationState.loggedOut))
-        visitorIdList.append(TestIdentifiableImplemetation.init(origin: "d_cid", type: "pushid", identifier: "testPushId", authenticationState: MobileVisitorAuthenticationState.authenticated))
+        visitorIdList.append(TestIdentifiable.init(origin: "d_cid_ic", type: "loginidhash", identifier: "97717", authenticationState: MobileVisitorAuthenticationState.unknown))
+        visitorIdList.append(TestIdentifiable.init(origin: "d_cid_ic", type: "xboxlivehash", identifier: "1629158955", authenticationState: MobileVisitorAuthenticationState.authenticated))
+        visitorIdList.append(TestIdentifiable.init(origin: "d_cid_ic", type: "psnidhash", identifier: "1144032295", authenticationState: MobileVisitorAuthenticationState.loggedOut))
+        visitorIdList.append(TestIdentifiable.init(origin: "d_cid", type: "pushid", identifier: "testPushId", authenticationState: MobileVisitorAuthenticationState.authenticated))
 
         let expectedString = "&cid.&loginidhash.&id=97717&as=0&.loginidhash&xboxlivehash.&id=1629158955&as=1&.xboxlivehash&psnidhash.&id=1144032295&as=2&.psnidhash&pushid.&id=testPushId&as=1&.pushid&.cid"
 
@@ -40,7 +40,6 @@ class AnalyticsRequestSerializeTests : XCTestCase {
     }
 
     func testGenerateAnalyticsCustomerIdStringWithEmptyIdentifiableList() {
-        let analyticsRequestSerializer = AnalyticsRequestSerializer.init()
         let visitorIdList = [Identifiable]()
 
         let expectedString = ""
@@ -49,7 +48,6 @@ class AnalyticsRequestSerializeTests : XCTestCase {
     }
 
     func testBuildRequestWhenValidDataAndValidVars() {
-        let analyticsRequestSerializer = AnalyticsRequestSerializer.init()
         let analyticsState = AnalyticsState.init(dataMap: [String:[String:Any]]())
 
         var vars: [String:String] = [:]
@@ -67,8 +65,8 @@ class AnalyticsRequestSerializeTests : XCTestCase {
         XCTAssertTrue(contextData.contains("&testKey1=val1"))
         XCTAssertTrue(contextData.contains("&testKey2=val2"))
         let additionalData = getAdditionalData(source: result)
-        let splittedAddionalData = additionalData.split(separator: "&")
-        XCTAssertTrue(splittedAddionalData.count == 3)
+        let splitAddionalData = additionalData.split(separator: "&")
+        XCTAssertTrue(splitAddionalData.count == 3)
         XCTAssertTrue(additionalData.starts(with: "ndh=1"))
         XCTAssertTrue(additionalData.contains("&v2=evar2Value"))
         XCTAssertTrue(additionalData.contains("&v1=evar1Value"))
@@ -77,7 +75,6 @@ class AnalyticsRequestSerializeTests : XCTestCase {
 
     func testBuildRequestWhenNullDataAndValidVars() {
 
-        let analyticsRequestSerializer = AnalyticsRequestSerializer.init()
         let analyticsState = AnalyticsState.init(dataMap: [String:[String:Any]]())
 
         var vars: [String:String] = [:]
@@ -89,7 +86,6 @@ class AnalyticsRequestSerializeTests : XCTestCase {
     }
 
     func testBuildRequestWhenValidDataAndNullVars() {
-        let analyticsRequestSerializer = AnalyticsRequestSerializer.init()
         let analyticsState = AnalyticsState.init(dataMap: [String:[String:Any]]())
 
         var data: [String:String] = [:]
@@ -108,14 +104,12 @@ class AnalyticsRequestSerializeTests : XCTestCase {
     }
 
     func testBuildRequestWhenNullDataAndNullVars() {
-        let analyticsRequestSerializer = AnalyticsRequestSerializer.init()
         let analyticsState = AnalyticsState.init(dataMap: [String:[String:Any]]())
         let result = analyticsRequestSerializer.buildRequest(analyticsState: analyticsState, data: nil, vars: nil)
         XCTAssertEqual("ndh=1", result)
     }
 
     func testBuildRequestWhenNullVisitorIdList() {
-        let analyticsRequestSerializer = AnalyticsRequestSerializer.init()
 
         var data: [String:String] = [:]
         data["testKey1"] = "val1"
@@ -142,7 +136,6 @@ class AnalyticsRequestSerializeTests : XCTestCase {
     }
 
     func testBuildRequestMovesToVarsWhenDataKeysPrefixed() {
-        let analyticsRequestSerializer = AnalyticsRequestSerializer.init()
         let analyticsState = AnalyticsState.init(dataMap: [String:[String:Any]]())
         var data: [String:String] = [:]
         data["&&key1"] = "val1"
@@ -153,8 +146,8 @@ class AnalyticsRequestSerializeTests : XCTestCase {
 
         let result = analyticsRequestSerializer.buildRequest(analyticsState: analyticsState, data: data, vars: vars)
         let additionalData = getAdditionalData(source: result)
-        let splittedAddionalData = additionalData.split(separator: "&")
-        XCTAssertTrue(splittedAddionalData.count == 3)
+        let splitAddionalData = additionalData.split(separator: "&")
+        XCTAssertTrue(splitAddionalData.count == 3)
         XCTAssertTrue(additionalData.starts(with: "ndh=1"))
         XCTAssertTrue(additionalData.contains("&key1=val1"))
         XCTAssertTrue(additionalData.contains("&v1=evar1Value"))        
@@ -163,7 +156,6 @@ class AnalyticsRequestSerializeTests : XCTestCase {
     }
 
     func testBuildRequestWithVisitorIdList() {
-        let analyticsRequestSerializer = AnalyticsRequestSerializer.init()
 
         var vars = [String:String]()
         vars["v1"] = "evar1Value"
@@ -171,7 +163,7 @@ class AnalyticsRequestSerializeTests : XCTestCase {
         var data: [String:String] = [:]
         data["key1"] = "val1"
         var visitorIdList = [Identifiable]()
-        visitorIdList.append(TestIdentifiableImplemetation.init(origin: "orig1", type: "type1", identifier: "97717", authenticationState: MobileVisitorAuthenticationState.authenticated))
+        visitorIdList.append(TestIdentifiable.init(origin: "orig1", type: "type1", identifier: "97717", authenticationState: MobileVisitorAuthenticationState.authenticated))
 
         var identityData: [String:Any] = [:]
         identityData["visitoridslist"] = visitorIdList
@@ -194,45 +186,5 @@ class AnalyticsRequestSerializeTests : XCTestCase {
         XCTAssertTrue(cidData.contains("id=97717"))
         XCTAssertTrue(cidData.contains(".type1"))
         XCTAssertTrue(cidData.contains("&.cid"))
-    }
-}
-
-//Helper Functions
-extension AnalyticsRequestSerializeTests {
-    func getCidData(source: String) -> String {
-        let regex = "&cid\\.(.*)&\\.cid"
-        if let range = source.range(of: regex, options: .regularExpression) {
-            return String(source[range])
-        }
-        return ""
-    }
-
-    func getContextData(source: String) -> String {
-        let regex = "(&c\\.(.*)&\\.c)"
-        if let range = source.range(of: regex, options: .regularExpression) {
-            return String(source[range])
-        }
-        return ""
-    }
-
-    func getAdditionalData(source: String) -> String {
-        var additionalData = source.replacingOccurrences(of: getCidData(source: source), with: "")
-        additionalData = additionalData.replacingOccurrences(of: getContextData(source: source), with: "")
-        return additionalData
-    }
-}
-
-fileprivate class TestIdentifiableImplemetation: Identifiable {
-
-    var origin: String?
-    var type: String?
-    var identifier: String?
-    var authenticationState: MobileVisitorAuthenticationState
-
-    init(origin: String, type: String, identifier: String, authenticationState: MobileVisitorAuthenticationState) {
-        self.origin = origin
-        self.type = type
-        self.identifier = identifier
-        self.authenticationState = authenticationState
     }
 }
