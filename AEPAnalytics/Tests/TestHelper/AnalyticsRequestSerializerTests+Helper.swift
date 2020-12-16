@@ -10,7 +10,7 @@
  governing permissions and limitations under the License.
  */
 
-extension AnalyticsRequestSerializeTests {
+extension AnalyticsRequestSerializerTests {
 
     func getCidData(source: String) -> String {
         let regex = "&cid\\.(.*)&\\.cid"
