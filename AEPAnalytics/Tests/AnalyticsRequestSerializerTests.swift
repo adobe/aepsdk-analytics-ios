@@ -16,7 +16,13 @@ import AEPIdentity
 
 class AnalyticsRequestSerializerTests : XCTestCase {
 
-    var analyticsRequestSerializer = AnalyticsRequestSerializer.init()
+    var analyticsRequestSerializer: AnalyticsRequestSerializer!
+    var analyticsState: AnalyticsState!
+
+    override func setUp() {
+        analyticsRequestSerializer = AnalyticsRequestSerializer.init()
+        analyticsState = AnalyticsState()
+    }
 
     func testGenerateAnalyticsCustomerIdString() {
         var visitorIdList = [Identifiable]()
@@ -48,8 +54,6 @@ class AnalyticsRequestSerializerTests : XCTestCase {
     }
 
     func testBuildRequestWhenValidDataAndValidVars() {
-        let analyticsState = AnalyticsState.init(dataMap: [String:[String:Any]]())
-
         var vars: [String:String] = [:]
         vars["v1"] = "evar1Value"
         vars["v2"] = "evar2Value"
@@ -74,9 +78,6 @@ class AnalyticsRequestSerializerTests : XCTestCase {
     }
 
     func testBuildRequestWhenNullDataAndValidVars() {
-
-        let analyticsState = AnalyticsState.init(dataMap: [String:[String:Any]]())
-
         var vars: [String:String] = [:]
         vars["v1"] = "evar1Value"
         vars["v2"] = "evar2Value"
@@ -86,8 +87,6 @@ class AnalyticsRequestSerializerTests : XCTestCase {
     }
 
     func testBuildRequestWhenValidDataAndNullVars() {
-        let analyticsState = AnalyticsState.init(dataMap: [String:[String:Any]]())
-
         var data: [String:String] = [:]
         data["testKey1"] = "val1"
         data["testKey2"] = "val2"
@@ -104,7 +103,6 @@ class AnalyticsRequestSerializerTests : XCTestCase {
     }
 
     func testBuildRequestWhenNullDataAndNullVars() {
-        let analyticsState = AnalyticsState.init(dataMap: [String:[String:Any]]())
         let result = analyticsRequestSerializer.buildRequest(analyticsState: analyticsState, data: nil, vars: nil)
         XCTAssertEqual("ndh=1", result)
     }
@@ -125,7 +123,7 @@ class AnalyticsRequestSerializerTests : XCTestCase {
         var sharedStates = [String: [String: Any]]()
         sharedStates[AnalyticsTestConstants.Identity.EventDataKeys.SHARED_STATE_NAME] = identityData
         sharedStates[AnalyticsTestConstants.Configuration.EventDataKeys.SHARED_STATE_NAME] = configurationData
-        let analyticsState = AnalyticsState.init(dataMap: sharedStates)
+        analyticsState.update(dataMap: sharedStates)
 
         let result = analyticsRequestSerializer.buildRequest(analyticsState: analyticsState, data: data, vars: nil)
         XCTAssertTrue(result.contains("ndh=1"))
@@ -136,7 +134,6 @@ class AnalyticsRequestSerializerTests : XCTestCase {
     }
 
     func testBuildRequestMovesToVarsWhenDataKeysPrefixed() {
-        let analyticsState = AnalyticsState.init(dataMap: [String:[String:Any]]())
         var data: [String:String] = [:]
         data["&&key1"] = "val1"
         data["key2"] = "val2"
@@ -170,7 +167,7 @@ class AnalyticsRequestSerializerTests : XCTestCase {
 
         var sharedStates = [String: [String: Any]]()
         sharedStates[AnalyticsTestConstants.Identity.EventDataKeys.SHARED_STATE_NAME] = identityData
-        let analyticsState = AnalyticsState.init(dataMap: sharedStates)
+        analyticsState.update(dataMap: sharedStates)
         analyticsState.marketingCloudOrganizationId = "orgID"
 
         let result = analyticsRequestSerializer.buildRequest(analyticsState: analyticsState, data: data, vars: vars)
