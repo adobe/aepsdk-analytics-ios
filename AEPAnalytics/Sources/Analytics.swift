@@ -42,7 +42,7 @@ public class Analytics: NSObject, Extension {
         registerListener(type: EventType.acquisition, source: EventSource.responseContent, listener: handleAnalyticsRequest)
         registerListener(type: EventType.lifecycle, source: EventSource.responseContent, listener: handleLifecycleEvents)
         registerListener(type: EventType.genericLifecycle, source: EventSource.requestContent, listener: handleAnalyticsRequest)
-//        registerListener(type: EventType.hub, source: EventSource.sharedState, listener: handleAnalyticsRequest)
+        registerListener(type: EventType.hub, source: EventSource.sharedState, listener: handleSharedStateUpdateEvent)
     }
 
     public func onUnregistered() {}
@@ -70,7 +70,7 @@ public class Analytics: NSObject, Extension {
     }
 }
 
-/// Event Listeners_object    Builtin.BridgeObject    0x8000000126eca620
+/// Event Listeners
 extension Analytics {
 
     /// Listener for handling Analytics `Events`.
@@ -162,6 +162,31 @@ extension Analytics {
             if event.type == EventType.acquisition && event.source == EventSource.responseContent {
                 trackAcquisitionData(analyticsState: createAnalyticsState(forEvent: event, dependencies: analyticsHardDependencies + softDependencies), event: event, analyticsProperties: &analyticsProperties)
             }
+        }
+    }
+    
+    /// Handles the shared state change `Event`
+    /// - Parameter event: The `Event` to be processed. The event this listener process is of
+    /// `EventType.Hub` and `EventSource.sharedState`.
+    private func handleSharedStateUpdateEvent(_ event: Event) {
+        
+        guard event.type == EventType.hub && event.source == EventSource.sharedState else {
+            Log.debug(label: LOG_TAG, "handleSharedStateUpdateEvent - Ignoring shared state update event (event is of correct Type).")
+            return
+        }
+        
+        guard let data = event.data else {
+            Log.debug(label: LOG_TAG, "handleSharedStateUpdateEvent - Ignoring shared state update event (event data was nil).")
+            return
+        }
+        
+        guard let stateOwner = data[AnalyticsConstants.EventDataKeys.STATE_OWNER] as? String else {
+            Log.debug(label: LOG_TAG, "handleSharedStateUpdateEvent - Ignoring shared state update event (state owner is missing).")
+            return
+        }
+        
+        if analyticsHardDependencies.contains(stateOwner) {
+            //TODO: Call the process event function.
         }
     }
 }
