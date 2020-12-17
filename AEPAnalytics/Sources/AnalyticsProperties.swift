@@ -97,6 +97,17 @@ struct AnalyticsProperties {
     func isDatabaseWaiting() -> Bool {
         return (!(referrerDispatchWorkItem?.isCancelled ?? true) && referrerTimerRunning) || (!(lifecycleDispatchWorkItem?.isCancelled ?? true) && lifecycleTimerRunning)
     }
+
+    /// Clears or resets to default values any saved properties present in the `AnalyticsProperties` instance.
+    mutating func reset() {
+        locale = nil
+        aid = nil
+        vid = nil
+        lifecyclePreviousSessionPauseTimestamp = nil
+        lifecyclePreviousPauseEventTimestamp = nil
+        referrerTimerRunning = false
+        lifecycleTimerRunning = false
+    }
 }
 
 extension TimeZone {

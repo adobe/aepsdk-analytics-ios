@@ -24,7 +24,7 @@ public class Analytics: NSObject, Extension {
     public let friendlyName = AnalyticsConstants.FRIENDLY_NAME
     public static let extensionVersion = AnalyticsConstants.EXTENSION_VERSION
     public let metadata: [String: String]? = nil
-    private var analyticsProperties = AnalyticsProperties.init()
+    private var analyticsProperties: AnalyticsProperties
     private var analyticsState: AnalyticsState
     private let analyticsHardDependencies: [String] = [AnalyticsConstants.Configuration.EventDataKeys.SHARED_STATE_NAME, AnalyticsConstants.Identity.EventDataKeys.SHARED_STATE_NAME]
     // MARK: Extension
@@ -32,15 +32,22 @@ public class Analytics: NSObject, Extension {
     public required init(runtime: ExtensionRuntime) {
         self.runtime = runtime
         self.analyticsState = AnalyticsState()
+        self.analyticsProperties = AnalyticsProperties.init()
         super.init()
     }
 
-    // internal init added for tests
     #if DEBUG
-        internal init(runtime: ExtensionRuntime, state: AnalyticsState) {
+        // internal init added for tests
+        internal init(runtime: ExtensionRuntime, state: AnalyticsState, properties: AnalyticsProperties) {
             self.runtime = runtime
             self.analyticsState = state
+            self.analyticsProperties = properties
             super.init()
+        }
+
+        // analytics properties getter added for tests
+        internal func getAnalyticsProperties() -> AnalyticsProperties {
+            return analyticsProperties
         }
     #endif
 
@@ -89,13 +96,18 @@ extension Analytics {
         Log.debug(label: LOG_TAG, "Received Configuration Response event, attempting to retrieve configuration settings.")
         analyticsState.extractConfigurationInfo(from: configSharedState)
         if analyticsState.privacyStatus == .optedOut {
-            Log.debug(label: LOG_TAG, "Privacy status is opted-out. Queued Analytics hits, stored state data, and properties will be cleared.")
-            // reset the AnalyticsProperties
-            analyticsProperties = AnalyticsProperties.init()
-            // TODO: clear hits database
-            // TODO: get empty data from analytics properties (AID and Visitor Identifier) and create shared state with that data.
-            createSharedState(data: [String:Any](), event: event)
+            handleOptOut(event: event)
         }
+    }
+
+    /// Clears all the Analytics Properties and any queued hits in the HitsDatabase.
+    private func handleOptOut(event: Event) {
+        Log.debug(label: LOG_TAG, "Privacy status is opted-out. Queued Analytics hits, stored state data, and properties will be cleared.")
+        // Clear / reset to default values any properties stored in the AnalyticsProperties
+        analyticsProperties.reset()
+        // TODO: clear hits database
+        // TODO: get empty data from analytics properties (AID and Visitor Identifier) and create shared state with that data.
+        createSharedState(data: [String:Any](), event: event)
     }
 
     /// Listener for handling Analytics `Events`.
