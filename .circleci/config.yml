@@ -9,7 +9,7 @@ workflows:
   build-test-deploy:
     jobs:
       - build-and-test
-      
+
 orbs:
   slack: circleci/slack@4.0.2
 
@@ -91,7 +91,7 @@ jobs:
                   "type": "header",
                   "text": {
                     "type": "plain_text",
-                    "text": "Build Failed :x:",
+                    "text": "AEPAnalytics [iOS] -> Build Failed :x:",
                     "emoji": true
                   }
                 },
@@ -144,7 +144,7 @@ jobs:
                   "type": "header",
                   "text": {
                     "type": "plain_text",
-                    "text": "Build Successful :tada:",
+                    "text": "AEPAnalytics [iOS] -> Build Successful :tada:",
                     "emoji": true
                   }
                 },
