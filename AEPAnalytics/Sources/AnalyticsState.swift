@@ -21,8 +21,6 @@ class AnalyticsState {
     private let LOG_TAG = "AnalyticsState"
     /// Instance of `AnalyticsRequestSerializer`, use to serialize visitor id's List.
     private let analyticsRequestSerializer = AnalyticsRequestSerializer()
-    /// Configuration setting for forwarding Analytics hits to Audience manager.
-    private(set) var analyticForwardingEnabled: Bool = AnalyticsConstants.Default.FORWARDING_ENABLED
     /// `Offline enabled` configuration setting. If true analytics hits are queued when device is offline and sent when device is online.
     private(set) var offlineEnabled: Bool = AnalyticsConstants.Default.OFFLINE_ENABLED
     /// `Batch limit` configuration setting. Number of hits to queue before sending to Analytics.
@@ -33,24 +31,38 @@ class AnalyticsState {
     private(set) var launchHitDelay: TimeInterval = AnalyticsConstants.Default.LAUNCH_HIT_DELAY
     /// `Backdate Previous Session Info` configuration setting. If enable backdates session information hits.
     private(set) var backDateSessionInfoEnabled: Bool = AnalyticsConstants.Default.BACKDATE_SESSION_INFO_ENABLED
-    /// Id for `Marketing cloud organization`.
-    private(set) var marketingCloudOrganizationId: String?
-    /// `RSID` configuration settings. Id of report suites to which data should be send.
-    private(set) var rsids: String?
-    /// Analytics Server url.
-    private(set) var host: String?
 
     #if DEBUG
+        var analyticForwardingEnabled: Bool = AnalyticsConstants.Default.FORWARDING_ENABLED
         var marketingCloudId: String?
+        var marketingCloudOrganizationId: String?
         var locationHint: String?
         var blob: String?
+        var rsids: String?
+        var host: String?
+        var defaultData: [String: String] = [String: String]()
+        var lifecycleMaxSessionLength: TimeInterval = AnalyticsConstants.Default.LIFECYCLE_MAX_SESSION_LENGTH
+        var lifecycleSessionStartTimestamp: TimeInterval = AnalyticsConstants.Default.LIFECYCLE_SESSION_START_TIMESTAMP
     #else
+        /// Configuration setting for forwarding Analytics hits to Audience manager.
+        private(set) var analyticForwardingEnabled: Bool = AnalyticsConstants.Default.FORWARDING_ENABLED
         /// Unique id for device.
         private(set) var marketingCloudId: String?
+        /// Id for `Marketing cloud organization`.
+        private(set) var marketingCloudOrganizationId: String?
         /// The location hint value.
         private var locationHint: String?
         /// The blob value.
         private var blob: String?
+        /// `RSID` configuration settings. Id of report suites to which data should be send.
+        private(set) var rsids: String?
+        /// Analytics Server url.
+        private(set) var host: String?
+        private(set) var defaultData: [String: String] = [:]
+        /// Maximum time in seconds before a session times out.
+        private(set) var lifecycleMaxSessionLength: TimeInterval = AnalyticsConstants.Default.LIFECYCLE_MAX_SESSION_LENGTH
+        /// Start timestamp of new session.
+        private(set) var lifecycleSessionStartTimestamp: TimeInterval = AnalyticsConstants.Default.LIFECYCLE_SESSION_START_TIMESTAMP
     #endif
     /// A serialized form of list of visitor identifiers.
     private(set) var serializedVisitorIdsList: String?
@@ -60,11 +72,6 @@ class AnalyticsState {
     private(set) var advertisingId: String?
     /// Whether or not Assurance session is active.
     private(set) var assuranceSessionActive: Bool?
-    /// Maximum time in ms before a session times out.
-    private(set) var lifecycleMaxSessionLength: TimeInterval = AnalyticsConstants.Default.LIFECYCLE_MAX_SESSION_LENGTH
-    /// Start timestamp of new session.
-    private(set) var lifecycleSessionStartTimestamp: TimeInterval = AnalyticsConstants.Default.LIFECYCLE_SESSION_START_TIMESTAMP
-    private(set) var defaultData: [String: String] = [String: String]()
     /// Typealias for Lifecycle Event Data keys.
     private typealias LifeCycleEventDataKeys = AnalyticsConstants.Lifecycle.EventDataKeys
     /// Typealias for Configuration Event Data keys.
@@ -78,19 +85,22 @@ class AnalyticsState {
 
     /// Initializer that takes the shared states map and initialize the properties.
     /// - Parameter dataMap: The map contains the shared state data required by the Analytics SDK.
-    init(dataMap: [String: [String: Any]]) {
+    init(dataMap: [String: [String: Any]?]) {
         for key in dataMap.keys {
+            guard let sharedState = dataMap[key] else {
+                continue
+            }
             switch key {
             case ConfigurationEventDataKeys.SHARED_STATE_NAME:
-                extractConfigurationInfo(from: dataMap[key])
+                extractConfigurationInfo(from: sharedState)
             case LifeCycleEventDataKeys.SHARED_STATE_NAME:
-                extractLifecycleInfo(from: dataMap[key])
+                extractLifecycleInfo(from: sharedState)
             case IdentityEventDataKeys.SHARED_STATE_NAME:
-                extractIdentityInfo(from: dataMap[key])
+                extractIdentityInfo(from: sharedState)
             case PlacesEventDataKeys.SHARED_STATE_NAME:
-                extractPlacesInfo(from: dataMap[key])
+                extractPlacesInfo(from: sharedState)
             case AssuranceEventDataKeys.SHARED_STATE_NAME:
-                extractAssuranceInfo(from: dataMap[key])
+                extractAssuranceInfo(from: sharedState)
             default:
                 break
             }
