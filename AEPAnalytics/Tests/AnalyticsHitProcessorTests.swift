@@ -15,7 +15,7 @@
 import XCTest
 
 class AnalyticsHitProcessorTests: XCTestCase {
-    let DEFAULT_TIMEOUT : TimeInterval = 2000;
+    let DEFAULT_TIMEOUT : TimeInterval = 2;
     var hitProcessor: AnalyticsHitProcessor!
     var responseCallbackArgs = [(DataEntity, Data?)]()
     var mockNetworkService: MockNetworking? {

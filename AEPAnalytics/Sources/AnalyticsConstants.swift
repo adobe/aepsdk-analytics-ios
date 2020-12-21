@@ -98,7 +98,7 @@ enum AnalyticsConstants {
         static let OFFLINE_ENABLED = false
         static let BACKDATE_SESSION_INFO_ENABLED = false
         static let BATCH_LIMIT = 0
-        static let CONNECTION_TIMEOUT = TimeInterval(2000)
+        static let CONNECTION_TIMEOUT = TimeInterval(2)
         static let LAUNCH_HIT_DELAY = TimeInterval.init()
         static let LIFECYCLE_RESPONSE_WAIT_TIMEOUT = TimeInterval.init(1)
         static let LAUNCH_DEEPLINK_DATA_WAIT_TIMEOUT = TimeInterval.init(0.5)
