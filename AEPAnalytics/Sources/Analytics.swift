@@ -244,10 +244,11 @@ extension Analytics {
                 } else if connection.responseCode != 200 {
                     Log.debug(label: self.LOG_TAG, "sendAnalyticsIdRequest - Unable to read response for AID request. Connection response code = \(String(describing: connection.responseCode)).")
                 } else {
-                    guard let responseData = connection.data, let aid = self.parseIdentifier(state: analyticsState, response: responseData) else {
-                        Log.debug(label: self.LOG_TAG, "sendAnalyticsIdRequest - Unable to parse AID from the AID request.")
+                    guard let responseData = connection.data else {
+                        Log.debug(label: self.LOG_TAG, "sendAnalyticsIdRequest - Unable to retrieve connection date from the AID request.")
                         return
                     }
+                    let aid = self.parseIdentifier(state: analyticsState, response: responseData)
                     Log.debug(label: self.LOG_TAG, "sendAnalyticsIdRequest - Successfully sent the AID request, received response: \(aid)")
                     self.analyticsProperties.setAnalyticsIdentifier(aid: aid)
                     self.dispatchAnalyticsIdentityResponse(event: event)
