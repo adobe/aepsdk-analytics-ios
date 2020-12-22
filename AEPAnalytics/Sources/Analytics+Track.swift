@@ -211,11 +211,11 @@ extension Analytics {
         if let stateName = trackData[AnalyticsConstants.EventDataKeys.TRACK_STATE] as? String {
             analyticsVars[AnalyticsConstants.Request.PAGE_NAME_KEY] = stateName
         }
-        if let aid = analyticsProperties.aid {
+        if let aid = analyticsProperties.getAnalyticsIdentifier() {
             analyticsVars[AnalyticsConstants.Request.ANALYTICS_ID_KEY] = aid
         }
 
-        if let vid = analyticsProperties.vid {
+        if let vid = analyticsProperties.getVisitorIdentifier() {
             analyticsVars[AnalyticsConstants.Request.VISITOR_ID_KEY] = vid
         }
 
