@@ -36,7 +36,6 @@
 		AC76C17B2534D67B00211DE2 /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = AC76C1632534D66300211DE2 /* .swiftlint.yml */; };
 		D67AC98C2578285F000FA306 /* AnalyticsHitResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67AC98B2578285F000FA306 /* AnalyticsHitResponse.swift */; };
 		D67AC99B257874C2000FA306 /* TestHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67AC995257874BE000FA306 /* TestHelper.swift */; };
-		D67AC9A12579663E000FA306 /* MockNetworking.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67AC9A02579663E000FA306 /* MockNetworking.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -445,7 +444,6 @@
 				3DDC3E8B258AA16700ED05BC /* AnalyticsRequestSerializerTests+Helper.swift in Sources */,
 				3D1D45B2253F99130053CB47 /* AnalyticsStateTest.swift in Sources */,
 				3DD0693F253516EC00877781 /* AnalyticsPropertiesTest.swift in Sources */,
-				D67AC9A12579663E000FA306 /* MockNetworking.swift in Sources */,
 				3DD8E6E82566FDEB009234FD /* AnalyticsTest.swift in Sources */,
 				3DDC3E8F258AA1D400ED05BC /* TestIdentifiable.swift in Sources */,
 				3DC1E0242575CB5100E0AA16 /* AnalyticsRequestSerializerTests.swift in Sources */,
