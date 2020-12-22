@@ -34,8 +34,8 @@
 		AC277D03252C23F400987C67 /* AnalyticsAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC277CF0252C23E600987C67 /* AnalyticsAPITests.swift */; };
 		AC3333702536590600BF8A56 /* MockExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC33336F2536590600BF8A56 /* MockExtension.swift */; };
 		AC76C17B2534D67B00211DE2 /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = AC76C1632534D66300211DE2 /* .swiftlint.yml */; };
+		D676B38E25928D4F0099E5AC /* TestHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67AC995257874BE000FA306 /* TestHelper.swift */; };
 		D67AC98C2578285F000FA306 /* AnalyticsHitResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67AC98B2578285F000FA306 /* AnalyticsHitResponse.swift */; };
-		D67AC99B257874C2000FA306 /* TestHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67AC995257874BE000FA306 /* TestHelper.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -86,7 +86,6 @@
 		AC76C1632534D66300211DE2 /* .swiftlint.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
 		D67AC98B2578285F000FA306 /* AnalyticsHitResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsHitResponse.swift; sourceTree = "<group>"; };
 		D67AC995257874BE000FA306 /* TestHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestHelper.swift; sourceTree = "<group>"; };
-		D67AC9A02579663E000FA306 /* MockNetworking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockNetworking.swift; sourceTree = "<group>"; };
 		E274320DD947E7BB2B2E8A33 /* Pods-AEPAnalyticsTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AEPAnalyticsTests.release.xcconfig"; path = "Target Support Files/Pods-AEPAnalyticsTests/Pods-AEPAnalyticsTests.release.xcconfig"; sourceTree = "<group>"; };
 		EF12C9A6B24908684CC8EA6C /* Pods-AEPAnalytics.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AEPAnalytics.release.xcconfig"; path = "Target Support Files/Pods-AEPAnalytics/Pods-AEPAnalytics.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -206,7 +205,6 @@
 				2ED53FF0255F37D7000F0B23 /* MockNetworking.swift */,
 				3DDC3E8A258AA16700ED05BC /* AnalyticsRequestSerializerTests+Helper.swift */,
 				3DDC3E8E258AA1D400ED05BC /* TestIdentifiable.swift */,
-				D617FA4F258BC9ED00C6B7ED /* TestHelper.swift */,
 			);
 			path = TestHelper;
 			sourceTree = "<group>";
@@ -445,10 +443,9 @@
 				3D1D45B2253F99130053CB47 /* AnalyticsStateTest.swift in Sources */,
 				3DD0693F253516EC00877781 /* AnalyticsPropertiesTest.swift in Sources */,
 				3DD8E6E82566FDEB009234FD /* AnalyticsTest.swift in Sources */,
+				D676B38E25928D4F0099E5AC /* TestHelper.swift in Sources */,
 				3DDC3E8F258AA1D400ED05BC /* TestIdentifiable.swift in Sources */,
 				3DC1E0242575CB5100E0AA16 /* AnalyticsRequestSerializerTests.swift in Sources */,
-				AC277D03252C23F400987C67 /* AnalyticsAPITests.swift in Sources */,
-				D617FA50258BC9EE00C6B7ED /* TestHelper.swift in Sources */,
 				2ED53FF5255F37ED000F0B23 /* AnalyticsHitProcessorTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

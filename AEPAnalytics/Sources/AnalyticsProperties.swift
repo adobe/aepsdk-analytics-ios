@@ -130,6 +130,11 @@ struct AnalyticsProperties {
         lifecyclePreviousPauseEventTimestamp = nil
         referrerTimerRunning = false
         lifecycleTimerRunning = false
+        // clean analytics data in datastore
+        dataStore.remove(key: AnalyticsConstants.DataStoreKeys.AID_KEY)
+        dataStore.remove(key: AnalyticsConstants.DataStoreKeys.VISITOR_IDENTIFIER_KEY)
+        dataStore.remove(key: AnalyticsConstants.DataStoreKeys.AID_IGNORE_KEY)
+        dataStore.remove(key: AnalyticsConstants.DataStoreKeys.MOST_RECENT_HIT_TIMESTAMP_SECONDS)
     }
 
     /// Sets the value of the `aid` in the `AnalyticsProperties` instance.

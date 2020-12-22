@@ -228,7 +228,6 @@ extension Analytics {
     ///     - event: The `Event` which triggered the visitor identifier update.
     ///     - vid: The visitor identifier that was set.
     private func updateVisitorIdentifier(event: Event, vid: String) {
-        let analyticsState = createAnalyticsState(forEvent: event, dependencies: [AnalyticsConstants.Configuration.EventDataKeys.SHARED_STATE_NAME])
         if analyticsState.privacyStatus == .optedOut {
             Log.debug(label: LOG_TAG, "updateVisitorIdentifier - Privacy is opted out, ignoring the update visitor identifier request.")
             return
@@ -245,9 +244,7 @@ extension Analytics {
     /// - Parameters:
     ///     - event: The `Event` which triggered the sending of the analytics id request.
     private func sendAnalyticsIdRequest(event: Event) {
-        let analyticsState = createAnalyticsState(forEvent: event, dependencies: [AnalyticsConstants.Configuration.EventDataKeys.SHARED_STATE_NAME])
-
-        // check if analytics disabled or privacy opt-out and update shared state with empty id
+        // check if analytics state contains an RSID and host OR if privacy opt-out. if so, update shared state with empty id.
         if !analyticsState.isAnalyticsConfigured() || analyticsState.privacyStatus == .optedOut {
             Log.debug(label: LOG_TAG, "sendAnalyticsIdRequest - Analytics is not configured or privacy is opted out, the analytics identifier request will not be sent.")
             analyticsProperties.setAnalyticsIdentifier(aid: nil)
@@ -292,7 +289,7 @@ extension Analytics {
                         Log.debug(label: self.LOG_TAG, "sendAnalyticsIdRequest - Unable to retrieve connection date from the AID request.")
                         return
                     }
-                    let aid = self.parseIdentifier(state: analyticsState, response: responseData)
+                    let aid = self.parseIdentifier(state: self.analyticsState, response: responseData)
                     Log.debug(label: self.LOG_TAG, "sendAnalyticsIdRequest - Successfully sent the AID request, received response: \(aid)")
                     self.analyticsProperties.setAnalyticsIdentifier(aid: aid)
                     self.dispatchAnalyticsIdentityResponse(event: event)
