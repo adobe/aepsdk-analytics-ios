@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		0D0C29204B3D28B8FC5EDE0F /* Pods_AEPAnalyticsTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 14F04C9E55A557E974B476CB /* Pods_AEPAnalyticsTests.framework */; };
+		2ED53FE9255F37A4000F0B23 /* AnalyticsHit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ED53FE8255F37A4000F0B23 /* AnalyticsHit.swift */; };
+		2ED53FED255F37B1000F0B23 /* AnalyticsHitProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ED53FEC255F37B1000F0B23 /* AnalyticsHitProcessor.swift */; };
+		2ED53FF1255F37D7000F0B23 /* MockNetworking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ED53FF0255F37D7000F0B23 /* MockNetworking.swift */; };
+		2ED53FF5255F37ED000F0B23 /* AnalyticsHitProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ED53FF4255F37ED000F0B23 /* AnalyticsHitProcessorTests.swift */; };
 		2FBC2E5752E860AAB4C519F1 /* Pods_AEPAnalytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 56DA22A3CE773DE7E7380769 /* Pods_AEPAnalytics.framework */; };
 		3D1D45AD2537B0990053CB47 /* AnalyticsState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1D45AC2537B0990053CB47 /* AnalyticsState.swift */; };
 		3D1D45AF25391B410053CB47 /* AnalyticsRequestSerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1D45AE25391B410053CB47 /* AnalyticsRequestSerializer.swift */; };
@@ -52,6 +56,10 @@
 		2E0B4C04252BA10800ABBE57 /* AEPCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = AEPCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2EBEE7702525A35400880E72 /* AEPAnalytics.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AEPAnalytics.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2EBEE7792525A35400880E72 /* AEPAnalyticsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AEPAnalyticsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		2ED53FE8255F37A4000F0B23 /* AnalyticsHit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsHit.swift; sourceTree = "<group>"; };
+		2ED53FEC255F37B1000F0B23 /* AnalyticsHitProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsHitProcessor.swift; sourceTree = "<group>"; };
+		2ED53FF0255F37D7000F0B23 /* MockNetworking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockNetworking.swift; sourceTree = "<group>"; };
+		2ED53FF4255F37ED000F0B23 /* AnalyticsHitProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsHitProcessorTests.swift; sourceTree = "<group>"; };
 		3D1D45AC2537B0990053CB47 /* AnalyticsState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsState.swift; sourceTree = "<group>"; };
 		3D1D45AE25391B410053CB47 /* AnalyticsRequestSerializer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsRequestSerializer.swift; sourceTree = "<group>"; };
 		3D1D45B1253F99120053CB47 /* AnalyticsStateTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsStateTest.swift; sourceTree = "<group>"; };
@@ -160,6 +168,7 @@
 				AC277CF3252C23E600987C67 /* Info.plist */,
 				3DD0693E253516EC00877781 /* AnalyticsPropertiesTest.swift */,
 				3D1D45B1253F99120053CB47 /* AnalyticsStateTest.swift */,
+				2ED53FF4255F37ED000F0B23 /* AnalyticsHitProcessorTests.swift */,
 				3DD8E6E72566FDEB009234FD /* AnalyticsTest.swift */,
 				3DC1E0232575CB5100E0AA16 /* AnalyticsRequestSerializerTests.swift */,
 			);
@@ -177,6 +186,8 @@
 				AC277CF9252C23E600987C67 /* Info.plist */,
 				3D1D45AC2537B0990053CB47 /* AnalyticsState.swift */,
 				3D1D45AE25391B410053CB47 /* AnalyticsRequestSerializer.swift */,
+				2ED53FE8255F37A4000F0B23 /* AnalyticsHit.swift */,
+				2ED53FEC255F37B1000F0B23 /* AnalyticsHitProcessor.swift */,
 				3D1D45B525425F230053CB47 /* ContextDataUtil.swift */,
 				3DAA40BA2548C58100703509 /* ContextData.swift */,
 				3DD8E6FB256F0BC2009234FD /* Analytics+Track.swift */,
@@ -193,7 +204,7 @@
 				AC76C1612534D66300211DE2 /* TestableExtensionRuntime.swift */,
 				3D1D45B3253F9EE60053CB47 /* AnalyticsTestConstants.swift */,
 				D67AC995257874BE000FA306 /* TestHelper.swift */,
-				D67AC9A02579663E000FA306 /* MockNetworking.swift */,
+				2ED53FF0255F37D7000F0B23 /* MockNetworking.swift */,
 				3DDC3E8A258AA16700ED05BC /* AnalyticsRequestSerializerTests+Helper.swift */,
 				3DDC3E8E258AA1D400ED05BC /* TestIdentifiable.swift */,
 			);
@@ -410,11 +421,13 @@
 				AC277CFF252C23E600987C67 /* AnalyticsConstants.swift in Sources */,
 				3DCDB3DF252E853200ABA819 /* AnalyticsProperties.swift in Sources */,
 				D67AC98C2578285F000FA306 /* AnalyticsHitResponse.swift in Sources */,
+				2ED53FED255F37B1000F0B23 /* AnalyticsHitProcessor.swift in Sources */,
 				3DAA40BB2548C58100703509 /* ContextData.swift in Sources */,
 				AC277CFE252C23E600987C67 /* Analytics.swift in Sources */,
 				3D1D45AF25391B410053CB47 /* AnalyticsRequestSerializer.swift in Sources */,
 				3D1D45B625425F240053CB47 /* ContextDataUtil.swift in Sources */,
 				AC277D01252C23E600987C67 /* Analytics+PublicAPI.swift in Sources */,
+				2ED53FE9255F37A4000F0B23 /* AnalyticsHit.swift in Sources */,
 				3DD8E6FC256F0BC2009234FD /* Analytics+Track.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -427,6 +440,7 @@
 				D67AC99B257874C2000FA306 /* TestHelper.swift in Sources */,
 				3DD8E6EB25673BE3009234FD /* TestableExtensionRuntime.swift in Sources */,
 				AC277D03252C23F400987C67 /* AnalyticsAPITests.swift in Sources */,
+				2ED53FF1255F37D7000F0B23 /* MockNetworking.swift in Sources */,
 				AC3333702536590600BF8A56 /* MockExtension.swift in Sources */,
 				3DDC3E8B258AA16700ED05BC /* AnalyticsRequestSerializerTests+Helper.swift in Sources */,
 				3D1D45B2253F99130053CB47 /* AnalyticsStateTest.swift in Sources */,
@@ -436,6 +450,7 @@
 				3DDC3E8F258AA1D400ED05BC /* TestIdentifiable.swift in Sources */,
 				3DC1E0242575CB5100E0AA16 /* AnalyticsRequestSerializerTests.swift in Sources */,
 				AC277D03252C23F400987C67 /* AnalyticsAPITests.swift in Sources */,
+				2ED53FF5255F37ED000F0B23 /* AnalyticsHitProcessorTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

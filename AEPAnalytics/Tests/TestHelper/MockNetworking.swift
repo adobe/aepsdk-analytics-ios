@@ -10,6 +10,7 @@
 // governing permissions and limitations under the License.
 //
 
+@testable import AEPAnalytics
 import AEPServices
 import Foundation
 
