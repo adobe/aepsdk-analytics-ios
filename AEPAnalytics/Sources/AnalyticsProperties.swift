@@ -93,7 +93,7 @@ struct AnalyticsProperties {
     /// - Returns: A bool containing the `ignoreAid` status.
     mutating func getIgnoreAidStatus() -> Bool {
         // check data store to see if we can return a visitor identifier from persistence
-        if let retrievedStatus = dataStore.getBool(key: AnalyticsConstants.DataStoreKeys.AID_IGNORE_KEY, fallback: nil), retrievedStatus {
+        if let retrievedStatus = dataStore.getBool(key: AnalyticsConstants.DataStoreKeys.AID_IGNORE_KEY, fallback: false), retrievedStatus {
             return retrievedStatus
         }
         return self.ignoreAid
@@ -153,10 +153,10 @@ struct AnalyticsProperties {
     /// - Parameter:
     ///   - status: The value for the new `vid`.
     mutating func setAnalyticsVisitorIdentifier(vid: String?) {
-        if vid == nil {
-            dataStore.remove(key: AnalyticsConstants.DataStoreKeys.VISITOR_IDENTIFIER_KEY)
-        } else {
+        if let vid = vid {
             dataStore.set(key: AnalyticsConstants.DataStoreKeys.VISITOR_IDENTIFIER_KEY, value: vid)
+        } else {
+            dataStore.remove(key: AnalyticsConstants.DataStoreKeys.VISITOR_IDENTIFIER_KEY)
         }
 
         self.vid = vid

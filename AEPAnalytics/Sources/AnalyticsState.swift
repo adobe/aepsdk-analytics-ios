@@ -265,7 +265,7 @@ class AnalyticsState {
         components.queryItems = getMarketingCloudIdQueryParameters()
 
         guard let url = components.url else {
-            Log.error(label: LOG_TAG, "Building Analytics Identity Request URL failed, returning nil.")
+            Log.error(label: LOG_TAG, "getMarketingCloudIdQueryParameters - Building Analytics Identity Request URL failed, returning nil.")
             return nil
         }
         return url
@@ -273,7 +273,8 @@ class AnalyticsState {
 
     private func getMarketingCloudIdQueryParameters() -> [URLQueryItem] {
         var queryItems: [URLQueryItem] = []
-        if marketingCloudId == nil {
+        guard let marketingCloudId = marketingCloudId else {
+            Log.debug(label: self.LOG_TAG, "getMarketingCloudIdQueryParameters - Experience Cloud ID is nil, no query items to return.")
             return queryItems
         }
 

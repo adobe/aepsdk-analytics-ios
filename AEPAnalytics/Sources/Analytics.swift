@@ -37,12 +37,12 @@ public class Analytics: NSObject, Extension {
         registerListener(type: EventType.genericTrack, source: EventSource.requestContent, listener: handleAnalyticsRequest)
 //        registerListener(type: EventType.rulesEngine, source: EventSource.responseContent, listener: handleAnalyticsRequest)
 //        registerListener(type: EventType.analytics, source: EventSource.requestContent, listener: handleAnalyticsRequest)
-        registerListener(type: EventType.analytics, source: EventSource.requestIdentity, listener: handleAnalyticsRequest)
+        registerListener(type: EventType.analytics, source: EventSource.requestIdentity, listener: handleAnalyticsRequestIdentityEvent)
 //        registerListener(type: EventType.configuration, source: EventSource.responseContent, listener: handleAnalyticsRequest)
         registerListener(type: EventType.acquisition, source: EventSource.responseContent, listener: handleAnalyticsRequest)
         registerListener(type: EventType.lifecycle, source: EventSource.responseContent, listener: handleLifecycleEvents)
         registerListener(type: EventType.genericLifecycle, source: EventSource.requestContent, listener: handleAnalyticsRequest)
-        registerListener(type: EventType.hub, source: EventSource.sharedState, listener: handleAnalyticsRequest)
+        registerListener(type: EventType.hub, source: EventSource.sharedState, listener: sendAnalyticsIdRequest)
     }
 
     public func onUnregistered() {}
@@ -84,18 +84,6 @@ extension Analytics {
         case EventType.acquisition:
             analyticsProperties.dispatchQueue.async {
                 self.handleAcquisitionEvent(event)
-            }
-        case EventType.analytics:
-            if event.source == EventSource.requestIdentity {
-                analyticsProperties.dispatchQueue.async {
-                    self.handleAnalyticsRequestIdentityEvent(event)
-                }
-            }
-        case EventType.hub:
-            if event.source == EventSource.sharedState {
-                analyticsProperties.dispatchQueue.async {
-                    self.sendAnalyticsIdRequest(event: event)
-                }
             }
         default:
             break
@@ -245,6 +233,7 @@ extension Analytics {
             }
 
             guard let url = analyticsState.buildAnalyticsIdRequestURL(properties: analyticsProperties) else {
+                Log.warning(label: self.LOG_TAG, "sendAnalyticsIdRequest - Failed to build the Analytics ID Request URL.")
                 return
             }
 
@@ -255,13 +244,15 @@ extension Analytics {
                 } else if connection.responseCode != 200 {
                     Log.debug(label: self.LOG_TAG, "sendAnalyticsIdRequest - Unable to read response for AID request. Connection response code = \(String(describing: connection.responseCode)).")
                 } else {
-                    guard let responseData = connection.data, let aid = self.parseIdentifier(state: analyticsState, response: responseData) else { return }
+                    guard let responseData = connection.data, let aid = self.parseIdentifier(state: analyticsState, response: responseData) else {
+                        Log.debug(label: self.LOG_TAG, "sendAnalyticsIdRequest - Unable to parse AID from the AID request.")
+                        return
+                    }
                     Log.debug(label: self.LOG_TAG, "sendAnalyticsIdRequest - Successfully sent the AID request, received response: \(aid)")
                     self.analyticsProperties.setAnalyticsIdentifier(aid: aid)
                     self.dispatchAnalyticsIdentityResponse(event: event)
                 }
             }
-            return
         } else {
             dispatchAnalyticsIdentityResponse(event: event)
         }
@@ -295,18 +286,18 @@ extension Analytics {
         var headers = [String: String]()
         let locale = ServiceProvider.shared.systemInfoService.getActiveLocaleName()
         if !locale.isEmpty {
-            headers[AnalyticsConstants.HttpConnection.HTTP_HEADER_KEY_ACCEPT_LANGUAGE] = locale
+            headers[AnalyticsConstants.HttpConnection.HEADER_KEY_ACCEPT_LANGUAGE] = locale
         }
 
-        return NetworkRequest(url: url, httpMethod: .get, connectPayload: "", httpHeaders: headers, connectTimeout: AnalyticsConstants.Default.ANALYTICS_CONNECTION_TIMEOUT, readTimeout: AnalyticsConstants.Default.ANALYTICS_CONNECTION_TIMEOUT)
+        return NetworkRequest(url: url, httpMethod: .get, connectPayload: "", httpHeaders: headers, connectTimeout: AnalyticsConstants.Default.CONNECTION_TIMEOUT, readTimeout: AnalyticsConstants.Default.CONNECTION_TIMEOUT)
     }
 
     /// Parses the analytics id present in a response received from analytics.
     /// - Parameters:
     ///     - state: The current `AnalyticsState`.
     ///     - response: The response received from analytics.
-    /// - Returns: a string containing the analytcs id contained in the response.
-    private func parseIdentifier(state: AnalyticsState, response: Data) -> String? {
+    /// - Returns: a string containing the analytcs id contained in the response or a generated analytics id if non was found.
+    private func parseIdentifier(state: AnalyticsState, response: Data) -> String {
         var aid = String()
         guard let jsonResponse = try? JSONDecoder().decode(AnalyticsHitResponse.self, from: response) else {
             Log.debug(label: self.LOG_TAG, "parseIdentifier - Failed to parse analytics server response. Generating an AID.")
