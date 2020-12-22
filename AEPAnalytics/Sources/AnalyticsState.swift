@@ -43,6 +43,7 @@ class AnalyticsState {
         var defaultData: [String: String] = [String: String]()
         var lifecycleMaxSessionLength: TimeInterval = AnalyticsConstants.Default.LIFECYCLE_MAX_SESSION_LENGTH
         var lifecycleSessionStartTimestamp: TimeInterval = AnalyticsConstants.Default.LIFECYCLE_SESSION_START_TIMESTAMP
+        var orgId: String?
     #else
         /// Configuration setting for forwarding Analytics hits to Audience manager.
         private(set) var analyticForwardingEnabled: Bool = AnalyticsConstants.Default.FORWARDING_ENABLED
@@ -63,6 +64,8 @@ class AnalyticsState {
         private(set) var lifecycleMaxSessionLength: TimeInterval = AnalyticsConstants.Default.LIFECYCLE_MAX_SESSION_LENGTH
         /// Start timestamp of new session.
         private(set) var lifecycleSessionStartTimestamp: TimeInterval = AnalyticsConstants.Default.LIFECYCLE_SESSION_START_TIMESTAMP
+        /// The Experience Cloud Org ID provided by the Configuration extension.
+        private(set) var orgId: String?
     #endif
     /// A serialized form of list of visitor identifiers.
     private(set) var serializedVisitorIdsList: String?
@@ -249,6 +252,36 @@ class AnalyticsState {
             return nil
         }
         return url
+    }
+
+    /// Creates a new Analytics ID Request URL
+    /// - Parameters:
+    ///   - properties: the analytics properties
+    func buildAnalyticsIdRequestURL(properties: AnalyticsProperties?) -> URL? {
+        var components = URLComponents()
+        components.scheme = "https"
+        components.host = host
+        components.path = "/id"
+        components.queryItems = getMarketingCloudIdQueryParameters()
+
+        guard let url = components.url else {
+            Log.error(label: LOG_TAG, "getMarketingCloudIdQueryParameters - Building Analytics Identity Request URL failed, returning nil.")
+            return nil
+        }
+        return url
+    }
+
+    private func getMarketingCloudIdQueryParameters() -> [URLQueryItem] {
+        var queryItems: [URLQueryItem] = []
+        guard let marketingCloudId = marketingCloudId else {
+            Log.debug(label: self.LOG_TAG, "getMarketingCloudIdQueryParameters - Experience Cloud ID is nil, no query items to return.")
+            return queryItems
+        }
+
+        queryItems += [URLQueryItem(name: AnalyticsConstants.ParameterKeys.KEY_MID, value: marketingCloudId)]
+        queryItems += [URLQueryItem(name: AnalyticsConstants.ParameterKeys.KEY_ORG, value: orgId)]
+
+        return queryItems
     }
 
     /// Determines and return whether visitor id service is enabled or not.
