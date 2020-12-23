@@ -105,8 +105,8 @@ extension Analytics {
         // Clear / reset to default values any properties stored in the AnalyticsProperties
         analyticsProperties.reset()
         // TODO: clear hits database
-        // TODO: get empty data from analytics properties (AID and Visitor Identifier) and create shared state with that data.
-        createSharedState(data: [String:Any](), event: event)
+        let stateData = getStateData()
+        createSharedState(data: stateData, event: event)
     }
 
     /// Listener for handling Analytics `Events`.
