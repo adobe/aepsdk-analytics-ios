@@ -74,7 +74,6 @@ public class Analytics: NSObject, Extension {
      - Parameters:
           - event: The `Event` for which shared state is to be retrieved.
           - dependencies: An array of names of event's dependencies.
-     - Returns: The `AnalyticsState` instance which contains the shared state of all dependecies.
      */
     func updateAnalyticsState(forEvent event: Event, dependencies: [String]) {
         var sharedStates = [String: [String: Any]?]()
