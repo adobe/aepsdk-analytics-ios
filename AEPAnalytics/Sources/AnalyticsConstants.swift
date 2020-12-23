@@ -22,10 +22,11 @@ enum AnalyticsConstants {
     static let IGNORE_PAGE_NAME_VALUE                   = "lnk_o"
     static let ACTION_PREFIX                            = "AMACTION:"
     static let INTERNAL_ACTION_PREFIX                   = "ADBINTERNAL:"
-    static let VAR_ESCAPE_PREFIX                         = "&&"
-    static let TRACK_INTERNAL_ADOBE_LINK                 = "AdobeLink"
-    static let APP_STATE_FOREGROUND                       = "foreground"
-    static let APP_STATE_BACKGROUND                       = "background"
+    static let VAR_ESCAPE_PREFIX                        = "&&"
+    static let TRACK_INTERNAL_ADOBE_LINK                = "AdobeLink"
+    static let APP_STATE_FOREGROUND                     = "foreground"
+    static let APP_STATE_BACKGROUND                     = "background"
+    static let AID_LENGTH                               = 33
 
     enum EventDataKeys {
         static let STATE_OWNER      = "stateowner"
@@ -98,6 +99,7 @@ enum AnalyticsConstants {
         static let OFFLINE_ENABLED = false
         static let BACKDATE_SESSION_INFO_ENABLED = false
         static let BATCH_LIMIT = 0
+        static let CONNECTION_TIMEOUT = TimeInterval(5)
         static let LAUNCH_HIT_DELAY = TimeInterval.init()
         static let LIFECYCLE_RESPONSE_WAIT_TIMEOUT = TimeInterval.init(1)
         static let LAUNCH_DEEPLINK_DATA_WAIT_TIMEOUT = TimeInterval.init(0.5)
@@ -111,6 +113,7 @@ enum AnalyticsConstants {
         static let KEY_MID = "mid"
         static let KEY_BLOB = "aamb"
         static let KEY_LOCATION_HINT = "aamlh"
+        static let KEY_ORG = "mcorgid"
     }
 
     enum DataStoreKeys {
@@ -136,6 +139,10 @@ enum AnalyticsConstants {
         static let CUSTOMER_ID_KEY          = "cid"
         static let REQUEST_STRING_PREFIX    = "ndh=1"
         static let DEBUG_API_PAYLOAD        = "&p.&debug=true&.p"
+    }
+
+    enum HttpConnection {
+        static let HEADER_KEY_ACCEPT_LANGUAGE = "Accept-Language"
     }
 
     static let MAP_EVENT_DATA_KEYS_TO_CONTEXT_DATA_KEYS: [String: String] = [
@@ -261,7 +268,7 @@ enum AnalyticsConstants {
             static let SHARED_STATE_NAME = "com.adobe.assurance"
             static let SESSION_ID = "sessionid"
         }
-        
+
         enum DEFAULT {
             static let SESSION_ENABLED = false
         }
