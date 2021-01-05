@@ -160,11 +160,6 @@ extension Analytics {
     /// `EventType.lifecycle` and `EventSource.responseContent`
     ///  - Parameter event: the `Event` to be processed
     private func handleLifecycleEvents(_ event: Event) {
-        if analyticsState.areHardDependenciesReady() == false {
-            Log.debug(label: LOG_TAG, "Analytics State is not ready, ignoring the lifecycle event.")
-            return
-        }
-
         if event.type == EventType.genericLifecycle && event.source == EventSource.requestContent {
 
             let lifecycleAction = event.data?[AnalyticsConstants.Lifecycle.EventDataKeys.LIFECYCLE_ACTION_KEY] as? String
@@ -206,11 +201,6 @@ extension Analytics {
     /// `EventType.acquisition` and `EventSource.responseContent`
     /// - Parameter event: The `Event` to be processed.
     private func handleAcquisitionEvent(_ event: Event) {
-        if analyticsState.areHardDependenciesReady() == false {
-            Log.debug(label: LOG_TAG, "Analytics State is not ready, ignoring the acquisiton event.")
-            return
-        }
-
         if analyticsProperties.referrerTimerRunning {
             Log.debug(label: LOG_TAG, "handleAcquisitionResponseEvent - Acquisition response received with referrer data.")
             analyticsProperties.cancelReferrerTimer()

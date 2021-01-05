@@ -335,9 +335,4 @@ class AnalyticsState {
         isConfigurationReady = false
         isIdentityReady = false
     }
-
-    /// Returns true if Configuration and Identity shared states have been processed, false otherwise.
-    func areHardDependenciesReady() -> Bool {
-        return isConfigurationReady && isIdentityReady
-    }
 }
