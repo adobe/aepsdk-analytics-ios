@@ -67,6 +67,12 @@ class AnalyticsTest : XCTestCase {
         mockNetworkService.expectedResponse = HttpConnection(data: responseData, response: response, error: nil)
     }
 
+    private func simulateComingEventAndWait(_ event : Event) {
+        testableExtensionRuntime.simulateComingEvent(event: event)
+        // sleep added to ensure DispatchQueue tasks are processed in time for test verification
+        sleep(1)
+    }
+
     // add shared state data to the analytics state for testing
     private func addSharedStateDataToAnalyticsState() {
         var dataMap = [String: [String: Any]]()
@@ -152,7 +158,7 @@ class AnalyticsTest : XCTestCase {
         testableExtensionRuntime.simulateSharedState(extensionName: AnalyticsTestConstants.Configuration.EventDataKeys.SHARED_STATE_NAME, event: configEvent, data: (configData, .set))
         let _ = analytics.readyForEvent(configEvent)
         // dispatch the event
-        testableExtensionRuntime.simulateComingEvent(event: configEvent)
+        simulateComingEventAndWait(configEvent)
     }
 
     func testGetSharedStateForEventWithNoDependencies() {
@@ -241,7 +247,7 @@ class AnalyticsTest : XCTestCase {
         // setup config shared state
         testableExtensionRuntime.simulateSharedState(extensionName: AnalyticsTestConstants.Configuration.EventDataKeys.SHARED_STATE_NAME, event: event, data: (configData, .set))
         // test
-        testableExtensionRuntime.simulateComingEvent(event: event)
+        simulateComingEventAndWait(event)
         // verify configuration data added to analyticsState
         XCTAssertEqual(.optedIn, analyticsState.privacyStatus) // analytics state privacy status should have updated to opt-in
         // configuration data should be present in analytics state
@@ -266,7 +272,7 @@ class AnalyticsTest : XCTestCase {
         // setup config shared state
         testableExtensionRuntime.simulateSharedState(extensionName: AnalyticsTestConstants.Configuration.EventDataKeys.SHARED_STATE_NAME, event: event, data: (configData, .set))
         // test
-        testableExtensionRuntime.simulateComingEvent(event: event)
+        simulateComingEventAndWait(event)
         // verify configuration data added to analyticsState
         XCTAssertEqual(.unknown, analyticsState.privacyStatus) // analytics state privacy status should have updated to opt-in
         // configuration data should be present in analytics state
@@ -303,7 +309,7 @@ class AnalyticsTest : XCTestCase {
         // setup config shared state
         testableExtensionRuntime.simulateSharedState(extensionName: AnalyticsTestConstants.Configuration.EventDataKeys.SHARED_STATE_NAME, event: event, data: (configData, .set))
         // test
-        testableExtensionRuntime.simulateComingEvent(event: event)
+        simulateComingEventAndWait(event)
         // verify configuration data was added to analyticsState by privacy status being set to opt-out
         XCTAssertEqual(.optedOut, analyticsState.privacyStatus)
         // verify configuration data was cleared
@@ -357,7 +363,7 @@ class AnalyticsTest : XCTestCase {
         let _ = analytics.readyForEvent(event)
 
         // test
-        testableExtensionRuntime.simulateComingEvent(event: event)
+        simulateComingEventAndWait(event)
 
         // verify shared state was created
         XCTAssertEqual(1, testableExtensionRuntime.createdSharedStates.count)
@@ -379,7 +385,7 @@ class AnalyticsTest : XCTestCase {
         let _ = analytics.readyForEvent(event)
 
         // test
-        testableExtensionRuntime.simulateComingEvent(event: event)
+        simulateComingEventAndWait(event)
 
         // verify vid was not added to the datastore
         XCTAssertEqual(nil, dataStore.getString(key: AnalyticsConstants.DataStoreKeys.VISITOR_IDENTIFIER_KEY))
@@ -399,7 +405,7 @@ class AnalyticsTest : XCTestCase {
         let _ = analytics.readyForEvent(event)
 
         // test
-        testableExtensionRuntime.simulateComingEvent(event: event)
+        simulateComingEventAndWait(event)
 
         // verify network request is sent
         XCTAssertEqual(1, mockNetworkService.calledNetworkRequests.count)
@@ -428,7 +434,7 @@ class AnalyticsTest : XCTestCase {
         let _ = analytics.readyForEvent(event)
 
         // test
-        testableExtensionRuntime.simulateComingEvent(event: event)
+        simulateComingEventAndWait(event)
 
         // verify network request is sent
         XCTAssertEqual(1, mockNetworkService.calledNetworkRequests.count)
@@ -458,7 +464,7 @@ class AnalyticsTest : XCTestCase {
         let _ = analytics.readyForEvent(event)
 
         // test
-        testableExtensionRuntime.simulateComingEvent(event: event)
+        simulateComingEventAndWait(event)
 
         // verify network request is sent
         XCTAssertEqual(1, mockNetworkService.calledNetworkRequests.count)
@@ -487,7 +493,7 @@ class AnalyticsTest : XCTestCase {
         let _ = analytics.readyForEvent(event)
 
         // test
-        testableExtensionRuntime.simulateComingEvent(event: event)
+        simulateComingEventAndWait(event)
 
         // verify no network request sent
         XCTAssertEqual(0, mockNetworkService.calledNetworkRequests.count)
@@ -515,8 +521,7 @@ class AnalyticsTest : XCTestCase {
         let _ = analytics.readyForEvent(event)
 
         // test
-        testableExtensionRuntime.simulateComingEvent(event: event)
-        sleep(1)
+        simulateComingEventAndWait(event)
 
         // verify no network request sent
         XCTAssertEqual(0, mockNetworkService.calledNetworkRequests.count)
@@ -545,8 +550,7 @@ class AnalyticsTest : XCTestCase {
         let _ = analytics.readyForEvent(event)
 
         // test
-        testableExtensionRuntime.simulateComingEvent(event: event)
-        sleep(1)
+        simulateComingEventAndWait(event)
 
         // verify network request is sent
         XCTAssertEqual(1, mockNetworkService.calledNetworkRequests.count)

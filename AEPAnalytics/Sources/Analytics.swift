@@ -52,15 +52,15 @@ public class Analytics: NSObject, Extension {
     #endif
 
     public func onRegistered() {
-        registerListener(type: EventType.genericTrack, source: EventSource.requestContent, listener: handleAnalyticsRequest)
-//        registerListener(type: EventType.rulesEngine, source: EventSource.responseContent, listener: handleAnalyticsRequest)
-//        registerListener(type: EventType.analytics, source: EventSource.requestContent, listener: handleAnalyticsRequest)
-        registerListener(type: EventType.configuration, source: EventSource.responseContent, listener: handleConfigurationResponse)
-        registerListener(type: EventType.analytics, source: EventSource.requestIdentity, listener: handleAnalyticsRequestIdentityEvent)
-        registerListener(type: EventType.acquisition, source: EventSource.responseContent, listener: handleAnalyticsRequest)
-        registerListener(type: EventType.lifecycle, source: EventSource.responseContent, listener: handleLifecycleEvents)
-        registerListener(type: EventType.genericLifecycle, source: EventSource.requestContent, listener: handleAnalyticsRequest)
-        registerListener(type: EventType.hub, source: EventSource.sharedState, listener: sendAnalyticsIdRequest)
+        registerListener(type: EventType.genericTrack, source: EventSource.requestContent, listener: handleIncomingEvent)
+//        registerListener(type: EventType.rulesEngine, source: EventSource.responseContent, listener: handleIncomingEvent)
+//        registerListener(type: EventType.analytics, source: EventSource.requestContent, listener: handleIncomingEvent)
+        registerListener(type: EventType.configuration, source: EventSource.responseContent, listener: handleIncomingEvent)
+        registerListener(type: EventType.analytics, source: EventSource.requestIdentity, listener: handleIncomingEvent)
+        registerListener(type: EventType.acquisition, source: EventSource.responseContent, listener: handleIncomingEvent)
+        registerListener(type: EventType.lifecycle, source: EventSource.responseContent, listener: handleIncomingEvent)
+        registerListener(type: EventType.genericLifecycle, source: EventSource.requestContent, listener: handleIncomingEvent)
+        registerListener(type: EventType.hub, source: EventSource.sharedState, listener: handleIncomingEvent)
     }
 
     public func onUnregistered() {}
@@ -87,10 +87,56 @@ public class Analytics: NSObject, Extension {
 /// Event Listeners_object    Builtin.BridgeObject    0x8000000126eca620
 extension Analytics {
 
+    /// Handles all `Events` heard by the Analytics Extension. The processing of events will
+    /// be done on the Analytics Extension's `DispatchQueue`.
+    /// - Parameter event: The instance of `Event` that needs to be processed.
+    private func handleIncomingEvent(event: Event) {
+        switch event.type {
+        case EventType.rulesEngine:
+            analyticsProperties.dispatchQueue.async {
+                // TODO: implement handler
+            }
+        case EventType.configuration:
+            analyticsProperties.dispatchQueue.async {
+                self.handleConfigurationResponseEvent(event)
+            }
+        case EventType.lifecycle:
+            analyticsProperties.dispatchQueue.async {
+                self.handleLifecycleEvents(event)
+            }
+        case EventType.genericLifecycle:
+            analyticsProperties.dispatchQueue.async {
+                self.handleLifecycleEvents(event)
+            }
+        case EventType.acquisition:
+            analyticsProperties.dispatchQueue.async {
+                self.handleAcquisitionEvent(event)
+            }
+        case EventType.analytics:
+            if event.source == EventSource.requestIdentity {
+                analyticsProperties.dispatchQueue.async {
+                    self.handleAnalyticsRequestIdentityEvent(event)
+                }
+            } else { // EventSource == requestContent
+                analyticsProperties.dispatchQueue.async {
+                    // TODO: implement handler
+                }
+            }
+        case EventType.hub:
+            if event.source == EventSource.sharedState {
+                analyticsProperties.dispatchQueue.async {
+                    self.sendAnalyticsIdRequest(event: event)
+                }
+            }
+        default:
+            break
+        }
+    }
+
     /// Processes Configuration Response content events to retrieve the configuration data and privacy status settings.
     /// - Parameter:
     ///   - event: The configuration response event
-    private func handleConfigurationResponse(event: Event) {
+    private func handleConfigurationResponseEvent(_ event: Event) {
         guard let configSharedState = getSharedState(extensionName: AnalyticsConstants.Configuration.EventDataKeys.SHARED_STATE_NAME, event: event)?.value else { return }
         Log.debug(label: LOG_TAG, "Received Configuration Response event, attempting to retrieve configuration settings.")
         analyticsState.extractConfigurationInfo(from: configSharedState)
@@ -107,23 +153,6 @@ extension Analytics {
         // TODO: clear hits database
         let stateData = getStateData()
         createSharedState(data: stateData, event: event)
-    }
-
-    /// Listener for handling Analytics `Events`.
-    /// - Parameter event: The instance of `Event` that needs to be processed.
-    private func handleAnalyticsRequest(event: Event) {
-        switch event.type {
-        case EventType.lifecycle:
-            analyticsProperties.dispatchQueue.async {
-                self.handleLifecycleEvents(event)
-            }
-        case EventType.acquisition:
-            analyticsProperties.dispatchQueue.async {
-                self.handleAcquisitionEvent(event)
-            }
-        default:
-            break
-        }
     }
 
     ///  Handles the following events
