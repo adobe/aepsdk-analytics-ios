@@ -180,10 +180,9 @@ extension Analytics {
 
         if !sdkBootUpCompleted {
             sdkBootUpCompleted.toggle()
-            Log.debug(label: LOG_TAG, "handleSharedStateUpdateEvent - Boot Completion detected.")
+            Log.trace(label: LOG_TAG, "handleSharedStateUpdateEvent - Boot Completion detected.")
             handleAnalyticsRequestIdentityEvent(event)
         }
-
 
         guard let data = event.data else {
             Log.debug(label: LOG_TAG, "handleSharedStateUpdateEvent - Ignoring shared state update event (event data was nil).")
