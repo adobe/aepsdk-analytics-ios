@@ -66,7 +66,11 @@ public class Analytics: NSObject, Extension {
     public func onUnregistered() {}
 
     public func readyForEvent(_ event: Event) -> Bool {
-        return true
+        let configurationStatus = getSharedState(extensionName: AnalyticsConstants.Configuration.EventDataKeys.SHARED_STATE_NAME, event: event)?.status ?? .none
+
+        let identityStatus = getSharedState(extensionName: AnalyticsConstants.Identity.EventDataKeys.SHARED_STATE_NAME, event: event)?.status ?? .none
+
+        return configurationStatus == .set && identityStatus == .set
     }
 
     /**
@@ -91,45 +95,31 @@ extension Analytics {
     /// be done on the Analytics Extension's `DispatchQueue`.
     /// - Parameter event: The instance of `Event` that needs to be processed.
     private func handleIncomingEvent(event: Event) {
-        switch event.type {
-        case EventType.rulesEngine:
-            analyticsProperties.dispatchQueue.async {
-                // TODO: implement handler
-            }
-        case EventType.configuration:
-            analyticsProperties.dispatchQueue.async {
+        analyticsProperties.dispatchQueue.async {
+            switch event.type {
+            // case EventType.rulesEngine:
+            // TODO: implement handler
+            case EventType.configuration:
                 self.handleConfigurationResponseEvent(event)
-            }
-        case EventType.lifecycle:
-            analyticsProperties.dispatchQueue.async {
+            case EventType.lifecycle:
                 self.handleLifecycleEvents(event)
-            }
-        case EventType.genericLifecycle:
-            analyticsProperties.dispatchQueue.async {
+            case EventType.genericLifecycle:
                 self.handleLifecycleEvents(event)
-            }
-        case EventType.acquisition:
-            analyticsProperties.dispatchQueue.async {
+            case EventType.acquisition:
                 self.handleAcquisitionEvent(event)
-            }
-        case EventType.analytics:
-            if event.source == EventSource.requestIdentity {
-                analyticsProperties.dispatchQueue.async {
+            case EventType.analytics:
+                if event.source == EventSource.requestIdentity {
                     self.handleAnalyticsRequestIdentityEvent(event)
-                }
-            } else { // EventSource == requestContent
-                analyticsProperties.dispatchQueue.async {
+                } else { // EventSource == requestContent
                     // TODO: implement handler
                 }
-            }
-        case EventType.hub:
-            if event.source == EventSource.sharedState {
-                analyticsProperties.dispatchQueue.async {
+            case EventType.hub:
+                if event.source == EventSource.sharedState {
                     self.sendAnalyticsIdRequest(event: event)
                 }
+            default:
+                break
             }
-        default:
-            break
         }
     }
 
@@ -151,8 +141,8 @@ extension Analytics {
         // Clear / reset to default values any properties stored in the AnalyticsProperties
         analyticsProperties.reset()
         // TODO: clear hits database
-        let stateData = getStateData()
-        createSharedState(data: stateData, event: event)
+        let sharedState = getSharedState()
+        createSharedState(data: sharedState, event: event)
     }
 
     ///  Handles the following events
@@ -320,7 +310,7 @@ extension Analytics {
 
     /// Get the data for the analytics extension to be shared with other extensions.
     /// - Returns: The analytics data to be shared.
-    private func getStateData() -> [String: Any] {
+    private func getSharedState() -> [String: Any] {
         var data = [String: Any]()
         data[AnalyticsConstants.EventDataKeys.ANALYTICS_ID] = analyticsProperties.getAnalyticsIdentifier()
         data[AnalyticsConstants.EventDataKeys.VISITOR_IDENTIFIER] = analyticsProperties.getVisitorIdentifier()
@@ -332,9 +322,9 @@ extension Analytics {
     /// - Parameters:
     ///   - event: the event which triggered the analytics identity request.
     private func dispatchAnalyticsIdentityResponse(event: Event) {
-        let stateData = getStateData()
-        createSharedState(data: stateData, event: event)
-        let responseIdentityEvent = event.createResponseEvent(name: "TrackingIdentifierValue", type: EventType.analytics, source: EventSource.responseIdentity, data: stateData)
+        let sharedState = getSharedState()
+        createSharedState(data: sharedState, event: event)
+        let responseIdentityEvent = event.createResponseEvent(name: "TrackingIdentifierValue", type: EventType.analytics, source: EventSource.responseIdentity, data: sharedState)
         dispatch(event: responseIdentityEvent)
     }
 
