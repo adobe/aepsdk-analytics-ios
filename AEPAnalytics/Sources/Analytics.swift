@@ -27,7 +27,8 @@ public class Analytics: NSObject, Extension {
     private var analyticsProperties = AnalyticsProperties.init()
     private let analyticsHardDependencies: [String] = [AnalyticsConstants.Configuration.EventDataKeys.SHARED_STATE_NAME, AnalyticsConstants.Identity.EventDataKeys.SHARED_STATE_NAME]
 
-    private var sharedStateEventId: UUID? ///TODO get rid of it. Replace it with better way.
+    //Maintains the boot up state of sdk. The first shared state update event indicates the boot up completion.
+    private var sdkBootUpCompleted = false
     // MARK: Extension
 
     public required init(runtime: ExtensionRuntime) {
@@ -45,8 +46,6 @@ public class Analytics: NSObject, Extension {
         registerListener(type: EventType.lifecycle, source: EventSource.responseContent, listener: handleLifecycleEvents)
         registerListener(type: EventType.genericLifecycle, source: EventSource.requestContent, listener: handleAnalyticsRequest)
         registerListener(type: EventType.hub, source: EventSource.sharedState, listener: handleSharedStateUpdateEvent)
-//        registerListener(type: EventType.hub, source: EventSource.Booted, listener: handleSharedStateUpdateEvent)
-
     }
 
     public func onUnregistered() {}
@@ -175,13 +174,14 @@ extension Analytics {
     private func handleSharedStateUpdateEvent(_ event: Event) {
 
         guard event.type == EventType.hub && event.source == EventSource.sharedState else {
-            Log.debug(label: LOG_TAG, "handleSharedStateUpdateEvent - Ignoring shared state update event (event is of correct Type).")
+            Log.debug(label: LOG_TAG, "handleSharedStateUpdateEvent - Ignoring shared state update event (event is of unexpected Type).")
             return
         }
 
-        if sharedStateEventId == nil {
+        if !sdkBootUpCompleted {
+            sdkBootUpCompleted.toggle()
+            Log.debug(label: LOG_TAG, "handleSharedStateUpdateEvent - Boot Completion detected.")
             handleAnalyticsRequestIdentityEvent(event)
-            sharedStateEventId = event.id
         }
 
 
