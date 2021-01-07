@@ -337,8 +337,8 @@ class AnalyticsTest : XCTestCase {
         //verify places data was cleared
         XCTAssertNil(analyticsState.defaultData[AnalyticsTestConstants.ContextDataKeys.REGION_ID])
         XCTAssertNil(analyticsState.defaultData[AnalyticsTestConstants.ContextDataKeys.REGION_NAME])
-        // verify assurance data was cleared
-        XCTAssertNil(analyticsState.assuranceSessionActive)
+        // verify assurance data was reset to default
+        XCTAssertFalse(analyticsState.assuranceSessionActive)
         // verify analytics properties was cleared / reset to default
         var retrievedProperties = analytics.getAnalyticsProperties()
         XCTAssertNil(retrievedProperties.locale)

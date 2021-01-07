@@ -31,10 +31,6 @@ class AnalyticsState {
     private(set) var launchHitDelay: TimeInterval = AnalyticsConstants.Default.LAUNCH_HIT_DELAY
     /// `Backdate Previous Session Info` configuration setting. If enable backdates session information hits.
     private(set) var backDateSessionInfoEnabled: Bool = AnalyticsConstants.Default.BACKDATE_SESSION_INFO_ENABLED
-    /// If true, Configuration shared state data has been processed.
-    private(set) var isConfigurationReady: Bool = false
-    /// If true, Identity shared state data has been processed.
-    private(set) var isIdentityReady: Bool = false
 
     #if DEBUG
         var analyticForwardingEnabled: Bool = AnalyticsConstants.Default.FORWARDING_ENABLED
@@ -134,7 +130,6 @@ class AnalyticsState {
         launchHitDelay =  TimeInterval.init(configurationData[ConfigurationEventDataKeys.ANALYTICS_LAUNCH_HIT_DELAY] as? Double ?? AnalyticsConstants.Default.LAUNCH_HIT_DELAY)
         marketingCloudOrganizationId = configurationData[ConfigurationEventDataKeys.MARKETING_CLOUD_ORGID_KEY] as? String
         backDateSessionInfoEnabled = configurationData[ConfigurationEventDataKeys.ANALYTICS_BACKDATE_PREVIOUS_SESSION] as? Bool ?? AnalyticsConstants.Default.BACKDATE_SESSION_INFO_ENABLED
-        isConfigurationReady = true
     }
 
     /// Extracts the `Lifecycle` data from the provided shared state data.
@@ -194,7 +189,6 @@ class AnalyticsState {
         if let identifiableArray = identityData[IdentityEventDataKeys.VISITOR_IDS_LIST] as? [Identifiable] {
             serializedVisitorIdsList = analyticsRequestSerializer.generateAnalyticsCustomerIdString(from: identifiableArray)
         }
-        isIdentityReady = true
     }
 
     /// Extracts the `Places` data from the provided shared state data.
@@ -331,8 +325,6 @@ class AnalyticsState {
         serializedVisitorIdsList = nil
         applicationId = nil
         advertisingId = nil
-        assuranceSessionActive = nil
-        isConfigurationReady = false
-        isIdentityReady = false
+        assuranceSessionActive = AnalyticsConstants.Default.ASSURANCE_SESSION_ENABLED
     }
 }
