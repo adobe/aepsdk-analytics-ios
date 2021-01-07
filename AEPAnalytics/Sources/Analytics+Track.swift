@@ -27,7 +27,7 @@ extension Analytics {
     ///      extensions
     ///     - event: The `acquisition event` to process
     func trackAcquisitionData(analyticsState: AnalyticsState, event: Event, analyticsProperties: inout AnalyticsProperties) {
-        var acquisitionContextData = event.data?[AnalyticsConstants.EventDataKeys.CONTEXT_DATA] ?? [String: String]()
+        let acquisitionContextData = event.data?[AnalyticsConstants.EventDataKeys.CONTEXT_DATA] ?? [String: String]()
 
         if analyticsProperties.referrerTimerRunning {
             analyticsProperties.referrerTimerRunning = false

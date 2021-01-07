@@ -70,18 +70,18 @@ class TestableExtensionRuntime: ExtensionRuntime {
 
     func stopEvents() {}
 
-    func createXDMSharedState(data: [String : Any], event: Event?) {
+    public func createXDMSharedState(data: [String : Any], event: Event?) {
         // no-op
     }
 
-    func createPendingXDMSharedState(event: Event?) -> SharedStateResolver {
+    public func createPendingXDMSharedState(event: Event?) -> SharedStateResolver {
         // no-op
         return { data in
             self.createdXdmSharedStates += [data]
         }
     }
 
-    func getXDMSharedState(extensionName: String, event: Event?) -> SharedStateResult? {
+    public func getXDMSharedState(extensionName: String, event: Event?) -> SharedStateResult? {
         // no-op
         return nil
     }

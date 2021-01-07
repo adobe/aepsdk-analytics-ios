@@ -18,12 +18,18 @@ import Foundation
 
 class AnalyticsStateTest : XCTestCase {
 
+    private var analyticsState: AnalyticsState!
+
+    override func setUp() {
+        analyticsState = AnalyticsState()
+    }
+
     func testExtractConfigurationInfoHappyFlow() {
 
         let server = "analytics_server"
         let rsids = "rsid1, rsid2"
         let marketingCloudOrgId = "marketingserver"
-        let privacyStatusString = "optedout"
+        let privacyStatusString = "optedin"
         let launchHitDelay : TimeInterval = 300
 
         var configurationData = [String: Any]()
@@ -38,7 +44,7 @@ class AnalyticsStateTest : XCTestCase {
 
         var dataMap = [String: [String: Any]]()
         dataMap[AnalyticsTestConstants.Configuration.EventDataKeys.SHARED_STATE_NAME] = configurationData
-        let analyticsState = AnalyticsState.init(dataMap: dataMap)
+        analyticsState.update(dataMap: dataMap)
 
         XCTAssertEqual(analyticsState.host, server)
         XCTAssertEqual(analyticsState.rsids, rsids)
@@ -47,13 +53,59 @@ class AnalyticsStateTest : XCTestCase {
         XCTAssertEqual(analyticsState.launchHitDelay, launchHitDelay, accuracy: 0)
         XCTAssertEqual(analyticsState.marketingCloudOrganizationId, marketingCloudOrgId)
         XCTAssertTrue(analyticsState.backDateSessionInfoEnabled)
+        XCTAssertEqual(analyticsState.privacyStatus, PrivacyStatus.optedIn)
+    }
+
+    func testExtractConfigurationInfoWhenPrivacyStatusIsOptedOut() {
+        let server = "analytics_server"
+        let rsids = "rsid1, rsid2"
+        let marketingCloudOrgId = "marketingserver"
+        let privacyStatusString = "optedin"
+        let launchHitDelay : TimeInterval = 300
+
+        var configurationData = [String: Any]()
+        configurationData[AnalyticsTestConstants.Configuration.EventDataKeys.ANALYTICS_SERVER] = server
+        configurationData[AnalyticsTestConstants.Configuration.EventDataKeys.ANALYTICS_REPORT_SUITES] = rsids
+        configurationData[AnalyticsTestConstants.Configuration.EventDataKeys.ANALYTICS_AAMFORWARDING] = true
+        configurationData[AnalyticsTestConstants.Configuration.EventDataKeys.ANALYTICS_OFFLINE_TRACKING] = true
+        configurationData[AnalyticsTestConstants.Configuration.EventDataKeys.ANALYTICS_LAUNCH_HIT_DELAY] = launchHitDelay
+        configurationData[AnalyticsTestConstants.Configuration.EventDataKeys.MARKETING_CLOUD_ORGID_KEY] = marketingCloudOrgId
+        configurationData[AnalyticsTestConstants.Configuration.EventDataKeys.ANALYTICS_BACKDATE_PREVIOUS_SESSION] = true
+        configurationData[AnalyticsTestConstants.Configuration.EventDataKeys.GLOBAL_PRIVACY] = privacyStatusString
+
+        var dataMap = [String: [String: Any]]()
+        dataMap[AnalyticsTestConstants.Configuration.EventDataKeys.SHARED_STATE_NAME] = configurationData
+        analyticsState.update(dataMap: dataMap)
+
+        XCTAssertEqual(analyticsState.host, server)
+        XCTAssertEqual(analyticsState.rsids, rsids)
+        XCTAssertTrue(analyticsState.analyticForwardingEnabled)
+        XCTAssertTrue(analyticsState.offlineEnabled)
+        XCTAssertEqual(analyticsState.launchHitDelay, launchHitDelay, accuracy: 0)
+        XCTAssertEqual(analyticsState.marketingCloudOrganizationId, marketingCloudOrgId)
+        XCTAssertTrue(analyticsState.backDateSessionInfoEnabled)
+        XCTAssertEqual(analyticsState.privacyStatus, PrivacyStatus.optedIn)
+
+        // opt out then check that data in state is either nil or default values
+        configurationData[AnalyticsTestConstants.Configuration.EventDataKeys.GLOBAL_PRIVACY] = "optedout"
+        dataMap = [String: [String: Any]]()
+        dataMap[AnalyticsTestConstants.Configuration.EventDataKeys.SHARED_STATE_NAME] = configurationData
+        analyticsState.update(dataMap: dataMap)
+
+        XCTAssertNil(analyticsState.host)
+        XCTAssertNil(analyticsState.rsids)
+        XCTAssertEqual(analyticsState.analyticForwardingEnabled, AnalyticsTestConstants.Default.FORWARDING_ENABLED)
+        XCTAssertEqual(analyticsState.offlineEnabled, AnalyticsTestConstants.Default.OFFLINE_ENABLED)
+        XCTAssertEqual(analyticsState.launchHitDelay, AnalyticsTestConstants.Default.LAUNCH_HIT_DELAY)
+        XCTAssertNil(analyticsState.marketingCloudOrganizationId)
+        XCTAssertEqual(analyticsState.backDateSessionInfoEnabled, AnalyticsTestConstants.Default.BACKDATE_SESSION_INFO_ENABLED)
         XCTAssertEqual(analyticsState.privacyStatus, PrivacyStatus.optedOut)
     }
 
     func testAnalyticsStateReturnsDefaultValuesWhenConfigurationInfoIsEmpty() {
 
         let dataMap = [String: [String: Any]]()
-        let analyticsState = AnalyticsState.init(dataMap: dataMap)
+        analyticsState.update(dataMap: dataMap)
 
         XCTAssertNil(analyticsState.host)
         XCTAssertNil(analyticsState.rsids)
@@ -92,7 +144,7 @@ class AnalyticsStateTest : XCTestCase {
 
         var dataMap = [String: [String: Any]]()
         dataMap[AnalyticsTestConstants.Lifecycle.EventDataKeys.SHARED_STATE_NAME] = lifecycleData
-        let analyticsState = AnalyticsState.init(dataMap: dataMap)
+        analyticsState.update(dataMap: dataMap)
 
         typealias AnalyticContextDataKeys = AnalyticsTestConstants.ContextDataKeys
 
@@ -111,7 +163,7 @@ class AnalyticsStateTest : XCTestCase {
 
         var dataMap = [String: [String: Any]]()
         dataMap[AnalyticsTestConstants.Lifecycle.EventDataKeys.SHARED_STATE_NAME] = [String: Any]()
-        let analyticsState = AnalyticsState.init(dataMap: dataMap)
+        analyticsState.update(dataMap: dataMap)
 
         XCTAssertTrue(analyticsState.defaultData.isEmpty)
         XCTAssertEqual(analyticsState.lifecycleSessionStartTimestamp, TimeInterval.init())
@@ -138,7 +190,7 @@ class AnalyticsStateTest : XCTestCase {
 //        }
         var dataMap = [String: [String: Any]]()
         dataMap[AnalyticsTestConstants.Identity.EventDataKeys.SHARED_STATE_NAME] = identityData
-        let analyticsState = AnalyticsState.init(dataMap: dataMap)
+        analyticsState.update(dataMap: dataMap)
 
         XCTAssertEqual(analyticsState.marketingCloudId, marketingCloudId)
         XCTAssertEqual(analyticsState.blob, blob)
@@ -149,7 +201,7 @@ class AnalyticsStateTest : XCTestCase {
     func testAnalyticsStateReturnsDefaultIdentityValuesWhenIdentityInfoIsEmpty() {
         var dataMap = [String: [String: Any]]()
         dataMap[AnalyticsTestConstants.Identity.EventDataKeys.SHARED_STATE_NAME] = [String: Any]()
-        let analyticsState = AnalyticsState.init(dataMap: dataMap)
+        analyticsState.update(dataMap: dataMap)
 
         XCTAssertNil(analyticsState.marketingCloudId)
         XCTAssertNil(analyticsState.blob)
@@ -174,7 +226,7 @@ class AnalyticsStateTest : XCTestCase {
         var dataMap = [String: [String: Any]]()
         dataMap[AnalyticsTestConstants.Places.EventDataKeys.SHARED_STATE_NAME] = placesData
 
-        let analyticsState = AnalyticsState.init(dataMap: dataMap)
+        analyticsState.update(dataMap: dataMap)
         XCTAssertEqual(analyticsState.defaultData[AnalyticsTestConstants.ContextDataKeys.REGION_ID], regionId)
         XCTAssertEqual(analyticsState.defaultData[AnalyticsTestConstants.ContextDataKeys.REGION_NAME], regionName)
 
@@ -185,7 +237,7 @@ class AnalyticsStateTest : XCTestCase {
         var dataMap = [String: [String: Any]]()
         dataMap[AnalyticsTestConstants.Places.EventDataKeys.SHARED_STATE_NAME] = [String: Any]()
 
-        let analyticsState = AnalyticsState.init(dataMap: dataMap)
+        analyticsState.update(dataMap: dataMap)
 
         XCTAssertNil(analyticsState.defaultData[AnalyticsTestConstants.ContextDataKeys.REGION_ID])
         XCTAssertNil(analyticsState.defaultData[AnalyticsTestConstants.ContextDataKeys.REGION_NAME])
@@ -202,7 +254,7 @@ class AnalyticsStateTest : XCTestCase {
         var dataMap = [String: [String: Any]]()
         dataMap[AssuranceEventDataKeys.SHARED_STATE_NAME] = assuranceData
 
-        let analyticsState = AnalyticsState.init(dataMap: dataMap)
+        analyticsState.update(dataMap: dataMap)
 
         XCTAssertTrue(analyticsState.assuranceSessionActive ?? false)
     }
@@ -214,13 +266,12 @@ class AnalyticsStateTest : XCTestCase {
         var dataMap = [String: [String: Any]]()
         dataMap[AssuranceEventDataKeys.SHARED_STATE_NAME] = [String: String]()
 
-        let analyticsState = AnalyticsState.init(dataMap: dataMap)
+        analyticsState.update(dataMap: dataMap)
 
         XCTAssertFalse(analyticsState.assuranceSessionActive ?? false)
     }
 
     func testGetBaseUrlWhenSSLAndForwarding() {
-        let analyticsState = AnalyticsState.init(dataMap: [String: [String: Any]]())
         analyticsState.analyticForwardingEnabled = true
         analyticsState.host = "test.com"
         analyticsState.rsids = "rsid1,rsid2"
@@ -229,7 +280,6 @@ class AnalyticsStateTest : XCTestCase {
     }
 
     func testGetBaseUrlWhenSSLAndNotForwarding() {
-        let analyticsState = AnalyticsState.init(dataMap: [String: [String: Any]]())
         analyticsState.analyticForwardingEnabled = false
         analyticsState.host = "test.com"
         analyticsState.rsids = "rsid1,rsid2"
@@ -238,14 +288,12 @@ class AnalyticsStateTest : XCTestCase {
     }
 
     func testIsAnalyticsConfiguredHappyFlow() {
-        let analyticsState = AnalyticsState.init(dataMap: [String: [String: Any]]())
         analyticsState.host = "test.com"
         analyticsState.rsids = "rsid1,rsid2"
         XCTAssertTrue(analyticsState.isAnalyticsConfigured())
     }
 
     func testIsAnalyticsConfiguredReturnsFalseWhenNoServerIds() {
-        let analyticsState = AnalyticsState.init(dataMap: [String: [String: Any]]())
         analyticsState.host = ""
         analyticsState.rsids = "rsid1,rsid2"
         XCTAssertFalse(analyticsState.isAnalyticsConfigured())
@@ -265,7 +313,6 @@ class AnalyticsStateTest : XCTestCase {
 //    return analyticsIdVisitorParameters
 
     func testIsAnalyticsConfiguredReturnsFalseWhenNoRsids() {
-        let analyticsState = AnalyticsState.init(dataMap: [String: [String: Any]]())
         analyticsState.host = "serverId"
         analyticsState.rsids = ""
         XCTAssertFalse(analyticsState.isAnalyticsConfigured())
@@ -277,7 +324,6 @@ class AnalyticsStateTest : XCTestCase {
         let blob = "blob"
         let locationHint = "locationHint"
 
-        let analyticsState = AnalyticsState.init(dataMap: [String: [String: Any]]())
         analyticsState.marketingCloudId = marketingCloudId
         analyticsState.blob = blob
         analyticsState.locationHint = locationHint
@@ -291,7 +337,6 @@ class AnalyticsStateTest : XCTestCase {
     }
 
     func testGetAnalyticsIdVisitorParametersWhenVisitorDataIsAbsent() {
-        let analyticsState = AnalyticsState.init(dataMap: [String: [String: Any]]())
         XCTAssertTrue(analyticsState.getAnalyticsIdVisitorParameters().isEmpty)
 
     }

@@ -121,6 +121,22 @@ struct AnalyticsProperties {
         return (!(referrerDispatchWorkItem?.isCancelled ?? true) && referrerTimerRunning) || (!(lifecycleDispatchWorkItem?.isCancelled ?? true) && lifecycleTimerRunning)
     }
 
+    /// Clears or resets to default values any saved properties present in the `AnalyticsProperties` instance.
+    mutating func reset() {
+        locale = nil
+        aid = nil
+        vid = nil
+        lifecyclePreviousSessionPauseTimestamp = nil
+        lifecyclePreviousPauseEventTimestamp = nil
+        referrerTimerRunning = false
+        lifecycleTimerRunning = false
+        // clean analytics data in datastore
+        dataStore.remove(key: AnalyticsConstants.DataStoreKeys.AID_KEY)
+        dataStore.remove(key: AnalyticsConstants.DataStoreKeys.VISITOR_IDENTIFIER_KEY)
+        dataStore.remove(key: AnalyticsConstants.DataStoreKeys.AID_IGNORE_KEY)
+        dataStore.remove(key: AnalyticsConstants.DataStoreKeys.MOST_RECENT_HIT_TIMESTAMP_SECONDS)
+    }
+
     /// Sets the value of the `aid` in the `AnalyticsProperties` instance.
     /// The new value is persisted in the datastore.
     /// - Parameter:

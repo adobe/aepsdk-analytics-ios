@@ -24,7 +24,8 @@ public class Analytics: NSObject, Extension {
     public let friendlyName = AnalyticsConstants.FRIENDLY_NAME
     public static let extensionVersion = AnalyticsConstants.EXTENSION_VERSION
     public let metadata: [String: String]? = nil
-    private var analyticsProperties = AnalyticsProperties.init()
+    private var analyticsProperties: AnalyticsProperties
+    private var analyticsState: AnalyticsState
     private let analyticsHardDependencies: [String] = [AnalyticsConstants.Configuration.EventDataKeys.SHARED_STATE_NAME, AnalyticsConstants.Identity.EventDataKeys.SHARED_STATE_NAME]
 
     //Maintains the boot up state of sdk. The first shared state update event indicates the boot up completion.
@@ -33,64 +34,118 @@ public class Analytics: NSObject, Extension {
 
     public required init(runtime: ExtensionRuntime) {
         self.runtime = runtime
+        self.analyticsState = AnalyticsState()
+        self.analyticsProperties = AnalyticsProperties.init()
         super.init()
     }
 
+    #if DEBUG
+        // internal init added for tests
+        internal init(runtime: ExtensionRuntime, state: AnalyticsState, properties: AnalyticsProperties) {
+            self.runtime = runtime
+            self.analyticsState = state
+            self.analyticsProperties = properties
+            super.init()
+        }
+
+        // analytics properties getter added for tests
+        internal func getAnalyticsProperties() -> AnalyticsProperties {
+            return analyticsProperties
+        }
+    #endif
+
     public func onRegistered() {
-        registerListener(type: EventType.genericTrack, source: EventSource.requestContent, listener: handleAnalyticsRequest)
-//        registerListener(type: EventType.rulesEngine, source: EventSource.responseContent, listener: handleAnalyticsRequest)
-//        registerListener(type: EventType.analytics, source: EventSource.requestContent, listener: handleAnalyticsRequest)
-        registerListener(type: EventType.analytics, source: EventSource.requestIdentity, listener: handleAnalyticsRequestIdentityEvent)
-//        registerListener(type: EventType.configuration, source: EventSource.responseContent, listener: handleAnalyticsRequest)
-        registerListener(type: EventType.acquisition, source: EventSource.responseContent, listener: handleAnalyticsRequest)
-        registerListener(type: EventType.lifecycle, source: EventSource.responseContent, listener: handleLifecycleEvents)
-        registerListener(type: EventType.genericLifecycle, source: EventSource.requestContent, listener: handleAnalyticsRequest)
-        registerListener(type: EventType.hub, source: EventSource.sharedState, listener: handleSharedStateUpdateEvent)
+        registerListener(type: EventType.genericTrack, source: EventSource.requestContent, listener: handleIncomingEvent)
+//        registerListener(type: EventType.rulesEngine, source: EventSource.responseContent, listener: handleIncomingEvent)
+//        registerListener(type: EventType.analytics, source: EventSource.requestContent, listener: handleIncomingEvent)
+        registerListener(type: EventType.configuration, source: EventSource.responseContent, listener: handleIncomingEvent)
+        registerListener(type: EventType.analytics, source: EventSource.requestIdentity, listener: handleIncomingEvent)
+        registerListener(type: EventType.acquisition, source: EventSource.responseContent, listener: handleIncomingEvent)
+        registerListener(type: EventType.lifecycle, source: EventSource.responseContent, listener: handleIncomingEvent)
+        registerListener(type: EventType.genericLifecycle, source: EventSource.requestContent, listener: handleIncomingEvent)
+        registerListener(type: EventType.hub, source: EventSource.sharedState, listener: handleIncomingEvent)
     }
 
     public func onUnregistered() {}
 
     public func readyForEvent(_ event: Event) -> Bool {
-        return true
+        let configurationStatus = getSharedState(extensionName: AnalyticsConstants.Configuration.EventDataKeys.SHARED_STATE_NAME, event: event)?.status ?? .none
+
+        let identityStatus = getSharedState(extensionName: AnalyticsConstants.Identity.EventDataKeys.SHARED_STATE_NAME, event: event)?.status ?? .none
+
+        return configurationStatus == .set && identityStatus == .set
     }
 
     /**
-     Tries to retrieve the shared data for all the dependencies of the given event. When all the dependencies are resolved, it will return the Dictionary with the shared states.
+     Tries to retrieve the shared data for all the dependencies of the given event. When all the dependencies are resolved, it will update the `AnalyticsState` with the shared states.
      - Parameters:
           - event: The `Event` for which shared state is to be retrieved.
           - dependencies: An array of names of event's dependencies.
-
-     - Returns: A `Dictionary` with shared state of all dependecies.
      */
-
-    func createAnalyticsState(forEvent event: Event, dependencies: [String]) -> AnalyticsState {
+    func updateAnalyticsState(forEvent event: Event, dependencies: [String]) {
         var sharedStates = [String: [String: Any]?]()
         for extensionName in dependencies {
             sharedStates[extensionName] = runtime.getSharedState(extensionName: extensionName, event: event, barrier: true)?.value
         }
-
-        return AnalyticsState.init(dataMap: sharedStates)
+        analyticsState.update(dataMap: sharedStates)
     }
 }
 
 /// Event Listeners
 extension Analytics {
 
-    /// Listener for handling Analytics `Events`.
+    /// Handles all `Events` heard by the Analytics Extension. The processing of events will
+    /// be done on the Analytics Extension's `DispatchQueue`.
     /// - Parameter event: The instance of `Event` that needs to be processed.
-    private func handleAnalyticsRequest(event: Event) {
-        switch event.type {
-        case EventType.lifecycle:
-            analyticsProperties.dispatchQueue.async {
+    private func handleIncomingEvent(event: Event) {
+        analyticsProperties.dispatchQueue.async {
+            switch event.type {
+            // case EventType.rulesEngine:
+            // TODO: implement handler
+            case EventType.configuration:
+                self.handleConfigurationResponseEvent(event)
+            case EventType.lifecycle:
                 self.handleLifecycleEvents(event)
-            }
-        case EventType.acquisition:
-            analyticsProperties.dispatchQueue.async {
+            case EventType.genericLifecycle:
+                self.handleLifecycleEvents(event)
+            case EventType.acquisition:
                 self.handleAcquisitionEvent(event)
+            case EventType.analytics:
+                if event.source == EventSource.requestIdentity {
+                    self.handleAnalyticsRequestIdentityEvent(event)
+                } else { // EventSource == requestContent
+                    // TODO: implement handler
+                }
+            case EventType.hub:
+                if event.source == EventSource.sharedState {
+                    self.handleSharedStateUpdateEvent(event)
+                }
+            default:
+                break
             }
-        default:
-            break
         }
+    }
+
+    /// Processes Configuration Response content events to retrieve the configuration data and privacy status settings.
+    /// - Parameter:
+    ///   - event: The configuration response event
+    private func handleConfigurationResponseEvent(_ event: Event) {
+        guard let configSharedState = getSharedState(extensionName: AnalyticsConstants.Configuration.EventDataKeys.SHARED_STATE_NAME, event: event)?.value else { return }
+        Log.debug(label: LOG_TAG, "Received Configuration Response event, attempting to retrieve configuration settings.")
+        analyticsState.extractConfigurationInfo(from: configSharedState)
+        if analyticsState.privacyStatus == .optedOut {
+            handleOptOut(event: event)
+        }
+    }
+
+    /// Clears all the Analytics Properties and any queued hits in the HitsDatabase.
+    private func handleOptOut(event: Event) {
+        Log.debug(label: LOG_TAG, "Privacy status is opted-out. Queued Analytics hits, stored state data, and properties will be cleared.")
+        // Clear / reset to default values any properties stored in the AnalyticsProperties
+        analyticsProperties.reset()
+        // TODO: clear hits database
+        let sharedState = getSharedState()
+        createSharedState(data: sharedState, event: event)
     }
 
     ///  Handles the following events
@@ -98,9 +153,7 @@ extension Analytics {
     /// `EventType.lifecycle` and `EventSource.responseContent`
     ///  - Parameter event: the `Event` to be processed
     private func handleLifecycleEvents(_ event: Event) {
-
         if event.type == EventType.genericLifecycle && event.source == EventSource.requestContent {
-            let analyticsState = createAnalyticsState(forEvent: event, dependencies: analyticsHardDependencies)
 
             let lifecycleAction = event.data?[AnalyticsConstants.Lifecycle.EventDataKeys.LIFECYCLE_ACTION_KEY] as? String
             if lifecycleAction == AnalyticsConstants.Lifecycle.EventDataKeys.LIFECYCLE_START {
@@ -128,12 +181,12 @@ extension Analytics {
 
         } else if event.type == EventType.lifecycle && event.source == EventSource.responseContent {
             //Soft dependecies list.
-            var softDependencies: [String] = [AnalyticsConstants.Lifecycle.EventDataKeys.SHARED_STATE_NAME, AnalyticsConstants.Assurance.EventDataKeys.SHARED_STATE_NAME,
+            let softDependencies: [String] = [AnalyticsConstants.Lifecycle.EventDataKeys.SHARED_STATE_NAME, AnalyticsConstants.Assurance.EventDataKeys.SHARED_STATE_NAME,
                                               AnalyticsConstants.Places.EventDataKeys.SHARED_STATE_NAME]
 
             analyticsProperties.lifecyclePreviousSessionPauseTimestamp = event.data?[AnalyticsConstants.Lifecycle.EventDataKeys.PREVIOUS_SESSION_PAUSE_TIMESTAMP] as? Date
-
-            trackLifecycle(analyticsState: createAnalyticsState(forEvent: event, dependencies: analyticsHardDependencies + softDependencies), event: event, analyticsProperties: &analyticsProperties)
+            updateAnalyticsState(forEvent: event, dependencies: analyticsHardDependencies + softDependencies)
+            trackLifecycle(analyticsState: analyticsState, event: event, analyticsProperties: &analyticsProperties)
         }
     }
 
@@ -141,10 +194,8 @@ extension Analytics {
     /// `EventType.acquisition` and `EventSource.responseContent`
     /// - Parameter event: The `Event` to be processed.
     private func handleAcquisitionEvent(_ event: Event) {
-
         if analyticsProperties.referrerTimerRunning {
             Log.debug(label: LOG_TAG, "handleAcquisitionResponseEvent - Acquisition response received with referrer data.")
-            let analyticsState = createAnalyticsState(forEvent: event, dependencies: [AnalyticsConstants.Configuration.EventDataKeys.SHARED_STATE_NAME])
             analyticsProperties.cancelReferrerTimer()
 
             /// - TODO: Implement the AnalyticsHitDatabase operation below.
@@ -159,11 +210,12 @@ extension Analytics {
 //                        }
 
         } else {
-            let softDependencies: [String] = [
-                AnalyticsConstants.Lifecycle.EventDataKeys.SHARED_STATE_NAME,
-                AnalyticsConstants.Assurance.EventDataKeys.SHARED_STATE_NAME]
             if event.type == EventType.acquisition && event.source == EventSource.responseContent {
-                trackAcquisitionData(analyticsState: createAnalyticsState(forEvent: event, dependencies: analyticsHardDependencies + softDependencies), event: event, analyticsProperties: &analyticsProperties)
+                let softDependencies: [String] = [
+                    AnalyticsConstants.Lifecycle.EventDataKeys.SHARED_STATE_NAME,
+                    AnalyticsConstants.Assurance.EventDataKeys.SHARED_STATE_NAME]
+                updateAnalyticsState(forEvent: event, dependencies: analyticsHardDependencies + softDependencies)
+                trackAcquisitionData(analyticsState: analyticsState, event: event, analyticsProperties: &analyticsProperties)
             }
         }
     }
@@ -218,7 +270,6 @@ extension Analytics {
     ///     - event: The `Event` which triggered the visitor identifier update.
     ///     - vid: The visitor identifier that was set.
     private func updateVisitorIdentifier(event: Event, vid: String) {
-        let analyticsState = createAnalyticsState(forEvent: event, dependencies: [AnalyticsConstants.Configuration.EventDataKeys.SHARED_STATE_NAME])
         if analyticsState.privacyStatus == .optedOut {
             Log.debug(label: LOG_TAG, "updateVisitorIdentifier - Privacy is opted out, ignoring the update visitor identifier request.")
             return
@@ -235,9 +286,7 @@ extension Analytics {
     /// - Parameters:
     ///     - event: The `Event` which triggered the sending of the analytics id request.
     private func sendAnalyticsIdRequest(event: Event) {
-        let analyticsState = createAnalyticsState(forEvent: event, dependencies: [AnalyticsConstants.Configuration.EventDataKeys.SHARED_STATE_NAME])
-
-        // check if analytics disabled or privacy opt-out and update shared state with empty id
+        // check if analytics state contains an RSID and host OR if privacy opt-out. if so, update shared state with empty id.
         if !analyticsState.isAnalyticsConfigured() || analyticsState.privacyStatus == .optedOut {
             Log.debug(label: LOG_TAG, "sendAnalyticsIdRequest - Analytics is not configured or privacy is opted out, the analytics identifier request will not be sent.")
             analyticsProperties.setAnalyticsIdentifier(aid: nil)
@@ -282,7 +331,7 @@ extension Analytics {
                         Log.debug(label: self.LOG_TAG, "sendAnalyticsIdRequest - Unable to retrieve connection date from the AID request.")
                         return
                     }
-                    let aid = self.parseIdentifier(state: analyticsState, response: responseData)
+                    let aid = self.parseIdentifier(state: self.analyticsState, response: responseData)
                     Log.debug(label: self.LOG_TAG, "sendAnalyticsIdRequest - Successfully sent the AID request, received response: \(aid)")
                     self.analyticsProperties.setAnalyticsIdentifier(aid: aid)
                     self.dispatchAnalyticsIdentityResponse(event: event)
@@ -295,7 +344,7 @@ extension Analytics {
 
     /// Get the data for the analytics extension to be shared with other extensions.
     /// - Returns: The analytics data to be shared.
-    private func getStateData() -> [String: Any] {
+    private func getSharedState() -> [String: Any] {
         var data = [String: Any]()
         data[AnalyticsConstants.EventDataKeys.ANALYTICS_ID] = analyticsProperties.getAnalyticsIdentifier()
         data[AnalyticsConstants.EventDataKeys.VISITOR_IDENTIFIER] = analyticsProperties.getVisitorIdentifier()
@@ -307,9 +356,9 @@ extension Analytics {
     /// - Parameters:
     ///   - event: the event which triggered the analytics identity request.
     private func dispatchAnalyticsIdentityResponse(event: Event) {
-        let stateData = getStateData()
-        createSharedState(data: stateData, event: event)
-        let responseIdentityEvent = event.createResponseEvent(name: "TrackingIdentifierValue", type: EventType.analytics, source: EventSource.responseIdentity, data: stateData)
+        let sharedState = getSharedState()
+        createSharedState(data: sharedState, event: event)
+        let responseIdentityEvent = event.createResponseEvent(name: "TrackingIdentifierValue", type: EventType.analytics, source: EventSource.responseIdentity, data: sharedState)
         dispatch(event: responseIdentityEvent)
     }
 
