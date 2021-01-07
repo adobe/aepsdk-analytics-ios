@@ -29,7 +29,7 @@ enum AnalyticsConstants {
     static let AID_LENGTH                               = 33
 
     enum EventDataKeys {
-        static let STATE_OWNER      = ""
+        static let STATE_OWNER      = "stateowner"
         static let EXTENSION_NAME   = "com.adobe.module.analytics"
         static let FORCE_KICK_HITS  = "forcekick"
         static let CLEAR_HITS_QUEUE = "clearhitsqueue"
@@ -138,6 +138,7 @@ enum AnalyticsConstants {
         static let CONTEXT_DATA_KEY         = "c"
         static let CUSTOMER_ID_KEY          = "cid"
         static let REQUEST_STRING_PREFIX    = "ndh=1"
+        static let DEBUG_API_PAYLOAD        = "&p.&debug=true&.p"
     }
 
     enum HttpConnection {
@@ -266,6 +267,10 @@ enum AnalyticsConstants {
         enum EventDataKeys {
             static let SHARED_STATE_NAME = "com.adobe.assurance"
             static let SESSION_ID = "sessionid"
+        }
+
+        enum DEFAULT {
+            static let SESSION_ENABLED = false
         }
     }
 }
