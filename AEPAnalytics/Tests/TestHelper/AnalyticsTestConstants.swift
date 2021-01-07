@@ -258,5 +258,9 @@ enum AnalyticsTestConstants {
             static let SHARED_STATE_NAME = "com.adobe.assurance"
             static let SESSION_ID = "sessionid"
         }
+        
+        enum DEFAULT {
+            static let SESSION_ENABLED = false
+        }
     }
 }

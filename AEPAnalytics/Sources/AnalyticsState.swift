@@ -78,7 +78,7 @@ class AnalyticsState {
     /// The value of advertising identifier.
     private(set) var advertisingId: String?
     /// Whether or not Assurance session is active.
-    private(set) var assuranceSessionActive: Bool?
+    private(set) var assuranceSessionActive = AnalyticsConstants.Assurance.DEFAULT.SESSION_ENABLED
     /// Typealias for Lifecycle Event Data keys.
     private typealias LifeCycleEventDataKeys = AnalyticsConstants.Lifecycle.EventDataKeys
     /// Typealias for Configuration Event Data keys.
