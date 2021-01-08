@@ -22,16 +22,15 @@ extension Analytics {
     ///     - analyticsState: shared state values
     ///     - event: `Track Event` to process.
     func trackAnalyticsData(analyticsState: AnalyticsState, event: Event, analyticsProperties: inout AnalyticsProperties) {
-        let analyticsEventData = event.data
-        guard analyticsEventData != nil else {
-            Log.debug(label: Analytics.LOG_TAG, "trackAnalyticsData - event data is null.")
+        guard let analyticsEventData = event.data else {
+            Log.debug(label: Analytics.LOG_TAG, "trackAnalyticsData - event data is not available.")
             return
         }
 
-        if (analyticsEventData!.keys.contains(AnalyticsConstants.EventDataKeys.TRACK_ACTION)) ||
-            (analyticsEventData!.keys.contains(AnalyticsConstants.EventDataKeys.TRACK_STATE)) ||
-            (analyticsEventData!.keys.contains(AnalyticsConstants.EventDataKeys.CONTEXT_DATA))
-        {track(analyticsState: analyticsState, trackEventData: analyticsEventData, timeStampInSeconds: event.timestamp.timeIntervalSince1970, appendToPlaceHolder: false, eventUniqueIdentifier: "\(event.id)", analyticsProperties: &analyticsProperties)
+        if analyticsEventData.keys.contains(AnalyticsConstants.EventDataKeys.TRACK_ACTION) ||
+            analyticsEventData.keys.contains(AnalyticsConstants.EventDataKeys.TRACK_STATE) ||
+            analyticsEventData.keys.contains(AnalyticsConstants.EventDataKeys.CONTEXT_DATA) {
+            track(analyticsState: analyticsState, trackEventData: analyticsEventData, timeStampInSeconds: event.timestamp.timeIntervalSince1970, appendToPlaceHolder: false, eventUniqueIdentifier: "\(event.id)", analyticsProperties: &analyticsProperties)
         }
     }
 
