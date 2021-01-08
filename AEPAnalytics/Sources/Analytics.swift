@@ -255,7 +255,7 @@ extension Analytics {
     /// `EventType.analytics` and `EventSource.requestIdentity`
     /// - Parameter event: The `Event` to be processed.
     private func handleAnalyticsRequestIdentityEvent(_ event: Event) {
-        if let eventData = event.data, !eventData.isEmpty {
+        if let eventData = event.data, event.source == EventSource.requestIdentity && !eventData.isEmpty {
             if let vid = eventData[AnalyticsConstants.EventDataKeys.VISITOR_IDENTIFIER] as? String, !vid.isEmpty {
                 // set VID request
                 updateVisitorIdentifier(event: event, vid: vid)
