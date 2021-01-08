@@ -573,7 +573,7 @@ class AnalyticsTest : XCTestCase {
     // ==========================================================================
     func testHandleAnalyticsTrackAction() {
         // setup
-        let data = [AnalyticsConstants.EventDataKeys.TRACK_ACTION: "sample action"] as [String: Any]
+        let data:[String : String] = [AnalyticsConstants.EventDataKeys.TRACK_ACTION: "sample action"]
         // create the analytics event
         let event = Event(name: "Test Generic Track Analytics request", type: EventType.genericTrack, source: EventSource.requestContent, data: data)
         let _ = analytics.readyForEvent(event)
@@ -588,7 +588,7 @@ class AnalyticsTest : XCTestCase {
 
     func testHandleAnalyticsTrackState() {
         // setup
-        let data = [AnalyticsConstants.EventDataKeys.TRACK_STATE: "sample page state"] as [String: Any]
+        let data:[String : String] = [AnalyticsConstants.EventDataKeys.TRACK_STATE: "sample page state"]
         // create the analytics event
         let event = Event(name: "Test Generic Track Analytics request", type: EventType.genericTrack, source: EventSource.requestContent, data: data)
         let _ = analytics.readyForEvent(event)
@@ -602,7 +602,7 @@ class AnalyticsTest : XCTestCase {
 
     func testHandleAnalyticsContextData() {
         // setup
-        let data = [AnalyticsConstants.EventDataKeys.CONTEXT_DATA: "sample contextdata"] as [String: Any]
+        let data:[String : String] = [AnalyticsConstants.EventDataKeys.CONTEXT_DATA: "sample contextdata"]
         // create the analytics event
         let event = Event(name: "Test Generic Track Analytics request", type: EventType.genericTrack, source: EventSource.requestContent, data: data)
         let _ = analytics.readyForEvent(event)

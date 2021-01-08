@@ -132,12 +132,14 @@ extension Analytics {
     ///`EventType.genericTrack` and `EventSource.requestContent`
     /// - Parameter event: an event containing track data for processing
     private func handleAnalyticsTrackEvent(_ event: Event) {
-        if event.type == EventType.genericTrack && event.source == EventSource.requestContent {
-            //Soft dependecies list.
-            let softDependencies: [String] = [AnalyticsConstants.Lifecycle.EventDataKeys.SHARED_STATE_NAME, AnalyticsConstants.Assurance.EventDataKeys.SHARED_STATE_NAME, AnalyticsConstants.Places.EventDataKeys.SHARED_STATE_NAME]
-            updateAnalyticsState(forEvent: event, dependencies: analyticsHardDependencies + softDependencies)
-            trackAnalyticsData(analyticsState: analyticsState, event: event, analyticsProperties: &analyticsProperties)
+        guard event.type == EventType.genericTrack && event.source == EventSource.requestContent else {
+            Log.debug(label: LOG_TAG, "handleAnalyticsTrackEvent - Ignoring track event (event is of unexpected type or source).")
+            return
         }
+        //Soft dependecies list.
+        let softDependencies: [String] = [AnalyticsConstants.Lifecycle.EventDataKeys.SHARED_STATE_NAME, AnalyticsConstants.Assurance.EventDataKeys.SHARED_STATE_NAME, AnalyticsConstants.Places.EventDataKeys.SHARED_STATE_NAME]
+        updateAnalyticsState(forEvent: event, dependencies: analyticsHardDependencies + softDependencies)
+        trackAnalyticsData(analyticsState: analyticsState, event: event, analyticsProperties: &analyticsProperties)
     }
 
     /// Processes Configuration Response content events to retrieve the configuration data and privacy status settings.

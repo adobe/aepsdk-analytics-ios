@@ -22,7 +22,7 @@ extension Analytics {
     ///     - analyticsState: shared state values
     ///     - event: `Track Event` to process.
     func trackAnalyticsData(analyticsState: AnalyticsState, event: Event, analyticsProperties: inout AnalyticsProperties) {
-        guard let analyticsEventData = event.data else {
+        guard let analyticsEventData = event.data, !analyticsEventData.isEmpty else {
             Log.debug(label: Analytics.LOG_TAG, "trackAnalyticsData - event data is not available.")
             return
         }
