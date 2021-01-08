@@ -25,11 +25,13 @@ public class Analytics: NSObject, Extension {
     public static let extensionVersion = AnalyticsConstants.EXTENSION_VERSION
     public let metadata: [String: String]? = nil
     private var analyticsProperties: AnalyticsProperties
-    private var analyticsState: AnalyticsState
+    private var analyticsState: AnalyticsState?
     private let analyticsHardDependencies: [String] = [AnalyticsConstants.Configuration.EventDataKeys.SHARED_STATE_NAME, AnalyticsConstants.Identity.EventDataKeys.SHARED_STATE_NAME]
-
-    //Maintains the boot up state of sdk. The first shared state update event indicates the boot up completion.
+    // The `DispatchQueue` used to process events in FIFO order and wait for Lifecycle and Acquisition response events.
+    private var dispatchQueue: DispatchQueue = DispatchQueue(label: AnalyticsConstants.FRIENDLY_NAME)
+    // Maintains the boot up state of sdk. The first shared state update event indicates the boot up completion.
     private var sdkBootUpCompleted = false
+    
     // MARK: Extension
 
     public required init(runtime: ExtensionRuntime) {
@@ -87,7 +89,7 @@ public class Analytics: NSObject, Extension {
         for extensionName in dependencies {
             sharedStates[extensionName] = runtime.getSharedState(extensionName: extensionName, event: event, barrier: true)?.value
         }
-        analyticsState.update(dataMap: sharedStates)
+        analyticsState?.update(dataMap: sharedStates)
     }
 }
 
@@ -98,7 +100,7 @@ extension Analytics {
     /// be done on the Analytics Extension's `DispatchQueue`.
     /// - Parameter event: The instance of `Event` that needs to be processed.
     private func handleIncomingEvent(event: Event) {
-        analyticsProperties.dispatchQueue.async {
+        dispatchQueue.async {
             switch event.type {
             // case EventType.rulesEngine:
             // TODO: implement handler
@@ -116,10 +118,6 @@ extension Analytics {
                 } else { // EventSource == requestContent
                     // TODO: implement handler
                 }
-            case EventType.hub:
-                if event.source == EventSource.sharedState {
-                    self.handleSharedStateUpdateEvent(event)
-                }
             default:
                 break
             }
@@ -130,17 +128,32 @@ extension Analytics {
     /// - Parameter:
     ///   - event: The configuration response event
     private func handleConfigurationResponseEvent(_ event: Event) {
+        guard let analyticsState = analyticsState else {
+            Log.debug(label: LOG_TAG, "handleConfigurationResponseEvent - Analytics state is nil, returning.")
+            return
+        }
+
         guard let configSharedState = getSharedState(extensionName: AnalyticsConstants.Configuration.EventDataKeys.SHARED_STATE_NAME, event: event)?.value else { return }
-        Log.debug(label: LOG_TAG, "Received Configuration Response event, attempting to retrieve configuration settings.")
+        Log.debug(label: LOG_TAG, "handleConfigurationResponseEvent - Received Configuration Response event, attempting to retrieve configuration settings.")
+
         analyticsState.extractConfigurationInfo(from: configSharedState)
         if analyticsState.privacyStatus == .optedOut {
             handleOptOut(event: event)
+        }
+
+        // send an analytics id request on boot if the analytics configuration is valid
+        if !sdkBootUpCompleted {
+            if analyticsState.isAnalyticsConfigured() {
+                sdkBootUpCompleted.toggle()
+                Log.trace(label: LOG_TAG, "handleConfigurationResponseEvent - Configuration ready, sending analytics id request.")
+                retrieveAnalyticsId(event: event)
+            }
         }
     }
 
     /// Clears all the Analytics Properties and any queued hits in the HitsDatabase.
     private func handleOptOut(event: Event) {
-        Log.debug(label: LOG_TAG, "Privacy status is opted-out. Queued Analytics hits, stored state data, and properties will be cleared.")
+        Log.debug(label: LOG_TAG, "handleOptOut - Privacy status is opted-out. Queued Analytics hits, stored state data, and properties will be cleared.")
         // Clear / reset to default values any properties stored in the AnalyticsProperties
         analyticsProperties.reset()
         // TODO: clear hits database
@@ -153,6 +166,11 @@ extension Analytics {
     /// `EventType.lifecycle` and `EventSource.responseContent`
     ///  - Parameter event: the `Event` to be processed
     private func handleLifecycleEvents(_ event: Event) {
+        guard let analyticsState = analyticsState else {
+            Log.trace(label: LOG_TAG, "handleLifecycleEvents - Analytics state is nil, returning.")
+            return
+        }
+
         if event.type == EventType.genericLifecycle && event.source == EventSource.requestContent {
 
             let lifecycleAction = event.data?[AnalyticsConstants.Lifecycle.EventDataKeys.LIFECYCLE_ACTION_KEY] as? String
@@ -174,9 +192,11 @@ extension Analytics {
                 /// - TODO: Implement the code for adding a placeholder hit in db using AnalyticsHitDB.
 
             } else if lifecycleAction == AnalyticsConstants.Lifecycle.EventDataKeys.LIFECYCLE_PAUSE {
-                analyticsProperties.lifecycleTimerRunning = false
-                analyticsProperties.referrerTimerRunning = false
-                analyticsProperties.lifecyclePreviousPauseEventTimestamp = event.timestamp
+                dispatchQueue.async {
+                    self.analyticsProperties.lifecycleTimerRunning = false
+                    self.analyticsProperties.referrerTimerRunning = false
+                    self.analyticsProperties.lifecyclePreviousPauseEventTimestamp = event.timestamp
+                }
             }
 
         } else if event.type == EventType.lifecycle && event.source == EventSource.responseContent {
@@ -194,6 +214,11 @@ extension Analytics {
     /// `EventType.acquisition` and `EventSource.responseContent`
     /// - Parameter event: The `Event` to be processed.
     private func handleAcquisitionEvent(_ event: Event) {
+        guard let analyticsState = analyticsState else {
+            Log.trace(label: LOG_TAG, "handleAcquisitionResponseEvent - Analytics state is nil, returning.")
+            return
+        }
+
         if analyticsProperties.referrerTimerRunning {
             Log.debug(label: LOG_TAG, "handleAcquisitionResponseEvent - Acquisition response received with referrer data.")
             analyticsProperties.cancelReferrerTimer()
@@ -220,48 +245,17 @@ extension Analytics {
         }
     }
 
-    /// Handles the shared state change `Event`
-    /// - Parameter event: The `Event` to be processed. The event this listener process is of
-    /// `EventType.Hub` and `EventSource.sharedState`.
-    private func handleSharedStateUpdateEvent(_ event: Event) {
-
-        guard event.type == EventType.hub && event.source == EventSource.sharedState else {
-            Log.debug(label: LOG_TAG, "handleSharedStateUpdateEvent - Ignoring shared state update event (event is of unexpected Type).")
-            return
-        }
-
-        if !sdkBootUpCompleted {
-            sdkBootUpCompleted.toggle()
-            Log.trace(label: LOG_TAG, "handleSharedStateUpdateEvent - Boot Completion detected.")
-            handleAnalyticsRequestIdentityEvent(event)
-        }
-
-        guard let data = event.data else {
-            Log.debug(label: LOG_TAG, "handleSharedStateUpdateEvent - Ignoring shared state update event (event data was nil).")
-            return
-        }
-
-        guard let stateOwner = data[AnalyticsConstants.EventDataKeys.STATE_OWNER] as? String else {
-            Log.debug(label: LOG_TAG, "handleSharedStateUpdateEvent - Ignoring shared state update event (state owner is missing).")
-            return
-        }
-
-        if analyticsHardDependencies.contains(stateOwner) {
-            //TODO: Call the process event function.
-        }
-    }
-
     /// Handles the following events
     /// `EventType.analytics` and `EventSource.requestIdentity`
     /// - Parameter event: The `Event` to be processed.
     private func handleAnalyticsRequestIdentityEvent(_ event: Event) {
-        if let eventData = event.data, event.source == EventSource.requestIdentity && !eventData.isEmpty {
+        if let eventData = event.data, !eventData.isEmpty {
             if let vid = eventData[AnalyticsConstants.EventDataKeys.VISITOR_IDENTIFIER] as? String, !vid.isEmpty {
                 // set VID request
                 updateVisitorIdentifier(event: event, vid: vid)
             }
         } else { // get AID/VID request
-            sendAnalyticsIdRequest(event: event)
+            retrieveAnalyticsId(event: event)
         }
     }
 
@@ -270,6 +264,11 @@ extension Analytics {
     ///     - event: The `Event` which triggered the visitor identifier update.
     ///     - vid: The visitor identifier that was set.
     private func updateVisitorIdentifier(event: Event, vid: String) {
+        guard let analyticsState = analyticsState else {
+            Log.trace(label: LOG_TAG, "updateVisitorIdentifier - Analytics state is nil, returning.")
+            return
+        }
+
         if analyticsState.privacyStatus == .optedOut {
             Log.debug(label: LOG_TAG, "updateVisitorIdentifier - Privacy is opted out, ignoring the update visitor identifier request.")
             return
@@ -282,10 +281,17 @@ extension Analytics {
         dispatchAnalyticsIdentityResponse(event: event)
     }
 
-    /// Sends an analytics id request and processes the response from the server.
+    /// Sends an analytics id request and processes the response from the server if there
+    /// is no currently stored AID. If an AID is already present in AnalyticsProperties,
+    /// the stored AID is dispatched and no network request is made.
     /// - Parameters:
     ///     - event: The `Event` which triggered the sending of the analytics id request.
-    private func sendAnalyticsIdRequest(event: Event) {
+    private func retrieveAnalyticsId(event: Event) {
+        guard let analyticsState = analyticsState else {
+            Log.trace(label: LOG_TAG, "retrieveAnalyticsId - Analytics state is nil, returning.")
+            return
+        }
+
         // check if analytics state contains an RSID and host OR if privacy opt-out. if so, update shared state with empty id.
         if !analyticsState.isAnalyticsConfigured() || analyticsState.privacyStatus == .optedOut {
             Log.debug(label: LOG_TAG, "sendAnalyticsIdRequest - Analytics is not configured or privacy is opted out, the analytics identifier request will not be sent.")
@@ -331,7 +337,7 @@ extension Analytics {
                         Log.debug(label: self.LOG_TAG, "sendAnalyticsIdRequest - Unable to retrieve connection date from the AID request.")
                         return
                     }
-                    let aid = self.parseIdentifier(state: self.analyticsState, response: responseData)
+                    let aid = self.parseIdentifier(state: analyticsState, response: responseData)
                     Log.debug(label: self.LOG_TAG, "sendAnalyticsIdRequest - Successfully sent the AID request, received response: \(aid)")
                     self.analyticsProperties.setAnalyticsIdentifier(aid: aid)
                     self.dispatchAnalyticsIdentityResponse(event: event)
@@ -434,23 +440,31 @@ extension Analytics {
 
     /// Wait for lifecycle data after receiving Lifecycle Request event.
     func waitForLifecycleData() {
-        analyticsProperties.lifecycleTimerRunning = true
+        dispatchQueue.async {
+            self.analyticsProperties.lifecycleTimerRunning = true
+        }
         let lifecycleWorkItem = DispatchWorkItem {
             Log.warning(label: self.LOG_TAG, "waitForLifecycleData - Lifecycle timeout has expired without Lifecycle data")
             /// - TODO: Kick the database hits.
         }
-        analyticsProperties.dispatchQueue.asyncAfter(deadline: DispatchTime.now() + AnalyticsConstants.Default.LIFECYCLE_RESPONSE_WAIT_TIMEOUT, execute: lifecycleWorkItem)
-        analyticsProperties.lifecycleDispatchWorkItem = lifecycleWorkItem
+        dispatchQueue.asyncAfter(deadline: DispatchTime.now() + AnalyticsConstants.Default.LIFECYCLE_RESPONSE_WAIT_TIMEOUT, execute: lifecycleWorkItem)
+        dispatchQueue.async {
+            self.analyticsProperties.lifecycleDispatchWorkItem = lifecycleWorkItem
+        }
     }
 
     /// Wait for Acquisition data after receiving Lifecycle Response event.
     func waitForAcquisitionData(state: AnalyticsState, timeout: TimeInterval) {
-        analyticsProperties.referrerTimerRunning = true
+        dispatchQueue.async {
+            self.analyticsProperties.referrerTimerRunning = true
+        }
         let referrerDispatchWorkItem = DispatchWorkItem {
             Log.warning(label: self.LOG_TAG, "waitForAcquisitionData - Referrer timeout has expired without referrer data")
             /// - TODO: Kick the database hits.
         }
-        analyticsProperties.dispatchQueue.asyncAfter(deadline: DispatchTime.now() + timeout, execute: referrerDispatchWorkItem)
-        analyticsProperties.referrerDispatchWorkItem = referrerDispatchWorkItem
+        dispatchQueue.asyncAfter(deadline: DispatchTime.now() + timeout, execute: referrerDispatchWorkItem)
+        dispatchQueue.async {
+            self.analyticsProperties.referrerDispatchWorkItem = referrerDispatchWorkItem
+        }
     }
 }

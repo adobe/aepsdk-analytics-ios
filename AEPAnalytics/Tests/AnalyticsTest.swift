@@ -150,7 +150,7 @@ class AnalyticsTest : XCTestCase {
     }
 
     // set testing settings via configuration response event
-    private func dispatchConfigurationEventForTesting(rsid: String?, host: String?, privacyStatus: PrivacyStatus) {
+    private func dispatchConfigurationEventForTesting(rsid: String?, host: String?, privacyStatus: PrivacyStatus, mockNetworkService: MockNetworking) {
         // setup configuration data
         let configData = [AnalyticsTestConstants.Configuration.EventDataKeys.GLOBAL_PRIVACY: privacyStatus.rawValue, AnalyticsTestConstants.Configuration.EventDataKeys.ANALYTICS_REPORT_SUITES: rsid as Any, AnalyticsTestConstants.Configuration.EventDataKeys.ANALYTICS_SERVER: host as Any] as [String: Any]
         // create a configuration event with the created event data
@@ -159,6 +159,11 @@ class AnalyticsTest : XCTestCase {
         let _ = analytics.readyForEvent(configEvent)
         // dispatch the event
         simulateComingEventAndWait(configEvent)
+
+        // clear network requests and created shared states as an analytics id request will be sent on the first valid configuration response event.
+        sleep(1)
+        mockNetworkService.calledNetworkRequests.removeAll()
+        testableExtensionRuntime.createdSharedStates.removeAll()
     }
 
     func testGetSharedStateForEventWithNoDependencies() {
@@ -378,8 +383,9 @@ class AnalyticsTest : XCTestCase {
     // setVisitorIdentifier when privacy status = opted out
     func testHandleAnalyticsRequestIdentityEventWithValidVid_WhenPrivacyOptedOut() {
         // setup
-        dispatchConfigurationEventForTesting(rsid: "testRsid", host: "testAnalyticsServer.com", privacyStatus: .optedOut)
+        let mockNetworkService = ServiceProvider.shared.networkService as! MockNetworking
         let data = [AnalyticsConstants.EventDataKeys.VISITOR_IDENTIFIER: "testVid"] as [String: Any]
+        dispatchConfigurationEventForTesting(rsid: "testRsid", host: "testAnalyticsServer.com", privacyStatus: .optedOut, mockNetworkService: mockNetworkService)
         // create the analytics request identity event with the data
         let event = Event(name: "Test Analytics request identity", type: EventType.analytics, source: EventSource.requestIdentity, data: data)
         let _ = analytics.readyForEvent(event)
@@ -397,9 +403,9 @@ class AnalyticsTest : XCTestCase {
     // getVisitorIdentifier happy path test
     func testHandleAnalyticsRequestIdentityEventWithNoVid() {
         // setup
-        dispatchConfigurationEventForTesting(rsid: "testRsid", host: "testAnalyticsServer.com", privacyStatus: .optedIn)
         let mockNetworkService = ServiceProvider.shared.networkService as! MockNetworking
         setDefaultResponse(responseData: AnalyticsTest.aidResponse.data(using: .utf8), expectedUrlFragment: "https://testAnalyticsServer.com", statusCode: 200, mockNetworkService: mockNetworkService)
+        dispatchConfigurationEventForTesting(rsid: "testRsid", host: "testAnalyticsServer.com", privacyStatus: .optedIn, mockNetworkService: mockNetworkService)
         // create the analytics request identity event with the data
         let event = Event(name: "Test Analytics request identity", type: EventType.analytics, source: EventSource.requestIdentity, data: nil)
         let _ = analytics.readyForEvent(event)
@@ -426,9 +432,9 @@ class AnalyticsTest : XCTestCase {
     // getVisitorIdentifier server returns invalid json in response
     func testHandleAnalyticsRequestIdentityEventWithNoVid_InvalidAIDInResponse() {
         // setup
-        dispatchConfigurationEventForTesting(rsid: "testRsid", host: "testAnalyticsServer.com", privacyStatus: .optedIn)
         let mockNetworkService = ServiceProvider.shared.networkService as! MockNetworking
         setDefaultResponse(responseData: AnalyticsTest.invalidAidResponse.data(using: .utf8), expectedUrlFragment: "https://testAnalyticsServer.com", statusCode: 200, mockNetworkService: mockNetworkService)
+        dispatchConfigurationEventForTesting(rsid: "testRsid", host: "testAnalyticsServer.com", privacyStatus: .optedIn, mockNetworkService: mockNetworkService)
         // create the analytics request identity event with the data
         let event = Event(name: "Test Analytics request identity", type: EventType.analytics, source: EventSource.requestIdentity, data: nil)
         let _ = analytics.readyForEvent(event)
@@ -456,9 +462,9 @@ class AnalyticsTest : XCTestCase {
     // getVisitorIdentifier server returns response without aid
     func testHandleAnalyticsRequestIdentityEventWithNoVid_NoAIDInResponse() {
         // setup
-        dispatchConfigurationEventForTesting(rsid: "testRsid", host: "testAnalyticsServer.com", privacyStatus: .optedIn)
         let mockNetworkService = ServiceProvider.shared.networkService as! MockNetworking
         setDefaultResponse(responseData: AnalyticsTest.noAIDResponse.data(using: .utf8), expectedUrlFragment: "https://testAnalyticsServer.com", statusCode: 200, mockNetworkService: mockNetworkService)
+        dispatchConfigurationEventForTesting(rsid: "testRsid", host: "testAnalyticsServer.com", privacyStatus: .optedIn, mockNetworkService: mockNetworkService)
         // create the analytics request identity event with the data
         let event = Event(name: "Test Analytics request identity", type: EventType.analytics, source: EventSource.requestIdentity, data: nil)
         let _ = analytics.readyForEvent(event)
@@ -486,8 +492,8 @@ class AnalyticsTest : XCTestCase {
     // getVisitorIdentifier when privacy opted out
     func testHandleAnalyticsRequestIdentityEventWithNoVid_WhenPrivacyOptedOut() {
         // setup
-        dispatchConfigurationEventForTesting(rsid: "testRsid", host: "testAnalyticsServer.com", privacyStatus: .optedOut)
         let mockNetworkService = ServiceProvider.shared.networkService as! MockNetworking
+        dispatchConfigurationEventForTesting(rsid: "testRsid", host: "testAnalyticsServer.com", privacyStatus: .optedOut, mockNetworkService: mockNetworkService)
         // create the analytics request identity event with the data
         let event = Event(name: "Test Analytics request identity", type: EventType.analytics, source: EventSource.requestIdentity, data: nil)
         let _ = analytics.readyForEvent(event)
@@ -497,10 +503,9 @@ class AnalyticsTest : XCTestCase {
 
         // verify no network request sent
         XCTAssertEqual(0, mockNetworkService.calledNetworkRequests.count)
-        // verify 2 shared states created, latest version has empty VID/AID
-        // (shared state 0 created by handleOptOut, shared state 1 created by sendAnalyticsIdRequest)
-        XCTAssertEqual(2, testableExtensionRuntime.createdSharedStates.count)
-        let sharedState = testableExtensionRuntime.createdSharedStates[1]
+        // verify 1 shared states created that has empty VID/AID
+        XCTAssertEqual(1, testableExtensionRuntime.createdSharedStates.count)
+        let sharedState = testableExtensionRuntime.createdSharedStates[0]
         XCTAssertNil(sharedState?[AnalyticsConstants.EventDataKeys.ANALYTICS_ID])
         XCTAssertNil(sharedState?[AnalyticsConstants.EventDataKeys.VISITOR_IDENTIFIER])
         // verify nil identifiers were added to the datastore
@@ -514,8 +519,8 @@ class AnalyticsTest : XCTestCase {
     // getVisitorIdentifier when privacy unknown
     func testHandleAnalyticsRequestIdentityEventWithNoVid_WhenPrivacyUnknown() {
         // setup
-        dispatchConfigurationEventForTesting(rsid: "testRsid", host: "testAnalyticsServer.com", privacyStatus: .unknown)
         let mockNetworkService = ServiceProvider.shared.networkService as! MockNetworking
+        dispatchConfigurationEventForTesting(rsid: "testRsid", host: "testAnalyticsServer.com", privacyStatus: .unknown, mockNetworkService: mockNetworkService)
         // create the analytics request identity event with the data
         let event = Event(name: "Test Analytics request identity", type: EventType.analytics, source: EventSource.requestIdentity, data: nil)
         let _ = analytics.readyForEvent(event)
@@ -539,15 +544,15 @@ class AnalyticsTest : XCTestCase {
         XCTAssertEqual(aid, (responseEvent?.data?[AnalyticsConstants.EventDataKeys.ANALYTICS_ID] as? String))
     }
 
-    // handle eventhub booted
-    func testHandleEventHubSharedStateEvent() {
-        // setup
-        dispatchConfigurationEventForTesting(rsid: "testRsid", host: "testAnalyticsServer.com", privacyStatus: .optedIn)
+    // verify analytics id request sent on first valid configuration response event
+    func testVerifyAnalyticsIdRequestSentOnFirstValidConfigurationResponseEvent() {
         let mockNetworkService = ServiceProvider.shared.networkService as! MockNetworking
         setDefaultResponse(responseData: AnalyticsTest.aidResponse.data(using: .utf8), expectedUrlFragment: "https://testAnalyticsServer.com", statusCode: 200, mockNetworkService: mockNetworkService)
-        // create the event hub shared state event
-        let event = Event(name: "Test Event Hub Shared State Update", type: EventType.hub, source: EventSource.sharedState, data: nil)
-        let _ = analytics.readyForEvent(event)
+        // setup configuration data
+        let configData = [AnalyticsTestConstants.Configuration.EventDataKeys.GLOBAL_PRIVACY: PrivacyStatus.optedIn.rawValue, AnalyticsTestConstants.Configuration.EventDataKeys.ANALYTICS_REPORT_SUITES: "testRsid", AnalyticsTestConstants.Configuration.EventDataKeys.ANALYTICS_SERVER: "testAnalyticsServer.com"] as [String: Any]
+        // create a configuration event with the created event data
+        let event = Event(name: "configuration response event", type: EventType.configuration, source: EventSource.responseContent, data: configData)
+        testableExtensionRuntime.simulateSharedState(extensionName: AnalyticsTestConstants.Configuration.EventDataKeys.SHARED_STATE_NAME, event: event, data: (configData, .set))
 
         // test
         simulateComingEventAndWait(event)
