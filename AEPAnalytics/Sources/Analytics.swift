@@ -31,7 +31,7 @@ public class Analytics: NSObject, Extension {
     private var dispatchQueue: DispatchQueue = DispatchQueue(label: AnalyticsConstants.FRIENDLY_NAME)
     // Maintains the boot up state of sdk. The first shared state update event indicates the boot up completion.
     private var sdkBootUpCompleted = false
-    
+
     // MARK: Extension
 
     public required init(runtime: ExtensionRuntime) {
