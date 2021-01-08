@@ -17,6 +17,23 @@ import AEPServices
 extension Analytics {
 
     private static let LOG_TAG = "Analytics+Track"
+    /// Processes the TrackAction/TrackState event.
+    /// - Parameters:
+    ///     - analyticsState: shared state values
+    ///     - event: `Track Event` to process.
+    func trackAnalyticsData(analyticsState: AnalyticsState, event: Event, analyticsProperties: inout AnalyticsProperties) {
+        let analyticsEventData = event.data
+        guard analyticsEventData != nil else {
+            Log.debug(label: Analytics.LOG_TAG, "trackAnalyticsData - event data is null.")
+            return
+        }
+
+        if (analyticsEventData!.keys.contains(AnalyticsConstants.EventDataKeys.TRACK_ACTION)) ||
+            (analyticsEventData!.keys.contains(AnalyticsConstants.EventDataKeys.TRACK_STATE)) ||
+            (analyticsEventData!.keys.contains(AnalyticsConstants.EventDataKeys.CONTEXT_DATA))
+        {track(analyticsState: analyticsState, trackEventData: analyticsEventData, timeStampInSeconds: event.timestamp.timeIntervalSince1970, appendToPlaceHolder: false, eventUniqueIdentifier: "\(event.id)", analyticsProperties: &analyticsProperties)
+        }
+    }
 
     /// Processes the Acquisition event.
     /// If we are waiting for the acquisition data, then try to append it to a existing hit. Otherwise, send a

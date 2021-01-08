@@ -567,4 +567,51 @@ class AnalyticsTest : XCTestCase {
         XCTAssertEqual(1, responseEvent?.data?.count)
         XCTAssertEqual(AnalyticsTest.responseAid, (responseEvent?.data?[AnalyticsConstants.EventDataKeys.ANALYTICS_ID] as? String))
     }
+
+    // ==========================================================================
+    // handleAnalyticsRequestGenericEvent
+    // ==========================================================================
+    func testHandleAnalyticsTrackAction() {
+        // setup
+        let data = [AnalyticsConstants.EventDataKeys.TRACK_ACTION: "sample action"] as [String: Any]
+        // create the analytics event
+        let event = Event(name: "Test Generic Track Analytics request", type: EventType.genericTrack, source: EventSource.requestContent, data: data)
+        let _ = analytics.readyForEvent(event)
+
+        // test
+        testableExtensionRuntime.simulateComingEvent(event: event)
+        sleep(1)
+
+        //To Do verify after link with hitprocess
+
+    }
+
+    func testHandleAnalyticsTrackState() {
+        // setup
+        let data = [AnalyticsConstants.EventDataKeys.TRACK_STATE: "sample page state"] as [String: Any]
+        // create the analytics event
+        let event = Event(name: "Test Generic Track Analytics request", type: EventType.genericTrack, source: EventSource.requestContent, data: data)
+        let _ = analytics.readyForEvent(event)
+
+        // test
+        testableExtensionRuntime.simulateComingEvent(event: event)
+        sleep(1)
+
+        //To Do verify after link with hitprocess
+    }
+
+    func testHandleAnalyticsContextData() {
+        // setup
+        let data = [AnalyticsConstants.EventDataKeys.CONTEXT_DATA: "sample contextdata"] as [String: Any]
+        // create the analytics event
+        let event = Event(name: "Test Generic Track Analytics request", type: EventType.genericTrack, source: EventSource.requestContent, data: data)
+        let _ = analytics.readyForEvent(event)
+
+        // test
+        testableExtensionRuntime.simulateComingEvent(event: event)
+        sleep(1)
+
+        //To Do verify after link with hitprocess
+    }
+
 }

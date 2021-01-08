@@ -102,6 +102,8 @@ extension Analytics {
             switch event.type {
             // case EventType.rulesEngine:
             // TODO: implement handler
+            case EventType.genericTrack:
+                self.handleAnalyticsTrackEvent(event)
             case EventType.configuration:
                 self.handleConfigurationResponseEvent(event)
             case EventType.lifecycle:
@@ -123,6 +125,18 @@ extension Analytics {
             default:
                 break
             }
+        }
+    }
+
+    /// Handle the following events
+    ///`EventType.genericTrack` and `EventSource.requestContent`
+    /// - Parameter event: an event containing track data for processing
+    private func handleAnalyticsTrackEvent(_ event: Event) {
+        if event.type == EventType.genericTrack && event.source == EventSource.requestContent {
+            //Soft dependecies list.
+            let softDependencies: [String] = [AnalyticsConstants.Lifecycle.EventDataKeys.SHARED_STATE_NAME, AnalyticsConstants.Assurance.EventDataKeys.SHARED_STATE_NAME, AnalyticsConstants.Places.EventDataKeys.SHARED_STATE_NAME]
+            updateAnalyticsState(forEvent: event, dependencies: analyticsHardDependencies + softDependencies)
+            trackAnalyticsData(analyticsState: analyticsState, event: event, analyticsProperties: &analyticsProperties)
         }
     }
 

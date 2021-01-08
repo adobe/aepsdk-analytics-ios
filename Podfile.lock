@@ -10,7 +10,7 @@ PODS:
 DEPENDENCIES:
   - AEPCore (from `https://github.com/adobe/aepsdk-core-ios.git`, branch `main`)
   - AEPIdentity (from `https://github.com/adobe/aepsdk-core-ios.git`, branch `main`)
-  - AEPRulesEngine (from `https://github.com/adobe/aepsdk-rulesengine-ios.git`, branch `main`)
+  - AEPRulesEngine (from `https://github.com/adobe/aepsdk-rulesengine-ios.git`, branch `1.0.0-beta.1`)
   - AEPServices (from `https://github.com/adobe/aepsdk-core-ios.git`, branch `main`)
 
 EXTERNAL SOURCES:
@@ -21,7 +21,7 @@ EXTERNAL SOURCES:
     :branch: main
     :git: https://github.com/adobe/aepsdk-core-ios.git
   AEPRulesEngine:
-    :branch: main
+    :branch: 1.0.0-beta.1
     :git: https://github.com/adobe/aepsdk-rulesengine-ios.git
   AEPServices:
     :branch: main
@@ -47,6 +47,6 @@ SPEC CHECKSUMS:
   AEPRulesEngine: 3860846bc56a1b1e3e69194016e168358b4b8efd
   AEPServices: a97f23f7dd26d9fc5ce0724fe2b2ad95ecd9189a
 
-PODFILE CHECKSUM: 63ec015943924a919b966906435edec8d87a9b4d
+PODFILE CHECKSUM: c2a87ee89bf29b2cf02762becafb0c7ea249a564
 
 COCOAPODS: 1.10.0
