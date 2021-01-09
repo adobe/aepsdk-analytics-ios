@@ -64,6 +64,7 @@ public class Analytics: NSObject, Extension {
         registerListener(type: EventType.lifecycle, source: EventSource.responseContent, listener: handleIncomingEvent)
         registerListener(type: EventType.genericLifecycle, source: EventSource.requestContent, listener: handleIncomingEvent)
         registerListener(type: EventType.hub, source: EventSource.sharedState, listener: handleIncomingEvent)
+        registerListener(type: EventType.analytics, source: EventSource.requestContent, listener: handleIncomingEvent)
     }
 
     public func onUnregistered() {}
@@ -113,8 +114,8 @@ extension Analytics {
             case EventType.analytics:
                 if event.source == EventSource.requestIdentity {
                     self.handleAnalyticsRequestIdentityEvent(event)
-                } else { // EventSource == requestContent
-                    // TODO: implement handler
+                } else if event.source == EventSource.requestContent {
+                    self.handleAnalyticsRequestContentEvent(event)
                 }
             case EventType.hub:
                 if event.source == EventSource.sharedState {
@@ -263,6 +264,42 @@ extension Analytics {
         } else { // get AID/VID request
             sendAnalyticsIdRequest(event: event)
         }
+    }
+
+    private func handleAnalyticsRequestContentEvent(_ event: Event) {
+        guard let eventData = event.data, !eventData.isEmpty else {
+            Log.debug(label: LOG_TAG, "handleAnalyticsRequestContentEvent - Returning early, event data is nil or empty.")
+            return
+        }
+        
+        if eventData.keys.contains(AnalyticsConstants.EventDataKeys.CLEAR_HITS_QUEUE) {
+            clearAllHits()
+        } else if eventData.keys.contains(AnalyticsConstants.EventDataKeys.GET_QUEUE_SIZE), let uuidString = event.responseID?.uuidString {
+            getQueueSize(queueSizeRequestEvent: event)
+        } else if eventData.keys.contains(AnalyticsConstants.EventDataKeys.FORCE_KICK_HITS) {
+            forceKickEventsFromDB()
+        }
+    }
+        
+    ///Clear all the `Analytic Hits` in the database.
+    func clearAllHits() {
+        //TODO: AnalyticsHitDatabase clear hits from db.
+    }
+    
+    ///Triggers `Analytics Response` event with `EventData` containing pending `Analytic hits` count.
+    /// - Parameter queueSizeRequestEvent: The `Event` of type `Analytic Request`, requesting queue size.
+    func getQueueSize(queueSizeRequestEvent event: Event) {
+        var queueSize: UInt64 = 0
+        //TODO: update queueSize with the tracking hits cound in db.
+        
+        let eventData: [String:Any] = [AnalyticsConstants.EventDataKeys.QUEUE_SIZE : queueSize]
+        let queueSizeResponseEvent = event.createResponseEvent(name: "QueueSizeValue", type: EventType.analytics, source: EventSource.responseContent, data: eventData)
+        dispatch(event: queueSizeResponseEvent)
+        Log.trace(label: LOG_TAG, "getQueueSize - Dispatching Analytic hit queue size response event with data \n \(eventData)")
+    }
+    
+    func forceKickEventsFromDB() {
+        //TODO: AnalyticsHitDatabase operations.
     }
 
     /// Stores the passed in visitor identifier in the analytics datastore via the `AnalyticsProperties`.
