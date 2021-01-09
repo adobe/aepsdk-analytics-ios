@@ -271,33 +271,33 @@ extension Analytics {
             Log.debug(label: LOG_TAG, "handleAnalyticsRequestContentEvent - Returning early, event data is nil or empty.")
             return
         }
-        
+
         if eventData.keys.contains(AnalyticsConstants.EventDataKeys.CLEAR_HITS_QUEUE) {
             clearAllHits()
-        } else if eventData.keys.contains(AnalyticsConstants.EventDataKeys.GET_QUEUE_SIZE), let uuidString = event.responseID?.uuidString {
+        } else if eventData.keys.contains(AnalyticsConstants.EventDataKeys.GET_QUEUE_SIZE) {
             getQueueSize(queueSizeRequestEvent: event)
         } else if eventData.keys.contains(AnalyticsConstants.EventDataKeys.FORCE_KICK_HITS) {
             forceKickEventsFromDB()
         }
     }
-        
+
     ///Clear all the `Analytic Hits` in the database.
     func clearAllHits() {
         //TODO: AnalyticsHitDatabase clear hits from db.
     }
-    
+
     ///Triggers `Analytics Response` event with `EventData` containing pending `Analytic hits` count.
     /// - Parameter queueSizeRequestEvent: The `Event` of type `Analytic Request`, requesting queue size.
     func getQueueSize(queueSizeRequestEvent event: Event) {
         var queueSize: UInt64 = 0
         //TODO: update queueSize with the tracking hits cound in db.
-        
+
         let eventData: [String:Any] = [AnalyticsConstants.EventDataKeys.QUEUE_SIZE : queueSize]
         let queueSizeResponseEvent = event.createResponseEvent(name: "QueueSizeValue", type: EventType.analytics, source: EventSource.responseContent, data: eventData)
         dispatch(event: queueSizeResponseEvent)
         Log.trace(label: LOG_TAG, "getQueueSize - Dispatching Analytic hit queue size response event with data \n \(eventData)")
     }
-    
+
     func forceKickEventsFromDB() {
         //TODO: AnalyticsHitDatabase operations.
     }

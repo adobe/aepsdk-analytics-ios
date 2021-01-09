@@ -567,4 +567,23 @@ class AnalyticsTest : XCTestCase {
         XCTAssertEqual(1, responseEvent?.data?.count)
         XCTAssertEqual(AnalyticsTest.responseAid, (responseEvent?.data?[AnalyticsConstants.EventDataKeys.ANALYTICS_ID] as? String))
     }
+
+    // ==========================================================================
+    // handleAnalyticsRequestEvents
+    // ==========================================================================
+
+    func testGetQueueSizeRequestEventShouldTriggerResponseEventWithQueueSize() {
+        // setup
+        let data  = [AnalyticsTestConstants.EventDataKeys.GET_QUEUE_SIZE: true]
+        let event = Event(name: "GetQueueSize", type: EventType.analytics, source: EventSource.requestContent, data: data)
+
+        analytics.readyForEvent(event)
+        simulateComingEventAndWait(event)
+
+        sleep(2)
+
+        let queueSizeEvent = testableExtensionRuntime.dispatchedEvents.last
+        XCTAssertTrue(queueSizeEvent?.data?.keys.contains(AnalyticsTestConstants.EventDataKeys.QUEUE_SIZE) ?? false)
+
+    }
 }
