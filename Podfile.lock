@@ -1,16 +1,16 @@
 PODS:
-  - AEPCore (3.0.0-beta.2):
-    - AEPRulesEngine
-    - AEPServices
-  - AEPIdentity (3.0.0-beta.2):
-    - AEPCore
-  - AEPRulesEngine (1.0.0-beta.1)
-  - AEPServices (3.0.0-beta.2)
+  - AEPCore (3.0.0-beta.3):
+    - AEPRulesEngine (= 1.0.0-beta.2)
+    - AEPServices (= 3.0.0-beta.3)
+  - AEPIdentity (3.0.0-beta.3):
+    - AEPCore (= 3.0.0-beta.3)
+  - AEPRulesEngine (1.0.0-beta.2)
+  - AEPServices (3.0.0-beta.3)
 
 DEPENDENCIES:
   - AEPCore (from `https://github.com/adobe/aepsdk-core-ios.git`, branch `main`)
   - AEPIdentity (from `https://github.com/adobe/aepsdk-core-ios.git`, branch `main`)
-  - AEPRulesEngine (from `https://github.com/adobe/aepsdk-rulesengine-ios.git`, branch `1.0.0-beta.1`)
+  - AEPRulesEngine (from `https://github.com/adobe/aepsdk-rulesengine-ios.git`, branch `main`)
   - AEPServices (from `https://github.com/adobe/aepsdk-core-ios.git`, branch `main`)
 
 EXTERNAL SOURCES:
@@ -21,7 +21,7 @@ EXTERNAL SOURCES:
     :branch: main
     :git: https://github.com/adobe/aepsdk-core-ios.git
   AEPRulesEngine:
-    :branch: 1.0.0-beta.1
+    :branch: main
     :git: https://github.com/adobe/aepsdk-rulesengine-ios.git
   AEPServices:
     :branch: main
@@ -29,24 +29,24 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   AEPCore:
-    :commit: 428da71ca81f50340f70c562d412c3d7a155fba3
+    :commit: 9da61360f4340907830146dc7db42933b619c398
     :git: https://github.com/adobe/aepsdk-core-ios.git
   AEPIdentity:
-    :commit: 428da71ca81f50340f70c562d412c3d7a155fba3
+    :commit: 9da61360f4340907830146dc7db42933b619c398
     :git: https://github.com/adobe/aepsdk-core-ios.git
   AEPRulesEngine:
-    :commit: b2e0247bf57975209997dd9a26fd576b7c420394
+    :commit: 151df7075de461c492c192a43eefa582cd7311df
     :git: https://github.com/adobe/aepsdk-rulesengine-ios.git
   AEPServices:
-    :commit: 428da71ca81f50340f70c562d412c3d7a155fba3
+    :commit: 9da61360f4340907830146dc7db42933b619c398
     :git: https://github.com/adobe/aepsdk-core-ios.git
 
 SPEC CHECKSUMS:
-  AEPCore: 3c5374555adceead3e14503ced175e928969b989
-  AEPIdentity: 04558a7692af328c7d30d2fa61e17183f4131117
-  AEPRulesEngine: 3860846bc56a1b1e3e69194016e168358b4b8efd
-  AEPServices: a97f23f7dd26d9fc5ce0724fe2b2ad95ecd9189a
+  AEPCore: c62d1074c0ebd417ebfbeb9b11d286806790df4f
+  AEPIdentity: c12d43c0d5ee86fda700c8a496cb7f50b07186de
+  AEPRulesEngine: bc77ec533b584fd353b616063601d4d8c9401089
+  AEPServices: 4637295cefaebecfce6b0e7496b6e15a05a245c8
 
-PODFILE CHECKSUM: c2a87ee89bf29b2cf02762becafb0c7ea249a564
+PODFILE CHECKSUM: 63ec015943924a919b966906435edec8d87a9b4d
 
 COCOAPODS: 1.10.0
