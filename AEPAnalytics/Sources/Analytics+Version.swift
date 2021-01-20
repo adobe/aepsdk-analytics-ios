@@ -34,7 +34,7 @@ extension Analytics {
     }
 
     /// Creates a zero padded representation of the Analytics extension version.
-    /// - Returns a `String` containing zero padded representation of the Analytics version.
+    /// - Returns a `String` containing a zero padded representation of the Analytics version.
     private func getFormattedAnalyticsVersion() -> String {
         var formattedVersionString = String()
         let analyticsVersionArray = Analytics.extensionVersion.components(separatedBy: ".")
@@ -49,7 +49,7 @@ extension Analytics {
     }
 
     /// Creates a zero padded representation of the Core extension version.
-    /// - Returns a `String` containing zero padded representation of the Analytics version.
+    /// - Returns a `String` containing a zero padded representation of the Analytics version.
     private func getFormattedMobileCoreVersion() -> String {
         var formattedVersionString = String()
         let mobileCoreVersionArray = MobileCore.extensionVersion.components(separatedBy: ".")
