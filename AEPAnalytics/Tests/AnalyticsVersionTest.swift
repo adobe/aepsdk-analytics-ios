@@ -68,4 +68,10 @@ class AnalyticsVersionTest : XCTestCase {
         // verify built version string and correct wrapper type of "F"
         XCTAssertEqual(builtVersionString, "WOSF223344556677")
     }
+
+    func testBuildVersionString_With_InvalidAnalyticsVersion() {
+        let builtVersionString = analytics.buildVersionString(osType: "IOS", analyticsVersion: "33.44", coreVersion: "55.66.77-" + WrapperType.xamarin.rawValue)
+        // verify version string contains fallback version of "000000" and correct wrapper type of "X"
+        XCTAssertEqual(builtVersionString, "IOSX000000556677")
+    }
 }

@@ -53,13 +53,17 @@ extension Analytics {
     private func getFormattedExtensionVersion(_ version: String) -> String {
         var formattedVersionString = String()
         let versionArray = version.components(separatedBy: ".")
-        for versionComponent in versionArray {
-            if versionComponent.count == 2 {
-                formattedVersionString.append(versionComponent)
-            } else {
-                formattedVersionString.append("0" + versionComponent)
+        if versionArray.count == 3 {
+            for versionComponent in versionArray {
+                if versionComponent.count == 2 {
+                    formattedVersionString.append(versionComponent)
+                } else {
+                    formattedVersionString.append("0" + versionComponent)
+                }
             }
+            return formattedVersionString
+        } else {
+            return "000000"
         }
-        return formattedVersionString
     }
 }
