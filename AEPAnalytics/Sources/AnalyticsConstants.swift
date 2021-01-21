@@ -27,7 +27,6 @@ enum AnalyticsConstants {
     static let APP_STATE_FOREGROUND                     = "foreground"
     static let APP_STATE_BACKGROUND                     = "background"
     static let AID_LENGTH                               = 33
-    static let WRAPPER_TYPE                             = "N"
 
     enum EventDataKeys {
         static let STATE_OWNER      = "stateowner"

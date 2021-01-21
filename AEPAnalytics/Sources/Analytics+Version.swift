@@ -14,10 +14,25 @@ import AEPCore
 /// Builds a version string for Analytics.
 extension Analytics {
 
+    /// Returns the built Analytics version string.
+    /// - Returns a `String` containing the built Analytics version string.
+    internal func getVersion() -> String {
+        let builtVersionString = buildVersionString(osType: getOSType(), analyticsVersion: Analytics.extensionVersion, coreVersion: MobileCore.extensionVersion)
+        return builtVersionString
+    }
+
     /// Builds a version string to be used for Analytics pings.
-    /// - Returns a `String` containing the Analytics version.
-    func getVersion() -> String {
-        return String(getOSType() + AnalyticsConstants.WRAPPER_TYPE + getFormattedAnalyticsVersion() + getFormattedMobileCoreVersion())
+    /// - Returns a `String` containing the built Analytics version string.
+    internal func buildVersionString(osType: String, analyticsVersion: String, coreVersion: String) -> String {
+        var wrapperType = String()
+        // split core version into version number and wrapper type if possible
+        let coreVersionComponents = coreVersion.components(separatedBy: "-")
+        if coreVersionComponents.count == 2 {
+            wrapperType = coreVersionComponents[1]
+        } else {
+            wrapperType = WrapperType.none.rawValue
+        }
+        return "\(osType)\(wrapperType)\(getFormattedExtensionVersion(analyticsVersion))\(getFormattedExtensionVersion(coreVersionComponents[0]))"
     }
 
     /// Determines which OS is present on the device and returns the
@@ -33,31 +48,16 @@ extension Analytics {
         #endif
     }
 
-    /// Creates a zero padded representation of the Analytics extension version.
-    /// - Returns a `String` containing a zero padded representation of the Analytics version.
-    private func getFormattedAnalyticsVersion() -> String {
+    /// Creates a zero padded representation from the provided extension version.
+    /// - Returns a `String` containing a zero padded representation of the provided version.
+    private func getFormattedExtensionVersion(_ version: String) -> String {
         var formattedVersionString = String()
-        let analyticsVersionArray = Analytics.extensionVersion.components(separatedBy: ".")
-        for version in analyticsVersionArray {
-            if version.count == 2 {
-                formattedVersionString.append(version)
+        let versionArray = version.components(separatedBy: ".")
+        for versionComponent in versionArray {
+            if versionComponent.count == 2 {
+                formattedVersionString.append(versionComponent)
             } else {
-                formattedVersionString.append("0" + version)
-            }
-        }
-        return formattedVersionString
-    }
-
-    /// Creates a zero padded representation of the Core extension version.
-    /// - Returns a `String` containing a zero padded representation of the Analytics version.
-    private func getFormattedMobileCoreVersion() -> String {
-        var formattedVersionString = String()
-        let mobileCoreVersionArray = MobileCore.extensionVersion.components(separatedBy: ".")
-        for version in mobileCoreVersionArray {
-            if version.count == 2 {
-                formattedVersionString.append(version)
-            } else {
-                formattedVersionString.append("0" + version)
+                formattedVersionString.append("0" + versionComponent)
             }
         }
         return formattedVersionString

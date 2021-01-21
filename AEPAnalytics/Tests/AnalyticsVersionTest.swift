@@ -17,7 +17,7 @@ import XCTest
 class AnalyticsVersionTest : XCTestCase {
 
     var testableExtensionRuntime: TestableExtensionRuntime!
-    var analytics:Analytics!
+    var analytics: Analytics!
     var analyticsProperties: AnalyticsProperties!
     var analyticsState: AnalyticsState!
 
@@ -30,9 +30,42 @@ class AnalyticsVersionTest : XCTestCase {
         analytics.onRegistered()
     }
 
-    func testGetVersion() {
+    func testGetVersion_HappyPath() {
         let version = analytics.getVersion()
         // verify Analytics version is 0.0.1 and MobileCore version is 3.0.0
         XCTAssertEqual(version, "IOSN000001030000")
+    }
+
+    func testGetVersion_With_XamarinWrapperType() {
+        MobileCore.setWrapperType(.xamarin)
+        let version = analytics.getVersion()
+        // verify wrapper type is "X"
+        XCTAssertEqual(version, "IOSX000001030000")
+    }
+
+    func testGetVersion_With_UnityWrapperType() {
+        MobileCore.setWrapperType(.unity)
+        let version = analytics.getVersion()
+        // verify wrapper type is "U"
+        XCTAssertEqual(version, "IOSU000001030000")
+    }
+
+    func testGetVersion_With_ReactNativeWrapperType() {
+        MobileCore.setWrapperType(.reactNative)
+        let version = analytics.getVersion()
+        // verify wrapper type is "R"
+        XCTAssertEqual(version, "IOSR000001030000")
+    }
+
+    func testBuildVersionString_With_SingleAndDoubleDigitVersionNumbers() {
+        let builtVersionString = analytics.buildVersionString(osType: "TOS", analyticsVersion: "9.18.27", coreVersion: "11.12.13-" + WrapperType.cordova.rawValue)
+        // verify built version string and correct wrapper type of "C"
+        XCTAssertEqual(builtVersionString, "TOSC091827111213")
+    }
+
+    func testBuildVersionString_With_DoubleDigitVersionNumbers() {
+        let builtVersionString = analytics.buildVersionString(osType: "WOS", analyticsVersion: "22.33.44", coreVersion: "55.66.77-" + WrapperType.flutter.rawValue)
+        // verify built version string and correct wrapper type of "F"
+        XCTAssertEqual(builtVersionString, "WOSF223344556677")
     }
 }
