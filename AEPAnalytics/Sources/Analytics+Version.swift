@@ -51,19 +51,19 @@ extension Analytics {
     /// Creates a zero padded representation from the provided extension version.
     /// - Returns a `String` containing a zero padded representation of the provided version.
     private func getFormattedExtensionVersion(_ version: String) -> String {
-        var formattedVersionString = String()
+        var formattedVersionString = "000000"
         let versionArray = version.components(separatedBy: ".")
         if versionArray.count == 3 {
-            for versionComponent in versionArray {
-                if versionComponent.count == 2 {
-                    formattedVersionString.append(versionComponent)
-                } else {
-                    formattedVersionString.append("0" + versionComponent)
-                }
-            }
-            return formattedVersionString
-        } else {
-            return "000000"
+            let major = formatVersionNumber(versionArray[0])
+            let minor = formatVersionNumber(versionArray[1])
+            let build = formatVersionNumber(versionArray[2])
+            formattedVersionString = "\(major)\(minor)\(build)"
         }
+        return formattedVersionString
+    }
+
+    /// Pads the version number with a zero if needed
+    private func formatVersionNumber(_ versionNumber: String) -> String {
+        return versionNumber.count == 1 ? "0\(versionNumber)" : versionNumber
     }
 }
