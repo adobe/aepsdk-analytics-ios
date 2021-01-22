@@ -192,11 +192,9 @@ extension Analytics {
                 /// - TODO: Implement the code for adding a placeholder hit in db using AnalyticsHitDB.
 
             } else if lifecycleAction == AnalyticsConstants.Lifecycle.EventDataKeys.LIFECYCLE_PAUSE {
-                dispatchQueue.async {
-                    self.analyticsProperties.lifecycleTimerRunning = false
-                    self.analyticsProperties.referrerTimerRunning = false
-                    self.analyticsProperties.lifecyclePreviousPauseEventTimestamp = event.timestamp
-                }
+                self.analyticsProperties.lifecycleTimerRunning = false
+                self.analyticsProperties.referrerTimerRunning = false
+                self.analyticsProperties.lifecyclePreviousPauseEventTimestamp = event.timestamp
             }
 
         } else if event.type == EventType.lifecycle && event.source == EventSource.responseContent {
@@ -442,13 +440,11 @@ extension Analytics {
     func waitForLifecycleData() {
         dispatchQueue.async {
             self.analyticsProperties.lifecycleTimerRunning = true
-        }
-        let lifecycleWorkItem = DispatchWorkItem {
-            Log.warning(label: self.LOG_TAG, "waitForLifecycleData - Lifecycle timeout has expired without Lifecycle data")
-            /// - TODO: Kick the database hits.
-        }
-        dispatchQueue.asyncAfter(deadline: DispatchTime.now() + AnalyticsConstants.Default.LIFECYCLE_RESPONSE_WAIT_TIMEOUT, execute: lifecycleWorkItem)
-        dispatchQueue.async {
+            let lifecycleWorkItem = DispatchWorkItem {
+                Log.warning(label: self.LOG_TAG, "waitForLifecycleData - Lifecycle timeout has expired without Lifecycle data")
+                /// - TODO: Kick the database hits.
+            }
+            self.dispatchQueue.asyncAfter(deadline: DispatchTime.now() + AnalyticsConstants.Default.LIFECYCLE_RESPONSE_WAIT_TIMEOUT, execute: lifecycleWorkItem)
             self.analyticsProperties.lifecycleDispatchWorkItem = lifecycleWorkItem
         }
     }
@@ -457,13 +453,11 @@ extension Analytics {
     func waitForAcquisitionData(state: AnalyticsState, timeout: TimeInterval) {
         dispatchQueue.async {
             self.analyticsProperties.referrerTimerRunning = true
-        }
-        let referrerDispatchWorkItem = DispatchWorkItem {
-            Log.warning(label: self.LOG_TAG, "waitForAcquisitionData - Referrer timeout has expired without referrer data")
-            /// - TODO: Kick the database hits.
-        }
-        dispatchQueue.asyncAfter(deadline: DispatchTime.now() + timeout, execute: referrerDispatchWorkItem)
-        dispatchQueue.async {
+            let referrerDispatchWorkItem = DispatchWorkItem {
+                Log.warning(label: self.LOG_TAG, "waitForAcquisitionData - Referrer timeout has expired without referrer data")
+                /// - TODO: Kick the database hits.
+            }
+            self.dispatchQueue.asyncAfter(deadline: DispatchTime.now() + timeout, execute: referrerDispatchWorkItem)
             self.analyticsProperties.referrerDispatchWorkItem = referrerDispatchWorkItem
         }
     }
