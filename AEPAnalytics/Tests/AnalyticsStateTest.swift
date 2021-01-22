@@ -14,14 +14,20 @@ import XCTest
 import Foundation
 @testable import AEPAnalytics
 @testable import AEPCore
+@testable import AEPServices
 
 
 class AnalyticsStateTest : XCTestCase {
 
     private var analyticsState: AnalyticsState!
+    var mockHitQueue: MockHitQueue!
+    var responseCallbackArgs = [(DataEntity, HttpConnection?)]()
 
     override func setUp() {
-        analyticsState = AnalyticsState()
+        mockHitQueue = MockHitQueue(processor: AnalyticsHitProcessor(responseHandler: { [weak self] entity, httpConnection in
+            self?.responseCallbackArgs.append((entity, httpConnection))
+        }))
+        analyticsState = AnalyticsState(hitQueue: mockHitQueue)
     }
 
     func testExtractConfigurationInfoHappyFlow() {

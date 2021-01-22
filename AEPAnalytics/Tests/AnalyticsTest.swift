@@ -24,6 +24,8 @@ class AnalyticsTest : XCTestCase {
     var analyticsProperties: AnalyticsProperties!
     var analyticsState: AnalyticsState!
     static let responseAid = "7A57620BB5CA4754-30BDF2392F2416C7"
+    var mockHitQueue: MockHitQueue!
+    var responseCallbackArgs = [(DataEntity, HttpConnection?)]()
 
     static let aidResponse = """
     {
@@ -47,7 +49,10 @@ class AnalyticsTest : XCTestCase {
         // setup test variables
         ServiceProvider.shared.networkService = MockNetworking()
         testableExtensionRuntime = TestableExtensionRuntime()
-        analyticsState = AnalyticsState()
+        mockHitQueue = MockHitQueue(processor: AnalyticsHitProcessor(responseHandler: { [weak self] entity, httpConnection in
+            self?.responseCallbackArgs.append((entity, httpConnection))
+        }))
+        analyticsState = AnalyticsState(hitQueue: mockHitQueue)
         analyticsProperties = AnalyticsProperties.init()
         analytics = Analytics(runtime: testableExtensionRuntime, state: analyticsState, properties: analyticsProperties)
         dataStore = analyticsProperties.dataStore
@@ -573,6 +578,9 @@ class AnalyticsTest : XCTestCase {
     // ==========================================================================
     func testHandleAnalyticsTrackAction() {
         // setup
+        dispatchConfigurationEventForTesting(rsid: "testRsid", host: "testAnalyticsServer.com", privacyStatus: .optedIn)
+        let mockNetworkService = ServiceProvider.shared.networkService as! MockNetworking
+        setDefaultResponse(responseData: AnalyticsTest.aidResponse.data(using: .utf8), expectedUrlFragment: "https://testAnalyticsServer.com", statusCode: 200, mockNetworkService: mockNetworkService)
         let data:[String : String] = [AnalyticsConstants.EventDataKeys.TRACK_ACTION: "sample action"]
         // create the analytics event
         let event = Event(name: "Test Generic Track Analytics request", type: EventType.genericTrack, source: EventSource.requestContent, data: data)
@@ -583,7 +591,7 @@ class AnalyticsTest : XCTestCase {
         sleep(1)
 
         //To Do verify after link with hitprocess
-
+        //XCTAssertEqual(1, analytics.analyticsState?.hitQueue.count())
     }
 
     func testHandleAnalyticsTrackState() {

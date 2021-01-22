@@ -31,6 +31,10 @@ class AnalyticsState {
     private(set) var launchHitDelay: TimeInterval = AnalyticsConstants.Default.LAUNCH_HIT_DELAY
     /// `Backdate Previous Session Info` configuration setting. If enable backdates session information hits.
     private(set) var backDateSessionInfoEnabled: Bool = AnalyticsConstants.Default.BACKDATE_SESSION_INFO_ENABLED
+    ///  The Analytics extension datastore.
+    private var dataStore: NamedCollectionDataStore
+
+    private(set) var hitQueue: HitQueuing
 
     #if DEBUG
         var analyticForwardingEnabled: Bool = AnalyticsConstants.Default.FORWARDING_ENABLED
@@ -86,6 +90,38 @@ class AnalyticsState {
     /// Typealias for Assurance Event Data keys.
     private typealias AssuranceEventDataKeys = AnalyticsConstants.Assurance.EventDataKeys
 
+    /// Creates a new `AnalyticsState`
+    init(hitQueue: HitQueuing) {
+        dataStore = NamedCollectionDataStore(name: AnalyticsConstants.DATASTORE_NAME)
+        privacyStatus = .unknown
+        self.hitQueue = hitQueue
+    }
+
+    /// Invoked by the Analytics extension each time we receive a network response for a processed hit
+    /// - Parameters:
+    ///   - hit: the hit that was processed
+    ///   - connection: http network connection
+    ///   - dispatchResponse: a function which when invoked dispatches a response `Event` with the visitor profile to the `EventHub`
+    func handleHitResponse(hit: AnalyticsHit, connection: HttpConnection?, dispatchResponse: ([String: String], URL, String, String) -> Void) {
+        if privacyStatus == .optedOut {
+            Log.debug(label: LOG_TAG, "handleHitResponse - Unable to process network response as privacy status is OPT_OUT.")
+            return
+        }
+        var extractHeaders = [String: String]()
+
+        guard let connection = connection else {
+            Log.debug(label: LOG_TAG, "handleHitResponse - connection is empty")
+            return
+        }
+
+        extractHeaders[AnalyticsConstants.EventDataKeys.CONTENT_TYPE_HEADER] = connection.responseHttpHeader(forKey: AnalyticsConstants.EventDataKeys.CONTENT_TYPE_HEADER)
+        extractHeaders[AnalyticsConstants.EventDataKeys.ETAG_HEADER] = connection.responseHttpHeader(forKey: AnalyticsConstants.EventDataKeys.ETAG_HEADER)
+        extractHeaders[AnalyticsConstants.EventDataKeys.SERVER_HEADER] = connection.responseHttpHeader(forKey: AnalyticsConstants.EventDataKeys.SERVER_HEADER)
+
+        dispatchResponse(extractHeaders, hit.host, hit.payload, hit.uniqueEventIdentifier)
+    }
+
+
     /// Takes the shared states map and updates the data within the Analytics State.
     /// - Parameter dataMap: The map contains the shared state data required by the Analytics SDK.
     func update(dataMap: [String: [String: Any]?]) {
@@ -122,6 +158,9 @@ class AnalyticsState {
             handleOptOut()
             return
         }
+        // update hit queue with privacy status
+        setMobilePrivacy(status: privacyStatus)
+
         host = configurationData[ConfigurationEventDataKeys.ANALYTICS_SERVER] as? String
         rsids = configurationData[ConfigurationEventDataKeys.ANALYTICS_REPORT_SUITES] as? String
         analyticForwardingEnabled = configurationData[ConfigurationEventDataKeys.ANALYTICS_AAMFORWARDING] as? Bool ?? AnalyticsConstants.Default.FORWARDING_ENABLED
@@ -252,7 +291,7 @@ class AnalyticsState {
         urlComponent.host = host
         urlComponent.path = "/b/ss/\(rsids ?? "")/\(getAnalyticsResponseType())/\(sdkVersion)/s"
         guard let url = urlComponent.url else {
-            Log.debug(label: LOG_TAG, "Error in creating Analytics base URL.")
+            Log.debug(label: LOG_TAG, "getBaseUrl - Error in creating Analytics base URL.")
             return nil
         }
         return url
@@ -269,7 +308,7 @@ class AnalyticsState {
         components.queryItems = getMarketingCloudIdQueryParameters()
 
         guard let url = components.url else {
-            Log.error(label: LOG_TAG, "getMarketingCloudIdQueryParameters - Building Analytics Identity Request URL failed, returning nil.")
+            Log.error(label: LOG_TAG, "buildAnalyticsIdRequestURL - Building Analytics Identity Request URL failed, returning nil.")
             return nil
         }
         return url
@@ -288,10 +327,45 @@ class AnalyticsState {
         return queryItems
     }
 
+    /// Sets the `PrivacyStatus` in the AnalyticsState instance.
+    /// - Parameter:
+    ///  - status: The value for the new privacyStatus
+    func setMobilePrivacy(status: PrivacyStatus) {
+        self.privacyStatus = status
+        if privacyStatus == .optedOut {
+            handleOptOut()
+            return
+        }
+        // update hit queue with privacy status
+        hitQueue.handlePrivacyChange(status: privacyStatus)
+    }
+
     /// Determines and return whether visitor id service is enabled or not.
     /// - Returns true if enabled else false.
     func isVisitorIdServiceEnabled() -> Bool {
         return !(marketingCloudOrganizationId?.isEmpty ?? true)
+    }
+
+    /// Determines and return whether analyitcs forwarding is enabled or not.
+    /// - Returns true if enabled else false.
+    func IsAnalyticsForwardingEnabled() -> Bool {
+        return analyticForwardingEnabled
+    }
+
+    /// Setting for analytics forwarding to audience option
+    func setAnalyticsForwardingEnabled(analyticsForwardingEnabled: Bool) {
+        analyticForwardingEnabled = analyticsForwardingEnabled
+    }
+
+    /// Determines and return whether offline Tracking is enabled or not.
+    /// - Returns true if enabled else false.
+    func IsOfflineTrackingEnabled() -> Bool {
+        return offlineEnabled
+    }
+
+    /// Set offline enabled option
+    func setOfflineEnabled(offlineEnable: Bool) {
+        offlineEnabled = offlineEnable
     }
 
     /// Returns the response type for analytics request url on basis of whether aam forwarding is enabled or not.
@@ -326,5 +400,54 @@ class AnalyticsState {
         applicationId = nil
         advertisingId = nil
         assuranceSessionActive = AnalyticsConstants.Default.ASSURANCE_SESSION_ENABLED
+    }
+
+    /// Queues an Analytics hit
+    /// - Parameters:
+    ///   - request: request from Analytics track
+    ///   - timeStamp: current time stamp
+    ///   - isQueueWaiting: booleen for queue is waiting
+    ///   - isBackdatePlaceHolder: booleen for backdate place holder
+    ///   - uniqueEventIdentifier:  the event unique identifier
+    func queueHit(request: String, timeStamp: TimeInterval, isQueueWaiting: Bool, isBackDatePlaceHolder: Bool, uniqueEventIdentifier: String) {
+
+        let randomIntBound = Int.random(in: 0...100000000)
+
+        if privacyStatus == PrivacyStatus.optedOut {
+            Log.debug(label: self.LOG_TAG, "queueHit - Unable to queue hit, privacy is opt-out")
+            return
+        }
+
+        if privacyStatus == PrivacyStatus.unknown {
+            Log.debug(label: self.LOG_TAG, "queueHit - Queueing the Analytics Hit, privacy status is unknown")
+        }
+
+        //To Do: Update sdk version
+        guard let host = getBaseUrl(sdkVersion: "100") else {
+            return
+        }
+
+        //To Do: Update sdk version
+        guard let url = URL(string: "\(host)\(randomIntBound)") else {
+            return
+        }
+
+        let offlineTrackingEnabledinHit = IsOfflineTrackingEnabled()
+        let aamForwardingEnabledInHit = IsAnalyticsForwardingEnabled()
+
+        guard let hitData = try? JSONEncoder().encode(AnalyticsHit(url: url, timestamp: timeStamp, payload: request, host: host, offlineTrackingEnabled: offlineTrackingEnabledinHit, aamForwardingEnabled: aamForwardingEnabledInHit, isWaiting: isQueueWaiting, isBackDatePlaceHolder: isBackDatePlaceHolder, uniqueEventIdentifier: uniqueEventIdentifier)) else {
+            Log.debug(label: self.LOG_TAG, "queueHit - Dropping Analytics hit, failed to encode AnalyticsHit")
+            return
+        }
+
+        hitQueue.queue(entity: DataEntity(uniqueIdentifier: UUID().uuidString, timestamp: Date(), data: hitData))
+        Log.debug(label: self.LOG_TAG, "queueHit - Checking Queue Status")
+    }
+    /// Queues an updateBackdatedHit
+    /// - Parameters:
+    ///   -
+    ///   -To Do:
+    func updateBackdatedHit(request: String, timeStamp: TimeInterval, uniqueEventIdentifier: String) {
+
     }
 }

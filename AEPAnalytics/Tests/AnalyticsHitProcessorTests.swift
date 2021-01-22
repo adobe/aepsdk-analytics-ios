@@ -15,17 +15,19 @@
 import XCTest
 
 class AnalyticsHitProcessorTests: XCTestCase {
-    let DEFAULT_TIMEOUT : TimeInterval = 2;
     var hitProcessor: AnalyticsHitProcessor!
-    var responseCallbackArgs = [(DataEntity, Data?)]()
+    var responseCallbackArgs = [(DataEntity, HttpConnection?)]()
     var mockNetworkService: MockNetworking? {
         return ServiceProvider.shared.networkService as? MockNetworking
     }
+    //test example data
+    static let timestamp : TimeInterval = 1611182722
+    static let uniqueIdentifier = "8DDF396B-85A6-48DA-83F3-288E8C973EFE"
 
     override func setUp() {
         ServiceProvider.shared.networkService = MockNetworking()
-        hitProcessor = AnalyticsHitProcessor(responseHandler: { [weak self] entity, data in
-            self?.responseCallbackArgs.append((entity, data))
+        hitProcessor = AnalyticsHitProcessor(responseHandler: { [weak self] entity, HttpConnection in
+            self?.responseCallbackArgs.append((entity, HttpConnection))
         })
     }
 
@@ -52,8 +54,8 @@ class AnalyticsHitProcessorTests: XCTestCase {
         // setup
         let expectation = XCTestExpectation(description: "Callback should be invoked with true signaling this hit should not be retried")
         let expectedUrl = URL(string: "adobe.com")!
-        let expectedEvent = Event(name: "Hit Event", type: EventType.analytics, source: EventSource.requestContent, data: ["key1":"value1"])
-        let hit = AnalyticsHit(url: expectedUrl, timeout: DEFAULT_TIMEOUT, event: expectedEvent)
+        let expectedHost = URL(string: "adobe.com")!
+        let hit = AnalyticsHit(url: expectedUrl, timestamp: AnalyticsHitProcessorTests.timestamp, payload: "", host: expectedHost, offlineTrackingEnabled: false, aamForwardingEnabled: false, isWaiting: false, isBackDatePlaceHolder: false, uniqueEventIdentifier: AnalyticsHitProcessorTests.uniqueIdentifier)
         mockNetworkService?.expectedResponse = HttpConnection(data: nil, response: HTTPURLResponse(url: expectedUrl, statusCode: 200, httpVersion: nil, headerFields: nil), error: nil)
 
         let entity = DataEntity(uniqueIdentifier: "test-uuid", timestamp: Date(), data: try! JSONEncoder().encode(hit))
@@ -76,8 +78,8 @@ class AnalyticsHitProcessorTests: XCTestCase {
         // setup
         let expectation = XCTestExpectation(description: "Callback should be invoked with true signaling this hit should be retried")
         let expectedUrl = URL(string: "adobe.com")!
-        let expectedEvent = Event(name: "Hit Event", type: EventType.analytics, source: EventSource.requestContent, data: nil)
-        let hit = AnalyticsHit(url: expectedUrl, timeout: DEFAULT_TIMEOUT, event: expectedEvent)
+        let expectedHost = URL(string: "adobe.com")!
+        let hit = AnalyticsHit(url: expectedUrl, timestamp: AnalyticsHitProcessorTests.timestamp, payload: "", host: expectedHost, offlineTrackingEnabled: false, aamForwardingEnabled: false, isWaiting: false, isBackDatePlaceHolder: false, uniqueEventIdentifier: AnalyticsHitProcessorTests.uniqueIdentifier)
         mockNetworkService?.expectedResponse = HttpConnection(data: nil, response: HTTPURLResponse(url: expectedUrl, statusCode: NetworkServiceConstants.RECOVERABLE_ERROR_CODES.first!, httpVersion: nil, headerFields: nil), error: nil)
 
         let entity = DataEntity(uniqueIdentifier: "test-uuid", timestamp: Date(), data: try! JSONEncoder().encode(hit))
@@ -100,8 +102,8 @@ class AnalyticsHitProcessorTests: XCTestCase {
         // setup
         let expectation = XCTestExpectation(description: "Callback should be invoked with true signaling this hit should not be retried")
         let expectedUrl = URL(string: "adobe.com")!
-        let expectedEvent = Event(name: "Hit Event", type: EventType.analytics, source: EventSource.requestContent, data: nil)
-        let hit = AnalyticsHit(url: expectedUrl, timeout: DEFAULT_TIMEOUT, event: expectedEvent)
+        let expectedHost = URL(string: "adobe.com")!
+        let hit = AnalyticsHit(url: expectedUrl, timestamp: AnalyticsHitProcessorTests.timestamp, payload: "", host: expectedHost, offlineTrackingEnabled: false, aamForwardingEnabled: false, isWaiting: false, isBackDatePlaceHolder: false, uniqueEventIdentifier: AnalyticsHitProcessorTests.uniqueIdentifier)
         mockNetworkService?.expectedResponse = HttpConnection(data: nil, response: HTTPURLResponse(url: expectedUrl, statusCode: -1, httpVersion: nil, headerFields: nil), error: nil)
 
         let entity = DataEntity(uniqueIdentifier: "test-uuid", timestamp: Date(), data: try! JSONEncoder().encode(hit))

@@ -13,6 +13,7 @@
 import XCTest
 @testable import AEPAnalytics
 @testable import AEPCore
+@testable import AEPServices
 
 class AnalyticsVersionTest : XCTestCase {
 
@@ -20,11 +21,16 @@ class AnalyticsVersionTest : XCTestCase {
     var analytics: Analytics!
     var analyticsProperties: AnalyticsProperties!
     var analyticsState: AnalyticsState!
+    var mockHitQueue: MockHitQueue!
+    var responseCallbackArgs = [(DataEntity, HttpConnection?)]()
 
     override func setUp() {
         // setup test variables
         testableExtensionRuntime = TestableExtensionRuntime()
-        analyticsState = AnalyticsState()
+        mockHitQueue = MockHitQueue(processor: AnalyticsHitProcessor(responseHandler: { [weak self] entity, httpConnection in
+            self?.responseCallbackArgs.append((entity, httpConnection))
+        }))
+        analyticsState = AnalyticsState(hitQueue: mockHitQueue)
         analyticsProperties = AnalyticsProperties.init()
         analytics = Analytics(runtime: testableExtensionRuntime, state: analyticsState, properties: analyticsProperties)
         analytics.onRegistered()

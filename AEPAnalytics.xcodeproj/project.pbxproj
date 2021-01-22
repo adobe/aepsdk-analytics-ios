@@ -27,6 +27,7 @@
 		3DD8E6FC256F0BC2009234FD /* Analytics+Track.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DD8E6FB256F0BC2009234FD /* Analytics+Track.swift */; };
 		3DDC3E8B258AA16700ED05BC /* AnalyticsRequestSerializerTests+Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DDC3E8A258AA16700ED05BC /* AnalyticsRequestSerializerTests+Helper.swift */; };
 		3DDC3E8F258AA1D400ED05BC /* TestIdentifiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DDC3E8E258AA1D400ED05BC /* TestIdentifiable.swift */; };
+		922C7BF225BB4510007152B4 /* MockHitQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 920F17B325BAD43D0036B0AA /* MockHitQueue.swift */; };
 		AC277CFE252C23E600987C67 /* Analytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC277CF5252C23E600987C67 /* Analytics.swift */; };
 		AC277CFF252C23E600987C67 /* AnalyticsConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC277CF6252C23E600987C67 /* AnalyticsConstants.swift */; };
 		AC277D00252C23E600987C67 /* AEPAnalytics.h in Headers */ = {isa = PBXBuildFile; fileRef = AC277CF7252C23E600987C67 /* AEPAnalytics.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -75,6 +76,7 @@
 		3DDC3E8A258AA16700ED05BC /* AnalyticsRequestSerializerTests+Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AnalyticsRequestSerializerTests+Helper.swift"; sourceTree = "<group>"; };
 		3DDC3E8E258AA1D400ED05BC /* TestIdentifiable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestIdentifiable.swift; sourceTree = "<group>"; };
 		56DA22A3CE773DE7E7380769 /* Pods_AEPAnalytics.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AEPAnalytics.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		920F17B325BAD43D0036B0AA /* MockHitQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockHitQueue.swift; sourceTree = "<group>"; };
 		AC277CEE252C23E600987C67 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AC277CF0252C23E600987C67 /* AnalyticsAPITests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsAPITests.swift; sourceTree = "<group>"; };
 		AC277CF3252C23E600987C67 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -211,6 +213,7 @@
 				2ED53FF0255F37D7000F0B23 /* MockNetworking.swift */,
 				3DDC3E8A258AA16700ED05BC /* AnalyticsRequestSerializerTests+Helper.swift */,
 				3DDC3E8E258AA1D400ED05BC /* TestIdentifiable.swift */,
+				920F17B325BAD43D0036B0AA /* MockHitQueue.swift */,
 			);
 			path = TestHelper;
 			sourceTree = "<group>";
@@ -447,6 +450,7 @@
 				D639E25525B8C70400955FBA /* AnalyticsVersionTest.swift in Sources */,
 				2ED53FF1255F37D7000F0B23 /* MockNetworking.swift in Sources */,
 				AC3333702536590600BF8A56 /* MockExtension.swift in Sources */,
+				922C7BF225BB4510007152B4 /* MockHitQueue.swift in Sources */,
 				3DDC3E8B258AA16700ED05BC /* AnalyticsRequestSerializerTests+Helper.swift in Sources */,
 				3D1D45B2253F99130053CB47 /* AnalyticsStateTest.swift in Sources */,
 				3DD0693F253516EC00877781 /* AnalyticsPropertiesTest.swift in Sources */,

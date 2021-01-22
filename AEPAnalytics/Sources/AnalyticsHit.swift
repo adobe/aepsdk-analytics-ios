@@ -16,10 +16,20 @@ import Foundation
 struct AnalyticsHit: Codable {
     /// URL to be requested for this Analytics hit
     let url: URL
-
-    /// Timeout for the network request
-    let timeout: TimeInterval?
-
-    /// Event responsible for triggering this Analytics hit
-    let event: Event
+    // TimeStamp to be requested for this Analytics hit
+    let timestamp: TimeInterval
+    // URL playload info
+    let payload: String
+//    // Analytics Host Info to be requested for this Analytics hit
+    let host: URL
+//    // offline tracking status
+    let offlineTrackingEnabled: Bool
+//    // audience forwarding status
+    let aamForwardingEnabled: Bool
+//    // Queue waiting status
+    let isWaiting: Bool
+//    // back dated status
+    let isBackDatePlaceHolder: Bool
+//    // Analytics event Identifier
+    let uniqueEventIdentifier: String
 }

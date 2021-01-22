@@ -16,14 +16,14 @@ class AnalyticsHitProcessor: HitProcessing {
     private let LOG_TAG = "AnalyticsHitProcessor"
 
     let retryInterval = TimeInterval(30)
-    private let responseHandler: (DataEntity, Data?) -> Void
+    private let responseHandler: (DataEntity, HttpConnection?) -> Void
     private var networkService: Networking {
         return ServiceProvider.shared.networkService
     }
 
     /// Creates a new `AnalyticsHitProcessor` where the `responseHandler` will be invoked after each successful processing of a hit
     /// - Parameter responseHandler: a function to be invoked with the `DataEntity` for a hit and the response data for that hit
-    init(responseHandler: @escaping (DataEntity, Data?) -> Void) {
+    init(responseHandler: @escaping (DataEntity, HttpConnection?) -> Void) {
         self.responseHandler = responseHandler
     }
 
@@ -41,9 +41,8 @@ class AnalyticsHitProcessor: HitProcessing {
             return
         }
 
-        let timeout = analyticsHit.timeout ?? AnalyticsConstants.Default.CONNECTION_TIMEOUT
         let headers = [NetworkServiceConstants.Headers.CONTENT_TYPE: NetworkServiceConstants.HeaderValues.CONTENT_TYPE_URL_ENCODED]
-        let networkRequest = NetworkRequest(url: analyticsHit.url, httpMethod: .get, connectPayload: "", httpHeaders: headers, connectTimeout: timeout, readTimeout: timeout)
+        let networkRequest = NetworkRequest(url: analyticsHit.url, httpMethod: .post, connectPayload: analyticsHit.payload, httpHeaders: headers, connectTimeout: AnalyticsConstants.Default.CONNECTION_TIMEOUT, readTimeout: AnalyticsConstants.Default.CONNECTION_TIMEOUT)
 
         networkService.connectAsync(networkRequest: networkRequest) { connection in
             self.handleNetworkResponse(entity: entity, hit: analyticsHit, connection: connection, completion: completion)
@@ -61,7 +60,7 @@ class AnalyticsHitProcessor: HitProcessing {
         if connection.responseCode == 200 {
             // hit sent successfully
             Log.debug(label: "\(LOG_TAG):\(#function)", "Analytics hit request with url \(hit.url.absoluteString) sent successfully")
-            responseHandler(entity, connection.data)
+            responseHandler(entity, connection)
             completion(true)
         } else if NetworkServiceConstants.RECOVERABLE_ERROR_CODES.contains(connection.responseCode ?? -1) {
             // retry this hit later
@@ -70,7 +69,7 @@ class AnalyticsHitProcessor: HitProcessing {
         } else {
             // unrecoverable error. delete the hit from the database and continue
             Log.warning(label: "\(LOG_TAG):\(#function)", "Dropping Analytics hit, request with url \(hit.url.absoluteString) failed with error \(connection.error?.localizedDescription ?? "") and unrecoverable status code \(connection.responseCode ?? -1)")
-            responseHandler(entity, connection.data)
+            responseHandler(entity, connection)
             completion(true)
         }
     }

@@ -13,15 +13,21 @@
 import XCTest
 import AEPIdentity
 @testable import AEPAnalytics
+@testable import AEPServices
 
 class AnalyticsRequestSerializerTests : XCTestCase {
 
     var analyticsRequestSerializer: AnalyticsRequestSerializer!
     var analyticsState: AnalyticsState!
+    var mockHitQueue: MockHitQueue!
+    var responseCallbackArgs = [(DataEntity, HttpConnection?)]()
 
     override func setUp() {
         analyticsRequestSerializer = AnalyticsRequestSerializer.init()
-        analyticsState = AnalyticsState()
+        mockHitQueue = MockHitQueue(processor: AnalyticsHitProcessor(responseHandler: { [weak self] entity, httpConnection in
+            self?.responseCallbackArgs.append((entity, httpConnection))
+        }))
+        analyticsState = AnalyticsState(hitQueue: mockHitQueue)
     }
 
     func testGenerateAnalyticsCustomerIdString() {

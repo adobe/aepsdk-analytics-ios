@@ -79,7 +79,7 @@ extension Analytics {
     ///     - eventUniqueIdentifier: the event unique identifier responsible for this track
     func track(analyticsState: AnalyticsState, trackEventData: [String: Any]?, timeStampInSeconds: TimeInterval, appendToPlaceHolder: Bool, eventUniqueIdentifier: String, analyticsProperties: inout AnalyticsProperties) {
         guard trackEventData != nil else {
-            Log.debug(label: Analytics.LOG_TAG , "track - Dropping the Analytics track request, request was null.")
+            Log.debug(label: Analytics.LOG_TAG, "track - Dropping the Analytics track request, request was null.")
             return
         }
 
@@ -99,13 +99,14 @@ extension Analytics {
         let analyticsVars = processAnalyticsVars(analyticsState: analyticsState, trackData: trackEventData, timestamp: timeStampInSeconds, analyticsProperties: &analyticsProperties)
         let builtRequest = analyticsProperties.analyticsRequestSerializer.buildRequest(analyticsState: analyticsState, data: analyticsData, vars: analyticsVars)
 
-        /// - TODO: Get analytics hit database and perform following action.
-//        if appendToPlaceHolder {
-//                        analyticsHitsDatabase.updateBackdatedHit(state, builtRequest, timestampInSeconds, eventUniqueIdentifier);
-//                    } else {
-//                        analyticsHitsDatabase.queue(state, builtRequest, timestampInSeconds, analyticsProperties.isDatabaseWaiting(),
-//                                                    false, eventUniqueIdentifier);
-//                    }
+        Log.debug(label: Analytics.LOG_TAG, "track - Queuing the Track Request \(builtRequest)")
+
+        if appendToPlaceHolder {
+            analyticsState.updateBackdatedHit(request: builtRequest, timeStamp: timeStampInSeconds, uniqueEventIdentifier: eventUniqueIdentifier)
+        } else {
+            analyticsState.queueHit(request: builtRequest, timeStamp: timeStampInSeconds, isQueueWaiting: analyticsProperties.isDatabaseWaiting(), isBackDatePlaceHolder: false, uniqueEventIdentifier: eventUniqueIdentifier)
+        }
+        Log.debug(label: Analytics.LOG_TAG, "track - track request queued \(builtRequest)")
     }
 
     ///Converts the lifecycle event in internal analytics action. If backdate session and offline tracking are enabled,

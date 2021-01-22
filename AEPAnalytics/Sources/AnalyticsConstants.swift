@@ -44,7 +44,7 @@ enum AnalyticsConstants {
         static let VISITOR_IDENTIFIER        = "vid"
         static let RULES_CONSEQUENCE_TYPE_TRACK = "an"
         static let HEADERS_RESPONSE = "headers"
-        static let ETAG_HEADER = "ETag"
+        static let ETAG_HEADER = "Etag"
         static let SERVER_HEADER = "Server"
         static let CONTENT_TYPE_HEADER = "Content-Type"
         static let REQUEST_EVENT_IDENTIFIER = "requestEventIdentifier"
