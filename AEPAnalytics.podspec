@@ -18,6 +18,7 @@ AEPCore
 
   s.dependency 'AEPCore'
   s.dependency 'AEPServices'
+  s.dependency 'AEPIdentity'
 
   s.source_files          = 'AEPAnalytics/Sources/*.swift'
 

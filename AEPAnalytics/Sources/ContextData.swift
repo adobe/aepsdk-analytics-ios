@@ -10,11 +10,10 @@
  governing permissions and limitations under the License.
  */
 
-@testable import AEPCore
 import Foundation
 
-extension EventHub {
-    static func reset() {
-        shared = EventHub()
-    }
+class ContextData {
+
+    var value: String?
+    var data = [String: ContextData]()
 }
