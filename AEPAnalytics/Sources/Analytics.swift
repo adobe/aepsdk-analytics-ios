@@ -25,7 +25,7 @@ public class Analytics: NSObject, Extension {
     public static let extensionVersion = AnalyticsConstants.EXTENSION_VERSION
     public let metadata: [String: String]? = nil
     private var analyticsProperties: AnalyticsProperties
-    private(set) var analyticsState: AnalyticsState?
+    private var analyticsState: AnalyticsState?
     private let analyticsHardDependencies: [String] = [AnalyticsConstants.Configuration.EventDataKeys.SHARED_STATE_NAME, AnalyticsConstants.Identity.EventDataKeys.SHARED_STATE_NAME]
 
     //Maintains the boot up state of sdk. The first shared state update event indicates the boot up completion.

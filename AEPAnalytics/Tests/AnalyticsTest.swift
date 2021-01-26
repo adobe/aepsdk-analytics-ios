@@ -75,7 +75,7 @@ class AnalyticsTest : XCTestCase {
     private func simulateComingEventAndWait(_ event : Event) {
         testableExtensionRuntime.simulateComingEvent(event: event)
         // sleep added to ensure DispatchQueue tasks are processed in time for test verification
-        sleep(1)
+        sleep(3)
     }
 
     // add shared state data to the analytics state for testing
@@ -576,40 +576,85 @@ class AnalyticsTest : XCTestCase {
     // ==========================================================================
     // handleAnalyticsRequestGenericEvent
     // ==========================================================================
-    func testHandleAnalyticsTrackAction() {
+    func testHandleAnalyticsTrackActionOptIn() {
         // setup
         dispatchConfigurationEventForTesting(rsid: "testRsid", host: "testAnalyticsServer.com", privacyStatus: .optedIn)
-        let mockNetworkService = ServiceProvider.shared.networkService as! MockNetworking
-        setDefaultResponse(responseData: AnalyticsTest.aidResponse.data(using: .utf8), expectedUrlFragment: "https://testAnalyticsServer.com", statusCode: 200, mockNetworkService: mockNetworkService)
         let data:[String : String] = [AnalyticsConstants.EventDataKeys.TRACK_ACTION: "sample action"]
         // create the analytics event
         let event = Event(name: "Test Generic Track Analytics request", type: EventType.genericTrack, source: EventSource.requestContent, data: data)
         let _ = analytics.readyForEvent(event)
 
         // test
-        testableExtensionRuntime.simulateComingEvent(event: event)
-        sleep(1)
+        simulateComingEventAndWait(event)
 
-        //To Do verify after link with hitprocess
-        //XCTAssertEqual(1, analytics.analyticsState?.hitQueue.count())
+        // Verify hit is queued
+        XCTAssertEqual(1, mockHitQueue.count())
     }
 
-    func testHandleAnalyticsTrackState() {
+    func testHandleAnalyticsTrackActionOptOut() {
         // setup
+        dispatchConfigurationEventForTesting(rsid: "testRsid", host: "testAnalyticsServer.com", privacyStatus: .optedOut)
+        let data:[String : String] = [AnalyticsConstants.EventDataKeys.TRACK_ACTION: "sample action"]
+        // create the analytics event
+        let event = Event(name: "Test Generic Track Analytics request", type: EventType.genericTrack, source: EventSource.requestContent, data: data)
+        let _ = analytics.readyForEvent(event)
+
+        // test
+        simulateComingEventAndWait(event)
+
+        // Verify hit is not queued
+        XCTAssertEqual(0, mockHitQueue.count())
+    }
+
+    func testHandleAnalyticsTrackActionWithDataEmpty() {
+        // setup
+        dispatchConfigurationEventForTesting(rsid: "testRsid", host: "testAnalyticsServer.com", privacyStatus: .optedIn)
+        let data:[String: Any] = [String: Any]()
+        let event = Event(name: "Test Generic Track Analytics request", type: EventType.genericTrack, source: EventSource.requestContent, data: data)
+        let _ = analytics.readyForEvent(event)
+
+        // test
+        testableExtensionRuntime.simulateComingEvent(event: event)
+
+        // Verify hit is not queued
+        XCTAssertEqual(0, mockHitQueue.count())
+    }
+
+    func testHandleAnalyticsTrackStateOptIn() {
+        // setup
+        dispatchConfigurationEventForTesting(rsid: "testRsid", host: "testAnalyticsServer.com", privacyStatus: .optedIn)
+
         let data:[String : String] = [AnalyticsConstants.EventDataKeys.TRACK_STATE: "sample page state"]
         // create the analytics event
         let event = Event(name: "Test Generic Track Analytics request", type: EventType.genericTrack, source: EventSource.requestContent, data: data)
         let _ = analytics.readyForEvent(event)
 
         // test
-        testableExtensionRuntime.simulateComingEvent(event: event)
-        sleep(1)
+        simulateComingEventAndWait(event)
 
-        //To Do verify after link with hitprocess
+        // Verify hit is queued
+        XCTAssertEqual(1, mockHitQueue.count())
+    }
+
+    func testHandleAnalyticsTrackStateUnknown() {
+        // setup
+        dispatchConfigurationEventForTesting(rsid: "testRsid", host: "testAnalyticsServer.com", privacyStatus: .unknown)
+        let data:[String : String] = [AnalyticsConstants.EventDataKeys.TRACK_STATE: "sample page state"]
+        // create the analytics event
+        let event = Event(name: "Test Generic Track Analytics request", type: EventType.genericTrack, source: EventSource.requestContent, data: data)
+        let _ = analytics.readyForEvent(event)
+
+        // test
+        simulateComingEventAndWait(event)
+
+        // Verify hit is queued
+        XCTAssertEqual(1, mockHitQueue.count())
     }
 
     func testHandleAnalyticsContextData() {
         // setup
+        dispatchConfigurationEventForTesting(rsid: "testRsid", host: "testAnalyticsServer.com", privacyStatus: .optedIn)
+
         let data:[String : String] = [AnalyticsConstants.EventDataKeys.CONTEXT_DATA: "sample contextdata"]
         // create the analytics event
         let event = Event(name: "Test Generic Track Analytics request", type: EventType.genericTrack, source: EventSource.requestContent, data: data)
@@ -619,7 +664,7 @@ class AnalyticsTest : XCTestCase {
         testableExtensionRuntime.simulateComingEvent(event: event)
         sleep(1)
 
-        //To Do verify after link with hitprocess
+        // Verify hit is queued
+        XCTAssertEqual(1, mockHitQueue.count())
     }
-
 }

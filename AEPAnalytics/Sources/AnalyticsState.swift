@@ -121,7 +121,6 @@ class AnalyticsState {
         dispatchResponse(extractHeaders, hit.host, hit.payload, hit.uniqueEventIdentifier)
     }
 
-
     /// Takes the shared states map and updates the data within the Analytics State.
     /// - Parameter dataMap: The map contains the shared state data required by the Analytics SDK.
     func update(dataMap: [String: [String: Any]?]) {
@@ -283,13 +282,13 @@ class AnalyticsState {
     }
 
     /// Creates and returns the base url for analytics requests.
-    /// - Parameter sdkVersion: the version of the SDK.
+    /// - Parameter version: Analytics request version info
     /// - Returns the base URL for an Analytics request.
-    func getBaseUrl(sdkVersion: String) -> URL? {
+    func getBaseUrl(version: String) -> URL? {
         var urlComponent = URLComponents()
         urlComponent.scheme = "https"
         urlComponent.host = host
-        urlComponent.path = "/b/ss/\(rsids ?? "")/\(getAnalyticsResponseType())/\(sdkVersion)/s"
+        urlComponent.path = "/b/ss/\(rsids ?? "")/\(getAnalyticsResponseType())/\(version)/s"
         guard let url = urlComponent.url else {
             Log.debug(label: LOG_TAG, "getBaseUrl - Error in creating Analytics base URL.")
             return nil
@@ -409,7 +408,8 @@ class AnalyticsState {
     ///   - isQueueWaiting: booleen for queue is waiting
     ///   - isBackdatePlaceHolder: booleen for backdate place holder
     ///   - uniqueEventIdentifier:  the event unique identifier
-    func queueHit(request: String, timeStamp: TimeInterval, isQueueWaiting: Bool, isBackDatePlaceHolder: Bool, uniqueEventIdentifier: String) {
+    ///   - getVersion: Including osType, analyticsVersion, coreVersion
+    func queueHit(request: String, timeStamp: TimeInterval, isQueueWaiting: Bool, isBackDatePlaceHolder: Bool, uniqueEventIdentifier: String, getVersion: String) {
 
         let randomIntBound = Int.random(in: 0...100000000)
 
@@ -422,19 +422,23 @@ class AnalyticsState {
             Log.debug(label: self.LOG_TAG, "queueHit - Queueing the Analytics Hit, privacy status is unknown")
         }
 
-        //To Do: Update sdk version
-        guard let host = getBaseUrl(sdkVersion: "100") else {
+        guard let host = URL(string: host!) else {
+            return
+        }
+
+        guard let baseURL = getBaseUrl(version: getVersion) else {
             return
         }
 
         //To Do: Update sdk version
-        guard let url = URL(string: "\(host)\(randomIntBound)") else {
+        guard let url = URL(string: "\(baseURL)\(randomIntBound)") else {
             return
         }
 
         let offlineTrackingEnabledinHit = IsOfflineTrackingEnabled()
         let aamForwardingEnabledInHit = IsAnalyticsForwardingEnabled()
 
+        //To do, revisit the parameters
         guard let hitData = try? JSONEncoder().encode(AnalyticsHit(url: url, timestamp: timeStamp, payload: request, host: host, offlineTrackingEnabled: offlineTrackingEnabledinHit, aamForwardingEnabled: aamForwardingEnabledInHit, isWaiting: isQueueWaiting, isBackDatePlaceHolder: isBackDatePlaceHolder, uniqueEventIdentifier: uniqueEventIdentifier)) else {
             Log.debug(label: self.LOG_TAG, "queueHit - Dropping Analytics hit, failed to encode AnalyticsHit")
             return

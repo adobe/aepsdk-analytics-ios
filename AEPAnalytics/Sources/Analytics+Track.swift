@@ -104,7 +104,7 @@ extension Analytics {
         if appendToPlaceHolder {
             analyticsState.updateBackdatedHit(request: builtRequest, timeStamp: timeStampInSeconds, uniqueEventIdentifier: eventUniqueIdentifier)
         } else {
-            analyticsState.queueHit(request: builtRequest, timeStamp: timeStampInSeconds, isQueueWaiting: analyticsProperties.isDatabaseWaiting(), isBackDatePlaceHolder: false, uniqueEventIdentifier: eventUniqueIdentifier)
+            analyticsState.queueHit(request: builtRequest, timeStamp: timeStampInSeconds, isQueueWaiting: analyticsProperties.isDatabaseWaiting(), isBackDatePlaceHolder: false, uniqueEventIdentifier: eventUniqueIdentifier, getVersion: getVersion())
         }
         Log.debug(label: Analytics.LOG_TAG, "track - track request queued \(builtRequest)")
     }
@@ -249,19 +249,31 @@ extension Analytics {
                 return key1
             }
         }
+        let appState = getApplicationState()
 
-        DispatchQueue.main.sync {
-            if UIApplication.shared.applicationState == .background {
-                analyticsVars[AnalyticsConstants.Request.CUSTOMER_PERSPECTIVE_KEY] =
-                    AnalyticsConstants.APP_STATE_BACKGROUND
-            } else {
-                analyticsVars[AnalyticsConstants.Request.CUSTOMER_PERSPECTIVE_KEY] =
-                    AnalyticsConstants.APP_STATE_FOREGROUND
-            }
+        if appState == .background {
+            analyticsVars[AnalyticsConstants.Request.CUSTOMER_PERSPECTIVE_KEY] =
+                AnalyticsConstants.APP_STATE_BACKGROUND
+        } else {
+            analyticsVars[AnalyticsConstants.Request.CUSTOMER_PERSPECTIVE_KEY] =
+                AnalyticsConstants.APP_STATE_FOREGROUND
         }
 
         return analyticsVars
     }
+}
+
+func getApplicationState() -> UIApplication.State? {
+    var ret: UIApplication.State?
+    if Thread.isMainThread {
+        ret = UIApplication.shared.applicationState
+    } else {
+        //using global queue instead of main to avoid deadlock
+        DispatchQueue.global().sync {
+            ret = UIApplication.shared.applicationState
+        }
+    }
+    return ret
 }
 
 /// Backdate handling.
@@ -325,4 +337,3 @@ extension Analytics {
         track(analyticsState: analyticsState, trackEventData: lifecycleSessionData, timeStampInSeconds: backDateTimeStamp.timeIntervalSince1970 + 1, appendToPlaceHolder: true, eventUniqueIdentifier: eventUniqueIdentifier, analyticsProperties: &analyticsProperties)
     }
 }
-
