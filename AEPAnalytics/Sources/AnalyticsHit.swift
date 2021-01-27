@@ -20,16 +20,16 @@ struct AnalyticsHit: Codable {
     let timestamp: TimeInterval
     // URL playload info
     let payload: String
-//    // Analytics Host Info to be requested for this Analytics hit
+    // Analytics Host Info to be requested for this Analytics hit
     let host: URL
-//    // offline tracking status
+    // offline tracking status
     let offlineTrackingEnabled: Bool
-//    // audience forwarding status
+    // audience forwarding status
     let aamForwardingEnabled: Bool
-//    // Queue waiting status
+    // Queue waiting status
     let isWaiting: Bool
-//    // back dated status
+    // back dated status
     let isBackDatePlaceHolder: Bool
-//    // Analytics event Identifier
+    // Analytics event Identifier
     let uniqueEventIdentifier: String
 }

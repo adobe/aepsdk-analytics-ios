@@ -430,7 +430,6 @@ class AnalyticsState {
             return
         }
 
-        //To Do: Update sdk version
         guard let url = URL(string: "\(baseURL)\(randomIntBound)") else {
             return
         }

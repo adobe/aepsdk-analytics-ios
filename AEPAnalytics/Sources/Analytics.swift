@@ -502,7 +502,9 @@ extension Analytics {
     private func dispatchResponse(headers: [String: String], hitHost: URL, hitUrl: String, requestEventIdentifier: String) {
         var eventData = [String: Any]()
         eventData[AnalyticsConstants.EventDataKeys.HEADERS_RESPONSE] = headers
+        //host info
         eventData[AnalyticsConstants.EventDataKeys.HIT_HOST] = hitHost
+        //payload info
         eventData[AnalyticsConstants.EventDataKeys.HIT_URL] = hitUrl
         if !requestEventIdentifier.isEmpty {
             eventData[AnalyticsConstants.EventDataKeys.REQUEST_EVENT_IDENTIFIER] = requestEventIdentifier

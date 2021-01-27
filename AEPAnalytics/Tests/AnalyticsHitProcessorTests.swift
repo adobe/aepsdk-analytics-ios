@@ -53,8 +53,8 @@ class AnalyticsHitProcessorTests: XCTestCase {
     func testProcessHitHappy() {
         // setup
         let expectation = XCTestExpectation(description: "Callback should be invoked with true signaling this hit should not be retried")
-        let expectedUrl = URL(string: "adobe.com")!
-        let expectedHost = URL(string: "adobe.com")!
+        let expectedUrl = URL(string: "https://example.com/b/ss/rsid/0/version/s12345")!
+        let expectedHost = URL(string: "https://example.com")!
         let hit = AnalyticsHit(url: expectedUrl, timestamp: AnalyticsHitProcessorTests.timestamp, payload: "", host: expectedHost, offlineTrackingEnabled: false, aamForwardingEnabled: false, isWaiting: false, isBackDatePlaceHolder: false, uniqueEventIdentifier: AnalyticsHitProcessorTests.uniqueIdentifier)
         mockNetworkService?.expectedResponse = HttpConnection(data: nil, response: HTTPURLResponse(url: expectedUrl, statusCode: 200, httpVersion: nil, headerFields: nil), error: nil)
 
@@ -77,8 +77,8 @@ class AnalyticsHitProcessorTests: XCTestCase {
     func testProcessHitRecoverableNetworkError() {
         // setup
         let expectation = XCTestExpectation(description: "Callback should be invoked with true signaling this hit should be retried")
-        let expectedUrl = URL(string: "adobe.com")!
-        let expectedHost = URL(string: "adobe.com")!
+        let expectedUrl = URL(string: "https://example.com/b/ss/rsid/0/version/s12345")!
+        let expectedHost = URL(string: "https://example.com")!
         let hit = AnalyticsHit(url: expectedUrl, timestamp: AnalyticsHitProcessorTests.timestamp, payload: "", host: expectedHost, offlineTrackingEnabled: false, aamForwardingEnabled: false, isWaiting: false, isBackDatePlaceHolder: false, uniqueEventIdentifier: AnalyticsHitProcessorTests.uniqueIdentifier)
         mockNetworkService?.expectedResponse = HttpConnection(data: nil, response: HTTPURLResponse(url: expectedUrl, statusCode: NetworkServiceConstants.RECOVERABLE_ERROR_CODES.first!, httpVersion: nil, headerFields: nil), error: nil)
 
@@ -101,8 +101,8 @@ class AnalyticsHitProcessorTests: XCTestCase {
     func testProcessHitUnrecoverableNetworkError() {
         // setup
         let expectation = XCTestExpectation(description: "Callback should be invoked with true signaling this hit should not be retried")
-        let expectedUrl = URL(string: "adobe.com")!
-        let expectedHost = URL(string: "adobe.com")!
+        let expectedUrl = URL(string: "https://example.com/b/ss/rsid/0/version/s12345")!
+        let expectedHost = URL(string: "https://example.com")!
         let hit = AnalyticsHit(url: expectedUrl, timestamp: AnalyticsHitProcessorTests.timestamp, payload: "", host: expectedHost, offlineTrackingEnabled: false, aamForwardingEnabled: false, isWaiting: false, isBackDatePlaceHolder: false, uniqueEventIdentifier: AnalyticsHitProcessorTests.uniqueIdentifier)
         mockNetworkService?.expectedResponse = HttpConnection(data: nil, response: HTTPURLResponse(url: expectedUrl, statusCode: -1, httpVersion: nil, headerFields: nil), error: nil)
 
