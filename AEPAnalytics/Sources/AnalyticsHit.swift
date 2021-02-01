@@ -32,4 +32,6 @@ struct AnalyticsHit: Codable {
     let isBackDatePlaceHolder: Bool
     // Analytics event Identifier
     let uniqueEventIdentifier: String
+    // Event responsible for triggering this Analytics hit
+    let event: Event
 }

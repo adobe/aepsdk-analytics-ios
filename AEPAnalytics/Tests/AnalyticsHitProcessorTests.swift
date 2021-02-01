@@ -55,7 +55,8 @@ class AnalyticsHitProcessorTests: XCTestCase {
         let expectation = XCTestExpectation(description: "Callback should be invoked with true signaling this hit should not be retried")
         let expectedUrl = URL(string: "https://example.com/b/ss/rsid/0/version/s12345")!
         let expectedHost = URL(string: "https://example.com")!
-        let hit = AnalyticsHit(url: expectedUrl, timestamp: AnalyticsHitProcessorTests.timestamp, payload: "", host: expectedHost, offlineTrackingEnabled: false, aamForwardingEnabled: false, isWaiting: false, isBackDatePlaceHolder: false, uniqueEventIdentifier: AnalyticsHitProcessorTests.uniqueIdentifier)
+        let event = Event(name: "Test Analytics request identity", type: EventType.analytics, source: EventSource.requestIdentity, data: nil)
+        let hit = AnalyticsHit(url: expectedUrl, timestamp: AnalyticsHitProcessorTests.timestamp, payload: "", host: expectedHost, offlineTrackingEnabled: false, aamForwardingEnabled: false, isWaiting: false, isBackDatePlaceHolder: false, uniqueEventIdentifier: AnalyticsHitProcessorTests.uniqueIdentifier, event: event)
         mockNetworkService?.expectedResponse = HttpConnection(data: nil, response: HTTPURLResponse(url: expectedUrl, statusCode: 200, httpVersion: nil, headerFields: nil), error: nil)
 
         let entity = DataEntity(uniqueIdentifier: "test-uuid", timestamp: Date(), data: try! JSONEncoder().encode(hit))
@@ -79,7 +80,8 @@ class AnalyticsHitProcessorTests: XCTestCase {
         let expectation = XCTestExpectation(description: "Callback should be invoked with true signaling this hit should be retried")
         let expectedUrl = URL(string: "https://example.com/b/ss/rsid/0/version/s12345")!
         let expectedHost = URL(string: "https://example.com")!
-        let hit = AnalyticsHit(url: expectedUrl, timestamp: AnalyticsHitProcessorTests.timestamp, payload: "", host: expectedHost, offlineTrackingEnabled: false, aamForwardingEnabled: false, isWaiting: false, isBackDatePlaceHolder: false, uniqueEventIdentifier: AnalyticsHitProcessorTests.uniqueIdentifier)
+        let event = Event(name: "Test Analytics request identity", type: EventType.analytics, source: EventSource.requestIdentity, data: nil)
+        let hit = AnalyticsHit(url: expectedUrl, timestamp: AnalyticsHitProcessorTests.timestamp, payload: "", host: expectedHost, offlineTrackingEnabled: false, aamForwardingEnabled: false, isWaiting: false, isBackDatePlaceHolder: false, uniqueEventIdentifier: AnalyticsHitProcessorTests.uniqueIdentifier, event: event)
         mockNetworkService?.expectedResponse = HttpConnection(data: nil, response: HTTPURLResponse(url: expectedUrl, statusCode: NetworkServiceConstants.RECOVERABLE_ERROR_CODES.first!, httpVersion: nil, headerFields: nil), error: nil)
 
         let entity = DataEntity(uniqueIdentifier: "test-uuid", timestamp: Date(), data: try! JSONEncoder().encode(hit))
@@ -103,7 +105,8 @@ class AnalyticsHitProcessorTests: XCTestCase {
         let expectation = XCTestExpectation(description: "Callback should be invoked with true signaling this hit should not be retried")
         let expectedUrl = URL(string: "https://example.com/b/ss/rsid/0/version/s12345")!
         let expectedHost = URL(string: "https://example.com")!
-        let hit = AnalyticsHit(url: expectedUrl, timestamp: AnalyticsHitProcessorTests.timestamp, payload: "", host: expectedHost, offlineTrackingEnabled: false, aamForwardingEnabled: false, isWaiting: false, isBackDatePlaceHolder: false, uniqueEventIdentifier: AnalyticsHitProcessorTests.uniqueIdentifier)
+        let event = Event(name: "Test Analytics request identity", type: EventType.analytics, source: EventSource.requestIdentity, data: nil)
+        let hit = AnalyticsHit(url: expectedUrl, timestamp: AnalyticsHitProcessorTests.timestamp, payload: "", host: expectedHost, offlineTrackingEnabled: false, aamForwardingEnabled: false, isWaiting: false, isBackDatePlaceHolder: false, uniqueEventIdentifier: AnalyticsHitProcessorTests.uniqueIdentifier, event:event)
         mockNetworkService?.expectedResponse = HttpConnection(data: nil, response: HTTPURLResponse(url: expectedUrl, statusCode: -1, httpVersion: nil, headerFields: nil), error: nil)
 
         let entity = DataEntity(uniqueIdentifier: "test-uuid", timestamp: Date(), data: try! JSONEncoder().encode(hit))

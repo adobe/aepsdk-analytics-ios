@@ -483,7 +483,7 @@ extension Analytics {
     // Invoked by the `AnalyticsHitProcessor` each time we receive a network response
     // - Parameters:
     //   - entity: The data entity responsible for the hit
-    //   - connection: http connection fpr the hit
+    //   - connection: http connection for the hit
     private func handleNetworkResponse(entity: DataEntity, connection: HttpConnection?) {
         guard let data = entity.data as Data?, let hit = try? JSONDecoder().decode(AnalyticsHit.self, from: data) else {
             Log.debug(label: LOG_TAG, "handleNetworkResponse - Failed to decode the Analytics Hit, aborting network response processing.")
@@ -491,16 +491,18 @@ extension Analytics {
         }
         Log.debug(label: LOG_TAG, "handleNetworkResponse - Received a network response from the Analytics server, attempting to process the response.")
 
-        analyticsState?.handleHitResponse(hit: hit, connection: connection, dispatchResponse: dispatchResponse(headers:hitHost:hitUrl:requestEventIdentifier:))
+        analyticsState?.handleHitResponse(hit: hit, connection: connection, dispatchResponse: dispatchResponse(response:headers:hitHost:hitUrl:requestEventIdentifier:event:))
     }
     /// Dispatches an Analytics response event
     /// - Parameters:
+    ///   - response: response from connection
     ///   - headers:the analytics headers from the network response
     ///   - hitHost:the host for the analytics hit
     ///   - hitUrl:the url for the analytics hit
     ///   - requestEventIdentifier: the unique identifier for the request event
-    private func dispatchResponse(headers: [String: String], hitHost: URL, hitUrl: String, requestEventIdentifier: String) {
+    private func dispatchResponse(response: String, headers: [String: String], hitHost: URL, hitUrl: String, requestEventIdentifier: String, event: Event) {
         var eventData = [String: Any]()
+        eventData[AnalyticsConstants.EventDataKeys.SERVER_RESPONSE] = response
         eventData[AnalyticsConstants.EventDataKeys.HEADERS_RESPONSE] = headers
         //host info
         eventData[AnalyticsConstants.EventDataKeys.HIT_HOST] = hitHost
@@ -510,8 +512,9 @@ extension Analytics {
             eventData[AnalyticsConstants.EventDataKeys.REQUEST_EVENT_IDENTIFIER] = requestEventIdentifier
         }
 
-        let responseAnalyticsEvent = Event.init(name: "AnalyticsResponse", type: EventType.analytics, source: EventSource.responseContent, data: eventData)
-        dispatch(event: responseAnalyticsEvent)    }
+        let responseAnalyticsEvent = event.createResponseEvent(name: "AnalyticsResponse", type: EventType.analytics, source: EventSource.responseContent, data: eventData)
+        dispatch(event: responseAnalyticsEvent)
+    }
 }
 
 /// Timeout timers.

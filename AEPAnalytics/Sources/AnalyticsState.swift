@@ -102,11 +102,17 @@ class AnalyticsState {
     ///   - hit: the hit that was processed
     ///   - connection: http network connection
     ///   - dispatchResponse: a function which when invoked dispatches a response `Event` with the visitor profile to the `EventHub`
-    func handleHitResponse(hit: AnalyticsHit, connection: HttpConnection?, dispatchResponse: ([String: String], URL, String, String) -> Void) {
+    func handleHitResponse(hit: AnalyticsHit, connection: HttpConnection?, dispatchResponse: (String, [String: String], URL, String, String, Event) -> Void) {
         if privacyStatus == .optedOut {
             Log.debug(label: LOG_TAG, "handleHitResponse - Unable to process network response as privacy status is OPT_OUT.")
             return
         }
+
+        guard let response = connection?.responseString else {
+            Log.debug(label: LOG_TAG, "handleHitResponse - response is nil")
+            return
+        }
+
         var extractHeaders = [String: String]()
 
         guard let connection = connection else {
@@ -118,7 +124,7 @@ class AnalyticsState {
         extractHeaders[AnalyticsConstants.EventDataKeys.ETAG_HEADER] = connection.responseHttpHeader(forKey: AnalyticsConstants.EventDataKeys.ETAG_HEADER)
         extractHeaders[AnalyticsConstants.EventDataKeys.SERVER_HEADER] = connection.responseHttpHeader(forKey: AnalyticsConstants.EventDataKeys.SERVER_HEADER)
 
-        dispatchResponse(extractHeaders, hit.host, hit.payload, hit.uniqueEventIdentifier)
+        dispatchResponse(response, extractHeaders, hit.host, hit.payload, hit.uniqueEventIdentifier, hit.event)
     }
 
     /// Takes the shared states map and updates the data within the Analytics State.
@@ -409,7 +415,7 @@ class AnalyticsState {
     ///   - isBackdatePlaceHolder: booleen for backdate place holder
     ///   - uniqueEventIdentifier:  the event unique identifier
     ///   - getVersion: Including osType, analyticsVersion, coreVersion
-    func queueHit(request: String, timeStamp: TimeInterval, isQueueWaiting: Bool, isBackDatePlaceHolder: Bool, uniqueEventIdentifier: String, getVersion: String) {
+    func queueHit(request: String, timeStamp: TimeInterval, isQueueWaiting: Bool, isBackDatePlaceHolder: Bool, uniqueEventIdentifier: String, getVersion: String, event: Event) {
 
         let randomIntBound = Int.random(in: 0...100000000)
 
@@ -438,7 +444,7 @@ class AnalyticsState {
         let aamForwardingEnabledInHit = IsAnalyticsForwardingEnabled()
 
         //To do, revisit the parameters
-        guard let hitData = try? JSONEncoder().encode(AnalyticsHit(url: url, timestamp: timeStamp, payload: request, host: host, offlineTrackingEnabled: offlineTrackingEnabledinHit, aamForwardingEnabled: aamForwardingEnabledInHit, isWaiting: isQueueWaiting, isBackDatePlaceHolder: isBackDatePlaceHolder, uniqueEventIdentifier: uniqueEventIdentifier)) else {
+        guard let hitData = try? JSONEncoder().encode(AnalyticsHit(url: url, timestamp: timeStamp, payload: request, host: host, offlineTrackingEnabled: offlineTrackingEnabledinHit, aamForwardingEnabled: aamForwardingEnabledInHit, isWaiting: isQueueWaiting, isBackDatePlaceHolder: isBackDatePlaceHolder, uniqueEventIdentifier: uniqueEventIdentifier, event: event)) else {
             Log.debug(label: self.LOG_TAG, "queueHit - Dropping Analytics hit, failed to encode AnalyticsHit")
             return
         }

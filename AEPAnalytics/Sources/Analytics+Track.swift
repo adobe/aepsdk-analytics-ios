@@ -30,7 +30,7 @@ extension Analytics {
         if analyticsEventData.keys.contains(AnalyticsConstants.EventDataKeys.TRACK_ACTION) ||
             analyticsEventData.keys.contains(AnalyticsConstants.EventDataKeys.TRACK_STATE) ||
             analyticsEventData.keys.contains(AnalyticsConstants.EventDataKeys.CONTEXT_DATA) {
-            track(analyticsState: analyticsState, trackEventData: analyticsEventData, timeStampInSeconds: event.timestamp.timeIntervalSince1970, appendToPlaceHolder: false, eventUniqueIdentifier: "\(event.id)", analyticsProperties: &analyticsProperties)
+            track(analyticsState: analyticsState, event: event, trackEventData: analyticsEventData, timeStampInSeconds: event.timestamp.timeIntervalSince1970, appendToPlaceHolder: false, eventUniqueIdentifier: "\(event.id)", analyticsProperties: &analyticsProperties)
         }
     }
 
@@ -64,7 +64,7 @@ extension Analytics {
             acquisitionEventData[AnalyticsConstants.EventDataKeys.CONTEXT_DATA] = acquisitionContextData
             acquisitionEventData[AnalyticsConstants.EventDataKeys.TRACK_INTERNAL] = true
 
-            track(analyticsState: analyticsState, trackEventData: acquisitionEventData, timeStampInSeconds: event.timestamp.timeIntervalSince1970, appendToPlaceHolder: false, eventUniqueIdentifier: "\(event.id)", analyticsProperties: &analyticsProperties)
+            track(analyticsState: analyticsState, event:event, trackEventData: acquisitionEventData, timeStampInSeconds: event.timestamp.timeIntervalSince1970, appendToPlaceHolder: false, eventUniqueIdentifier: "\(event.id)", analyticsProperties: &analyticsProperties)
 
         }
     }
@@ -72,12 +72,14 @@ extension Analytics {
     /// Track analytics requests for actions/states
     /// - Parameters:
     ///     - analyticsState: current `AnalyticsState` object containing shared state of dependencies.
+    ///     - event: current event is procecssing
     ///     - trackEventData: `EventData` object containing tracking data
     ///     - timeStampInSeconds: current event timestamp used for tracking
     ///     - appendToPlaceHolder: a boolean indicating whether the data should be appended to a placeholder
     ///      hit; the placeholder hit is currently used for backdated session hits
     ///     - eventUniqueIdentifier: the event unique identifier responsible for this track
-    func track(analyticsState: AnalyticsState, trackEventData: [String: Any]?, timeStampInSeconds: TimeInterval, appendToPlaceHolder: Bool, eventUniqueIdentifier: String, analyticsProperties: inout AnalyticsProperties) {
+    ///     - analyticsProperties: current `Analytics Properties` object
+    func track(analyticsState: AnalyticsState, event:Event, trackEventData: [String: Any]?, timeStampInSeconds: TimeInterval, appendToPlaceHolder: Bool, eventUniqueIdentifier: String, analyticsProperties: inout AnalyticsProperties) {
         guard trackEventData != nil else {
             Log.debug(label: Analytics.LOG_TAG, "track - Dropping the Analytics track request, request was null.")
             return
@@ -104,7 +106,7 @@ extension Analytics {
         if appendToPlaceHolder {
             analyticsState.updateBackdatedHit(request: builtRequest, timeStamp: timeStampInSeconds, uniqueEventIdentifier: eventUniqueIdentifier)
         } else {
-            analyticsState.queueHit(request: builtRequest, timeStamp: timeStampInSeconds, isQueueWaiting: analyticsProperties.isDatabaseWaiting(), isBackDatePlaceHolder: false, uniqueEventIdentifier: eventUniqueIdentifier, getVersion: getVersion())
+            analyticsState.queueHit(request: builtRequest, timeStamp: timeStampInSeconds, isQueueWaiting: analyticsProperties.isDatabaseWaiting(), isBackDatePlaceHolder: false, uniqueEventIdentifier: eventUniqueIdentifier, getVersion: getVersion(), event: event)
         }
         Log.debug(label: Analytics.LOG_TAG, "track - track request queued \(builtRequest)")
     }
@@ -151,12 +153,12 @@ extension Analytics {
         if analyticsState.backDateSessionInfoEnabled && analyticsState.offlineEnabled {
             if lifecycleContextData.keys.contains(AnalyticsConstants.ContextDataKeys.CRASH_EVENT_KEY) {
                 lifecycleContextData.removeValue(forKey: AnalyticsConstants.ContextDataKeys.CRASH_EVENT_KEY)
-                backdateLifecycleCrash(analyticsState: analyticsState, previousOSVersion: previousOsVersion, previousAppIdVersion: previousAppIdVersion, eventUniqueIdentifier: "\(event.id)", analyticsProperties: &analyticsProperties)
+                backdateLifecycleCrash(analyticsState: analyticsState, previousOSVersion: previousOsVersion, previousAppIdVersion: previousAppIdVersion, eventUniqueIdentifier: "\(event.id)", analyticsProperties: &analyticsProperties, event: event)
             }
 
             if lifecycleContextData.keys.contains(AnalyticsConstants.ContextDataKeys.PREVIOUS_SESSION_LENGTH) {
                 let previousSessionLength: String? = lifecycleContextData.removeValue(forKey: AnalyticsConstants.ContextDataKeys.PREVIOUS_SESSION_LENGTH)
-                backdateLifecycleSessionInfo(analyticsState: analyticsState, previousSessionLength: previousSessionLength, previousOSVersion: previousOsVersion, previousAppIdVersion: previousAppIdVersion, eventUniqueIdentifier: "\(event.id)", analyticsProperties: &analyticsProperties)
+                backdateLifecycleSessionInfo(analyticsState: analyticsState, previousSessionLength: previousSessionLength, previousOSVersion: previousOsVersion, previousAppIdVersion: previousAppIdVersion, eventUniqueIdentifier: "\(event.id)", analyticsProperties: &analyticsProperties, event: event)
             }
         }
     }
@@ -249,31 +251,21 @@ extension Analytics {
                 return key1
             }
         }
-        let appState = getApplicationState()
 
-        if appState == .background {
-            analyticsVars[AnalyticsConstants.Request.CUSTOMER_PERSPECTIVE_KEY] =
-                AnalyticsConstants.APP_STATE_BACKGROUND
-        } else {
-            analyticsVars[AnalyticsConstants.Request.CUSTOMER_PERSPECTIVE_KEY] =
-                AnalyticsConstants.APP_STATE_FOREGROUND
-        }
-
+        //TO DO: verify if this is a good approach
+        DispatchQueue.global().async(execute: {
+            DispatchQueue.main.sync {
+                if UIApplication.shared.applicationState == .background {
+                    analyticsVars[AnalyticsConstants.Request.CUSTOMER_PERSPECTIVE_KEY] =
+                        AnalyticsConstants.APP_STATE_BACKGROUND
+                } else {
+                    analyticsVars[AnalyticsConstants.Request.CUSTOMER_PERSPECTIVE_KEY] =
+                        AnalyticsConstants.APP_STATE_FOREGROUND
+                }
+            }
+        })
         return analyticsVars
     }
-}
-
-func getApplicationState() -> UIApplication.State? {
-    var ret: UIApplication.State?
-    if Thread.isMainThread {
-        ret = UIApplication.shared.applicationState
-    } else {
-        //using global queue instead of main to avoid deadlock
-        DispatchQueue.global().sync {
-            ret = UIApplication.shared.applicationState
-        }
-    }
-    return ret
 }
 
 /// Backdate handling.
@@ -285,7 +277,7 @@ extension Analytics {
     ///      - previousOSVersion: The OS version in the backdated session
     ///      - previousAppIdVersion: The App Id in the backdate session
     ///      - eventUniqueIdentifier: The event identifier of backdated Lifecycle session event.
-    private func backdateLifecycleCrash(analyticsState: AnalyticsState, previousOSVersion: String?, previousAppIdVersion: String?, eventUniqueIdentifier: String, analyticsProperties: inout AnalyticsProperties) {
+    private func backdateLifecycleCrash(analyticsState: AnalyticsState, previousOSVersion: String?, previousAppIdVersion: String?, eventUniqueIdentifier: String, analyticsProperties: inout AnalyticsProperties, event: Event) {
         Log.trace(label: Analytics.LOG_TAG, "backdateLifecycleCrash - Backdating the lifecycle session crash event.")
         var crashContextData: [String: String] = [:]
         crashContextData[AnalyticsConstants.ContextDataKeys.CRASH_EVENT_KEY] = AnalyticsConstants.ContextDataValues.CRASH_EVENT
@@ -303,7 +295,7 @@ extension Analytics {
         lifecycleSessionData[AnalyticsConstants.EventDataKeys.CONTEXT_DATA] = crashContextData
         lifecycleSessionData[AnalyticsConstants.EventDataKeys.TRACK_INTERNAL] = true
 
-        track(analyticsState: analyticsState, trackEventData: lifecycleSessionData, timeStampInSeconds: analyticsProperties.getMostRecentHitTimestamp() + 1, appendToPlaceHolder: true, eventUniqueIdentifier: eventUniqueIdentifier, analyticsProperties: &analyticsProperties)
+        track(analyticsState: analyticsState, event: event, trackEventData: lifecycleSessionData, timeStampInSeconds: analyticsProperties.getMostRecentHitTimestamp() + 1, appendToPlaceHolder: true, eventUniqueIdentifier: eventUniqueIdentifier, analyticsProperties: &analyticsProperties)
     }
 
     /// Creates an internal analytics event with the previous lifecycle session info.
@@ -313,7 +305,7 @@ extension Analytics {
     ///      - previousOSVersion: The OS version in the backdated session
     ///      - previousAppIdVersion: The App Id in the backdate session
     ///      - eventUniqueIdentifier: The event identifier of backdated Lifecycle session event.
-    private func backdateLifecycleSessionInfo(analyticsState: AnalyticsState, previousSessionLength: String?, previousOSVersion: String?, previousAppIdVersion: String?, eventUniqueIdentifier: String, analyticsProperties: inout AnalyticsProperties) {
+    private func backdateLifecycleSessionInfo(analyticsState: AnalyticsState, previousSessionLength: String?, previousOSVersion: String?, previousAppIdVersion: String?, eventUniqueIdentifier: String, analyticsProperties: inout AnalyticsProperties, event: Event) {
         Log.trace(label: Analytics.LOG_TAG, "backdateLifecycleSessionInfo - Backdating the previous lifecycle session.")
         var sessionContextData: [String: String] = [:]
 
@@ -334,6 +326,6 @@ extension Analytics {
         lifecycleSessionData[AnalyticsConstants.EventDataKeys.CONTEXT_DATA] = sessionContextData
         lifecycleSessionData[AnalyticsConstants.EventDataKeys.TRACK_INTERNAL] = true
         let backDateTimeStamp = max(Date.init(timeIntervalSince1970: analyticsProperties.getMostRecentHitTimestamp()), analyticsProperties.lifecyclePreviousSessionPauseTimestamp ?? Date.init(timeIntervalSince1970: 0))
-        track(analyticsState: analyticsState, trackEventData: lifecycleSessionData, timeStampInSeconds: backDateTimeStamp.timeIntervalSince1970 + 1, appendToPlaceHolder: true, eventUniqueIdentifier: eventUniqueIdentifier, analyticsProperties: &analyticsProperties)
+        track(analyticsState: analyticsState, event: event, trackEventData: lifecycleSessionData, timeStampInSeconds: backDateTimeStamp.timeIntervalSince1970 + 1, appendToPlaceHolder: true, eventUniqueIdentifier: eventUniqueIdentifier, analyticsProperties: &analyticsProperties)
     }
 }
