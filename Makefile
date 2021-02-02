@@ -16,8 +16,7 @@ pod-repo-update:
 
 # pod repo update may fail if there is no repo (issue fixed in v1.8.4). Use pod install --repo-update instead
 pod-install:
-	bundle check || bundle install --path vendor/bundle --clean
-	(bundle exec pod install --repo-update)
+	(pod install --repo-update)
 
 pod-update: pod-repo-update
 	(pod update)

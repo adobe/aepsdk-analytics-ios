@@ -26,30 +26,50 @@ PODS:
 DEPENDENCIES:
   - ACPCore (from `https://github.com/adobe/aepsdk-compatibility-ios.git`, branch `main`)
   - AEPAssurance
-  - AEPCore
-  - AEPIdentity
-  - AEPRulesEngine
-  - AEPServices
+  - AEPCore (from `https://github.com/adobe/aepsdk-core-ios.git`, branch `main`)
+  - AEPIdentity (from `https://github.com/adobe/aepsdk-core-ios.git`, branch `main`)
+  - AEPRulesEngine (from `https://github.com/adobe/aepsdk-rulesengine-ios.git`, branch `main`)
+  - AEPServices (from `https://github.com/adobe/aepsdk-core-ios.git`, branch `main`)
 
 SPEC REPOS:
   trunk:
     - AEPAssurance
-    - AEPCore
-    - AEPIdentity
     - AEPLifecycle
-    - AEPRulesEngine
-    - AEPServices
     - AEPSignal
 
 EXTERNAL SOURCES:
   ACPCore:
     :branch: main
     :git: https://github.com/adobe/aepsdk-compatibility-ios.git
+  AEPCore:
+    :branch: main
+    :git: https://github.com/adobe/aepsdk-core-ios.git
+  AEPIdentity:
+    :branch: main
+    :git: https://github.com/adobe/aepsdk-core-ios.git
+  AEPRulesEngine:
+    :branch: main
+    :git: https://github.com/adobe/aepsdk-rulesengine-ios.git
+  AEPServices:
+    :branch: main
+    :git: https://github.com/adobe/aepsdk-core-ios.git
 
 CHECKOUT OPTIONS:
   ACPCore:
     :commit: 748779dd93ae14a9b7241c93fe9fd190abb816a5
     :git: https://github.com/adobe/aepsdk-compatibility-ios.git
+  AEPCore:
+    :commit: 9fe655414c1e88d4252e9be25cf4f8d1dc539bee
+    :git: https://github.com/adobe/aepsdk-core-ios.git
+  AEPIdentity:
+    :commit: 9fe655414c1e88d4252e9be25cf4f8d1dc539bee
+    :git: https://github.com/adobe/aepsdk-core-ios.git
+  AEPRulesEngine:
+    :commit: 1e270654b330b9f07a6b1ec374e686f2e631e039
+    :git: https://github.com/adobe/aepsdk-rulesengine-ios.git
+  AEPServices:
+    :commit: 9fe655414c1e88d4252e9be25cf4f8d1dc539bee
+    :git: https://github.com/adobe/aepsdk-core-ios.git
 
 SPEC CHECKSUMS:
   ACPCore: 67e4b855bf16cfb6a63024a4ddb73d15c0fd30e5
@@ -61,6 +81,6 @@ SPEC CHECKSUMS:
   AEPServices: 21ea64149483fdfbd5f88f546b9f5ad7d4987400
   AEPSignal: b4ac5c8e8c68e8902739426d70c01ed3ce229ac9
 
-PODFILE CHECKSUM: 98906738258861a375036ffd8bd64b5a79aede4e
+PODFILE CHECKSUM: c4fd8d75c7dd44c8b14f90d4a3f1949a319cdd2c
 
-COCOAPODS: 1.10.0
+COCOAPODS: 1.10.1

@@ -28,7 +28,6 @@ jobs:
             - cocoapods-cache-v4-{{ arch }}-{{ .Branch }}-{{ checksum "Podfile.lock" }}
             - cocoapods-cache-v4-{{ arch }}-{{ .Branch }}
             - cocoapods-cache-v4
-            - 1-gems-{{ checksum "Gemfile.lock" }}
 
       # install CocoaPods - using default CocoaPods version, not the bundle
       - run:
@@ -42,7 +41,6 @@ jobs:
           paths:
             - ./Pods
             - ~/.cocoapods
-            - vendor/bundle
 
       - run:
           name: Install SwiftLint
