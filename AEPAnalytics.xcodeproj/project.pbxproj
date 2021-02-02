@@ -27,6 +27,7 @@
 		3DD8E6FC256F0BC2009234FD /* Analytics+Track.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DD8E6FB256F0BC2009234FD /* Analytics+Track.swift */; };
 		3DDC3E8B258AA16700ED05BC /* AnalyticsRequestSerializerTests+Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DDC3E8A258AA16700ED05BC /* AnalyticsRequestSerializerTests+Helper.swift */; };
 		3DDC3E8F258AA1D400ED05BC /* TestIdentifiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DDC3E8E258AA1D400ED05BC /* TestIdentifiable.swift */; };
+		3FBA5746150DF4619268622F /* Pods_AnalyticsSampleApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0E355386B606F5D58291BC54 /* Pods_AnalyticsSampleApp.framework */; };
 		AC277CFE252C23E600987C67 /* Analytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC277CF5252C23E600987C67 /* Analytics.swift */; };
 		AC277CFF252C23E600987C67 /* AnalyticsConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC277CF6252C23E600987C67 /* AnalyticsConstants.swift */; };
 		AC277D00252C23E600987C67 /* AEPAnalytics.h in Headers */ = {isa = PBXBuildFile; fileRef = AC277CF7252C23E600987C67 /* AEPAnalytics.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -38,6 +39,12 @@
 		D639E25525B8C70400955FBA /* AnalyticsVersionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D639E23925B8C25500955FBA /* AnalyticsVersionTest.swift */; };
 		D676B38E25928D4F0099E5AC /* TestHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67AC995257874BE000FA306 /* TestHelper.swift */; };
 		D67AC98C2578285F000FA306 /* AnalyticsHitResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67AC98B2578285F000FA306 /* AnalyticsHitResponse.swift */; };
+		D6D5F35925C8806D008148B3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6D5F35825C8806D008148B3 /* AppDelegate.swift */; };
+		D6D5F35B25C8806D008148B3 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6D5F35A25C8806D008148B3 /* SceneDelegate.swift */; };
+		D6D5F35D25C8806D008148B3 /* AnalyticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6D5F35C25C8806D008148B3 /* AnalyticsView.swift */; };
+		D6D5F35F25C88070008148B3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D6D5F35E25C88070008148B3 /* Assets.xcassets */; };
+		D6D5F36225C88070008148B3 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D6D5F36125C88070008148B3 /* Preview Assets.xcassets */; };
+		D6D5F36525C88070008148B3 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D6D5F36325C88070008148B3 /* LaunchScreen.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -48,9 +55,17 @@
 			remoteGlobalIDString = 2EBEE76F2525A35300880E72;
 			remoteInfo = AEPAnalytics;
 		};
+		D6D5F38425C88465008148B3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2EBEE7672525A35300880E72 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2EBEE76F2525A35300880E72;
+			remoteInfo = AEPAnalytics;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0E355386B606F5D58291BC54 /* Pods_AnalyticsSampleApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AnalyticsSampleApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		14F04C9E55A557E974B476CB /* Pods_AEPAnalyticsTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AEPAnalyticsTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		20355BF005BB751B58D1150D /* Pods-AEPAnalyticsTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AEPAnalyticsTests.debug.xcconfig"; path = "Target Support Files/Pods-AEPAnalyticsTests/Pods-AEPAnalyticsTests.debug.xcconfig"; sourceTree = "<group>"; };
 		2D24C61FB42A1BDE18FCC7C9 /* Pods-AEPAnalytics.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AEPAnalytics.debug.xcconfig"; path = "Target Support Files/Pods-AEPAnalytics/Pods-AEPAnalytics.debug.xcconfig"; sourceTree = "<group>"; };
@@ -86,12 +101,22 @@
 		AC33336F2536590600BF8A56 /* MockExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockExtension.swift; sourceTree = "<group>"; };
 		AC76C1612534D66300211DE2 /* TestableExtensionRuntime.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestableExtensionRuntime.swift; sourceTree = "<group>"; };
 		AC76C1632534D66300211DE2 /* .swiftlint.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
+		CE85C4421313D5BBE96D5060 /* Pods-AnalyticsSampleApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AnalyticsSampleApp.debug.xcconfig"; path = "Target Support Files/Pods-AnalyticsSampleApp/Pods-AnalyticsSampleApp.debug.xcconfig"; sourceTree = "<group>"; };
 		D639E23525B8B25600955FBA /* Analytics+Version.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Analytics+Version.swift"; sourceTree = "<group>"; };
 		D639E23925B8C25500955FBA /* AnalyticsVersionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsVersionTest.swift; sourceTree = "<group>"; };
 		D67AC98B2578285F000FA306 /* AnalyticsHitResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsHitResponse.swift; sourceTree = "<group>"; };
 		D67AC995257874BE000FA306 /* TestHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestHelper.swift; sourceTree = "<group>"; };
+		D6D5F35625C8806D008148B3 /* AnalyticsSampleApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AnalyticsSampleApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D6D5F35825C8806D008148B3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		D6D5F35A25C8806D008148B3 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		D6D5F35C25C8806D008148B3 /* AnalyticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsView.swift; sourceTree = "<group>"; };
+		D6D5F35E25C88070008148B3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		D6D5F36125C88070008148B3 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		D6D5F36425C88070008148B3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		D6D5F36625C88070008148B3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E274320DD947E7BB2B2E8A33 /* Pods-AEPAnalyticsTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AEPAnalyticsTests.release.xcconfig"; path = "Target Support Files/Pods-AEPAnalyticsTests/Pods-AEPAnalyticsTests.release.xcconfig"; sourceTree = "<group>"; };
 		EF12C9A6B24908684CC8EA6C /* Pods-AEPAnalytics.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AEPAnalytics.release.xcconfig"; path = "Target Support Files/Pods-AEPAnalytics/Pods-AEPAnalytics.release.xcconfig"; sourceTree = "<group>"; };
+		F09743C2FA04519BE26C974E /* Pods-AnalyticsSampleApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AnalyticsSampleApp.release.xcconfig"; path = "Target Support Files/Pods-AnalyticsSampleApp/Pods-AnalyticsSampleApp.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -111,6 +136,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D6D5F35325C8806D008148B3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3FBA5746150DF4619268622F /* Pods_AnalyticsSampleApp.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -121,6 +154,8 @@
 				EF12C9A6B24908684CC8EA6C /* Pods-AEPAnalytics.release.xcconfig */,
 				20355BF005BB751B58D1150D /* Pods-AEPAnalyticsTests.debug.xcconfig */,
 				E274320DD947E7BB2B2E8A33 /* Pods-AEPAnalyticsTests.release.xcconfig */,
+				CE85C4421313D5BBE96D5060 /* Pods-AnalyticsSampleApp.debug.xcconfig */,
+				F09743C2FA04519BE26C974E /* Pods-AnalyticsSampleApp.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -129,6 +164,7 @@
 			isa = PBXGroup;
 			children = (
 				AC277CEC252C23E600987C67 /* AEPAnalytics */,
+				D6D5F35725C8806D008148B3 /* AnalyticsSampleApp */,
 				2EBEE7712525A35400880E72 /* Products */,
 				CEBDCEF550A14091A479F5C5 /* Frameworks */,
 				13AC300B194721A7FF402F99 /* Pods */,
@@ -140,6 +176,7 @@
 			children = (
 				2EBEE7702525A35400880E72 /* AEPAnalytics.framework */,
 				2EBEE7792525A35400880E72 /* AEPAnalyticsTests.xctest */,
+				D6D5F35625C8806D008148B3 /* AnalyticsSampleApp.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -221,8 +258,31 @@
 				2E0B4C04252BA10800ABBE57 /* AEPCore.framework */,
 				56DA22A3CE773DE7E7380769 /* Pods_AEPAnalytics.framework */,
 				14F04C9E55A557E974B476CB /* Pods_AEPAnalyticsTests.framework */,
+				0E355386B606F5D58291BC54 /* Pods_AnalyticsSampleApp.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		D6D5F35725C8806D008148B3 /* AnalyticsSampleApp */ = {
+			isa = PBXGroup;
+			children = (
+				D6D5F35825C8806D008148B3 /* AppDelegate.swift */,
+				D6D5F35A25C8806D008148B3 /* SceneDelegate.swift */,
+				D6D5F35C25C8806D008148B3 /* AnalyticsView.swift */,
+				D6D5F35E25C88070008148B3 /* Assets.xcassets */,
+				D6D5F36325C88070008148B3 /* LaunchScreen.storyboard */,
+				D6D5F36625C88070008148B3 /* Info.plist */,
+				D6D5F36025C88070008148B3 /* Preview Content */,
+			);
+			path = AnalyticsSampleApp;
+			sourceTree = "<group>";
+		};
+		D6D5F36025C88070008148B3 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				D6D5F36125C88070008148B3 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -279,13 +339,33 @@
 			productReference = 2EBEE7792525A35400880E72 /* AEPAnalyticsTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		D6D5F35525C8806D008148B3 /* AnalyticsSampleApp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D6D5F36925C88070008148B3 /* Build configuration list for PBXNativeTarget "AnalyticsSampleApp" */;
+			buildPhases = (
+				2358AF83EF31D8860327C9F2 /* [CP] Check Pods Manifest.lock */,
+				D6D5F35225C8806D008148B3 /* Sources */,
+				D6D5F35325C8806D008148B3 /* Frameworks */,
+				D6D5F35425C8806D008148B3 /* Resources */,
+				775B1A8C2AC8BBA87C3E7DD5 /* [CP] Embed Pods Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D6D5F38525C88465008148B3 /* PBXTargetDependency */,
+			);
+			name = AnalyticsSampleApp;
+			productName = AnalyticsSampleApp;
+			productReference = D6D5F35625C8806D008148B3 /* AnalyticsSampleApp.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		2EBEE7672525A35300880E72 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1200;
+				LastSwiftUpdateCheck = 1240;
 				LastUpgradeCheck = 1200;
 				ORGANIZATIONNAME = Adobe;
 				TargetAttributes = {
@@ -295,6 +375,9 @@
 					2EBEE7782525A35400880E72 = {
 						CreatedOnToolsVersion = 12.0.1;
 						LastSwiftMigration = 1200;
+					};
+					D6D5F35525C8806D008148B3 = {
+						CreatedOnToolsVersion = 12.4;
 					};
 				};
 			};
@@ -313,6 +396,7 @@
 			targets = (
 				2EBEE76F2525A35300880E72 /* AEPAnalytics */,
 				2EBEE7782525A35400880E72 /* AEPAnalyticsTests */,
+				D6D5F35525C8806D008148B3 /* AnalyticsSampleApp */,
 			);
 		};
 /* End PBXProject section */
@@ -330,6 +414,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				AC76C17B2534D67B00211DE2 /* .swiftlint.yml in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D6D5F35425C8806D008148B3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D6D5F36525C88070008148B3 /* LaunchScreen.storyboard in Resources */,
+				D6D5F36225C88070008148B3 /* Preview Assets.xcassets in Resources */,
+				D6D5F35F25C88070008148B3 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -356,6 +450,45 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		2358AF83EF31D8860327C9F2 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-AnalyticsSampleApp-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		775B1A8C2AC8BBA87C3E7DD5 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-AnalyticsSampleApp/Pods-AnalyticsSampleApp-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-AnalyticsSampleApp/Pods-AnalyticsSampleApp-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-AnalyticsSampleApp/Pods-AnalyticsSampleApp-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		AC277D05252C328B00987C67 /* ShellScript */ = {
@@ -458,6 +591,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D6D5F35225C8806D008148B3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D6D5F35925C8806D008148B3 /* AppDelegate.swift in Sources */,
+				D6D5F35B25C8806D008148B3 /* SceneDelegate.swift in Sources */,
+				D6D5F35D25C8806D008148B3 /* AnalyticsView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -466,7 +609,23 @@
 			target = 2EBEE76F2525A35300880E72 /* AEPAnalytics */;
 			targetProxy = 2EBEE77B2525A35400880E72 /* PBXContainerItemProxy */;
 		};
+		D6D5F38525C88465008148B3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2EBEE76F2525A35300880E72 /* AEPAnalytics */;
+			targetProxy = D6D5F38425C88465008148B3 /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		D6D5F36325C88070008148B3 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D6D5F36425C88070008148B3 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		2EBEE7822525A35400880E72 /* Debug */ = {
@@ -697,6 +856,52 @@
 			};
 			name = Release;
 		};
+		D6D5F36725C88070008148B3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = CE85C4421313D5BBE96D5060 /* Pods-AnalyticsSampleApp.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_ASSET_PATHS = "\"AnalyticsSampleApp/Preview Content\"";
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = AnalyticsSampleApp/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MACH_O_TYPE = mh_execute;
+				PRODUCT_BUNDLE_IDENTIFIER = com.adobe.AnalyticsSampleApp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		D6D5F36825C88070008148B3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = F09743C2FA04519BE26C974E /* Pods-AnalyticsSampleApp.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_ASSET_PATHS = "\"AnalyticsSampleApp/Preview Content\"";
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = AnalyticsSampleApp/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MACH_O_TYPE = mh_execute;
+				PRODUCT_BUNDLE_IDENTIFIER = com.adobe.AnalyticsSampleApp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -723,6 +928,15 @@
 			buildConfigurations = (
 				2EBEE7882525A35400880E72 /* Debug */,
 				2EBEE7892525A35400880E72 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D6D5F36925C88070008148B3 /* Build configuration list for PBXNativeTarget "AnalyticsSampleApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D6D5F36725C88070008148B3 /* Debug */,
+				D6D5F36825C88070008148B3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
