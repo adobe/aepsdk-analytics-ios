@@ -26,6 +26,12 @@ class AnalyticsStateTest : XCTestCase {
         return ServiceProvider.shared.networkService as? MockNetworking
     }
 
+    static let hitResponse = """
+    {
+       "id": "test"
+    }
+    """
+
     override func setUp() {
         mockHitQueue = MockHitQueue(processor: AnalyticsHitProcessor(responseHandler: { [weak self] entity, httpConnection in
             self?.responseCallbackArgs.append((entity, httpConnection))
@@ -348,117 +354,123 @@ class AnalyticsStateTest : XCTestCase {
 
     func testGetAnalyticsIdVisitorParametersWhenVisitorDataIsAbsent() {
         XCTAssertTrue(analyticsState.getAnalyticsIdVisitorParameters().isEmpty)
-
     }
 
     // ==========================================================================
     // handleHitResponse
     // ==========================================================================
-//    func testHandleHitResponse() {
-    //Setup
-//        var expectedResponse = ""
-//        var expectedHost = URL(string: "https://adobe.com")!
-//        let hit = AnalyticsHit.fakeHit()
-//        var identifier = ""
-//        var expectedPayload = ""
-//        //Set headers
-//        var expectedHeaders = [String: String]()
-//        expectedHeaders[AnalyticsTestConstants.EventDataKeys.ETAG_HEADER] = "etagValue"
-//        expectedHeaders[AnalyticsTestConstants.EventDataKeys.SERVER_HEADER] = "serverValue"
-//        expectedHeaders[AnalyticsTestConstants.EventDataKeys.CONTENT_TYPE_HEADER] = "contentValue"
-//        expectedHeaders["p3p"] = "This is not a P3P policy"
-//        expectedHeaders["cache-control"] = "no-cache"
-//
-//        let connection = HttpConnection(data: nil, response: HTTPURLResponse(url: expectedHost, statusCode: 200, httpVersion: nil, headerFields: expectedHeaders), error: nil)
-//
-//        analyticsState.handleHitResponse(hit: hit, connection: connection, dispatchResponse: {
-//            response, headers, hitHost, hitUrl, requestEventIdentifier, event in
-//            expectedResponse = response
-//            expectedHeaders = headers
-//            expectedHost = hitHost
-//            expectedPayload = hitUrl
-//            identifier = requestEventIdentifier
-//
-//        })
-//
-//        //verify
-//        //should only extract 3 headers (Etag, server, content-type)
-//        XCTAssertEqual(expectedHeaders.count, 3)
-//        XCTAssertEqual(expectedHost, URL(string: "https://example.com")!)
-//        XCTAssertEqual(expectedPayload, "ndh=1&mid=65837975888089377005040020619800013833")
-//        XCTAssertEqual(identifier, "abcde")
-//    }
+    func testHandleHitResponse() {
+        // Setup
+        var expectedResponse = ""
+        var expectedHost = URL(string: "https://adobe.com")!
+        let hit = AnalyticsHit.fakeHit()
+        var identifier = ""
+        var expectedPayload = ""
+        //Set headers
+        var expectedHeaders = [String: String]()
+        expectedHeaders[AnalyticsTestConstants.EventDataKeys.ETAG_HEADER] = "etagValue"
+        expectedHeaders[AnalyticsTestConstants.EventDataKeys.SERVER_HEADER] = "serverValue"
+        expectedHeaders[AnalyticsTestConstants.EventDataKeys.CONTENT_TYPE_HEADER] = "contentValue"
+        expectedHeaders["p3p"] = "This is not a P3P policy"
+        expectedHeaders["cache-control"] = "no-cache"
 
-//    func testHandleHitResponsePrivacyOptedOut() {
-//        //Setup
-//        var configurationData = [String: Any]()
-//        configurationData[AnalyticsTestConstants.Configuration.EventDataKeys.GLOBAL_PRIVACY] = "optedout"
-//        var dataMap = [String: [String: Any]]()
-//        dataMap[AnalyticsTestConstants.Configuration.EventDataKeys.SHARED_STATE_NAME] = configurationData
-//        analyticsState.update(dataMap: dataMap)
-//
-//
-//        //Setup
-//        var expectedHost = URL(string: "https://adobe.com")!
-//        let hit = AnalyticsHit.fakeHit()
-//        var identifier = ""
-//        var expectedPayload = ""
-//        var expectedHeaders = [String: String]()
-//        expectedHeaders[AnalyticsTestConstants.EventDataKeys.ETAG_HEADER] = "etagValue"
-//        expectedHeaders[AnalyticsTestConstants.EventDataKeys.SERVER_HEADER] = "serverValue"
-//        expectedHeaders[AnalyticsTestConstants.EventDataKeys.CONTENT_TYPE_HEADER] = "contentValue"
-//        expectedHeaders["p3p"] = "This is not a P3P policy"
-//        expectedHeaders["cache-control"] = "no-cache"
-//
-//        let connection = HttpConnection(data: nil, response: HTTPURLResponse(url: expectedHost, statusCode: 200, httpVersion: nil, headerFields: expectedHeaders), error: nil)
-//
-//        analyticsState.handleHitResponse(hit: hit, connection: connection, dispatchResponse: {
-//            headers, hitHost, hitUrl, requestEventIdentifier in
-//            expectedHeaders = headers
-//            expectedHost = hitHost
-//            expectedPayload = hitUrl
-//            identifier = requestEventIdentifier
-//        })
-//
-//        //verify doesn't extract response
-//
-//        XCTAssertEqual(expectedHeaders.count, 5)
-//        XCTAssertEqual(expectedHost, URL(string: "https://adobe.com")!)
-//        XCTAssertEqual(expectedPayload, "")
-//        XCTAssertEqual(identifier, "")
-//    }
 
-//    func testHandleHitResponseResponseConnectionNil() {
-//        //Setup
-//        var expectedHost = URL(string: "https://adobe.com")!
-//        let hit = AnalyticsHit.fakeHit()
-//        var identifier = ""
-//        var expectedPayload = ""
-//        var expectedHeaders = [String: String]()
-//        expectedHeaders[AnalyticsTestConstants.EventDataKeys.ETAG_HEADER] = "etagValue"
-//        expectedHeaders[AnalyticsTestConstants.EventDataKeys.SERVER_HEADER] = "serverValue"
-//        expectedHeaders[AnalyticsTestConstants.EventDataKeys.CONTENT_TYPE_HEADER] = "contentValue"
-//        expectedHeaders["p3p"] = "This is not a P3P policy"
-//        expectedHeaders["cache-control"] = "no-cache"
-//
-//        analyticsState.handleHitResponse(hit: hit, connection: nil, dispatchResponse: {
-//            header, hitHost, hitUrl, requestEventIdentifier in
-//            expectedHeaders = header
-//            expectedHost = hitHost
-//            expectedPayload = hitUrl
-//            identifier = requestEventIdentifier
-//        })
-//
-//        //verify doesn't extract response
-//        XCTAssertEqual(expectedHeaders.count, 5)
-//        XCTAssertEqual(expectedHost, URL(string: "https://adobe.com")!)
-//        XCTAssertEqual(expectedPayload, "")
-//        XCTAssertEqual(identifier, "")
-//    }
+        let connection = HttpConnection(data: AnalyticsStateTest.hitResponse.data(using: .utf8), response: HTTPURLResponse(url: expectedHost, statusCode: 200, httpVersion: nil, headerFields: expectedHeaders), error: nil)
+
+        analyticsState.handleHitResponse(hit: hit, connection: connection, dispatchResponse: {
+            response, headers, hitHost, hitUrl, requestEventIdentifier, event in
+            expectedResponse = response
+            expectedHeaders = headers
+            expectedHost = hitHost
+            expectedPayload = hitUrl
+            identifier = requestEventIdentifier
+        })
+
+        //verify
+
+        XCTAssertEqual(expectedResponse, "{\n   \"id\": \"test\"\n}")
+        //should only extract 3 headers (Etag, server, content-type)
+        XCTAssertEqual(expectedHeaders.count, 3)
+        XCTAssertEqual(expectedHost, URL(string: "https://example.com")!)
+        XCTAssertEqual(expectedPayload, "ndh=1&mid=65837975888089377005040020619800013833")
+        XCTAssertEqual(identifier, "abcde")
+    }
+
+    func testHandleHitResponsePrivacyOptedOut() {
+        //Setup
+        var configurationData = [String: Any]()
+        configurationData[AnalyticsTestConstants.Configuration.EventDataKeys.GLOBAL_PRIVACY] = "optedout"
+        var dataMap = [String: [String: Any]]()
+        dataMap[AnalyticsTestConstants.Configuration.EventDataKeys.SHARED_STATE_NAME] = configurationData
+        analyticsState.update(dataMap: dataMap)
+
+
+        //Setup
+        var expectedResponse = ""
+        var expectedHost = URL(string: "https://adobe.com")!
+        let hit = AnalyticsHit.fakeHit()
+        var identifier = ""
+        var expectedPayload = ""
+        var expectedHeaders = [String: String]()
+        expectedHeaders[AnalyticsTestConstants.EventDataKeys.ETAG_HEADER] = "etagValue"
+        expectedHeaders[AnalyticsTestConstants.EventDataKeys.SERVER_HEADER] = "serverValue"
+        expectedHeaders[AnalyticsTestConstants.EventDataKeys.CONTENT_TYPE_HEADER] = "contentValue"
+        expectedHeaders["p3p"] = "This is not a P3P policy"
+        expectedHeaders["cache-control"] = "no-cache"
+
+        let connection = HttpConnection(data: AnalyticsStateTest.hitResponse.data(using: .utf8), response: HTTPURLResponse(url: expectedHost, statusCode: 200, httpVersion: nil, headerFields: expectedHeaders), error: nil)
+
+        analyticsState.handleHitResponse(hit: hit, connection: connection, dispatchResponse: {
+            response, headers, hitHost, hitUrl, requestEventIdentifier, event in
+            expectedResponse = response
+            expectedHeaders = headers
+            expectedHost = hitHost
+            expectedPayload = hitUrl
+            identifier = requestEventIdentifier
+        })
+
+        XCTAssertEqual(expectedResponse, "")
+        //verify doesn't extract response headers
+        XCTAssertEqual(expectedHeaders.count, 5)
+        XCTAssertEqual(expectedHost, URL(string: "https://adobe.com")!)
+        XCTAssertEqual(expectedPayload, "")
+        XCTAssertEqual(identifier, "")
+    }
+
+    func testHandleHitResponseResponseConnectionNil() {
+        //Setup
+        var expectedResponse = ""
+        var expectedHost = URL(string: "https://adobe.com")!
+        let hit = AnalyticsHit.fakeHit()
+        var identifier = ""
+        var expectedPayload = ""
+        var expectedHeaders = [String: String]()
+        expectedHeaders[AnalyticsTestConstants.EventDataKeys.ETAG_HEADER] = "etagValue"
+        expectedHeaders[AnalyticsTestConstants.EventDataKeys.SERVER_HEADER] = "serverValue"
+        expectedHeaders[AnalyticsTestConstants.EventDataKeys.CONTENT_TYPE_HEADER] = "contentValue"
+        expectedHeaders["p3p"] = "This is not a P3P policy"
+        expectedHeaders["cache-control"] = "no-cache"
+
+        analyticsState.handleHitResponse(hit: hit, connection: nil, dispatchResponse: {
+            response, header, hitHost, hitUrl, requestEventIdentifier, event in
+            expectedResponse = response
+            expectedHeaders = header
+            expectedHost = hitHost
+            expectedPayload = hitUrl
+            identifier = requestEventIdentifier
+        })
+
+        //verify doesn't extract response
+        XCTAssertEqual(expectedResponse, "")
+        XCTAssertEqual(expectedHeaders.count, 5)
+        XCTAssertEqual(expectedHost, URL(string: "https://adobe.com")!)
+        XCTAssertEqual(expectedPayload, "")
+        XCTAssertEqual(identifier, "")
+    }
 
 }
 
-//// MARK: fake hit and fake response for testing
+//// MARK: fake hit for testing
 private extension AnalyticsHit {
     static func fakeHit() -> AnalyticsHit {
         let payload = "ndh=1&mid=65837975888089377005040020619800013833"

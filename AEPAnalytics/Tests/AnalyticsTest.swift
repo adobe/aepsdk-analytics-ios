@@ -701,36 +701,4 @@ class AnalyticsTest : XCTestCase {
         // Verify hit is queued
         XCTAssertEqual(2, mockHitQueue.count())
     }
-
-    func testNetwork() {
-        // setup
-        dispatchConfigurationEventForTesting(rsid: "testRsid", host: "testAnalyticsServer.com", privacyStatus: .optedIn)
-        let mockNetworkService = ServiceProvider.shared.networkService as! MockNetworking
-        setDefaultResponse(responseData: AnalyticsTest.aidResponse.data(using: .utf8), expectedUrlFragment: "https://testAnalyticsServer.com", statusCode: 200, mockNetworkService: mockNetworkService)
-        let event = Event(name: "Test Event Hub Shared State Update", type: EventType.hub, source: EventSource.sharedState, data: nil)
-        let _ = analytics.readyForEvent(event)
-        let data:[String : String] = [AnalyticsConstants.EventDataKeys.TRACK_ACTION: "sample action"]
-        // create the analytics event
-        let event2 = Event(name: "Test Generic Track Analytics request", type: EventType.genericTrack, source: EventSource.requestContent, data: data)
-        let _ = analytics.readyForEvent(event2)
-
-        // test
-        simulateComingEventAndWait(event)
-        simulateComingEventAndWait(event2)
-
-        // verify no network request sent
-        XCTAssertEqual(1, mockNetworkService.calledNetworkRequests.count)
-        // verify 2 shared states created, latest version has empty VID/AID
-        // (shared state 0 created by handleOptOut, shared state 1 created by sendAnalyticsIdRequest)
-//        XCTAssertEqual(2, testableExtensionRuntime.createdSharedStates.count)
-//        let sharedState = testableExtensionRuntime.createdSharedStates[1]
-//        XCTAssertNil(sharedState?[AnalyticsConstants.EventDataKeys.ANALYTICS_ID])
-//        XCTAssertNil(sharedState?[AnalyticsConstants.EventDataKeys.VISITOR_IDENTIFIER])
-//        // verify nil identifiers were added to the datastore
-//        XCTAssertEqual(nil, dataStore.getString(key: AnalyticsConstants.DataStoreKeys.VISITOR_IDENTIFIER_KEY))
-//        XCTAssertEqual(nil, dataStore.getString(key: AnalyticsConstants.DataStoreKeys.AID_KEY))
-//        // verify an analytics identity response event with no data was dispatched
-//        let responseEvent = testableExtensionRuntime.dispatchedEvents.first(where: { $0.responseID == event.id })
-//        XCTAssertEqual(0, responseEvent?.data?.count)
-    }
 }
