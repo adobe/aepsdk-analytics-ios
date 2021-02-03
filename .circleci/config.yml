@@ -14,10 +14,9 @@ orbs:
   slack: circleci/slack@4.0.2
 
 jobs:
-
   build-and-test:
     macos:
-      xcode: 11.1.0 # Specify the Xcode version to use
+      xcode: 11.2.1 # Specify the Xcode version to use
 
     steps:
       - checkout
@@ -28,11 +27,15 @@ jobs:
             - cocoapods-cache-v4-{{ arch }}-{{ .Branch }}-{{ checksum "Podfile.lock" }}
             - cocoapods-cache-v4-{{ arch }}-{{ .Branch }}
             - cocoapods-cache-v4
+            - 1-gems-{{ checksum "Gemfile.lock" }}
+
+      # install Gemfile
+      - run: bundle check || bundle install --path vendor/bundle --clean
 
       # install CocoaPods - using default CocoaPods version, not the bundle
       - run:
           name: Repo Update & Install CocoaPods
-          command: make pod-install
+          command: bundle exec pod install
 
       # save pods related files
       - save_cache:
@@ -41,6 +44,7 @@ jobs:
           paths:
             - ./Pods
             - ~/.cocoapods
+            - vendor/bundle
 
       - run:
           name: Install SwiftLint
