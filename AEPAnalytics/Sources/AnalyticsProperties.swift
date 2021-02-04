@@ -43,9 +43,6 @@ struct AnalyticsProperties {
     /// Indicates if lifecycle timer is running.
     var lifecycleTimerRunning = false
 
-    /// The `DispatchQueue` use to process events in FIFO order and wait for Lifecycle and Acquisition response events.
-    var dispatchQueue: DispatchQueue = DispatchQueue(label: AnalyticsConstants.FRIENDLY_NAME)
-
     /// Instance of `AnalyticsRequestSerializer` used for creating track request.
     var analyticsRequestSerializer = AnalyticsRequestSerializer()
 
