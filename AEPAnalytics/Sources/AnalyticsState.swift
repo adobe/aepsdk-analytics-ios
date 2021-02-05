@@ -121,7 +121,7 @@ class AnalyticsState {
         }
 
         extractHeaders[AnalyticsConstants.EventDataKeys.CONTENT_TYPE_HEADER] = connection.responseHttpHeader(forKey: AnalyticsConstants.EventDataKeys.CONTENT_TYPE_HEADER)
-        extractHeaders[AnalyticsConstants.EventDataKeys.ETAG_HEADER] = connection.responseHttpHeader(forKey: AnalyticsConstants.EventDataKeys.ETAG_HEADER)
+        extractHeaders[AnalyticsConstants.EventDataKeys.ETAG_HEADER] = connection.responseHttpHeader(forKey: AnalyticsConstants.EventDataKeys.ETAG_HEADER_RESPONSE)
         extractHeaders[AnalyticsConstants.EventDataKeys.SERVER_HEADER] = connection.responseHttpHeader(forKey: AnalyticsConstants.EventDataKeys.SERVER_HEADER)
 
         dispatchResponse(response, extractHeaders, hit.host, hit.payload, hit.uniqueEventIdentifier, hit.event)
@@ -428,14 +428,11 @@ class AnalyticsState {
             Log.debug(label: self.LOG_TAG, "queueHit - Queueing the Analytics Hit, privacy status is unknown")
         }
 
-        guard let host = URL(string: host!) else {
-            return
-        }
-
         guard let baseURL = getBaseUrl(version: getVersion) else {
             return
         }
 
+        let host = baseURL
         guard let url = URL(string: "\(baseURL)\(randomIntBound)") else {
             return
         }

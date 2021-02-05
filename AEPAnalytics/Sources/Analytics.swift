@@ -505,7 +505,7 @@ extension Analytics {
         eventData[AnalyticsConstants.EventDataKeys.SERVER_RESPONSE] = response
         eventData[AnalyticsConstants.EventDataKeys.HEADERS_RESPONSE] = headers
         //host info
-        eventData[AnalyticsConstants.EventDataKeys.HIT_HOST] = hitHost
+        eventData[AnalyticsConstants.EventDataKeys.HIT_HOST] = hitHost.absoluteString
         //payload info
         eventData[AnalyticsConstants.EventDataKeys.HIT_URL] = hitUrl
         if !requestEventIdentifier.isEmpty {
