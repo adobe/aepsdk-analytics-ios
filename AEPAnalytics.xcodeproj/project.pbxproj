@@ -25,7 +25,6 @@
 		3DD8E6EB25673BE3009234FD /* TestableExtensionRuntime.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC76C1612534D66300211DE2 /* TestableExtensionRuntime.swift */; };
 		3DD8E6F025676159009234FD /* AnalyticsTestConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1D45B3253F9EE60053CB47 /* AnalyticsTestConstants.swift */; };
 		3DD8E6FC256F0BC2009234FD /* Analytics+Track.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DD8E6FB256F0BC2009234FD /* Analytics+Track.swift */; };
-		3DDC3E8B258AA16700ED05BC /* AnalyticsRequestSerializerTests+Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DDC3E8A258AA16700ED05BC /* AnalyticsRequestSerializerTests+Helper.swift */; };
 		3DDC3E8F258AA1D400ED05BC /* TestIdentifiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DDC3E8E258AA1D400ED05BC /* TestIdentifiable.swift */; };
 		3FBA5746150DF4619268622F /* Pods_AnalyticsSampleApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0E355386B606F5D58291BC54 /* Pods_AnalyticsSampleApp.framework */; };
 		AC277CFE252C23E600987C67 /* Analytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC277CF5252C23E600987C67 /* Analytics.swift */; };
@@ -37,6 +36,7 @@
 		AC76C17B2534D67B00211DE2 /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = AC76C1632534D66300211DE2 /* .swiftlint.yml */; };
 		D639E23625B8B25600955FBA /* Analytics+Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = D639E23525B8B25600955FBA /* Analytics+Version.swift */; };
 		D639E25525B8C70400955FBA /* AnalyticsVersionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D639E23925B8C25500955FBA /* AnalyticsVersionTest.swift */; };
+		D642499925CCF03900ED94F9 /* AnalyticsHitDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = D642499825CCF03900ED94F9 /* AnalyticsHitDatabase.swift */; };
 		D676B38E25928D4F0099E5AC /* TestHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67AC995257874BE000FA306 /* TestHelper.swift */; };
 		D67AC98C2578285F000FA306 /* AnalyticsHitResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67AC98B2578285F000FA306 /* AnalyticsHitResponse.swift */; };
 		D6D5F35925C8806D008148B3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6D5F35825C8806D008148B3 /* AppDelegate.swift */; };
@@ -87,7 +87,6 @@
 		3DD0693E253516EC00877781 /* AnalyticsPropertiesTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsPropertiesTest.swift; sourceTree = "<group>"; };
 		3DD8E6E72566FDEB009234FD /* AnalyticsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsTest.swift; sourceTree = "<group>"; };
 		3DD8E6FB256F0BC2009234FD /* Analytics+Track.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Analytics+Track.swift"; sourceTree = "<group>"; };
-		3DDC3E8A258AA16700ED05BC /* AnalyticsRequestSerializerTests+Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AnalyticsRequestSerializerTests+Helper.swift"; sourceTree = "<group>"; };
 		3DDC3E8E258AA1D400ED05BC /* TestIdentifiable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestIdentifiable.swift; sourceTree = "<group>"; };
 		56DA22A3CE773DE7E7380769 /* Pods_AEPAnalytics.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AEPAnalytics.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		AC277CEE252C23E600987C67 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -104,6 +103,7 @@
 		CE85C4421313D5BBE96D5060 /* Pods-AnalyticsSampleApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AnalyticsSampleApp.debug.xcconfig"; path = "Target Support Files/Pods-AnalyticsSampleApp/Pods-AnalyticsSampleApp.debug.xcconfig"; sourceTree = "<group>"; };
 		D639E23525B8B25600955FBA /* Analytics+Version.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Analytics+Version.swift"; sourceTree = "<group>"; };
 		D639E23925B8C25500955FBA /* AnalyticsVersionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsVersionTest.swift; sourceTree = "<group>"; };
+		D642499825CCF03900ED94F9 /* AnalyticsHitDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsHitDatabase.swift; sourceTree = "<group>"; };
 		D67AC98B2578285F000FA306 /* AnalyticsHitResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsHitResponse.swift; sourceTree = "<group>"; };
 		D67AC995257874BE000FA306 /* TestHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestHelper.swift; sourceTree = "<group>"; };
 		D6D5F35625C8806D008148B3 /* AnalyticsSampleApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AnalyticsSampleApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -233,6 +233,7 @@
 				3DD8E6FB256F0BC2009234FD /* Analytics+Track.swift */,
 				D67AC98B2578285F000FA306 /* AnalyticsHitResponse.swift */,
 				D639E23525B8B25600955FBA /* Analytics+Version.swift */,
+				D642499825CCF03900ED94F9 /* AnalyticsHitDatabase.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -246,7 +247,6 @@
 				3D1D45B3253F9EE60053CB47 /* AnalyticsTestConstants.swift */,
 				D67AC995257874BE000FA306 /* TestHelper.swift */,
 				2ED53FF0255F37D7000F0B23 /* MockNetworking.swift */,
-				3DDC3E8A258AA16700ED05BC /* AnalyticsRequestSerializerTests+Helper.swift */,
 				3DDC3E8E258AA1D400ED05BC /* TestIdentifiable.swift */,
 			);
 			path = TestHelper;
@@ -567,6 +567,7 @@
 				2ED53FE9255F37A4000F0B23 /* AnalyticsHit.swift in Sources */,
 				3DD8E6FC256F0BC2009234FD /* Analytics+Track.swift in Sources */,
 				D639E23625B8B25600955FBA /* Analytics+Version.swift in Sources */,
+				D642499925CCF03900ED94F9 /* AnalyticsHitDatabase.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -580,7 +581,6 @@
 				D639E25525B8C70400955FBA /* AnalyticsVersionTest.swift in Sources */,
 				2ED53FF1255F37D7000F0B23 /* MockNetworking.swift in Sources */,
 				AC3333702536590600BF8A56 /* MockExtension.swift in Sources */,
-				3DDC3E8B258AA16700ED05BC /* AnalyticsRequestSerializerTests+Helper.swift in Sources */,
 				3D1D45B2253F99130053CB47 /* AnalyticsStateTest.swift in Sources */,
 				3DD0693F253516EC00877781 /* AnalyticsPropertiesTest.swift in Sources */,
 				3DD8E6E82566FDEB009234FD /* AnalyticsTest.swift in Sources */,

@@ -82,7 +82,7 @@ extension Analytics {
         let analyticsData: [String: String] = processAnalyticsContextData(analyticsState: analyticsState, trackEventData: trackEventData)
         let analyticsVars = processAnalyticsVars(analyticsState: analyticsState, trackData: trackEventData, timestamp: timeStampInSeconds, analyticsProperties: &analyticsProperties)
         let builtRequest = analyticsProperties.analyticsRequestSerializer.buildRequest(analyticsState: analyticsState, data: analyticsData, vars: analyticsVars)
-
+        analyticsHitDatabase.queue(request: builtRequest)
         /// - TODO: Get analytics hit database and perform following action.
 //        if appendToPlaceHolder {
 //                        analyticsHitsDatabase.updateBackdatedHit(state, builtRequest, timestampInSeconds, eventUniqueIdentifier);
@@ -156,14 +156,12 @@ extension Analytics {
             return analyticsData
         }
 
-        analyticsData.merge(analyticsState.defaultData) {
-            key1, _ in
+        analyticsData.merge(analyticsState.defaultData) { key1, _ in
             return key1
         }
         if let contextData = trackEventData[AnalyticsConstants.EventDataKeys.CONTEXT_DATA] as? [String: String] {
-            analyticsData.merge(contextData) {
-                key1, _ in
-                return key1
+            analyticsData.merge(contextData) { _, value in
+                return value
             }
         }
         if let actionName = trackEventData[AnalyticsConstants.EventDataKeys.TRACK_ACTION] as? String, !actionName.isEmpty {
@@ -171,9 +169,9 @@ extension Analytics {
             let actionKey = isInternalAction ? AnalyticsConstants.ContextDataKeys.INTERNAL_ACTION_KEY : AnalyticsConstants.ContextDataKeys.ACTION_KEY
             analyticsData[actionKey] = actionName
         }
-        var lifecycleSessionStartTimestamp = analyticsState.lifecycleSessionStartTimestamp
+        let lifecycleSessionStartTimestamp = analyticsState.lifecycleSessionStartTimestamp
         if lifecycleSessionStartTimestamp > 0 {
-            var timeSinceLaunchInSeconds = Date.init().timeIntervalSince1970 - lifecycleSessionStartTimestamp
+            let timeSinceLaunchInSeconds = Date.init().timeIntervalSince1970 - lifecycleSessionStartTimestamp
             if timeSinceLaunchInSeconds > 0 && timeSinceLaunchInSeconds.isLessThanOrEqualTo( analyticsState.lifecycleMaxSessionLength) {
                 analyticsData[AnalyticsConstants.ContextDataKeys.TIME_SINCE_LAUNCH_KEY] = "\(timeSinceLaunchInSeconds)"
             }
@@ -227,13 +225,12 @@ extension Analytics {
         }
 
         if analyticsState.isVisitorIdServiceEnabled() {
-            analyticsVars.merge(analyticsState.getAnalyticsIdVisitorParameters()) {
-                key1, _ in
+            analyticsVars.merge(analyticsState.getAnalyticsIdVisitorParameters()) { key1, _ in
                 return key1
             }
         }
 
-        DispatchQueue.main.sync {
+        DispatchQueue.main.async {
             if UIApplication.shared.applicationState == .background {
                 analyticsVars[AnalyticsConstants.Request.CUSTOMER_PERSPECTIVE_KEY] =
                     AnalyticsConstants.APP_STATE_BACKGROUND
@@ -301,7 +298,7 @@ extension Analytics {
         }
 
         var lifecycleSessionData: [String: Any] = [:]
-        lifecycleSessionData[AnalyticsConstants.EventDataKeys.TRACK_ACTION] = AnalyticsConstants.CRASH_INTERNAL_ACTION_NAME
+        lifecycleSessionData[AnalyticsConstants.EventDataKeys.TRACK_ACTION] = AnalyticsConstants.SESSION_INFO_INTERNAL_ACTION_NAME
         lifecycleSessionData[AnalyticsConstants.EventDataKeys.CONTEXT_DATA] = sessionContextData
         lifecycleSessionData[AnalyticsConstants.EventDataKeys.TRACK_INTERNAL] = true
         let backDateTimeStamp = max(Date.init(timeIntervalSince1970: analyticsProperties.getMostRecentHitTimestamp()), analyticsProperties.lifecyclePreviousSessionPauseTimestamp ?? Date.init(timeIntervalSince1970: 0))

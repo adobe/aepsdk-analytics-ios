@@ -31,6 +31,8 @@ public class Analytics: NSObject, Extension {
     private var dispatchQueue: DispatchQueue = DispatchQueue(label: AnalyticsConstants.FRIENDLY_NAME)
     // Maintains the boot up state of sdk. The first shared state update event indicates the boot up completion.
     private var sdkBootUpCompleted = false
+    // TODO: replace with actual Analytics HitDatabase. This is for testing only.
+    private(set) var analyticsHitDatabase = AnalyticsHitDatabase()
 
     // MARK: Extension
 
@@ -38,15 +40,17 @@ public class Analytics: NSObject, Extension {
         self.runtime = runtime
         self.analyticsState = AnalyticsState()
         self.analyticsProperties = AnalyticsProperties.init()
+        self.analyticsHitDatabase = AnalyticsHitDatabase.init()
         super.init()
     }
 
     #if DEBUG
         // internal init added for tests
-        internal init(runtime: ExtensionRuntime, state: AnalyticsState, properties: AnalyticsProperties) {
+        internal init(runtime: ExtensionRuntime, state: AnalyticsState, properties: AnalyticsProperties, hitDatabase: AnalyticsHitDatabase) {
             self.runtime = runtime
             self.analyticsState = state
             self.analyticsProperties = properties
+            self.analyticsHitDatabase = hitDatabase
             super.init()
         }
 

@@ -19,6 +19,7 @@ enum AnalyticsConstants {
     static let EXTENSION_VERSION                        = "0.0.1"
     static let DATASTORE_NAME                           = EXTENSION_NAME
     static let CRASH_INTERNAL_ACTION_NAME               = "Crash"
+    static let SESSION_INFO_INTERNAL_ACTION_NAME        = "Session"
     static let IGNORE_PAGE_NAME_VALUE                   = "lnk_o"
     static let ACTION_PREFIX                            = "AMACTION:"
     static let INTERNAL_ACTION_PREFIX                   = "ADBINTERNAL:"

@@ -23,6 +23,8 @@ class AnalyticsTest : XCTestCase {
     var dataStore: NamedCollectionDataStore!
     var analyticsProperties: AnalyticsProperties!
     var analyticsState: AnalyticsState!
+    var analyticsHitDatabase: AnalyticsHitDatabase!
+
     static let responseAid = "7A57620BB5CA4754-30BDF2392F2416C7"
 
     static let aidResponse = """
@@ -43,13 +45,16 @@ class AnalyticsTest : XCTestCase {
     }
     """
 
+    static let referrerData = ["a.referrer.campaign.trackingcode": "1234567890","a.launch.campaign.trackingcode": "1234567890","a.referrer.campaign.name": "myLink","a.referrer.campaign.source": "mycompany","a.launch.campaign.source": "mycompany","a.acquisition.custom.amo1.key1": "amo1.value1","a.acquisition.custom.amo1.key2": "amo1.value2"]
+
     override func setUp() {
         // setup test variables
         ServiceProvider.shared.networkService = MockNetworking()
         testableExtensionRuntime = TestableExtensionRuntime()
+        analyticsHitDatabase = AnalyticsHitDatabase()
         analyticsState = AnalyticsState()
         analyticsProperties = AnalyticsProperties.init()
-        analytics = Analytics(runtime: testableExtensionRuntime, state: analyticsState, properties: analyticsProperties)
+        analytics = Analytics(runtime: testableExtensionRuntime, state: analyticsState, properties: analyticsProperties, hitDatabase: analyticsHitDatabase)
         dataStore = analyticsProperties.dataStore
         analytics.onRegistered()
     }
@@ -80,12 +85,13 @@ class AnalyticsTest : XCTestCase {
         // add lifecycle data
         let sessionStartTimestamp: TimeInterval = 1000
         let lifecycleMaxSessionLength: TimeInterval = 2000
-        let os = "Android"
-        let deviceName = "Pixel"
-        let deviceResolution = "1024 * 1024"
-        let carrierName = "Verizon"
+        let os = "iOS"
+        let deviceName = "iPhone 12 Pro Max"
+        let deviceResolution = "1284 * 2778"
+        let carrierName = "Adobe"
         let runMode = "run mode"
         let appId = "1234"
+        let locale = "en-US"
 
         var lifecycleContextData = [String: String]()
         lifecycleContextData[AnalyticsTestConstants.Lifecycle.EventDataKeys.OPERATING_SYSTEM] = os
@@ -94,6 +100,7 @@ class AnalyticsTest : XCTestCase {
         lifecycleContextData[AnalyticsTestConstants.Lifecycle.EventDataKeys.CARRIER_NAME] = carrierName
         lifecycleContextData[AnalyticsTestConstants.Lifecycle.EventDataKeys.RUN_MODE] = runMode
         lifecycleContextData[AnalyticsTestConstants.Lifecycle.EventDataKeys.APP_ID] = appId
+        lifecycleContextData[AnalyticsTestConstants.Lifecycle.EventDataKeys.LOCALE] = locale
 
         var lifecycleData = [String: Any]()
         lifecycleData[AnalyticsTestConstants.Lifecycle.EventDataKeys.SESSION_START_TIMESTAMP] = sessionStartTimestamp
@@ -150,9 +157,9 @@ class AnalyticsTest : XCTestCase {
     }
 
     // set testing settings via configuration response event
-    private func dispatchConfigurationEventForTesting(rsid: String?, host: String?, privacyStatus: PrivacyStatus, mockNetworkService: MockNetworking) {
+    private func dispatchConfigurationEventForTesting(rsid: String?, host: String?, privacyStatus: PrivacyStatus, backDateSession: Bool, offlineEnabled: Bool, mockNetworkService: MockNetworking?) {
         // setup configuration data
-        let configData = [AnalyticsTestConstants.Configuration.EventDataKeys.GLOBAL_PRIVACY: privacyStatus.rawValue, AnalyticsTestConstants.Configuration.EventDataKeys.ANALYTICS_REPORT_SUITES: rsid as Any, AnalyticsTestConstants.Configuration.EventDataKeys.ANALYTICS_SERVER: host as Any] as [String: Any]
+        let configData = [AnalyticsTestConstants.Configuration.EventDataKeys.GLOBAL_PRIVACY: privacyStatus.rawValue, AnalyticsTestConstants.Configuration.EventDataKeys.ANALYTICS_REPORT_SUITES: rsid as Any, AnalyticsTestConstants.Configuration.EventDataKeys.ANALYTICS_SERVER: host as Any, AnalyticsTestConstants.Configuration.EventDataKeys.ANALYTICS_OFFLINE_TRACKING: offlineEnabled, AnalyticsTestConstants.Configuration.EventDataKeys.ANALYTICS_BACKDATE_PREVIOUS_SESSION: backDateSession] as [String: Any]
         // create a configuration event with the created event data
         let configEvent = Event(name: "configuration response event", type: EventType.configuration, source: EventSource.responseContent, data: configData)
         testableExtensionRuntime.simulateSharedState(extensionName: AnalyticsTestConstants.Configuration.EventDataKeys.SHARED_STATE_NAME, event: configEvent, data: (configData, .set))
@@ -162,7 +169,9 @@ class AnalyticsTest : XCTestCase {
 
         // clear network requests and created shared states as an analytics id request will be sent on the first valid configuration response event.
         sleep(1)
-        mockNetworkService.calledNetworkRequests.removeAll()
+        if mockNetworkService != nil {
+            mockNetworkService?.calledNetworkRequests.removeAll()
+        }
         testableExtensionRuntime.createdSharedStates.removeAll()
     }
 
@@ -385,7 +394,7 @@ class AnalyticsTest : XCTestCase {
         // setup
         let mockNetworkService = ServiceProvider.shared.networkService as! MockNetworking
         let data = [AnalyticsConstants.EventDataKeys.VISITOR_IDENTIFIER: "testVid"] as [String: Any]
-        dispatchConfigurationEventForTesting(rsid: "testRsid", host: "testAnalyticsServer.com", privacyStatus: .optedOut, mockNetworkService: mockNetworkService)
+        dispatchConfigurationEventForTesting(rsid: "testRsid", host: "testAnalyticsServer.com", privacyStatus: .optedOut, backDateSession: true, offlineEnabled: true, mockNetworkService: mockNetworkService)
         // create the analytics request identity event with the data
         let event = Event(name: "Test Analytics request identity", type: EventType.analytics, source: EventSource.requestIdentity, data: data)
         let _ = analytics.readyForEvent(event)
@@ -405,7 +414,7 @@ class AnalyticsTest : XCTestCase {
         // setup
         let mockNetworkService = ServiceProvider.shared.networkService as! MockNetworking
         setDefaultResponse(responseData: AnalyticsTest.aidResponse.data(using: .utf8), expectedUrlFragment: "https://testAnalyticsServer.com", statusCode: 200, mockNetworkService: mockNetworkService)
-        dispatchConfigurationEventForTesting(rsid: "testRsid", host: "testAnalyticsServer.com", privacyStatus: .optedIn, mockNetworkService: mockNetworkService)
+        dispatchConfigurationEventForTesting(rsid: "testRsid", host: "testAnalyticsServer.com", privacyStatus: .optedIn, backDateSession: true, offlineEnabled: true, mockNetworkService: mockNetworkService)
         // create the analytics request identity event with the data
         let event = Event(name: "Test Analytics request identity", type: EventType.analytics, source: EventSource.requestIdentity, data: nil)
         let _ = analytics.readyForEvent(event)
@@ -434,7 +443,7 @@ class AnalyticsTest : XCTestCase {
         // setup
         let mockNetworkService = ServiceProvider.shared.networkService as! MockNetworking
         setDefaultResponse(responseData: AnalyticsTest.invalidAidResponse.data(using: .utf8), expectedUrlFragment: "https://testAnalyticsServer.com", statusCode: 200, mockNetworkService: mockNetworkService)
-        dispatchConfigurationEventForTesting(rsid: "testRsid", host: "testAnalyticsServer.com", privacyStatus: .optedIn, mockNetworkService: mockNetworkService)
+        dispatchConfigurationEventForTesting(rsid: "testRsid", host: "testAnalyticsServer.com", privacyStatus: .optedIn, backDateSession: true, offlineEnabled: true, mockNetworkService: mockNetworkService)
         // create the analytics request identity event with the data
         let event = Event(name: "Test Analytics request identity", type: EventType.analytics, source: EventSource.requestIdentity, data: nil)
         let _ = analytics.readyForEvent(event)
@@ -464,7 +473,7 @@ class AnalyticsTest : XCTestCase {
         // setup
         let mockNetworkService = ServiceProvider.shared.networkService as! MockNetworking
         setDefaultResponse(responseData: AnalyticsTest.noAIDResponse.data(using: .utf8), expectedUrlFragment: "https://testAnalyticsServer.com", statusCode: 200, mockNetworkService: mockNetworkService)
-        dispatchConfigurationEventForTesting(rsid: "testRsid", host: "testAnalyticsServer.com", privacyStatus: .optedIn, mockNetworkService: mockNetworkService)
+        dispatchConfigurationEventForTesting(rsid: "testRsid", host: "testAnalyticsServer.com", privacyStatus: .optedIn, backDateSession: true, offlineEnabled: true, mockNetworkService: mockNetworkService)
         // create the analytics request identity event with the data
         let event = Event(name: "Test Analytics request identity", type: EventType.analytics, source: EventSource.requestIdentity, data: nil)
         let _ = analytics.readyForEvent(event)
@@ -493,7 +502,7 @@ class AnalyticsTest : XCTestCase {
     func testHandleAnalyticsRequestIdentityEventWithNoVid_WhenPrivacyOptedOut() {
         // setup
         let mockNetworkService = ServiceProvider.shared.networkService as! MockNetworking
-        dispatchConfigurationEventForTesting(rsid: "testRsid", host: "testAnalyticsServer.com", privacyStatus: .optedOut, mockNetworkService: mockNetworkService)
+        dispatchConfigurationEventForTesting(rsid: "testRsid", host: "testAnalyticsServer.com", privacyStatus: .optedOut, backDateSession: true, offlineEnabled: true, mockNetworkService: mockNetworkService)
         // create the analytics request identity event with the data
         let event = Event(name: "Test Analytics request identity", type: EventType.analytics, source: EventSource.requestIdentity, data: nil)
         let _ = analytics.readyForEvent(event)
@@ -520,7 +529,7 @@ class AnalyticsTest : XCTestCase {
     func testHandleAnalyticsRequestIdentityEventWithNoVid_WhenPrivacyUnknown() {
         // setup
         let mockNetworkService = ServiceProvider.shared.networkService as! MockNetworking
-        dispatchConfigurationEventForTesting(rsid: "testRsid", host: "testAnalyticsServer.com", privacyStatus: .unknown, mockNetworkService: mockNetworkService)
+        dispatchConfigurationEventForTesting(rsid: "testRsid", host: "testAnalyticsServer.com", privacyStatus: .unknown, backDateSession: true, offlineEnabled: true, mockNetworkService: mockNetworkService)
         // create the analytics request identity event with the data
         let event = Event(name: "Test Analytics request identity", type: EventType.analytics, source: EventSource.requestIdentity, data: nil)
         let _ = analytics.readyForEvent(event)
@@ -571,5 +580,142 @@ class AnalyticsTest : XCTestCase {
         let responseEvent = testableExtensionRuntime.dispatchedEvents.first(where: { $0.responseID == event.id })
         XCTAssertEqual(1, responseEvent?.data?.count)
         XCTAssertEqual(AnalyticsTest.responseAid, (responseEvent?.data?[AnalyticsConstants.EventDataKeys.ANALYTICS_ID] as? String))
+    }
+
+    // ==========================================================================
+    // handleAcquisitionEvent
+    // ==========================================================================
+    // TODO: add test case for acquisition response content event handled while referrer timer is running
+    func testHandleAcquisitionResponseContentEvent() {
+        // setup
+        dispatchConfigurationEventForTesting(rsid: "testRsid", host: "testAnalyticsServer.com", privacyStatus: .optedIn, backDateSession: true, offlineEnabled: true, mockNetworkService: nil)
+        // setup shared state data for lifecycle, identity, places, and assurance
+        addSharedStateDataToAnalyticsState()
+        let data = [AnalyticsConstants.EventDataKeys.CONTEXT_DATA: AnalyticsTest.referrerData] as [String: Any]
+        // create the acquisition response content event with the data
+        let event = Event(name: "Test Acquisition response content", type: EventType.acquisition, source: EventSource.responseContent, data: data)
+        let _ = analytics.readyForEvent(event)
+
+        // test
+        simulateComingEventAndWait(event)
+
+        // verify built request contains the expected data
+        XCTAssertEqual(1, analyticsHitDatabase.trackRequests?.count)
+        let contextData = AnalyticsDataProcessor.getContextData(source: analyticsHitDatabase.trackRequests?[0] ?? "")
+        XCTAssertTrue(contextData.contains("&c."))
+        XCTAssertTrue(contextData.contains("&.c"))
+        // verify acquisition context data
+        XCTAssertTrue(contextData.contains("&launch.&campaign."))
+        XCTAssertTrue(contextData.contains("&trackingcode=1234567890"))
+        XCTAssertTrue(contextData.contains("&source=mycompany"))
+        XCTAssertTrue(contextData.contains("&.campaign&.launch"))
+        XCTAssertTrue(contextData.contains("&referrer.&campaign."))
+        XCTAssertTrue(contextData.contains("&trackingcode=1234567890"))
+        XCTAssertTrue(contextData.contains("&source=mycompany"))
+        XCTAssertTrue(contextData.contains("&name=myLink"))
+        XCTAssertTrue(contextData.contains("&.campaign&.referrer"))
+        XCTAssertTrue(contextData.contains("&acquisition.&custom.&amo1."))
+        XCTAssertTrue(contextData.contains("&key2=amo1.value2"))
+        XCTAssertTrue(contextData.contains("&key1=amo1.value1"))
+        XCTAssertTrue(contextData.contains("&.amo1&.custom&.acquisition"))
+        XCTAssertTrue(contextData.contains("&internalaction=AdobeLink"))
+        // verify places context data
+        XCTAssertTrue(contextData.contains("&loc."))
+        XCTAssertTrue(contextData.contains("&poi=regionName"))
+        XCTAssertTrue(contextData.contains("&poi.&id=regionId&.poi"))
+        XCTAssertTrue(contextData.contains("&.loc"))
+        // verify lifecycle context data
+        XCTAssertTrue(contextData.contains("&a."))
+        XCTAssertTrue(contextData.contains("&.a"))
+
+        XCTAssertTrue(contextData.contains("&OSVersion=iOS"))
+        XCTAssertTrue(contextData.contains("&DeviceName=iPhone%2012%20Pro%20Max"))
+        XCTAssertTrue(contextData.contains("&Resolution=1284%20*%202778"))
+        XCTAssertTrue(contextData.contains("&CarrierName=Adobe"))
+        XCTAssertTrue(contextData.contains("&RunMode=run%20mode"))
+        XCTAssertTrue(contextData.contains("&AppID=1234"))
+    }
+
+    // ==========================================================================
+    // handleLifecycleEvent
+    // ==========================================================================
+    // TODO: add test cases for Generic Lifecycle Request Content (start / pause events)
+    // TODO: add additional test cases for Lifecycle Response content events
+    func testHandleLifecycleResponseContentEvent_OfflineAndBackdateSessionEnabled_SessionEvent() {
+        // setup
+        // set backdate session and offline enabled to true
+        dispatchConfigurationEventForTesting(rsid: "testRsid", host: "testAnalyticsServer.com", privacyStatus: .optedIn, backDateSession: true, offlineEnabled: true, mockNetworkService: nil)
+        // setup shared state data for lifecycle, identity, places, and assurance
+        addSharedStateDataToAnalyticsState()
+        // create lifecycle event data
+        let lifecycleContextData = ["previoussessionpausetimestampmillis":"0","previoussessionstarttimestampmillis":"1600367248","starttimestampmillis":"1600371801","maxsessionlength":"604800","sessionevent":"start","prevsessionlength":"700000","previousosversion":"previousOsVersion","previousappid":"previousAppId"] as [String: String]
+        let eventData = ["lifecyclecontextdata":lifecycleContextData] as [String: Any]
+        // create the lifecycle response content event with the data
+        let event = Event(name: "Test Lifecycle response content", type: EventType.lifecycle, source: EventSource.responseContent, data: eventData)
+        let _ = analytics.readyForEvent(event)
+
+        // test
+        simulateComingEventAndWait(event)
+
+        // verify built request contains the expected data
+        XCTAssertEqual(1, analyticsHitDatabase.trackRequests?.count)
+        let contextData = AnalyticsDataProcessor.getContextData(source: analyticsHitDatabase.trackRequests?[0] ?? "")
+        XCTAssertTrue(contextData.contains("&c."))
+        XCTAssertTrue(contextData.contains("&.c"))
+        // verify places context data
+        XCTAssertTrue(contextData.contains("&loc."))
+        XCTAssertTrue(contextData.contains("&poi=regionName"))
+        XCTAssertTrue(contextData.contains("&poi.&id=regionId&.poi"))
+        XCTAssertTrue(contextData.contains("&.loc"))
+        // verify lifecycle context data
+        XCTAssertTrue(contextData.contains("&a."))
+        XCTAssertTrue(contextData.contains("&.a"))
+        XCTAssertTrue(contextData.contains("&OSVersion=previousOsVersion"))
+        XCTAssertTrue(contextData.contains("&DeviceName=iPhone%2012%20Pro%20Max"))
+        XCTAssertTrue(contextData.contains("&Resolution=1284%20*%202778"))
+        XCTAssertTrue(contextData.contains("&CarrierName=Adobe"))
+        XCTAssertTrue(contextData.contains("&RunMode=run%20mode"))
+        XCTAssertTrue(contextData.contains("&AppID=previousAppId"))
+        XCTAssertTrue(contextData.contains("&PrevSessionLength=70000"))
+        XCTAssertTrue(contextData.contains("&internalaction=Session"))
+    }
+
+    func testHandleLifecycleResponseContentEvent_OfflineAndBackdateSessionEnabled_CrashEvent() {
+        // setup
+        // set backdate session and offline enabled to true
+        dispatchConfigurationEventForTesting(rsid: "testRsid", host: "testAnalyticsServer.com", privacyStatus: .optedIn, backDateSession: true, offlineEnabled: true, mockNetworkService: nil)
+        // setup shared state data for lifecycle, identity, places, and assurance
+        addSharedStateDataToAnalyticsState()
+        // create lifecycle event data
+        let lifecycleContextData = ["crashevent":"a.CrashEvent","previousosversion":"previousOsVersion","previousappid":"previousAppId"] as [String: String]
+        let eventData = ["lifecyclecontextdata":lifecycleContextData] as [String: Any]
+        // create the lifecycle response content event with the data
+        let event = Event(name: "Test Lifecycle response content", type: EventType.lifecycle, source: EventSource.responseContent, data: eventData)
+        let _ = analytics.readyForEvent(event)
+
+        // test
+        simulateComingEventAndWait(event)
+
+        // verify built request contains the expected data
+        XCTAssertEqual(1, analyticsHitDatabase.trackRequests?.count)
+        let contextData = AnalyticsDataProcessor.getContextData(source: analyticsHitDatabase.trackRequests?[0] ?? "")
+        XCTAssertTrue(contextData.contains("&c."))
+        XCTAssertTrue(contextData.contains("&.c"))
+        // verify places context data
+        XCTAssertTrue(contextData.contains("&loc."))
+        XCTAssertTrue(contextData.contains("&poi=regionName"))
+        XCTAssertTrue(contextData.contains("&poi.&id=regionId&.poi"))
+        XCTAssertTrue(contextData.contains("&.loc"))
+        // verify lifecycle context data
+        XCTAssertTrue(contextData.contains("&a."))
+        XCTAssertTrue(contextData.contains("&.a"))
+        XCTAssertTrue(contextData.contains("&OSVersion=previousOsVersion"))
+        XCTAssertTrue(contextData.contains("&DeviceName=iPhone%2012%20Pro%20Max"))
+        XCTAssertTrue(contextData.contains("&Resolution=1284%20*%202778"))
+        XCTAssertTrue(contextData.contains("&CarrierName=Adobe"))
+        XCTAssertTrue(contextData.contains("&RunMode=run%20mode"))
+        XCTAssertTrue(contextData.contains("&AppID=previousAppId"))
+        XCTAssertTrue(contextData.contains("&CrashEvent=CrashEvent"))
+        XCTAssertTrue(contextData.contains("&internalaction=Crash"))
     }
 }

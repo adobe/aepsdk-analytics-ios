@@ -20,13 +20,15 @@ class AnalyticsVersionTest : XCTestCase {
     var analytics: Analytics!
     var analyticsProperties: AnalyticsProperties!
     var analyticsState: AnalyticsState!
+    var analyticsHitDatabase: AnalyticsHitDatabase!
 
     override func setUp() {
         // setup test variables
         testableExtensionRuntime = TestableExtensionRuntime()
         analyticsState = AnalyticsState()
         analyticsProperties = AnalyticsProperties.init()
-        analytics = Analytics(runtime: testableExtensionRuntime, state: analyticsState, properties: analyticsProperties)
+        analyticsHitDatabase = AnalyticsHitDatabase.init()
+        analytics = Analytics(runtime: testableExtensionRuntime, state: analyticsState, properties: analyticsProperties, hitDatabase: analyticsHitDatabase)
         analytics.onRegistered()
     }
 

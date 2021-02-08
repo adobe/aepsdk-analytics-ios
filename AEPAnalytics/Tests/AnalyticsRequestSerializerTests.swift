@@ -63,18 +63,18 @@ class AnalyticsRequestSerializerTests : XCTestCase {
         data["testKey2"] = "val2"
 
         let result = analyticsRequestSerializer.buildRequest(analyticsState: analyticsState, data: data, vars: vars)
-        let contextData = getContextData(source: result)
+        let contextData = AnalyticsDataProcessor.getContextData(source: result)
         XCTAssertTrue(contextData.contains("&c."))
         XCTAssertTrue(contextData.contains("&.c"))
         XCTAssertTrue(contextData.contains("&testKey1=val1"))
         XCTAssertTrue(contextData.contains("&testKey2=val2"))
-        let additionalData = getAdditionalData(source: result)
+        let additionalData = AnalyticsDataProcessor.getAdditionalData(source: result)
         let splitAddionalData = additionalData.split(separator: "&")
         XCTAssertTrue(splitAddionalData.count == 3)
         XCTAssertTrue(additionalData.starts(with: "ndh=1"))
         XCTAssertTrue(additionalData.contains("&v2=evar2Value"))
         XCTAssertTrue(additionalData.contains("&v1=evar1Value"))
-        XCTAssertTrue(getCidData(source: result).isEmpty)
+        XCTAssertTrue(AnalyticsDataProcessor.getCidData(source: result).isEmpty)
     }
 
     func testBuildRequestWhenNullDataAndValidVars() {
@@ -82,8 +82,8 @@ class AnalyticsRequestSerializerTests : XCTestCase {
         vars["v1"] = "evar1Value"
         vars["v2"] = "evar2Value"
         let result = analyticsRequestSerializer.buildRequest(analyticsState: analyticsState, data: nil, vars: vars)
-        XCTAssertTrue(getCidData(source: result).isEmpty)
-        XCTAssertTrue(getContextData(source: result).isEmpty)        
+        XCTAssertTrue(AnalyticsDataProcessor.getCidData(source: result).isEmpty)
+        XCTAssertTrue(AnalyticsDataProcessor.getContextData(source: result).isEmpty)
     }
 
     func testBuildRequestWhenValidDataAndNullVars() {
@@ -92,14 +92,14 @@ class AnalyticsRequestSerializerTests : XCTestCase {
         data["testKey2"] = "val2"
         let result = analyticsRequestSerializer.buildRequest(analyticsState: analyticsState, data: data, vars: nil)
 
-        let contextData = getContextData(source: result)
+        let contextData = AnalyticsDataProcessor.getContextData(source: result)
         XCTAssertTrue(contextData.contains("&c."))
         XCTAssertTrue(contextData.contains("&.c"))
         XCTAssertTrue(contextData.contains("&testKey1=val1"))
         XCTAssertTrue(contextData.contains("&testKey2=val2"))
-        let additionalData = getAdditionalData(source: result)
+        let additionalData = AnalyticsDataProcessor.getAdditionalData(source: result)
         XCTAssertEqual("ndh=1", additionalData)
-        XCTAssertTrue(getCidData(source: result).isEmpty)
+        XCTAssertTrue(AnalyticsDataProcessor.getCidData(source: result).isEmpty)
     }
 
     func testBuildRequestWhenNullDataAndNullVars() {
@@ -142,14 +142,14 @@ class AnalyticsRequestSerializerTests : XCTestCase {
         vars["v1"] = "evar1Value"
 
         let result = analyticsRequestSerializer.buildRequest(analyticsState: analyticsState, data: data, vars: vars)
-        let additionalData = getAdditionalData(source: result)
+        let additionalData = AnalyticsDataProcessor.getAdditionalData(source: result)
         let splitAddionalData = additionalData.split(separator: "&")
         XCTAssertTrue(splitAddionalData.count == 3)
         XCTAssertTrue(additionalData.starts(with: "ndh=1"))
         XCTAssertTrue(additionalData.contains("&key1=val1"))
         XCTAssertTrue(additionalData.contains("&v1=evar1Value"))        
-        XCTAssertEqual("&c.&key2=val2&.c", getContextData(source: result))
-        XCTAssertTrue(getCidData(source: result).isEmpty)
+        XCTAssertEqual("&c.&key2=val2&.c", AnalyticsDataProcessor.getContextData(source: result))
+        XCTAssertTrue(AnalyticsDataProcessor.getCidData(source: result).isEmpty)
     }
 
     func testBuildRequestWithVisitorIdList() {
@@ -171,9 +171,9 @@ class AnalyticsRequestSerializerTests : XCTestCase {
         analyticsState.marketingCloudOrganizationId = "orgID"
 
         let result = analyticsRequestSerializer.buildRequest(analyticsState: analyticsState, data: data, vars: vars)
-        XCTAssertEqual("ndh=1&v1=evar1Value", getAdditionalData(source: result))
-        XCTAssertEqual("&c.&key1=val1&.c", getContextData(source: result))
-        let cidData = getCidData(source: result)
+        XCTAssertEqual("ndh=1&v1=evar1Value", AnalyticsDataProcessor.getAdditionalData(source: result))
+        XCTAssertEqual("&c.&key1=val1&.c", AnalyticsDataProcessor.getContextData(source: result))
+        let cidData = AnalyticsDataProcessor.getCidData(source: result)
         let splittedCidData = cidData.split(separator: "&")
         XCTAssertTrue(splittedCidData.count == 6)
         XCTAssertTrue(cidData.starts(with: "&cid."))
