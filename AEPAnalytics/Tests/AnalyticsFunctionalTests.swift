@@ -318,7 +318,7 @@ class AnalyticsFunctionalTests: XCTestCase {
             actualVid = vid ?? ""
             semaphore.signal()
         }
-        
+
         // verify
         semaphore.wait()
         XCTAssertEqual(expectedvid, actualVid)
