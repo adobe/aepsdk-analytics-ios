@@ -13,9 +13,11 @@ import Foundation
 
 class AnalyticsHitDatabase {
     var trackRequests: [String]?
+    var isHitWaiting: Bool
 
     init() {
         trackRequests = [String]()
+        isHitWaiting = false
     }
 
     func queue(request: String) {

@@ -114,8 +114,7 @@ extension Analytics {
 
         var lifecycleContextData: [String: String] = [:]
 
-        eventLifecycleContextData.forEach {
-            eventDataKey, value in
+        eventLifecycleContextData.forEach { eventDataKey, value in
             if AnalyticsConstants.MAP_EVENT_DATA_KEYS_TO_CONTEXT_DATA_KEYS.keys.contains(eventDataKey) {
                 if let contextDataKey = AnalyticsConstants.MAP_EVENT_DATA_KEYS_TO_CONTEXT_DATA_KEYS[eventDataKey] {
                     lifecycleContextData[contextDataKey] = value
@@ -141,6 +140,20 @@ extension Analytics {
                 let previousSessionLength: String? = lifecycleContextData.removeValue(forKey: AnalyticsConstants.ContextDataKeys.PREVIOUS_SESSION_LENGTH)
                 backdateLifecycleSessionInfo(analyticsState: analyticsState, previousSessionLength: previousSessionLength, previousOSVersion: previousOsVersion, previousAppIdVersion: previousAppIdVersion, eventUniqueIdentifier: "\(event.id)", analyticsProperties: &analyticsProperties)
             }
+        }
+
+        // track the lifecycle data
+        if analyticsProperties.lifecycleTimerRunning && analyticsHitDatabase.isHitWaiting {
+            analyticsProperties.cancelReferrerTimer()
+            /// - TODO: Get analytics hit database and perform following action.
+            // hit_database->KickWithAdditionalData(state, lifecycle_context_data);
+        } else {
+            analyticsProperties.cancelReferrerTimer()
+            var lifecycleData: [String: Any] = [:]
+            lifecycleData[AnalyticsConstants.EventDataKeys.TRACK_ACTION] = AnalyticsConstants.LIFECYCLE_INTERNAL_ACTION_NAME
+            lifecycleData[AnalyticsConstants.EventDataKeys.CONTEXT_DATA] = lifecycleContextData
+            lifecycleData[AnalyticsConstants.EventDataKeys.TRACK_INTERNAL] = true
+            track(analyticsState: analyticsState, trackEventData: lifecycleData, timeStampInSeconds: analyticsProperties.getMostRecentHitTimestamp() + 1, appendToPlaceHolder: false, eventUniqueIdentifier: "\(event.id)", analyticsProperties: &analyticsProperties)
         }
     }
 
