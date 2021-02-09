@@ -58,9 +58,7 @@ class AnalyticsFunctionalTests: XCTestCase {
     }
 
     func setupConfiguration(){
-        MobileCore.updateConfigurationWith(configDict: [AnalyticsFunctionalTests.GLOBAL_CONFIG_PRIVACY: "optedin", AnalyticsFunctionalTests.BACKDATE_SESSION_INFO: false, AnalyticsFunctionalTests.OFFLINE_ENABLED: true, AnalyticsFunctionalTests.EXPERIENCE_CLOUD_ORGID: "testOrg@AdobeOrg", "experienceCloud.server": "identityTestServer.com", AnalyticsFunctionalTests.ANALYTICS_SERVER: "testserver.com",  AnalyticsFunctionalTests.ANALYTICS_REPORT_SUITES: "rsid1", AnalyticsFunctionalTests.AAM_FORWARDING_ENABLED: false,
-                                                        AnalyticsFunctionalTests.BATCH_LIMIT: 0, AnalyticsFunctionalTests.IDENTITY_ORG_ID: "972C898555E9F7BC7F000101@AdobeOrg"])
-//        MobileCore.updateConfigurationWith(configDict: [AnalyticsFunctionalTests.GLOBAL_CONFIG_PRIVACY: privacyStatus, AnalyticsFunctionalTests.IDENTITIY_ADID_ENABLED: true, AnalyticsFunctionalTests.IDENTITY_ORG_ID: "972C898555E9F7BC7F000101@AdobeOrg", AnalyticsFunctionalTests.IDENTITY_SERVER: "identity.com"])
+        MobileCore.updateConfigurationWith(configDict: [AnalyticsFunctionalTests.GLOBAL_CONFIG_PRIVACY: "optedin", AnalyticsFunctionalTests.BACKDATE_SESSION_INFO: false, AnalyticsFunctionalTests.OFFLINE_ENABLED: true, AnalyticsFunctionalTests.EXPERIENCE_CLOUD_ORGID: "testOrg@AdobeOrg", "experienceCloud.server": "identityTestServer.com", AnalyticsFunctionalTests.ANALYTICS_SERVER: "testserver.com",  AnalyticsFunctionalTests.ANALYTICS_REPORT_SUITES: "rsid1", AnalyticsFunctionalTests.AAM_FORWARDING_ENABLED: false, AnalyticsFunctionalTests.BATCH_LIMIT: 0, AnalyticsFunctionalTests.IDENTITY_ORG_ID: "972C898555E9F7BC7F000101@AdobeOrg"])
         sleep(1)
     }
 
