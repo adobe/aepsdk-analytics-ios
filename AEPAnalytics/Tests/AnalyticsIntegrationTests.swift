@@ -15,7 +15,7 @@ import XCTest
 import AEPAnalytics
 import AEPIdentity
 
-class AnalyticsFunctionalTests: XCTestCase {
+class AnalyticsIntegrationTests: XCTestCase {
 
     static let EXPERIENCE_CLOUD_ORGID = "experienceCloud.org"
     static let GLOBAL_CONFIG_PRIVACY = "global.privacy"
@@ -30,6 +30,7 @@ class AnalyticsFunctionalTests: XCTestCase {
 
     static let IDENTITY_ORG_ID = "972C898555E9F7BC7F000101@AdobeOrg"
     static let LIFECYCLE_SESSION_TIMEOUT = 10
+    let mockNetworkService = TestableNetworkService()
 
     override func setUp() {
         UserDefaults.clear()
@@ -58,13 +59,18 @@ class AnalyticsFunctionalTests: XCTestCase {
     }
 
     func setupConfiguration(){
-        MobileCore.updateConfigurationWith(configDict: [AnalyticsFunctionalTests.GLOBAL_CONFIG_PRIVACY: "optedin", AnalyticsFunctionalTests.BACKDATE_SESSION_INFO: false, AnalyticsFunctionalTests.OFFLINE_ENABLED: true, AnalyticsFunctionalTests.EXPERIENCE_CLOUD_ORGID: "testOrg@AdobeOrg", "experienceCloud.server": "identityTestServer.com", AnalyticsFunctionalTests.ANALYTICS_SERVER: "testserver.com",  AnalyticsFunctionalTests.ANALYTICS_REPORT_SUITES: "rsid1", AnalyticsFunctionalTests.AAM_FORWARDING_ENABLED: false, AnalyticsFunctionalTests.BATCH_LIMIT: 0, AnalyticsFunctionalTests.IDENTITY_ORG_ID: "972C898555E9F7BC7F000101@AdobeOrg"])
+        MobileCore.updateConfigurationWith(configDict: [AnalyticsIntegrationTests.GLOBAL_CONFIG_PRIVACY: "optedin", AnalyticsIntegrationTests.BACKDATE_SESSION_INFO: false, AnalyticsIntegrationTests.OFFLINE_ENABLED: true, AnalyticsIntegrationTests.EXPERIENCE_CLOUD_ORGID: "testOrg@AdobeOrg", "experienceCloud.server": "identityTestServer.com", AnalyticsIntegrationTests.ANALYTICS_SERVER: "testserver.com",  AnalyticsIntegrationTests.ANALYTICS_REPORT_SUITES: "rsid1", AnalyticsIntegrationTests.AAM_FORWARDING_ENABLED: false, AnalyticsIntegrationTests.BATCH_LIMIT: 0, AnalyticsIntegrationTests.IDENTITY_ORG_ID: "972C898555E9F7BC7F000101@AdobeOrg"])
         sleep(1)
     }
 
     func setupAnalyticsConfiguration(privacyStatus: String, aamForwardingEnabled: Bool, batchLimit: Int, offlineEnabled: Bool, server: String ,rsid: String , launchHitDelay: Int ) {
-        MobileCore.updateConfigurationWith(configDict: [AnalyticsFunctionalTests.GLOBAL_CONFIG_PRIVACY: privacyStatus, AnalyticsFunctionalTests.AAM_FORWARDING_ENABLED: aamForwardingEnabled, AnalyticsFunctionalTests.BATCH_LIMIT: batchLimit, AnalyticsFunctionalTests.OFFLINE_ENABLED: offlineEnabled, AnalyticsFunctionalTests.ANALYTICS_SERVER: server, AnalyticsFunctionalTests.ANALYTICS_REPORT_SUITES: rsid, AnalyticsFunctionalTests.LAUNCH_HIT_DELAY: launchHitDelay, AnalyticsFunctionalTests.EXPERIENCE_CLOUD_ORGID: "testOrg@AdobeOrg", "experienceCloud.server": "identityTestServer.com",])
+        MobileCore.updateConfigurationWith(configDict: [AnalyticsIntegrationTests.GLOBAL_CONFIG_PRIVACY: privacyStatus, AnalyticsIntegrationTests.AAM_FORWARDING_ENABLED: aamForwardingEnabled, AnalyticsIntegrationTests.BATCH_LIMIT: batchLimit, AnalyticsIntegrationTests.OFFLINE_ENABLED: offlineEnabled, AnalyticsIntegrationTests.ANALYTICS_SERVER: server, AnalyticsIntegrationTests.ANALYTICS_REPORT_SUITES: rsid, AnalyticsIntegrationTests.LAUNCH_HIT_DELAY: launchHitDelay, AnalyticsIntegrationTests.EXPERIENCE_CLOUD_ORGID: "testOrg@AdobeOrg", "experienceCloud.server": "identityTestServer.com",])
         sleep(1)
+    }
+
+    func setMockNetworkService(){
+        ServiceProvider.shared.networkService = mockNetworkService
+        setDefaultResponse(responseData: nil, expectedUrlFragment: "https://testserver.com", statusCode: 200, mockNetworkService: mockNetworkService)
     }
 
     func setDefaultResponse(responseData: Data?, expectedUrlFragment: String, statusCode: Int, mockNetworkService: TestableNetworkService) {
@@ -78,10 +84,7 @@ class AnalyticsFunctionalTests: XCTestCase {
         // setup
         initExtensionsAndWait()
         setupAnalyticsConfiguration(privacyStatus: "optedin", aamForwardingEnabled: false, batchLimit: 0, offlineEnabled: true, server: "testserver.com", rsid: "rsid1", launchHitDelay: 0)
-        let mockNetworkService = TestableNetworkService()
-        ServiceProvider.shared.networkService = mockNetworkService
-
-        setDefaultResponse(responseData: nil, expectedUrlFragment: "https://testserver.com", statusCode: 200, mockNetworkService: mockNetworkService)
+        setMockNetworkService()
 
         // test
         MobileCore.track(action: "requestAction", data: ["mykey" : "myvalue" ])
@@ -102,10 +105,7 @@ class AnalyticsFunctionalTests: XCTestCase {
         // setup
         initExtensionsAndWait()
         setupAnalyticsConfiguration(privacyStatus: "optedout", aamForwardingEnabled: false, batchLimit: 0, offlineEnabled: true, server: "testserver.com", rsid: "rsid1", launchHitDelay: 0)
-        let mockNetworkService = TestableNetworkService()
-        ServiceProvider.shared.networkService = mockNetworkService
-
-        setDefaultResponse(responseData: nil, expectedUrlFragment: "https://testserver.com", statusCode: 200, mockNetworkService: mockNetworkService)
+        setMockNetworkService()
 
         // test
         MobileCore.track(action: "requestAction", data: ["mykey" : "myvalue" ])
@@ -118,11 +118,9 @@ class AnalyticsFunctionalTests: XCTestCase {
     func ignore_testAnalytics_Track_Unknown_then_Optin() {
         // setup
         initExtensionsAndWait()
-        setupAnalyticsConfiguration(privacyStatus: "unknown", aamForwardingEnabled: false, batchLimit: 0, offlineEnabled: true, server: "testserver.com", rsid: "rsid1", launchHitDelay: 0)
-        let mockNetworkService = TestableNetworkService()
-        ServiceProvider.shared.networkService = mockNetworkService
+        setupAnalyticsConfiguration(privacyStatus: "optedin", aamForwardingEnabled: false, batchLimit: 0, offlineEnabled: true, server: "testserver.com", rsid: "rsid1", launchHitDelay: 0)
+        setMockNetworkService()
 
-        setDefaultResponse(responseData: nil, expectedUrlFragment: "https://testserver.com", statusCode: 200, mockNetworkService: mockNetworkService)
 
         // test
         MobileCore.track(state: "requestState", data: ["mystate" : "myvalue" ])
@@ -132,21 +130,23 @@ class AnalyticsFunctionalTests: XCTestCase {
         XCTAssertEqual(0, mockNetworkService.requests.count)
 
         setupAnalyticsConfiguration(privacyStatus: "optedin", aamForwardingEnabled: false, batchLimit: 0, offlineEnabled: true, server: "testserver.com", rsid: "rsid1", launchHitDelay: 0)
+        //MobileCore.track(state: "requestState", data: ["mystate" : "myvalue" ])
         Analytics.sendQueuedHits()
 
         // verify 2 network request (analytics and identity) sent
         XCTAssertEqual(2, mockNetworkService.requests.count)
+        let requestUrl = mockNetworkService.getRequest(at: 0)?.url.absoluteString ?? ""
+        let requestUrl1 = mockNetworkService.getRequest(at: 1)?.url.absoluteString ?? ""
+        XCTAssertTrue(requestUrl.contains("https://identityTestServer.com"))
+        XCTAssertTrue(requestUrl1.contains("https://testserver.com/b/ss/rsid1/0"))
     }
 
     func ignore_testAnalytics_sendQueueHits_happy() {
         // setup
+        let semaphore = DispatchSemaphore(value: 0)
         initExtensionsAndWait()
         setupAnalyticsConfiguration(privacyStatus: "optedin", aamForwardingEnabled: false, batchLimit: 0, offlineEnabled: true, server: "testserver.com", rsid: "rsid1", launchHitDelay: 0)
-
-        let mockNetworkService = TestableNetworkService()
-        ServiceProvider.shared.networkService = mockNetworkService
-
-        setDefaultResponse(responseData: nil, expectedUrlFragment: "https://testserver.com", statusCode: 200, mockNetworkService: mockNetworkService)
+        setMockNetworkService()
 
         var retrievedQueueSize = 0;
         Analytics.clearQueue()
@@ -159,9 +159,10 @@ class AnalyticsFunctionalTests: XCTestCase {
 
         Analytics.getQueueSize(){ (queueSize, error) in
             retrievedQueueSize = queueSize
+            semaphore.signal()
         }
-        sleep(2)
 
+        semaphore.wait()
         // verify queue size
         XCTAssertEqual(3, retrievedQueueSize)
         Analytics.sendQueuedHits()
@@ -175,10 +176,7 @@ class AnalyticsFunctionalTests: XCTestCase {
         initExtensionsAndWait()
         setupAnalyticsConfiguration(privacyStatus: "optedin", aamForwardingEnabled: false, batchLimit: 2, offlineEnabled: true, server: "testserver.com", rsid: "rsid1", launchHitDelay: 0)
 
-        let mockNetworkService = TestableNetworkService()
-        ServiceProvider.shared.networkService = mockNetworkService
-
-        setDefaultResponse(responseData: nil, expectedUrlFragment: "https://testserver.com", statusCode: 200, mockNetworkService: mockNetworkService)
+        setMockNetworkService()
 
         Analytics.clearQueue()
 
@@ -203,10 +201,7 @@ class AnalyticsFunctionalTests: XCTestCase {
         initExtensionsAndWait()
         setupAnalyticsConfiguration(privacyStatus: "optedin", aamForwardingEnabled: false, batchLimit: 4, offlineEnabled: true, server: "testserver.com", rsid: "rsid1", launchHitDelay: 0)
 
-        let mockNetworkService = TestableNetworkService()
-        ServiceProvider.shared.networkService = mockNetworkService
-
-        setDefaultResponse(responseData: nil, expectedUrlFragment: "https://testserver.com", statusCode: 200, mockNetworkService: mockNetworkService)
+        setMockNetworkService()
 
         var retrievedQueueSize = 0;
 
@@ -224,8 +219,8 @@ class AnalyticsFunctionalTests: XCTestCase {
         // verify queue size is 3
         XCTAssertEqual(3, retrievedQueueSize)
 
-        Analytics.sendQueuedHits()
         Analytics.clearQueue()
+        Analytics.sendQueuedHits()
 
         // verify no network request has been sent after clear queue
         XCTAssertEqual(0, mockNetworkService.requests.count)
@@ -236,11 +231,7 @@ class AnalyticsFunctionalTests: XCTestCase {
         let semaphore = DispatchSemaphore(value: 0)
         initExtensionsAndWait()
         setupAnalyticsConfiguration(privacyStatus: "optedin", aamForwardingEnabled: false, batchLimit: 4, offlineEnabled: true, server: "testserver.com", rsid: "rsid1", launchHitDelay: 0)
-
-        let mockNetworkService = TestableNetworkService()
-        ServiceProvider.shared.networkService = mockNetworkService
-
-        setDefaultResponse(responseData: nil, expectedUrlFragment: "https://testserver.com", statusCode: 200, mockNetworkService: mockNetworkService)
+        setMockNetworkService()
 
         var retrievedQueueSize = 0;
 
@@ -253,23 +244,13 @@ class AnalyticsFunctionalTests: XCTestCase {
         semaphore.wait()
         // verify default queue size is 0
         XCTAssertEqual(0, retrievedQueueSize)
-
-        Analytics.sendQueuedHits()
-        Analytics.clearQueue()
-
-        // verify no network request has been sent after clear queue
-        XCTAssertEqual(0, mockNetworkService.requests.count)
-
     }
 
     func ignore_testTrackStateWithNoContextData_pingGoOut() {
         // setup
         initExtensionsAndWait()
         setupAnalyticsConfiguration(privacyStatus: "optedin", aamForwardingEnabled: false, batchLimit: 0, offlineEnabled: true, server: "testserver.com", rsid: "rsid1", launchHitDelay: 0)
-        let mockNetworkService = TestableNetworkService()
-        ServiceProvider.shared.networkService = mockNetworkService
-
-        setDefaultResponse(responseData: nil, expectedUrlFragment: "https://testserver.com", statusCode: 200, mockNetworkService: mockNetworkService)
+        setMockNetworkService()
 
         // test
         MobileCore.track(state: "requestState", data: nil)
@@ -288,10 +269,7 @@ class AnalyticsFunctionalTests: XCTestCase {
         // setup
         initExtensionsAndWait()
         setupAnalyticsConfiguration(privacyStatus: "optedin", aamForwardingEnabled: false, batchLimit: 0, offlineEnabled: true, server: "", rsid: "rsid1", launchHitDelay: 0)
-        let mockNetworkService = TestableNetworkService()
-        ServiceProvider.shared.networkService = mockNetworkService
-
-        setDefaultResponse(responseData: nil, expectedUrlFragment: "https://testserver.com", statusCode: 200, mockNetworkService: mockNetworkService)
+        setMockNetworkService()
 
         // test
         MobileCore.track(state: "requestState", data: nil)
