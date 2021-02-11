@@ -151,7 +151,6 @@ class AnalyticsIntegrationTests: XCTestCase {
         var retrievedQueueSize = 0;
         Analytics.clearQueue()
 
-
         // test
         MobileCore.track(action: "requestAction", data: ["mykey" : "myvalue" ])
         MobileCore.track(action: "requestAction", data: ["mykey" : "myvalue" ])
