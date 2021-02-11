@@ -20,7 +20,7 @@ class AnalyticsRequestSerializerTests : XCTestCase {
     var analyticsState: AnalyticsState!
 
     override func setUp() {
-        analyticsRequestSerializer = AnalyticsRequestSerializer.init()
+        analyticsRequestSerializer = AnalyticsRequestSerializer()
         analyticsState = AnalyticsState()
     }
 

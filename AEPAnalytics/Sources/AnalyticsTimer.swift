@@ -29,7 +29,7 @@ class AnalyticsTimer {
         self.dispatchQueue = dispatchQueue
     }
 
-    func startReferrerTimer(task: @escaping () -> Void, timeout: TimeInterval) {
+    func startReferrerTimer(timeout: TimeInterval, task: @escaping () -> Void) {
         if self.referrerDispatchWorkItem != nil {
             Log.warning(label: self.LOG_TAG, "Referrer timer is already running.")
             return
@@ -50,7 +50,7 @@ class AnalyticsTimer {
         referrerDispatchWorkItem = nil
     }
 
-    func startLifecycleTimer(task: @escaping () -> Void, timeout: TimeInterval) {
+    func startLifecycleTimer(timeout: TimeInterval, task: @escaping () -> Void) {
         if self.lifecycleDispatchWorkItem != nil {
             Log.warning(label: self.LOG_TAG, "Lifecycle timer is already running.")
             return
@@ -71,19 +71,15 @@ class AnalyticsTimer {
         lifecycleDispatchWorkItem = nil
     }
 
-    /// Verifies if the referrer or lifecycle timer are running.
-    /// - Returns `True` if either of the timer is running.
-    func isRunning() -> Bool {
-        return isLifecycleRunning() || isReferrerRunning()
+    /// Verifies if the lifecycle timer is running.
+    /// - Returns `True` if lifecycle timer is running
+    func isLifecycleTimerRunning() -> Bool {
+        return lifecycleDispatchWorkItem != nil
     }
 
-    /// Verifies if the referrer or lifecycle timer are running.
-    /// - Returns `True` if either of the timer is running.
-    func isLifecycleRunning() -> Bool {
-        return lifecycleDispatchWorkItem == nil
-    }
-
-    func isReferrerRunning() -> Bool {
-        return referrerDispatchWorkItem == nil
+    /// Verifies if the referrer timer is running.
+    /// - Returns `True` if referrer timer is running
+    func isReferrerTimerRunning() -> Bool {
+        return referrerDispatchWorkItem != nil
     }
 }

@@ -93,7 +93,7 @@ class AnalyticsProperties {
     /// This method attempts to find one from the DataStore first before returning the variable present in `AnalyticsProperties`.
     /// - Returns: A string containing the `aid`.
     func getAnalyticsIdentifier() -> String? {
-        return self.aid
+        return aid
     }
 
     /// Sets the value of the `vid` in the `AnalyticsProperties` instance.
@@ -114,7 +114,7 @@ class AnalyticsProperties {
     /// This method attempts to find one from the DataStore first before returning the variable present in `AnalyticsProperties`.
     /// - Returns: A string containing the `vid`.
     func getVisitorIdentifier() -> String? {
-        return self.vid
+        return vid
     }
 
     /// Clears or resets to default values any saved properties present in the `AnalyticsProperties` instance.

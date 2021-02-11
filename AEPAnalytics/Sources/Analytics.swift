@@ -31,7 +31,7 @@ public class Analytics: NSObject, Extension {
     private var analyticsProperties: AnalyticsProperties
     private var analyticsState: AnalyticsState
     private let analyticsHardDependencies: [String] = [AnalyticsConstants.Configuration.EventDataKeys.SHARED_STATE_NAME, AnalyticsConstants.Identity.EventDataKeys.SHARED_STATE_NAME]
-    private let analyticsRequestSerializer = AnalyticsRequestSerializer.init()
+    private let analyticsRequestSerializer = AnalyticsRequestSerializer()
     // The `DispatchQueue` used to process events in FIFO order and wait for Lifecycle and Acquisition response events.
     private var dispatchQueue: DispatchQueue = DispatchQueue(label: AnalyticsConstants.FRIENDLY_NAME)
     // Maintains the boot up state of sdk. The first shared state update event indicates the boot up completion.
@@ -51,7 +51,7 @@ public class Analytics: NSObject, Extension {
 
     #if DEBUG
         // Internal init added for tests
-        internal init(runtime: ExtensionRuntime, state: AnalyticsState, properties: AnalyticsProperties) {
+        init(runtime: ExtensionRuntime, state: AnalyticsState, properties: AnalyticsProperties) {
             self.runtime = runtime
             self.analyticsDatabase = AnalyticsDatabase()
             self.analyticsTimer = AnalyticsTimer(dispatchQueue: dispatchQueue)
@@ -89,7 +89,7 @@ public class Analytics: NSObject, Extension {
           - event: The `Event` for which shared state is to be retrieved.
           - dependencies: An array of names of event's dependencies.
      */
-    func updateAnalyticsState(forEvent event: Event, dependencies: [String]) {
+    private func updateAnalyticsState(forEvent event: Event, dependencies: [String]) {
         var sharedStates = [String: [String: Any]?]()
         for extensionName in dependencies {
             sharedStates[extensionName] = runtime.getSharedState(extensionName: extensionName, event: event, barrier: true)?.value
@@ -164,7 +164,7 @@ public class Analytics: NSObject, Extension {
             if lifecycleAction == AnalyticsConstants.Lifecycle.EventDataKeys.LIFECYCLE_START {
 
                 // If we receive extra lifecycle start events after the first one, then just ignore rest of it
-                if analyticsTimer.isLifecycleRunning() {
+                if analyticsTimer.isLifecycleTimerRunning() {
                     return
                 }
 
@@ -458,7 +458,7 @@ public class Analytics: NSObject, Extension {
             }
         }
 
-        if analyticsTimer.isLifecycleRunning() && analyticsDatabase.isHitWaiting() {
+        if analyticsTimer.isLifecycleTimerRunning() && analyticsDatabase.isHitWaiting() {
             analyticsTimer.cancelLifecycleTimer()
             analyticsDatabase.kickWithAddtionalData(data: lifecycleContextData)
         } else {
@@ -483,7 +483,7 @@ public class Analytics: NSObject, Extension {
     func trackAcquisitionData(event: Event) {
         let acquisitionContextData = event.data?[AnalyticsConstants.EventDataKeys.CONTEXT_DATA] as? [String: String]
 
-        if analyticsTimer.isReferrerRunning() {
+        if analyticsTimer.isReferrerTimerRunning() {
             analyticsTimer.cancelReferrerTimer()
 
             analyticsDatabase.kickWithAddtionalData(data: acquisitionContextData)
@@ -506,17 +506,17 @@ public class Analytics: NSObject, Extension {
     ///     - eventUniqueIdentifier: the event unique identifier responsible for this track
     func track(eventData: [String: Any]?, timeStampInSeconds: TimeInterval, isBackdatedHit: Bool, eventUniqueIdentifier: String) {
         guard eventData != nil else {
-            Log.debug(label: LOG_TAG, "track - Dropping the Analytics track request, request was null.")
+            Log.debug(label: LOG_TAG, "track - Dropping the request, eventData is nil.")
             return
         }
 
         guard analyticsState.isAnalyticsConfigured() else {
-            Log.debug(label: LOG_TAG, "track - Dropping the Analytics track request, Analytics is not configured.")
+            Log.debug(label: LOG_TAG, "track - Dropping the request, Analytics is not configured.")
             return
         }
 
         guard analyticsState.privacyStatus != .optedOut else {
-            Log.debug(label: LOG_TAG, "track - Dropping the Analytics track request, privacy status is opted out.")
+            Log.debug(label: LOG_TAG, "track - Dropping the , privacy status is opted out.")
             return
         }
 
@@ -535,19 +535,15 @@ public class Analytics: NSObject, Extension {
     ///     - trackData: Dictionary containing tracking data
     ///     - Returns a `Dictionary` containing the context data.
     func processAnalyticsContextData(trackData: [String: Any]?) -> [String: String] {
-        var analyticsData: [String: String] = [:]
-
         guard let trackData = trackData else {
-            Log.debug(label: LOG_TAG, "processAnalyticsContextData - trackevendata is nil.")
-            return analyticsData
+            Log.debug(label: LOG_TAG, "processAnalyticsContextData - trackData is nil.")
+            return [:]
         }
 
-        analyticsData.merge(analyticsState.defaultData) { key1, _ in
-            return key1
-        }
+        var analyticsData = analyticsState.defaultData
         if let contextData = trackData[AnalyticsConstants.EventDataKeys.CONTEXT_DATA] as? [String: String] {
-            analyticsData.merge(contextData) { key1, _ in
-                return key1
+            analyticsData.merge(contextData) { _, newValue in
+                return newValue
             }
         }
         if let actionName = trackData[AnalyticsConstants.EventDataKeys.TRACK_ACTION] as? String, !actionName.isEmpty {
@@ -557,7 +553,7 @@ public class Analytics: NSObject, Extension {
         }
         let lifecycleSessionStartTimestamp = analyticsState.lifecycleSessionStartTimestamp
         if lifecycleSessionStartTimestamp > 0 {
-            let timeSinceLaunchInSeconds = Date.init().timeIntervalSince1970 - lifecycleSessionStartTimestamp
+            let timeSinceLaunchInSeconds = Date().timeIntervalSince1970 - lifecycleSessionStartTimestamp
             if timeSinceLaunchInSeconds > 0 && timeSinceLaunchInSeconds.isLessThanOrEqualTo( analyticsState.lifecycleMaxSessionLength) {
                 analyticsData[AnalyticsConstants.ContextDataKeys.TIME_SINCE_LAUNCH_KEY] = "\(timeSinceLaunchInSeconds)"
             }
@@ -585,6 +581,7 @@ public class Analytics: NSObject, Extension {
             Log.debug(label: LOG_TAG, "processAnalyticsVars - track event data is nil.")
             return analyticsVars
         }
+
         if let actionName = trackData[AnalyticsConstants.EventDataKeys.TRACK_ACTION] as? String {
             analyticsVars[AnalyticsConstants.Request.IGNORE_PAGE_NAME_KEY] = AnalyticsConstants.IGNORE_PAGE_NAME_VALUE
             let isInternal = trackData[AnalyticsConstants.EventDataKeys.TRACK_INTERNAL] as? Bool ?? false
@@ -595,6 +592,7 @@ public class Analytics: NSObject, Extension {
         if let stateName = trackData[AnalyticsConstants.EventDataKeys.TRACK_STATE] as? String {
             analyticsVars[AnalyticsConstants.Request.PAGE_NAME_KEY] = stateName
         }
+
         if let aid = analyticsProperties.getAnalyticsIdentifier() {
             analyticsVars[AnalyticsConstants.Request.ANALYTICS_ID_KEY] = aid
         }
@@ -611,8 +609,8 @@ public class Analytics: NSObject, Extension {
         }
 
         if analyticsState.isVisitorIdServiceEnabled() {
-            analyticsVars.merge(analyticsState.getAnalyticsIdVisitorParameters()) { key1, _ in
-                return key1
+            analyticsVars.merge(analyticsState.getAnalyticsIdVisitorParameters()) { _, newValue in
+                return newValue
             }
         }
 
@@ -627,7 +625,7 @@ public class Analytics: NSObject, Extension {
     /// Creates an internal analytics event with the crash session data
     /// - Parameters:
     ///      - previousOSVersion: The OS version in the backdated session
-    ///      - previousAppIdVersion: The App Id in the backdate session
+    ///      - previousAppIdVersion: The App Id in the backdated session
     ///      - eventUniqueIdentifier: The event identifier of backdated Lifecycle session event.
     private func backdateLifecycleCrash(previousOSVersion: String?, previousAppIdVersion: String?, eventUniqueIdentifier: String) {
         Log.trace(label: LOG_TAG, "backdateLifecycleCrash - Backdating the lifecycle session crash event.")
@@ -654,7 +652,7 @@ public class Analytics: NSObject, Extension {
     /// - Parameters:    
     ///      - previousSessionLength: The length of previous session
     ///      - previousOSVersion: The OS version in the backdated session
-    ///      - previousAppIdVersion: The App Id in the backdate session
+    ///      - previousAppIdVersion: The App Id in the backdated session
     ///      - eventUniqueIdentifier: The event identifier of backdated Lifecycle session event.
     private func backdateLifecycleSessionInfo(previousSessionLength: String?, previousSessionPauseTimestamp: Date?, previousOSVersion: String?, previousAppIdVersion: String?, eventUniqueIdentifier: String) {
         Log.trace(label: LOG_TAG, "backdateLifecycleSessionInfo - Backdating the previous lifecycle session.")
@@ -684,19 +682,21 @@ public class Analytics: NSObject, Extension {
 
     /// Wait for lifecycle data after receiving Lifecycle Request event.
     func waitForLifecycleData() {
+        Log.debug(label: "Analytics", "waitForLifecycleData - Lifecycle timer scheduled with timeout \(AnalyticsConstants.Default.LIFECYCLE_RESPONSE_WAIT_TIMEOUT)")
         analyticsDatabase.setWaiting(wait: true)
-        self.analyticsTimer.startLifecycleTimer(task: { [weak self] in
+        self.analyticsTimer.startLifecycleTimer(timeout: AnalyticsConstants.Default.LIFECYCLE_RESPONSE_WAIT_TIMEOUT) { [weak self] in
             Log.warning(label: "Analytics", "waitForLifecycleData - Lifecycle timeout has expired without Lifecycle data")
             self?.analyticsDatabase.setWaiting(wait: false)
-        }, timeout: AnalyticsConstants.Default.LIFECYCLE_RESPONSE_WAIT_TIMEOUT)
+        }
     }
 
-    /// Wait for Acquisition data after receiving Lifecycle Response event.
+    /// Wait for Acquisition data after receiving Acquisition Response event.
     func waitForAcquisitionData(timeout: TimeInterval) {
+        Log.debug(label: "Analytics", "waitForAcquisitionData - Referrer timer scheduled with timeout \(timeout)")
         analyticsDatabase.setWaiting(wait: true)
-        self.analyticsTimer.startReferrerTimer(task: { [weak self] in
+        self.analyticsTimer.startReferrerTimer(timeout: timeout) { [weak self] in
             Log.warning(label: "Analytics", "WaitForAcquisitionData - Launch hit delay has expired without referrer data.")
-            self?.analyticsDatabase.setWaiting(wait: true)
-        }, timeout: timeout)
+            self?.analyticsDatabase.setWaiting(wait: false)
+        }
     }
 }
