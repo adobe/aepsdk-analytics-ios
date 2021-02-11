@@ -291,9 +291,9 @@ public class Analytics: NSObject, Extension {
             Log.debug(label: LOG_TAG, "sendAnalyticsIdRequest - Sending Analytics ID call (\(url)).")
             ServiceProvider.shared.networkService.connectAsync(networkRequest: buildAnalyticsIdentityRequest(url: url)) {[weak self] (connection) in
                 if connection.response == nil {
-                    Log.debug(label: "Analytics", "sendAnalyticsIdRequest - Unable to read response for AID request, connection was nil.")
+                    Log.debug(label: "Analytics", "sendAnalyticsIdRequest - Unable to read response for AID request, response is nil.")
                 } else if connection.responseCode != 200 {
-                    Log.debug(label: "Analytics", "sendAnalyticsIdRequest - Unable to read response for AID request. Connection response code = \(String(describing: connection.responseCode)).")
+                    Log.debug(label: "Analytics", "sendAnalyticsIdRequest - Unable to read response for AID request. response code = \(String(describing: connection.responseCode)).")
                 } else {
                     // Execute this on dispatch queue as it mutates analytics property.
                     self?.dispatchQueue.async {
@@ -671,7 +671,7 @@ public class Analytics: NSObject, Extension {
         }
 
         var lifecycleSessionData: [String: Any] = [:]
-        lifecycleSessionData[AnalyticsConstants.EventDataKeys.TRACK_ACTION] = AnalyticsConstants.CRASH_INTERNAL_ACTION_NAME
+        lifecycleSessionData[AnalyticsConstants.EventDataKeys.TRACK_ACTION] = AnalyticsConstants.SESSION_INFO_INTERNAL_ACTION_NAME
         lifecycleSessionData[AnalyticsConstants.EventDataKeys.CONTEXT_DATA] = sessionContextData
         lifecycleSessionData[AnalyticsConstants.EventDataKeys.TRACK_INTERNAL] = true
 
