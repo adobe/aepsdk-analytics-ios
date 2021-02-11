@@ -167,9 +167,7 @@ class AnalyticsTest : XCTestCase {
 
         // clear network requests and created shared states as an analytics id request will be sent on the first valid configuration response event.
         sleep(1)
-        if mockNetworkService != nil {
-            mockNetworkService?.calledNetworkRequests.removeAll()
-        }
+        mockNetworkService?.calledNetworkRequests.removeAll()
         testableExtensionRuntime.createdSharedStates.removeAll()
     }
 

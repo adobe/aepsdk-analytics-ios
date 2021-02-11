@@ -45,8 +45,8 @@ public class Analytics: NSObject, Extension {
     }
 
     #if DEBUG
-        // internal init added for tests
-        internal init(runtime: ExtensionRuntime, state: AnalyticsState, properties: AnalyticsProperties, hitDatabase: AnalyticsHitDatabase) {
+        // init added for tests
+        init(runtime: ExtensionRuntime, state: AnalyticsState, properties: AnalyticsProperties, hitDatabase: AnalyticsHitDatabase) {
             self.runtime = runtime
             self.analyticsState = state
             self.analyticsProperties = properties

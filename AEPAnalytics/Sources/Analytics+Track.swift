@@ -115,10 +115,8 @@ extension Analytics {
         var lifecycleContextData: [String: String] = [:]
 
         eventLifecycleContextData.forEach { eventDataKey, value in
-            if AnalyticsConstants.MAP_EVENT_DATA_KEYS_TO_CONTEXT_DATA_KEYS.keys.contains(eventDataKey) {
-                if let contextDataKey = AnalyticsConstants.MAP_EVENT_DATA_KEYS_TO_CONTEXT_DATA_KEYS[eventDataKey] {
-                    lifecycleContextData[contextDataKey] = value
-                }
+            if let contextDataKey = AnalyticsConstants.MAP_EVENT_DATA_KEYS_TO_CONTEXT_DATA_KEYS[eventDataKey] {
+                lifecycleContextData[contextDataKey] = value
             } else {
                 lifecycleContextData[eventDataKey] = value
             }
@@ -243,7 +241,7 @@ extension Analytics {
             }
         }
 
-        DispatchQueue.main.async {
+        DispatchQueue.main.sync {
             if UIApplication.shared.applicationState == .background {
                 analyticsVars[AnalyticsConstants.Request.CUSTOMER_PERSPECTIVE_KEY] =
                     AnalyticsConstants.APP_STATE_BACKGROUND
