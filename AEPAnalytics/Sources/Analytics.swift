@@ -468,7 +468,7 @@ public class Analytics: NSObject, Extension {
             lifecycleEventData[AnalyticsConstants.EventDataKeys.CONTEXT_DATA] = lifecycleContextData
             lifecycleEventData[AnalyticsConstants.EventDataKeys.TRACK_INTERNAL] = true
 
-            track(eventData: lifecycleContextData, timeStampInSeconds: event.timestamp.timeIntervalSince1970, isBackdatedHit: false, eventUniqueIdentifier: "\(event.id)")
+            track(eventData: lifecycleEventData, timeStampInSeconds: event.timestamp.timeIntervalSince1970, isBackdatedHit: false, eventUniqueIdentifier: "\(event.id)")
         }
     }
 
