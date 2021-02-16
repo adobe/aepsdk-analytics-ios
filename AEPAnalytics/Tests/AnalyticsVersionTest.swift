@@ -11,21 +11,23 @@
  */
 
 import XCTest
+import AEPServices
 @testable import AEPAnalytics
 @testable import AEPCore
 
 class AnalyticsVersionTest : XCTestCase {
 
-    var testableExtensionRuntime: TestableExtensionRuntime!
     var analytics: Analytics!
-    var analyticsProperties: AnalyticsProperties!
-    var analyticsState: AnalyticsState!
 
     override func setUp() {
         // setup test variables
-        testableExtensionRuntime = TestableExtensionRuntime()
-        analyticsState = AnalyticsState()
-        analyticsProperties = AnalyticsProperties.init()
+        let testableExtensionRuntime = TestableExtensionRuntime()
+        let analyticsState = AnalyticsState()
+
+        ServiceProvider.shared.namedKeyValueService = MockDataStore()
+        let dataStore = NamedCollectionDataStore(name: AnalyticsTestConstants.DATASTORE_NAME)
+        let analyticsProperties = AnalyticsProperties.init(dataStore: dataStore)
+
         analytics = Analytics(runtime: testableExtensionRuntime, state: analyticsState, properties: analyticsProperties)
         analytics.onRegistered()
     }

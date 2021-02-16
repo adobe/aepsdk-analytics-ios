@@ -14,19 +14,23 @@ import Foundation
 import AEPCore
 
 enum AnalyticsConstants {
+
     static let EXTENSION_NAME                           = "com.adobe.module.analytics"
     static let FRIENDLY_NAME                            = "Analytics"
     static let EXTENSION_VERSION                        = "0.0.1"
     static let DATASTORE_NAME                           = EXTENSION_NAME
-    static let CRASH_INTERNAL_ACTION_NAME               = "Crash"
     static let IGNORE_PAGE_NAME_VALUE                   = "lnk_o"
     static let ACTION_PREFIX                            = "AMACTION:"
     static let INTERNAL_ACTION_PREFIX                   = "ADBINTERNAL:"
     static let VAR_ESCAPE_PREFIX                        = "&&"
-    static let TRACK_INTERNAL_ADOBE_LINK                = "AdobeLink"
     static let APP_STATE_FOREGROUND                     = "foreground"
     static let APP_STATE_BACKGROUND                     = "background"
     static let AID_LENGTH                               = 33
+
+    static let TRACK_INTERNAL_ADOBE_LINK                = "AdobeLink"
+    static let SESSION_INFO_INTERNAL_ACTION_NAME        = "SessionInfo"
+    static let CRASH_INTERNAL_ACTION_NAME        = "Crash"
+    static let LIFECYCLE_INTERNAL_ACTION_NAME    = "Lifecycle"
 
     enum EventDataKeys {
         static let STATE_OWNER      = "stateowner"
@@ -117,10 +121,34 @@ enum AnalyticsConstants {
     }
 
     enum DataStoreKeys {
-        static let MOST_RECENT_HIT_TIMESTAMP_SECONDS = "mostRecentHitTimestampSeconds"
-        static let AID_KEY                = "ADOBEMOBILE_STOREDDEFAULTS_AID"
-        static let AID_IGNORE_KEY         = "ADOBEMOBILE_STOREDDEFAULTS_IGNORE_AID"
-        static let VISITOR_IDENTIFIER_KEY = "ADOBEMOBILE_STOREDDEFAULTS_VISITOR_IDENTIFIER"
+        static let MOST_RECENT_HIT_TIMESTAMP = "mostrecenthittimestamp"
+        static let AID = "aid"
+        static let IGNORE_AID = "ignoreaid"
+        static let VID = "vid"
+        static let DATA_MIGRATED = "data.migrated"
+    }
+
+    enum V4Migration {
+        // Migrate
+        static let AID = "ADOBEMOBILE_STOREDDEFAULTS_AID"
+        static let IGNORE_AID = "ADOBEMOBILE_STOREDDEFAULTS_IGNOREAID"
+        static let VID = "AOMS_AppMeasurement_StoredDefaults_VisitorID"
+        // Delete
+        static let AID_SYNCED = "ADOBEMOBILE_STOREDDEFAULTS_AIDSYNCED"
+        static let LAST_TIMESTAMP = "ADBMobileLastTimestamp"
+        static let CURRENT_HIT_ID  = "ANALYTICS_WORKER_CURRENT_ID"
+        static let CURRENT_HIT_STAMP = "ANALYTICS_WORKER_CURRENT_STAMP"
+    }
+
+    enum V5Migration {
+        // Migrate
+        static let AID  = "Adobe.AnalyticsDataStorage.ADOBEMOBILE_STOREDDEFAULTS_AID"
+        static let IGNORE_AID = "Adobe.AnalyticsDataStorage.ADOBEMOBILE_STOREDDEFAULTS_IGNOREAID"
+        static let VID = "Adobe.AnalyticsDataStorage.ADOBEMOBILE_STOREDDEFAULTS_VISITOR_IDENTIFIER"
+        // In some cases VID from v4 was migrated to identity datastore.
+        static let IDENTITY_VID = "Adobe.visitorIDServiceDataStore.ADOBEMOBILE_VISITOR_ID"
+        // Delete
+        static let MOST_RECENT_HIT_TIMESTAMP = "Adobe.AnalyticsDataStorage.mostRecentHitTimestampSeconds"
     }
 
     enum Request {
@@ -176,7 +204,7 @@ enum AnalyticsConstants {
 
     // acquisition keys
     enum Acquisition {
-        static let SHARED_STATE_NAME = ""
+        static let SHARED_STATE_NAME = "com.adobe.module.acquisition"
         static let CONTEXT_DATA = "contextdata"
         static let REFERRER_DATA = "referrerdata"
         static let DATA_PUSH_MESSAGE_ID = "a.push.payloadId"

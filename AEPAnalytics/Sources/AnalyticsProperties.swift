@@ -15,11 +15,10 @@ import AEPCore
 import AEPServices
 
 /// Represents a type which contains instances variables for the Analytics extension.
-struct AnalyticsProperties {
+class AnalyticsProperties {
     static let CHARSET = "UTF-8"
 
-    /// Current locale of the user
-    var locale: Locale?
+    private var dataStore: NamedCollectionDataStore
 
     /// Analytics AID (legacy)
     private var aid: String?
@@ -27,124 +26,64 @@ struct AnalyticsProperties {
     /// Analytics VID (legacy)
     private var vid: String?
 
-    /// Time in seconds when previous lifecycle session was paused.
-    var lifecyclePreviousSessionPauseTimestamp: Date?
+    /// Indicates if an analytics id request should be ignored.
+    private var ignoreAid: Bool
 
-    var lifecyclePreviousPauseEventTimestamp: Date?
+    /// Timestamp of the last hit
+    private var mostRecentHitTimeStampInSeconds: TimeInterval = 0
 
     /// Timestamp String contains timezone offset. All other fields in timestamp except timezone offset are set to 0.
     var timezoneOffset: String {
         return TimeZone.current.getOffsetFromGmtInMinutes()
     }
 
-    /// Indicates if referrer timer is running.
-    var referrerTimerRunning = false
+    /// Current locale of the user
+    var locale: Locale?
 
-    /// Indicates if lifecycle timer is running.
-    var lifecycleTimerRunning = false
+    init(dataStore: NamedCollectionDataStore) {
+        self.dataStore = dataStore
+        self.mostRecentHitTimeStampInSeconds = dataStore.getDouble(key: AnalyticsConstants.DataStoreKeys.MOST_RECENT_HIT_TIMESTAMP) ?? 0
+        self.ignoreAid = dataStore.getBool(key: AnalyticsConstants.DataStoreKeys.IGNORE_AID) ?? false
+        self.aid = dataStore.getString(key: AnalyticsConstants.DataStoreKeys.AID)
+        self.vid = dataStore.getString(key: AnalyticsConstants.DataStoreKeys.VID)
+    }
 
-    /// Instance of `AnalyticsRequestSerializer` used for creating track request.
-    var analyticsRequestSerializer = AnalyticsRequestSerializer()
-
-    lazy var dataStore: NamedCollectionDataStore = {
-        return NamedCollectionDataStore(name: AnalyticsConstants.DATASTORE_NAME)
-    }()
-
-    private var mostRecentHitTimeStampInSeconds: TimeInterval = 0
-
-    mutating func getMostRecentHitTimestamp() -> TimeInterval {
-        if mostRecentHitTimeStampInSeconds <= 0 {
-            mostRecentHitTimeStampInSeconds = dataStore.getDouble(key: AnalyticsConstants.DataStoreKeys.MOST_RECENT_HIT_TIMESTAMP_SECONDS) ?? 0
+    func setMostRecentHitTimestamp(timestampInSeconds: TimeInterval) {
+        if mostRecentHitTimeStampInSeconds.isLess(than: timestampInSeconds) {
+            dataStore.set(key: AnalyticsConstants.DataStoreKeys.MOST_RECENT_HIT_TIMESTAMP, value: timestampInSeconds)
+            mostRecentHitTimeStampInSeconds = timestampInSeconds
         }
+    }
+
+    func getMostRecentHitTimestamp() -> TimeInterval {
         return mostRecentHitTimeStampInSeconds
     }
-
-    mutating func setMostRecentHitTimestamp(timestampInSeconds: TimeInterval) {
-        let mostRecentHitTimeStampInSeconds = getMostRecentHitTimestamp()
-        if mostRecentHitTimeStampInSeconds.isLess(than: timestampInSeconds) {
-            self.mostRecentHitTimeStampInSeconds = timestampInSeconds
-            dataStore.set(key: AnalyticsConstants.DataStoreKeys.MOST_RECENT_HIT_TIMESTAMP_SECONDS, value: timestampInSeconds)
-        }
-    }
-
-    /// `DispatchWorkItem` use to wait for `acquisition` data before executing task.
-    var referrerDispatchWorkItem: DispatchWorkItem?
-
-    /// `DispatchWorkItem` use to wait for `lifecycle` data before executing task.
-    var lifecycleDispatchWorkItem: DispatchWorkItem?
-
-    /// Indicates if an analytics id request should be ignored.
-    private var ignoreAid = false
 
     /// Sets the value of the `ignoreAid` status in the `AnalyticsProperties` instance.
     /// The new value is persisted in the datastore.
     /// - Parameter:
     ///   - status: The value for the new `ignoreAid` status.
-    mutating func setIgnoreAidStatus(status: Bool) {
-        dataStore.set(key: AnalyticsConstants.DataStoreKeys.AID_IGNORE_KEY, value: status)
-        self.ignoreAid = status
+    func setIgnoreAidStatus(status: Bool) {
+        dataStore.set(key: AnalyticsConstants.DataStoreKeys.IGNORE_AID, value: status)
+        ignoreAid = status
     }
 
     /// Returns the `ignoreAid` status from the `AnalyticsProperties` instance.
     /// This method attempts to find one from the DataStore first before returning the variable present in `AnalyticsProperties`.
     /// - Returns: A bool containing the `ignoreAid` status.
-    mutating func getIgnoreAidStatus() -> Bool {
-        // check data store to see if we can return a visitor identifier from persistence
-        if let retrievedStatus = dataStore.getBool(key: AnalyticsConstants.DataStoreKeys.AID_IGNORE_KEY, fallback: false), retrievedStatus {
-            return retrievedStatus
-        }
-        return self.ignoreAid
-    }
-
-    /// Cancels the referrer timer. Sets referrerTimerRunning flag to false. Sets referrerTimer to nil.
-    mutating func cancelReferrerTimer() {
-
-        referrerTimerRunning = false
-        referrerDispatchWorkItem?.cancel()
-        referrerDispatchWorkItem = nil
-    }
-
-    /// Cancels the lifecycle timer. Sets lifecycleTimerRunning flag to false. Sets lifecycleTimer to nil.
-    mutating func cancelLifecycleTimer() {
-
-        lifecycleTimerRunning = false
-        lifecycleDispatchWorkItem?.cancel()
-        lifecycleDispatchWorkItem = nil
-    }
-
-    /// Verifies if the referrer or lifecycle timer are running.
-    /// - Returns `True` if either of the timer is running.
-    func isDatabaseWaiting() -> Bool {
-        return (!(referrerDispatchWorkItem?.isCancelled ?? true) && referrerTimerRunning) || (!(lifecycleDispatchWorkItem?.isCancelled ?? true) && lifecycleTimerRunning)
-    }
-
-    /// Clears or resets to default values any saved properties present in the `AnalyticsProperties` instance.
-    mutating func reset() {
-        locale = nil
-        aid = nil
-        vid = nil
-        lifecyclePreviousSessionPauseTimestamp = nil
-        lifecyclePreviousPauseEventTimestamp = nil
-        referrerTimerRunning = false
-        lifecycleTimerRunning = false
-        // clean analytics data in datastore
-        dataStore.remove(key: AnalyticsConstants.DataStoreKeys.AID_KEY)
-        dataStore.remove(key: AnalyticsConstants.DataStoreKeys.VISITOR_IDENTIFIER_KEY)
-        dataStore.remove(key: AnalyticsConstants.DataStoreKeys.AID_IGNORE_KEY)
-        dataStore.remove(key: AnalyticsConstants.DataStoreKeys.MOST_RECENT_HIT_TIMESTAMP_SECONDS)
+    func getIgnoreAidStatus() -> Bool {
+        return ignoreAid
     }
 
     /// Sets the value of the `aid` in the `AnalyticsProperties` instance.
     /// The new value is persisted in the datastore.
     /// - Parameter:
     ///   - status: The value for the new `aid`.
-    mutating func setAnalyticsIdentifier(aid: String?) {
-        if aid == nil {
-            dataStore.remove(key: AnalyticsConstants.DataStoreKeys.AID_KEY)
-            setIgnoreAidStatus(status: false)
+    func setAnalyticsIdentifier(aid: String?) {
+        if (aid ?? "").isEmpty {
+            dataStore.remove(key: AnalyticsConstants.DataStoreKeys.AID)
         } else {
-            dataStore.set(key: AnalyticsConstants.DataStoreKeys.AID_KEY, value: aid)
-            setIgnoreAidStatus(status: true)
+            dataStore.set(key: AnalyticsConstants.DataStoreKeys.AID, value: aid)
         }
 
         self.aid = aid
@@ -153,23 +92,19 @@ struct AnalyticsProperties {
     /// Returns the `aid` from the `AnalyticsProperties` instance.
     /// This method attempts to find one from the DataStore first before returning the variable present in `AnalyticsProperties`.
     /// - Returns: A string containing the `aid`.
-    mutating func getAnalyticsIdentifier() -> String? {
-        if self.aid == nil {
-            // check data store to see if we can return a visitor identifier from persistence
-            self.aid = dataStore.getString(key: AnalyticsConstants.DataStoreKeys.AID_KEY)
-        }
-        return self.aid
+    func getAnalyticsIdentifier() -> String? {
+        return aid
     }
 
     /// Sets the value of the `vid` in the `AnalyticsProperties` instance.
     /// The new value is persisted in the datastore.
     /// - Parameter:
     ///   - status: The value for the new `vid`.
-    mutating func setAnalyticsVisitorIdentifier(vid: String?) {
-        if let vid = vid {
-            dataStore.set(key: AnalyticsConstants.DataStoreKeys.VISITOR_IDENTIFIER_KEY, value: vid)
+    func setVisitorIdentifier(vid: String?) {
+        if (vid ?? "").isEmpty {
+            dataStore.remove(key: AnalyticsConstants.DataStoreKeys.VID)
         } else {
-            dataStore.remove(key: AnalyticsConstants.DataStoreKeys.VISITOR_IDENTIFIER_KEY)
+            dataStore.set(key: AnalyticsConstants.DataStoreKeys.VID, value: vid)
         }
 
         self.vid = vid
@@ -178,13 +113,24 @@ struct AnalyticsProperties {
     /// Returns the `vid` from the `AnalyticsProperties` instance.
     /// This method attempts to find one from the DataStore first before returning the variable present in `AnalyticsProperties`.
     /// - Returns: A string containing the `vid`.
-    mutating func getVisitorIdentifier() -> String? {
-        if self.vid == nil {
-            // check data store to see if we can return a visitor identifier from persistence
-            self.vid = (dataStore.getString(key: AnalyticsConstants.DataStoreKeys.VISITOR_IDENTIFIER_KEY))
-        }
-        return self.vid
+    func getVisitorIdentifier() -> String? {
+        return vid
     }
+
+    /// Clears or resets to default values any saved properties present in the `AnalyticsProperties` instance.
+    func reset() {
+        locale = nil
+        aid = nil
+        ignoreAid = false
+        vid = nil
+        mostRecentHitTimeStampInSeconds = 0
+        // Clear datastore
+        dataStore.remove(key: AnalyticsConstants.DataStoreKeys.AID)
+        dataStore.remove(key: AnalyticsConstants.DataStoreKeys.VID)
+        dataStore.remove(key: AnalyticsConstants.DataStoreKeys.IGNORE_AID)
+        dataStore.remove(key: AnalyticsConstants.DataStoreKeys.MOST_RECENT_HIT_TIMESTAMP)
+    }
+
 }
 
 extension TimeZone {

@@ -261,7 +261,7 @@ class AnalyticsState {
     /// Creates a new Analytics ID Request URL
     /// - Parameters:
     ///   - properties: the analytics properties
-    func buildAnalyticsIdRequestURL(properties: AnalyticsProperties?) -> URL? {
+    func buildAnalyticsIdRequestURL() -> URL? {
         var components = URLComponents()
         components.scheme = "https"
         components.host = host
