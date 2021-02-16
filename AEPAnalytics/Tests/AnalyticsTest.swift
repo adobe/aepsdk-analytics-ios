@@ -23,6 +23,8 @@ class AnalyticsTest : XCTestCase {
     var dataStore: NamedCollectionDataStore!
     var analyticsProperties: AnalyticsProperties!
     var analyticsState: AnalyticsState!
+    var analyticsDatabase: TestableAnalyticsDatabase!
+
     static let responseAid = "7A57620BB5CA4754-30BDF2392F2416C7"
 
     static let aidResponse = """
@@ -43,6 +45,9 @@ class AnalyticsTest : XCTestCase {
     }
     """
 
+    static let referrerData = ["a.referrer.campaign.trackingcode": "1234567890","a.launch.campaign.trackingcode": "1234567890","a.referrer.campaign.name": "myLink","a.referrer.campaign.source": "mycompany","a.launch.campaign.source": "mycompany","a.acquisition.custom.amo1.key1": "amo1.value1","a.acquisition.custom.amo1.key2": "amo1.value2"]
+
+
     override func setUp() {
         // setup test variables
         ServiceProvider.shared.networkService = MockNetworking()
@@ -54,7 +59,9 @@ class AnalyticsTest : XCTestCase {
         dataStore = NamedCollectionDataStore(name: AnalyticsConstants.DATASTORE_NAME)
         analyticsProperties = AnalyticsProperties.init(dataStore: dataStore)
 
-        analytics = Analytics(runtime: testableExtensionRuntime, state: analyticsState, properties: analyticsProperties)
+        analyticsDatabase = TestableAnalyticsDatabase()
+
+        analytics = Analytics(runtime: testableExtensionRuntime, state: analyticsState, properties: analyticsProperties, database: analyticsDatabase)
         analytics.onRegistered()
     }
 
@@ -148,9 +155,9 @@ class AnalyticsTest : XCTestCase {
     }
 
     // set testing settings via configuration response event
-    private func dispatchConfigurationEventForTesting(rsid: String?, host: String?, privacyStatus: PrivacyStatus, mockNetworkService: MockNetworking) {
+    private func dispatchConfigurationEventForTesting(rsid: String?, host: String?, privacyStatus: PrivacyStatus, backDateSession: Bool, offlineEnabled: Bool, mockNetworkService: MockNetworking?) {
         // setup configuration data
-        let configData = [AnalyticsTestConstants.Configuration.EventDataKeys.GLOBAL_PRIVACY: privacyStatus.rawValue, AnalyticsTestConstants.Configuration.EventDataKeys.ANALYTICS_REPORT_SUITES: rsid as Any, AnalyticsTestConstants.Configuration.EventDataKeys.ANALYTICS_SERVER: host as Any] as [String: Any]
+        let configData = [AnalyticsTestConstants.Configuration.EventDataKeys.GLOBAL_PRIVACY: privacyStatus.rawValue, AnalyticsTestConstants.Configuration.EventDataKeys.ANALYTICS_REPORT_SUITES: rsid as Any, AnalyticsTestConstants.Configuration.EventDataKeys.ANALYTICS_SERVER: host as Any, AnalyticsTestConstants.Configuration.EventDataKeys.ANALYTICS_OFFLINE_TRACKING: offlineEnabled, AnalyticsTestConstants.Configuration.EventDataKeys.ANALYTICS_BACKDATE_PREVIOUS_SESSION: backDateSession] as [String: Any]
         // create a configuration event with the created event data
         let configEvent = Event(name: "configuration response event", type: EventType.configuration, source: EventSource.responseContent, data: configData)
         testableExtensionRuntime.simulateSharedState(extensionName: AnalyticsTestConstants.Configuration.EventDataKeys.SHARED_STATE_NAME, event: configEvent, data: (configData, .set))
@@ -160,7 +167,7 @@ class AnalyticsTest : XCTestCase {
 
         // clear network requests and created shared states as an analytics id request will be sent on the first valid configuration response event.
         sleep(1)
-        mockNetworkService.calledNetworkRequests.removeAll()
+        mockNetworkService?.calledNetworkRequests.removeAll()
         testableExtensionRuntime.createdSharedStates.removeAll()
     }
 
@@ -549,4 +556,229 @@ class AnalyticsTest : XCTestCase {
 //        XCTAssertEqual(1, responseEvent?.data?.count)
 //        XCTAssertEqual(AnalyticsTest.responseAid, (responseEvent?.data?[AnalyticsConstants.EventDataKeys.ANALYTICS_ID] as? String))
 //    }
+
+    // ==========================================================================
+    // handleAcquisitionEvent
+    // ==========================================================================
+    /// - TODO: add test case for acquisition response content event handled while referrer timer is running
+    func testHandleAcquisitionResponseContentEvent() {
+        // setup
+        dispatchConfigurationEventForTesting(rsid: "testRsid", host: "testAnalyticsServer.com", privacyStatus: .optedIn, backDateSession: true, offlineEnabled: true, mockNetworkService: nil)
+        // setup shared state data for lifecycle, identity, places, and assurance
+        addSharedStateDataToAnalyticsState()
+        let data = [AnalyticsConstants.EventDataKeys.CONTEXT_DATA: AnalyticsTest.referrerData] as [String: Any]
+        // create the acquisition response content event with the data
+        let event = Event(name: "Test Acquisition response content", type: EventType.acquisition, source: EventSource.responseContent, data: data)
+        let _ = analytics.readyForEvent(event)
+
+        // test
+        simulateComingEventAndWait(event)
+
+        // verify built request contains the expected data
+        XCTAssertEqual(1, analyticsDatabase.getQueueSize())
+        let contextData = AnalyticsDataProcessor.getContextData(source: analyticsDatabase.queuedHits[0])
+        XCTAssertTrue(contextData.contains("&c."))
+        XCTAssertTrue(contextData.contains("&.c"))
+        // verify acquisition context data
+        XCTAssertTrue(contextData.contains("&launch.&campaign."))
+        XCTAssertTrue(contextData.contains("&trackingcode=1234567890"))
+        XCTAssertTrue(contextData.contains("&source=mycompany"))
+        XCTAssertTrue(contextData.contains("&.campaign&.launch"))
+        XCTAssertTrue(contextData.contains("&referrer.&campaign."))
+        XCTAssertTrue(contextData.contains("&trackingcode=1234567890"))
+        XCTAssertTrue(contextData.contains("&source=mycompany"))
+        XCTAssertTrue(contextData.contains("&name=myLink"))
+        XCTAssertTrue(contextData.contains("&.campaign&.referrer"))
+        XCTAssertTrue(contextData.contains("&acquisition.&custom.&amo1."))
+        XCTAssertTrue(contextData.contains("&key2=amo1.value2"))
+        XCTAssertTrue(contextData.contains("&key1=amo1.value1"))
+        XCTAssertTrue(contextData.contains("&.amo1&.custom&.acquisition"))
+        XCTAssertTrue(contextData.contains("&internalaction=AdobeLink"))
+        // verify places context data
+        XCTAssertTrue(contextData.contains("&loc."))
+        XCTAssertTrue(contextData.contains("&poi=regionName"))
+        XCTAssertTrue(contextData.contains("&poi.&id=regionId&.poi"))
+        XCTAssertTrue(contextData.contains("&.loc"))
+        // verify lifecycle context data
+        XCTAssertTrue(contextData.contains("&a."))
+        XCTAssertTrue(contextData.contains("&.a"))
+
+        XCTAssertTrue(contextData.contains("&OSVersion=iOS"))
+        XCTAssertTrue(contextData.contains("&DeviceName=iPhone%2012%20Pro%20Max"))
+        XCTAssertTrue(contextData.contains("&Resolution=1284%20*%202778"))
+        XCTAssertTrue(contextData.contains("&CarrierName=Adobe"))
+        XCTAssertTrue(contextData.contains("&RunMode=run%20mode"))
+        XCTAssertTrue(contextData.contains("&AppID=1234"))
+    }
+
+    // ==========================================================================
+    // handleLifecycleEvent
+    // ==========================================================================
+    /// - TODO: add test cases for Generic Lifecycle Request Content (start / pause events)
+    /// - TODO: add additional test cases for Lifecycle Response content events
+    func testHandleLifecycleResponseContentEvent_OfflineAndBackdateSessionEnabled_SessionEvent() {
+        // setup
+        // set backdate session and offline enabled to true
+        dispatchConfigurationEventForTesting(rsid: "testRsid", host: "testAnalyticsServer.com", privacyStatus: .optedIn, backDateSession: true, offlineEnabled: true, mockNetworkService: nil)
+        // setup shared state data for lifecycle, identity, places, and assurance
+        addSharedStateDataToAnalyticsState()
+        // create lifecycle event data
+        let lifecycleContextData = ["previoussessionpausetimestampmillis":"0","previoussessionstarttimestampmillis":"1600367248","starttimestampmillis":"1600371801","maxsessionlength":"604800","sessionevent":"start","prevsessionlength":"700000","previousosversion":"previousOsVersion","previousappid":"previousAppId"] as [String: String]
+        let eventData = ["lifecyclecontextdata":lifecycleContextData] as [String: Any]
+        // create the lifecycle response content event with the data
+        let event = Event(name: "Test Lifecycle response content", type: EventType.lifecycle, source: EventSource.responseContent, data: eventData)
+        let _ = analytics.readyForEvent(event)
+
+        // test
+        simulateComingEventAndWait(event)
+
+        // verify built requests contain the expected data
+        XCTAssertEqual(2, analyticsDatabase.getQueueSize())
+        let previousSessionContextData = AnalyticsDataProcessor.getContextData(source: analyticsDatabase.queuedHits[0])
+        let sessionHitContextData = AnalyticsDataProcessor.getContextData(source: analyticsDatabase.queuedHits[1])
+        // verify session info track request
+        XCTAssertTrue(previousSessionContextData.contains("&c."))
+        XCTAssertTrue(previousSessionContextData.contains("&.c"))
+        // verify places context data
+        XCTAssertTrue(previousSessionContextData.contains("&loc."))
+        XCTAssertTrue(previousSessionContextData.contains("&poi=regionName"))
+        XCTAssertTrue(previousSessionContextData.contains("&poi.&id=regionId&.poi"))
+        XCTAssertTrue(previousSessionContextData.contains("&.loc"))
+        // verify lifecycle context data
+        XCTAssertTrue(previousSessionContextData.contains("&a."))
+        XCTAssertTrue(previousSessionContextData.contains("&.a"))
+        XCTAssertTrue(previousSessionContextData.contains("&OSVersion=previousOsVersion"))
+        XCTAssertTrue(previousSessionContextData.contains("&DeviceName=iPhone%2012%20Pro%20Max"))
+        XCTAssertTrue(previousSessionContextData.contains("&Resolution=1284%20*%202778"))
+        XCTAssertTrue(previousSessionContextData.contains("&CarrierName=Adobe"))
+        XCTAssertTrue(previousSessionContextData.contains("&RunMode=run%20mode"))
+        XCTAssertTrue(previousSessionContextData.contains("&AppID=previousAppId"))
+        XCTAssertTrue(previousSessionContextData.contains("&PrevSessionLength=70000"))
+        XCTAssertTrue(previousSessionContextData.contains("&internalaction=SessionInfo"))
+
+        // verify lifecycle track request
+        XCTAssertTrue(sessionHitContextData.contains("&c."))
+        XCTAssertTrue(sessionHitContextData.contains("&.c"))
+        // verify places context data
+        XCTAssertTrue(sessionHitContextData.contains("&loc."))
+        XCTAssertTrue(sessionHitContextData.contains("&poi=regionName"))
+        XCTAssertTrue(sessionHitContextData.contains("&poi.&id=regionId&.poi"))
+        XCTAssertTrue(sessionHitContextData.contains("&.loc"))
+        // verify session context data
+        XCTAssertTrue(sessionHitContextData.contains("&previoussessionpausetimestampmillis=0"))
+        XCTAssertTrue(sessionHitContextData.contains("&previoussessionstarttimestampmillis=1600367248"))
+        XCTAssertTrue(sessionHitContextData.contains("&starttimestampmillis=1600371801"))
+        XCTAssertTrue(sessionHitContextData.contains("&maxsessionlength=604800"))
+        XCTAssertTrue(sessionHitContextData.contains("&sessionevent=start"))
+        // verify lifecycle context data
+        XCTAssertTrue(sessionHitContextData.contains("&a."))
+        XCTAssertTrue(sessionHitContextData.contains("&.a"))
+        XCTAssertTrue(sessionHitContextData.contains("&OSVersion=iOS"))
+        XCTAssertTrue(sessionHitContextData.contains("&DeviceName=iPhone%2012%20Pro%20Max"))
+        XCTAssertTrue(sessionHitContextData.contains("&Resolution=1284%20*%202778"))
+        XCTAssertTrue(sessionHitContextData.contains("&CarrierName=Adobe"))
+        XCTAssertTrue(sessionHitContextData.contains("&RunMode=run%20mode"))
+        XCTAssertTrue(sessionHitContextData.contains("&AppID=1234"))
+        XCTAssertTrue(sessionHitContextData.contains("&internalaction=Lifecycle"))
+    }
+
+    func testHandleLifecycleResponseContentEvent_BackdateSessionDisabled_InstallEvent() {
+        // setup
+        // set backdate session and offline enabled to true
+        dispatchConfigurationEventForTesting(rsid: "testRsid", host: "testAnalyticsServer.com", privacyStatus: .optedIn, backDateSession: false, offlineEnabled: true, mockNetworkService: nil)
+        // setup shared state data for lifecycle, identity, places, and assurance
+        addSharedStateDataToAnalyticsState()
+        // create lifecycle event data
+        let lifecycleContextData = ["dailyenguserevent":"DailyEngUserEvent","monthlyenguserevent":"MonthlyEngUserEvent","installdate": "someInstallDate","installevent":"InstallEvent","launchevent":"LaunchEvent"] as [String: String]
+        let eventData = ["lifecyclecontextdata":lifecycleContextData] as [String: Any]
+        // create the lifecycle response content event with the data
+        let event = Event(name: "Test Lifecycle response content", type: EventType.lifecycle, source: EventSource.responseContent, data: eventData)
+        let _ = analytics.readyForEvent(event)
+
+        // test
+        simulateComingEventAndWait(event)
+
+        // verify built request contains the expected data
+        XCTAssertEqual(1, analyticsDatabase.getQueueSize())
+        let contextData = AnalyticsDataProcessor.getContextData(source: analyticsDatabase.queuedHits[0])
+        XCTAssertTrue(contextData.contains("&c."))
+        XCTAssertTrue(contextData.contains("&.c"))
+        // verify places context data
+        XCTAssertTrue(contextData.contains("&loc."))
+        XCTAssertTrue(contextData.contains("&poi=regionName"))
+        XCTAssertTrue(contextData.contains("&poi.&id=regionId&.poi"))
+        XCTAssertTrue(contextData.contains("&.loc"))
+        // verify lifecycle context data
+        XCTAssertTrue(contextData.contains("&a."))
+        XCTAssertTrue(contextData.contains("&.a"))
+        XCTAssertTrue(contextData.contains("&OSVersion=iOS"))
+        XCTAssertTrue(contextData.contains("&DeviceName=iPhone%2012%20Pro%20Max"))
+        XCTAssertTrue(contextData.contains("&Resolution=1284%20*%202778"))
+        XCTAssertTrue(contextData.contains("&CarrierName=Adobe"))
+        XCTAssertTrue(contextData.contains("&RunMode=run%20mode"))
+        XCTAssertTrue(contextData.contains("&AppID=1234"))
+        XCTAssertTrue(contextData.contains("&InstallDate=someInstallDate"))
+        XCTAssertTrue(contextData.contains("&InstallEvent=InstallEvent"))
+        XCTAssertTrue(contextData.contains("&LaunchEvent=LaunchEvent"))
+        XCTAssertTrue(contextData.contains("&DailyEngUserEvent=DailyEngUserEvent"))
+        XCTAssertTrue(contextData.contains("&MonthlyEngUserEvent=MonthlyEngUserEvent"))
+        XCTAssertTrue(contextData.contains("&internalaction=Lifecycle"))
+    }
+
+    func testHandleLifecycleResponseContentEvent_OfflineAndBackdateSessionEnabled_CrashEvent() {
+        // setup
+        // set backdate session and offline enabled to true
+        dispatchConfigurationEventForTesting(rsid: "testRsid", host: "testAnalyticsServer.com", privacyStatus: .optedIn, backDateSession: true, offlineEnabled: true, mockNetworkService: nil)
+        // setup shared state data for lifecycle, identity, places, and assurance
+        addSharedStateDataToAnalyticsState()
+        // create lifecycle event data
+        let lifecycleContextData = ["crashevent":"a.CrashEvent","previousosversion":"previousOsVersion","previousappid":"previousAppId"] as [String: String]
+        let eventData = ["lifecyclecontextdata":lifecycleContextData] as [String: Any]
+        // create the lifecycle response content event with the data
+        let event = Event(name: "Test Lifecycle response content", type: EventType.lifecycle, source: EventSource.responseContent, data: eventData)
+        let _ = analytics.readyForEvent(event)
+
+        // test
+        simulateComingEventAndWait(event)
+
+        // verify built requests contain the expected data
+        XCTAssertEqual(2, analyticsDatabase.getQueueSize())
+        let previousSessionContextData = AnalyticsDataProcessor.getContextData(source: analyticsDatabase.queuedHits[0])
+        let lifecycleHitContextData = AnalyticsDataProcessor.getContextData(source: analyticsDatabase.queuedHits[1])
+        // verify places context data
+        XCTAssertTrue(previousSessionContextData.contains("&loc."))
+        XCTAssertTrue(previousSessionContextData.contains("&poi=regionName"))
+        XCTAssertTrue(previousSessionContextData.contains("&poi.&id=regionId&.poi"))
+        XCTAssertTrue(previousSessionContextData.contains("&.loc"))
+        // verify lifecycle context data
+        XCTAssertTrue(previousSessionContextData.contains("&a."))
+        XCTAssertTrue(previousSessionContextData.contains("&.a"))
+        XCTAssertTrue(previousSessionContextData.contains("&OSVersion=previousOsVersion"))
+        XCTAssertTrue(previousSessionContextData.contains("&DeviceName=iPhone%2012%20Pro%20Max"))
+        XCTAssertTrue(previousSessionContextData.contains("&Resolution=1284%20*%202778"))
+        XCTAssertTrue(previousSessionContextData.contains("&CarrierName=Adobe"))
+        XCTAssertTrue(previousSessionContextData.contains("&RunMode=run%20mode"))
+        XCTAssertTrue(previousSessionContextData.contains("&AppID=previousAppId"))
+        XCTAssertTrue(previousSessionContextData.contains("&CrashEvent=CrashEvent"))
+        XCTAssertTrue(previousSessionContextData.contains("&internalaction=Crash"))
+
+        // verify lifecycle track request
+        XCTAssertTrue(lifecycleHitContextData.contains("&c."))
+        XCTAssertTrue(lifecycleHitContextData.contains("&.c"))
+        // verify places context data
+        XCTAssertTrue(lifecycleHitContextData.contains("&loc."))
+        XCTAssertTrue(lifecycleHitContextData.contains("&poi=regionName"))
+        XCTAssertTrue(lifecycleHitContextData.contains("&poi.&id=regionId&.poi"))
+        XCTAssertTrue(lifecycleHitContextData.contains("&.loc"))
+        // verify lifecycle context data
+        XCTAssertTrue(lifecycleHitContextData.contains("&a."))
+        XCTAssertTrue(lifecycleHitContextData.contains("&.a"))
+        XCTAssertTrue(lifecycleHitContextData.contains("&OSVersion=iOS"))
+        XCTAssertTrue(lifecycleHitContextData.contains("&DeviceName=iPhone%2012%20Pro%20Max"))
+        XCTAssertTrue(lifecycleHitContextData.contains("&Resolution=1284%20*%202778"))
+        XCTAssertTrue(lifecycleHitContextData.contains("&CarrierName=Adobe"))
+        XCTAssertTrue(lifecycleHitContextData.contains("&RunMode=run%20mode"))
+        XCTAssertTrue(lifecycleHitContextData.contains("&AppID=1234"))
+        XCTAssertTrue(lifecycleHitContextData.contains("&internalaction=Lifecycle"))
+    }
 }

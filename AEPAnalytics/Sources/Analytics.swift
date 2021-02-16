@@ -58,7 +58,7 @@ public class Analytics: NSObject, Extension {
             self.analyticsTimer = AnalyticsTimer(dispatchQueue: dispatchQueue)
             self.analyticsState = state
             self.analyticsProperties = properties
-            self.analyticsHitDatabase = hitDatabase
+            self.analyticsDatabase = database ?? AnalyticsDatabase()
             super.init()
         }
     #endif
