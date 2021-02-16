@@ -49,6 +49,7 @@ extension FileManager {
     }
 
 }
+
 class AnalyticsDataProcessor {
     static func getCidData(source: String) -> String {
         let regex = "&cid\\.(.*)&\\.cid"

@@ -28,7 +28,7 @@ class AnalyticsVersionTest : XCTestCase {
         let dataStore = NamedCollectionDataStore(name: AnalyticsTestConstants.DATASTORE_NAME)
         let analyticsProperties = AnalyticsProperties.init(dataStore: dataStore)
 
-        analytics = Analytics(runtime: testableExtensionRuntime, state: analyticsState, properties: analyticsProperties)
+        analytics = Analytics(runtime: testableExtensionRuntime, state: analyticsState, properties: analyticsProperties, database: nil)
         analytics.onRegistered()
     }
 
