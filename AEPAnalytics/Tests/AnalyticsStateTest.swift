@@ -256,7 +256,7 @@ class AnalyticsStateTest : XCTestCase {
 
         analyticsState.update(dataMap: dataMap)
 
-        XCTAssertTrue(analyticsState.assuranceSessionActive ?? false)
+        XCTAssertTrue(analyticsState.assuranceSessionActive)
     }
 
     func testAnalyticsStateReturnsAssuranceStateInactiveWithEmptyAssuranceInfo() {
@@ -268,7 +268,7 @@ class AnalyticsStateTest : XCTestCase {
 
         analyticsState.update(dataMap: dataMap)
 
-        XCTAssertFalse(analyticsState.assuranceSessionActive ?? false)
+        XCTAssertFalse(analyticsState.assuranceSessionActive)
     }
 
     func testGetBaseUrlWhenSSLAndForwarding() {

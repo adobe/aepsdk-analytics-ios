@@ -10,16 +10,18 @@
  governing permissions and limitations under the License.
  */
 
-@testable import AEPCore
 import Foundation
+
+@testable import AEPCore
+
 
 class TestableExtensionRuntime: ExtensionRuntime {
     var listeners: [String: EventListener] = [:]
     var dispatchedEvents: [Event] = []
     var createdSharedStates: [[String: Any]?] = []
+    public var createdXdmSharedStates: [[String: Any]?] = []
     var otherSharedStates: [String: SharedStateResult] = [:]
-    // unused
-    var createdXdmSharedStates: [[String: Any]?] = []
+    var otherXDMSharedStates: [String: SharedStateResult] = [:]
 
     func getListener(type: String, source: String) -> EventListener? {
         return listeners["\(type)-\(source)"]
@@ -56,8 +58,26 @@ class TestableExtensionRuntime: ExtensionRuntime {
         return otherSharedStates["\(extensionName)-\(String(describing: event?.id))"] ?? nil
     }
 
+    public func createXDMSharedState(data: [String : Any], event: Event?) {
+        createdXdmSharedStates += [data]
+    }
+
+    func createPendingXDMSharedState(event: Event?) -> SharedStateResolver {
+        return { data in
+            self.createdXdmSharedStates += [data]
+        }
+    }
+
+    public func getXDMSharedState(extensionName: String, event: Event?) -> SharedStateResult? {
+        return otherXDMSharedStates["\(extensionName)-\(String(describing: event?.id))"] ?? nil
+    }
+
     func simulateSharedState(extensionName: String, event: Event?, data: (value: [String: Any]?, status: SharedStateStatus)) {
         otherSharedStates["\(extensionName)-\(String(describing: event?.id))"] = SharedStateResult(status: data.status, value: data.value)
+    }
+
+    public func simulateXDMSharedState(for extensionName: String, data: (value: [String: Any]?, status: SharedStateStatus)) {
+        otherXDMSharedStates["\(extensionName)"] = SharedStateResult(status: data.status, value: data.value)
     }
 
     /// clear the events and shared states that have been created by the current extension
@@ -69,20 +89,4 @@ class TestableExtensionRuntime: ExtensionRuntime {
     func startEvents() {}
 
     func stopEvents() {}
-
-    public func createXDMSharedState(data: [String : Any], event: Event?) {
-        // no-op
-    }
-
-    public func createPendingXDMSharedState(event: Event?) -> SharedStateResolver {
-        // no-op
-        return { data in
-            self.createdXdmSharedStates += [data]
-        }
-    }
-
-    public func getXDMSharedState(extensionName: String, event: Event?) -> SharedStateResult? {
-        // no-op
-        return nil
-    }
 }

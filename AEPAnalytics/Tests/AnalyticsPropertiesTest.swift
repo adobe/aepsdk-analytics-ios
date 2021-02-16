@@ -11,49 +11,25 @@
  */
 
 import XCTest
+import AEPServices
 @testable import AEPAnalytics
 
 
 class AnalyticsPropertiesTest: XCTestCase {
-        
-    var analyticsProperties = AnalyticsProperties()
-    
-    override func setUp() {}
-    
+
+    var analyticsProperties:AnalyticsProperties!
+
+    override func setUp() {
+        ServiceProvider.shared.namedKeyValueService = MockDataStore()
+        let dataStore = NamedCollectionDataStore(name: AnalyticsTestConstants.DATASTORE_NAME)
+        analyticsProperties = AnalyticsProperties.init(dataStore: dataStore)
+    }
+
     func testTimezoneOffsetFormat() {
-        
         let timezoneOffsetString = analyticsProperties.timezoneOffset
         let range = NSRange(location: 0, length: timezoneOffsetString.count)
         let regex = try! NSRegularExpression(pattern: "00/00/0000 00:00:00 0 \\d{1,}")
-        
-        XCTAssertTrue(regex.firstMatch(in: timezoneOffsetString, options: [], range: range) != nil)
-    }
-    
-    func testCancelReffererTimer() {
-        
-        analyticsProperties.referrerTimerRunning = true
-        analyticsProperties.referrerDispatchWorkItem = DispatchWorkItem{}
-        
-        XCTAssertNotNil(analyticsProperties.referrerDispatchWorkItem)
-        XCTAssertTrue(analyticsProperties.referrerTimerRunning)
-                                
-        analyticsProperties.cancelReferrerTimer()
-        
-        XCTAssertNil(analyticsProperties.referrerDispatchWorkItem)
-        XCTAssertFalse(analyticsProperties.referrerTimerRunning)
-    }
-    
-    func testCancelLifecycleTimer() {
 
-        analyticsProperties.lifecycleTimerRunning = true
-        analyticsProperties.lifecycleDispatchWorkItem = DispatchWorkItem{}
-        
-        XCTAssertNotNil(analyticsProperties.lifecycleDispatchWorkItem)
-        XCTAssertTrue(analyticsProperties.lifecycleTimerRunning)
-                                
-        analyticsProperties.cancelLifecycleTimer()
-        
-        XCTAssertNil(analyticsProperties.lifecycleDispatchWorkItem)
-        XCTAssertFalse(analyticsProperties.lifecycleTimerRunning)
+        XCTAssertTrue(regex.firstMatch(in: timezoneOffsetString, options: [], range: range) != nil)
     }
 }
