@@ -49,3 +49,27 @@ extension FileManager {
     }
 
 }
+
+class AnalyticsDataProcessor {
+    static func getCidData(source: String) -> String {
+        let regex = "&cid\\.(.*)&\\.cid"
+        if let range = source.range(of: regex, options: .regularExpression) {
+            return String(source[range])
+        }
+        return ""
+    }
+
+    static func getContextData(source: String) -> String {
+        let regex = "(&c\\.(.*)&\\.c)"
+        if let range = source.range(of: regex, options: .regularExpression) {
+            return String(source[range])
+        }
+        return ""
+    }
+
+    static func getAdditionalData(source: String) -> String {
+        var additionalData = source.replacingOccurrences(of: getCidData(source: source), with: "")
+        additionalData = additionalData.replacingOccurrences(of: getContextData(source: source), with: "")
+        return additionalData
+    }
+}
