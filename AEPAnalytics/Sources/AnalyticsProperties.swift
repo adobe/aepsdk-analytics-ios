@@ -82,8 +82,10 @@ class AnalyticsProperties {
     func setAnalyticsIdentifier(aid: String?) {
         if (aid ?? "").isEmpty {
             dataStore.remove(key: AnalyticsConstants.DataStoreKeys.AID)
+            setIgnoreAidStatus(status: true)
         } else {
             dataStore.set(key: AnalyticsConstants.DataStoreKeys.AID, value: aid)
+            setIgnoreAidStatus(status: false)
         }
 
         self.aid = aid

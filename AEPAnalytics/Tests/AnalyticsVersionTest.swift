@@ -17,62 +17,28 @@ import AEPServices
 
 class AnalyticsVersionTest : XCTestCase {
 
-    var analytics: Analytics!
-
     override func setUp() {
-        // setup test variables
-        let testableExtensionRuntime = TestableExtensionRuntime()
-        let analyticsState = AnalyticsState()
-
-        ServiceProvider.shared.namedKeyValueService = MockDataStore()
-        let dataStore = NamedCollectionDataStore(name: AnalyticsTestConstants.DATASTORE_NAME)
-        let analyticsProperties = AnalyticsProperties.init(dataStore: dataStore)
-
-        analytics = Analytics(runtime: testableExtensionRuntime, state: analyticsState, properties: analyticsProperties)
-        analytics.onRegistered()
     }
 
-    func testGetVersion_HappyPath() {
-        let version = analytics.getVersion()
-        // verify Analytics version is 0.0.1 and MobileCore version is 3.0.0
-        XCTAssertEqual(version, "IOSN000001030000")
-    }
-
-    func testGetVersion_With_XamarinWrapperType() {
-        MobileCore.setWrapperType(.xamarin)
-        let version = analytics.getVersion()
-        // verify wrapper type is "X"
-        XCTAssertEqual(version, "IOSX000001030000")
-    }
-
-    func testGetVersion_With_UnityWrapperType() {
-        MobileCore.setWrapperType(.unity)
-        let version = analytics.getVersion()
-        // verify wrapper type is "U"
-        XCTAssertEqual(version, "IOSU000001030000")
-    }
-
-    func testGetVersion_With_ReactNativeWrapperType() {
-        MobileCore.setWrapperType(.reactNative)
-        let version = analytics.getVersion()
-        // verify wrapper type is "R"
-        XCTAssertEqual(version, "IOSR000001030000")
+    func testBuildVersionString_HappyPath() {
+        let builtVersionString = AnalyticsVersion.buildVersionString(osType: "IOS", analyticsVersion: "3.0.0", coreVersion: "3.0.0-" + WrapperType.none.rawValue)
+        XCTAssertEqual(builtVersionString, "IOSN030000030000")
     }
 
     func testBuildVersionString_With_SingleAndDoubleDigitVersionNumbers() {
-        let builtVersionString = analytics.buildVersionString(osType: "TOS", analyticsVersion: "9.18.27", coreVersion: "11.12.13-" + WrapperType.cordova.rawValue)
+        let builtVersionString = AnalyticsVersion.buildVersionString(osType: "TOS", analyticsVersion: "9.18.27", coreVersion: "11.12.13-" + WrapperType.cordova.rawValue)
         // verify built version string and correct wrapper type of "C"
         XCTAssertEqual(builtVersionString, "TOSC091827111213")
     }
 
     func testBuildVersionString_With_DoubleDigitVersionNumbers() {
-        let builtVersionString = analytics.buildVersionString(osType: "WOS", analyticsVersion: "22.33.44", coreVersion: "55.66.77-" + WrapperType.flutter.rawValue)
+        let builtVersionString = AnalyticsVersion.buildVersionString(osType: "WOS", analyticsVersion: "22.33.44", coreVersion: "55.66.77-" + WrapperType.flutter.rawValue)
         // verify built version string and correct wrapper type of "F"
         XCTAssertEqual(builtVersionString, "WOSF223344556677")
     }
 
     func testBuildVersionString_With_InvalidAnalyticsVersion() {
-        let builtVersionString = analytics.buildVersionString(osType: "IOS", analyticsVersion: "33.44", coreVersion: "55.66.77-" + WrapperType.xamarin.rawValue)
+        let builtVersionString = AnalyticsVersion.buildVersionString(osType: "IOS", analyticsVersion: "33.44", coreVersion: "55.66.77-" + WrapperType.xamarin.rawValue)
         // verify version string contains fallback version of "000000" and correct wrapper type of "X"
         XCTAssertEqual(builtVersionString, "IOSX000000556677")
     }
