@@ -82,13 +82,9 @@ public class Analytics: NSObject, Extension {
     public func onUnregistered() {}
 
     public func readyForEvent(_ event: Event) -> Bool {
-
         let configurationStatus = getSharedState(extensionName: AnalyticsConstants.Configuration.EventDataKeys.SHARED_STATE_NAME, event: event)?.status ?? .none
-
         let identityStatus = getSharedState(extensionName: AnalyticsConstants.Identity.EventDataKeys.SHARED_STATE_NAME, event: event)?.status ?? .none
-
-        //return configurationStatus == .set && identityStatus == .set
-        return true
+        return configurationStatus == .set && identityStatus == .set        
     }
 
     /**
