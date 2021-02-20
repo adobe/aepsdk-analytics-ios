@@ -166,4 +166,109 @@ class ContextDataUtil {
             addValueToContextData(value: value, inContextData: &data, subkeys: subkeys, index: index + 1)
         }
     }
+
+    /**
+     Gets the url fragment, it deserialize it, appends the given map inside the context data node if that one
+     exists and serialize it back to the initial format. Otherwise it returns the initial url fragment
+     
+     - Parameters:
+        - referrerData: the `Dictionary` that we want to append to the initial url fragment
+        - source: the url fragment as `String`
+     - Returns: the url fragment that has the given `Dictionary` merged inside the context data node
+     */
+    static func appendContextData(referrerData: [String: String]?, source: String) -> String {
+
+        guard !source.isEmpty else {
+            Log.debug(label: LOG_TAG, "\(#function) - Returning early. Source url is empty.")
+            return source
+        }
+
+        guard let referrerData = referrerData, !referrerData.isEmpty else {
+            Log.debug(label: LOG_TAG, "\(#function) - Returning early. Context data passed is nil or empty.")
+            return source
+        }
+
+        let contextDataPattern = ".*(&c\\.(.*)&\\.c).*"
+        var regex: NSRegularExpression?
+
+        do {
+            regex = try NSRegularExpression(pattern: contextDataPattern, options: [])
+        } catch {
+            Log.debug(label: LOG_TAG, "\(#function) - Context data regular expression failed with exception:  (\(error.localizedDescription))")
+        }
+
+        let result = regex?.firstMatch(in: source, options: [], range: NSRange.init(location: 0, length: source.count))
+        if let regexResult = result, regexResult.numberOfRanges >= 2 {
+            let innerContextDataRange = regexResult.range(at: 2)  //It excludes the context data &c.&.c for ex: in &c.abc&.c will return abc
+            let start = innerContextDataRange.lowerBound
+            let end = innerContextDataRange.upperBound
+            let contextDataString = source[source.index(source.startIndex, offsetBy: start)..<source.index(source.startIndex, offsetBy: end)]
+            var contextData = deserializeContextDataKeyValuePairs(serializedContextData: String(contextDataString))
+            referrerData.forEach { key, value in
+                contextData[key] = value
+            }
+
+            let outerContextDataRange = regexResult.range(at: 1) //It includes the context data &c.&.c for ex: in &c.abc&.c will return &c.abc&.c
+            let startOuter = outerContextDataRange.lowerBound
+            let endOuter = outerContextDataRange.upperBound
+
+            var serializedUrl = String(source[source.startIndex..<source.index(source.startIndex, offsetBy: startOuter)])
+            var contextMap: [String: Any] = [:]
+            contextMap["c"] = translateContextData(data: contextData)
+            serializeToQueryString(parameters: contextMap, requestString: &serializedUrl)
+            if endOuter < source.count {
+                serializedUrl += String(source[source.index(source.startIndex, offsetBy: endOuter)..<source.index(source.startIndex, offsetBy: source.count)])
+            }
+            return serializedUrl
+
+        } else {
+            var serializedUrl = source
+            var contextMap: [String: Any] = [:]
+            contextMap["c"] = translateContextData(data: referrerData)
+            serializeToQueryString(parameters: contextMap, requestString: &serializedUrl)
+            return serializedUrl
+        }
+    }
+
+    /**
+     Splits the context data string into key value pairs parameters and returns them as a `Dictionary`
+     
+     - Parameter contextDataString: the context data url fragment that we want to deserialize
+     - Returns: context data as `Dictionary`
+     */
+    private static func deserializeContextDataKeyValuePairs(serializedContextData data: String) -> [String: String] {
+        var contextData: [String: String] = [:]
+        var keyPath = [String]()
+
+        let subString = data.split(separator: "&")
+        for substring in subString {
+            if substring.hasSuffix(".") && !substring.contains("=") {
+                keyPath.append(String(substring))
+            } else if substring.hasPrefix(".") {
+                if !keyPath.isEmpty {
+                    keyPath.remove(at: keyPath.count - 1)
+                }
+            } else {
+                let kvPair = substring.split(separator: "=")
+                if kvPair.count != 2 {
+                    continue
+                }
+                let contextDataKey = contextDataStringPath(keyPath: keyPath, lastComponent: String(kvPair[0]))
+                contextData[contextDataKey] = URLEncoder.decode(value: String(kvPair[1]))
+            }
+        }
+
+        return contextData
+    }
+
+    private static func contextDataStringPath(keyPath: [String], lastComponent: String) -> String {
+        var stringPath = ""
+
+        for path in keyPath {
+            stringPath += "\(path)"
+        }
+
+        stringPath += "\(lastComponent)"
+        return stringPath
+    }
 }
