@@ -67,15 +67,16 @@ class ContextDataUtilTests: XCTestCase {
     }
 
     func testAppendContextData_When_NestedKeyNameAppendToExistingLevel() {
-        let data:[String:String] = ["key.new2":"value2", "key1.new3":"value3"]
+        let data:[String:String] = ["key2.new2":"value2", "key1.new3":"value3"]
 
-        let result = ContextDataUtil.appendContextData(referrerData: data, source: "&c.&key=value&key.&nest=value1&.key&key1.&nest1=value2&.key1&.c")        
+        let result = ContextDataUtil.appendContextData(referrerData: data, source: "&c.&key=value&key2.&nest=value1&.key2&key1.&nest1=value2&.key1&.c")
 
         XCTAssertTrue(contextDataInCorrectSequence(source: result, target: "new3=value3", start: "&key1.", end: "&.key1"))
         XCTAssertTrue(contextDataInCorrectSequence(source: result, target: "nest1=value2", start: "&key1.", end: "&.key1"))
         XCTAssertTrue(contextDataInCorrectSequence(source: result, target: "key=value", start: "&c.", end: "&.c"))
-        XCTAssertTrue(contextDataInCorrectSequence(source: result, target: "new2=value2", start: "&key.", end: "&.key"))
-        XCTAssertTrue(contextDataInCorrectSequence(source: result, target: "nest=value1", start: "&key.", end: "&.key"))
+
+        XCTAssertTrue(contextDataInCorrectSequence(source: result, target: "new2=value2", start: "&key2.", end: "&.key2"))
+        XCTAssertTrue(contextDataInCorrectSequence(source: result, target: "nest=value1", start: "&key2.", end: "&.key2"))
     }
 
     func testAppendContextData_When_NestedKeyNameAppendToExistingLevel_4Level() {
@@ -123,5 +124,10 @@ class ContextDataUtilTests: XCTestCase {
 
         return source.distance(from: startRange.upperBound, to: targetRange.lowerBound) >= 0 && source.distance(from: targetRange.upperBound, to: endRange.lowerBound) >= 0
     }
+
+}
+
+
+class ABC: Error {
 
 }
