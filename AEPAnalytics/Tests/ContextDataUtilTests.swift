@@ -20,32 +20,33 @@ class ContextDataUtilTests: XCTestCase {
         let emptySource = ""
         var data = [String:String]()
         data["new-key"] = "value"
-        XCTAssertEqual(emptySource, ContextDataUtil.appendContextData(referrerData: data, source: emptySource))
+        let serializedContextDataQuery = "&c.&newkey=value&.c"
+        XCTAssertEqual(serializedContextDataQuery, ContextDataUtil.appendContextData(contextData: data, source: emptySource))
     }
 
     func testAppendContextData_When_NoContextDataInSource() {
         let sourceUrl = "http://abc.com"
         var data = [String:String]()
         data["new-key"] = "value"
-        XCTAssertEqual("\(sourceUrl)&c.&newkey=value&.c", ContextDataUtil.appendContextData(referrerData: data, source: sourceUrl))
+        XCTAssertEqual("\(sourceUrl)&c.&newkey=value&.c", ContextDataUtil.appendContextData(contextData: data, source: sourceUrl))
     }
 
     func testAppendContextData_When_ReferreDataIsNullOrEmpty() {
         let sourceUrl = "http://abc.com"
-        XCTAssertEqual(sourceUrl, ContextDataUtil.appendContextData(referrerData: nil, source: sourceUrl))
+        XCTAssertEqual(sourceUrl, ContextDataUtil.appendContextData(contextData: nil, source: sourceUrl))
         let data = [String:String]()
-        XCTAssertEqual(sourceUrl, ContextDataUtil.appendContextData(referrerData: data, source: sourceUrl))
+        XCTAssertEqual(sourceUrl, ContextDataUtil.appendContextData(contextData: data, source: sourceUrl))
     }
 
     func testAppendContextData_When_ContextDataOnePair() {
         let data:[String:String] = ["key":"value"]
-        XCTAssertEqual("&c.&key=value&.c", ContextDataUtil.appendContextData(referrerData: data, source: "&c.&.c"))
+        XCTAssertEqual("&c.&key=value&.c", ContextDataUtil.appendContextData(contextData: data, source: "&c.&.c"))
     }
 
     func testAppendContextData_When_ContextDataTwoPair() {
         let data:[String:String] = ["key":"value", "key1":"value1"]
 
-        let result = ContextDataUtil.appendContextData(referrerData: data, source: "&c.&.c")
+        let result = ContextDataUtil.appendContextData(contextData: data, source: "&c.&.c")
         XCTAssertTrue(contextDataInCorrectSequence(source: result, target: "key=value", start: "&c.", end: "&.c"))
         XCTAssertTrue(contextDataInCorrectSequence(source: result, target: "key1=value1", start: "&c.", end: "&.c"))
     }
@@ -53,7 +54,7 @@ class ContextDataUtilTests: XCTestCase {
     func testAppendContextData_When_ContextDataWithNestedKeyName() {
         let data:[String:String] = ["key":"value", "key.nest":"value1"]
 
-        let result = ContextDataUtil.appendContextData(referrerData: data, source: "&c.&.c")
+        let result = ContextDataUtil.appendContextData(contextData: data, source: "&c.&.c")
         XCTAssertTrue(contextDataInCorrectSequence(source: result, target: "key=value", start: "&c.", end: "&.c"))
         XCTAssertTrue(contextDataInCorrectSequence(source: result, target: "nest=value1", start: "&key.", end: "&.key"))
     }
@@ -61,7 +62,7 @@ class ContextDataUtilTests: XCTestCase {
     func testAppendContextData_When_NestedKeyNameOverrideOldValue() {
         let data:[String:String] = ["key":"new-value", "key.nest":"new-value1"]
 
-        let result = ContextDataUtil.appendContextData(referrerData: data, source: "&c.&key=value&key.&nest=value1&.key&.c")
+        let result = ContextDataUtil.appendContextData(contextData: data, source: "&c.&key=value&key.&nest=value1&.key&.c")
         XCTAssertTrue(contextDataInCorrectSequence(source: result, target: "key=new-value", start: "&c.", end: "&.c"))
         XCTAssertTrue(contextDataInCorrectSequence(source: result, target: "nest=new-value1", start: "&key.", end: "&.key"))
     }
@@ -69,7 +70,7 @@ class ContextDataUtilTests: XCTestCase {
     func testAppendContextData_When_NestedKeyNameAppendToExistingLevel() {
         let data:[String:String] = ["key2.new2":"value2", "key1.new3":"value3"]
 
-        let result = ContextDataUtil.appendContextData(referrerData: data, source: "&c.&key=value&key2.&nest=value1&.key2&key1.&nest1=value2&.key1&.c")
+        let result = ContextDataUtil.appendContextData(contextData: data, source: "&c.&key=value&key2.&nest=value1&.key2&key1.&nest1=value2&.key1&.c")
 
         XCTAssertTrue(contextDataInCorrectSequence(source: result, target: "new3=value3", start: "&key1.", end: "&.key1"))
         XCTAssertTrue(contextDataInCorrectSequence(source: result, target: "nest1=value2", start: "&key1.", end: "&.key1"))
@@ -82,7 +83,7 @@ class ContextDataUtilTests: XCTestCase {
     func testAppendContextData_When_NestedKeyNameAppendToExistingLevel_4Level() {
         let data:[String:String] = ["level1.level2.level3.level4.new": "new", "key1.new":"value", "key.new":"value"]
 
-        let result = ContextDataUtil.appendContextData(referrerData: data, source: "&c.&key=value&key.&nest=value1&.key&key1.&nest=value1&.key1&level1.&level2.&level3.&level4.&old=old&.level4&.level3&.level2&.level1&.c")
+        let result = ContextDataUtil.appendContextData(contextData: data, source: "&c.&key=value&key.&nest=value1&.key&key1.&nest=value1&.key1&level1.&level2.&level3.&level4.&old=old&.level4&.level3&.level2&.level1&.c")
 
         XCTAssertTrue(contextDataInCorrectSequence(source: result, target: "&level2.", start: "&level1.", end: "&.level1"))
         XCTAssertTrue(contextDataInCorrectSequence(source: result, target: "&level3.", start: "&level2.", end: "&.level2"))
@@ -94,7 +95,7 @@ class ContextDataUtilTests: XCTestCase {
     func testAppendContextData_When_ContextDataWithUTF8() {
         let data:[String:String] = ["level1.level2.level3.level4.new":"中文", "key1.new":"value", "key.new":"value"]
 
-        let result = ContextDataUtil.appendContextData(referrerData: data, source: "&c.&key=value&key.&nest=value1&.key&key1.&nest=value1&.key1&level1.&level2.&level3.&level4.&old=old&.level4&.level3&.level2&.level1&.c")
+        let result = ContextDataUtil.appendContextData(contextData: data, source: "&c.&key=value&key.&nest=value1&.key&key1.&nest=value1&.key1&level1.&level2.&level3.&level4.&old=old&.level4&.level3&.level2&.level1&.c")
 
         XCTAssertTrue(contextDataInCorrectSequence(source: result, target: "new=%E4%B8%AD%E6%96%87", start: "&level4.", end: "&.level4"))        
     }
@@ -102,7 +103,7 @@ class ContextDataUtilTests: XCTestCase {
     func testAppendContextData_When_ContextDataUTF8_And_SourceContainsUTF8() {
         let data:[String:String] = ["level1.level2.level3.level4.new":"中文", "key1.new":"value", "key.new":"value"]
 
-        let result = ContextDataUtil.appendContextData(referrerData: data, source: "&c.&key=value&key.&nest=value1&.key&key1.&nest=%E4%B8%AD%E6%96%87&.key1&level1.&level2.&level3.&level4.&old=old&.level4&.level3&.level2&.level1&.c")
+        let result = ContextDataUtil.appendContextData(contextData: data, source: "&c.&key=value&key.&nest=value1&.key&key1.&nest=%E4%B8%AD%E6%96%87&.key1&level1.&level2.&level3.&level4.&old=old&.level4&.level3&.level2&.level1&.c")
 
         XCTAssertTrue(contextDataInCorrectSequence(source: result, target: "new=%E4%B8%AD%E6%96%87", start: "&level4.", end: "&.level4"))
         XCTAssertTrue(contextDataInCorrectSequence(source: result, target: "nest=%E4%B8%AD%E6%96%87", start: "&key1.", end: "&.key1"))                        
@@ -111,7 +112,7 @@ class ContextDataUtilTests: XCTestCase {
     func testAppendContextData_When_SourceIsARealHit() {
         let data:[String:String] = ["key1.new1":"value1", "key2.new2":"value2"]
 
-        let result = ContextDataUtil.appendContextData(referrerData: data, source: "ndh=1&pe=lnk_o&pev2=ADBINTERNAL%3ALifecycle&pageName=My%20Application%201.0%20%281%29&t=00%2F00%2F0000%2000%3A00%3A00%200%20360&ts=1432159549&c.&a.&DeviceName=SAMSUNG-SGH-I337&Resolution=1080x1920&OSVersion=Android%204.3&CarrierName=&internalaction=Lifecycle&AppID=My%20Application%201.0%20%281%29&Launches=1&InstallEvent=InstallEvent&DayOfWeek=4&InstallDate=5%2F20%2F2015&LaunchEvent=LaunchEvent&DailyEngUserEvent=DailyEngUserEvent&RunMode=Application&HourOfDay=16&MonthlyEngUserEvent=MonthlyEngUserEvent&.a&.c&mid=45872199741202307594993613744306256830&ce=UTF-8")
+        let result = ContextDataUtil.appendContextData(contextData: data, source: "ndh=1&pe=lnk_o&pev2=ADBINTERNAL%3ALifecycle&pageName=My%20Application%201.0%20%281%29&t=00%2F00%2F0000%2000%3A00%3A00%200%20360&ts=1432159549&c.&a.&DeviceName=SAMSUNG-SGH-I337&Resolution=1080x1920&OSVersion=Android%204.3&CarrierName=&internalaction=Lifecycle&AppID=My%20Application%201.0%20%281%29&Launches=1&InstallEvent=InstallEvent&DayOfWeek=4&InstallDate=5%2F20%2F2015&LaunchEvent=LaunchEvent&DailyEngUserEvent=DailyEngUserEvent&RunMode=Application&HourOfDay=16&MonthlyEngUserEvent=MonthlyEngUserEvent&.a&.c&mid=45872199741202307594993613744306256830&ce=UTF-8")
 
         XCTAssertTrue(contextDataInCorrectSequence(source: result, target: "new1=value1", start: "&key1.", end: "&.key1"))
         XCTAssertTrue(contextDataInCorrectSequence(source: result, target: "new2=value2", start: "&key2.", end: "&.key2"))

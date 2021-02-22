@@ -176,14 +176,9 @@ class ContextDataUtil {
         - source: the url fragment as `String`
      - Returns: the url fragment that has the given `Dictionary` merged inside the context data node
      */
-    static func appendContextData(referrerData: [String: String]?, source: String) -> String {
+    static func appendContextData(contextData: [String: String]?, source: String) -> String {
 
-        guard !source.isEmpty else {
-            Log.debug(label: LOG_TAG, "\(#function) - Returning early. Source url is empty.")
-            return source
-        }
-
-        guard let referrerData = referrerData, !referrerData.isEmpty else {
+        guard let referrerData = contextData, !referrerData.isEmpty else {
             Log.debug(label: LOG_TAG, "\(#function) - Returning early. Context data passed is nil or empty.")
             return source
         }
