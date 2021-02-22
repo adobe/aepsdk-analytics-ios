@@ -170,7 +170,7 @@ class ContextDataUtil {
     /**
      Gets the url fragment, it deserialize it, appends the given map inside the context data node if that one
      exists and serialize it back to the initial format. Otherwise it returns the initial url fragment
-     
+
      - Parameters:
         - referrerData: the `Dictionary` that we want to append to the initial url fragment
         - source: the url fragment as `String`
@@ -232,7 +232,7 @@ class ContextDataUtil {
 
     /**
      Splits the context data string into key value pairs parameters and returns them as a `Dictionary`
-     
+
      - Parameter contextDataString: the context data url fragment that we want to deserialize
      - Returns: context data as `Dictionary`
      */
