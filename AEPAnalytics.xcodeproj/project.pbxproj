@@ -17,6 +17,7 @@
 		3D1D45AF25391B410053CB47 /* AnalyticsRequestSerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1D45AE25391B410053CB47 /* AnalyticsRequestSerializer.swift */; };
 		3D1D45B2253F99130053CB47 /* AnalyticsStateTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1D45B1253F99120053CB47 /* AnalyticsStateTest.swift */; };
 		3D1D45B625425F240053CB47 /* ContextDataUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1D45B525425F230053CB47 /* ContextDataUtil.swift */; };
+		3D2C832425E03A300064E0D4 /* ContextDataUtilTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2C832325E03A300064E0D4 /* ContextDataUtilTests.swift */; };
 		3DAA40BB2548C58100703509 /* ContextData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DAA40BA2548C58100703509 /* ContextData.swift */; };
 		3DC1E0242575CB5100E0AA16 /* AnalyticsRequestSerializerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DC1E0232575CB5100E0AA16 /* AnalyticsRequestSerializerTests.swift */; };
 		3DCDB3DF252E853200ABA819 /* AnalyticsProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DCDB3DE252E853200ABA819 /* AnalyticsProperties.swift */; };
@@ -87,6 +88,7 @@
 		3D1D45B1253F99120053CB47 /* AnalyticsStateTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsStateTest.swift; sourceTree = "<group>"; };
 		3D1D45B3253F9EE60053CB47 /* AnalyticsTestConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsTestConstants.swift; sourceTree = "<group>"; };
 		3D1D45B525425F230053CB47 /* ContextDataUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextDataUtil.swift; sourceTree = "<group>"; };
+		3D2C832325E03A300064E0D4 /* ContextDataUtilTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextDataUtilTests.swift; sourceTree = "<group>"; };
 		3DAA40BA2548C58100703509 /* ContextData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextData.swift; sourceTree = "<group>"; };
 		3DC1E0232575CB5100E0AA16 /* AnalyticsRequestSerializerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsRequestSerializerTests.swift; sourceTree = "<group>"; };
 		3DCDB3DE252E853200ABA819 /* AnalyticsProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsProperties.swift; sourceTree = "<group>"; };
@@ -224,6 +226,7 @@
 				D639E23925B8C25500955FBA /* AnalyticsVersionTest.swift */,
 				AC277CF3252C23E600987C67 /* Info.plist */,
 				AC76C1602534D66300211DE2 /* TestHelper */,
+				3D2C832325E03A300064E0D4 /* ContextDataUtilTests.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -596,6 +599,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3DD8E6F025676159009234FD /* AnalyticsTestConstants.swift in Sources */,
+				3D2C832425E03A300064E0D4 /* ContextDataUtilTests.swift in Sources */,
 				3DD8E6EB25673BE3009234FD /* TestableExtensionRuntime.swift in Sources */,
 				AC277D03252C23F400987C67 /* AnalyticsAPITests.swift in Sources */,
 				D639E25525B8C70400955FBA /* AnalyticsVersionTest.swift in Sources */,
