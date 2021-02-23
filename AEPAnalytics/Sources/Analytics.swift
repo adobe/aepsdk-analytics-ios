@@ -84,7 +84,7 @@ public class Analytics: NSObject, Extension {
     public func readyForEvent(_ event: Event) -> Bool {
         let configurationStatus = getSharedState(extensionName: AnalyticsConstants.Configuration.EventDataKeys.SHARED_STATE_NAME, event: event)?.status ?? .none
         let identityStatus = getSharedState(extensionName: AnalyticsConstants.Identity.EventDataKeys.SHARED_STATE_NAME, event: event)?.status ?? .none
-        return configurationStatus == .set && identityStatus == .set        
+        return configurationStatus == .set && identityStatus == .set
     }
 
     /**
@@ -536,10 +536,10 @@ public class Analytics: NSObject, Extension {
         }
         if analyticsDatabase?.isHitWaiting() ?? false {
             Log.debug(label: LOG_TAG, "trackLifecycle - Append lifecycle data to pending hit")
-            analyticsDatabase?.kickWithAddtionalData(type: .lifecycle, data: lifecycleContextData)
+            analyticsDatabase?.kickWithAdditionalData(type: .lifecycle, data: lifecycleContextData)
         } else {
             // Signal the database, it does not have to wait for lifecyle data.
-            analyticsDatabase?.kickWithAddtionalData(type: .lifecycle, data: nil)
+            analyticsDatabase?.cancelWaitForAdditionalData(type: .lifecycle)
 
             Log.debug(label: LOG_TAG, "trackLifecycle - Sending lifecycle data as seperate tracking hit")
             // Send Lifecycle data as a seperate tracking hit.
@@ -570,10 +570,10 @@ public class Analytics: NSObject, Extension {
 
         if analyticsDatabase?.isHitWaiting() ?? false {
             Log.debug(label: LOG_TAG, "trackAcquisition - Append referrer data to pending hit")
-            analyticsDatabase?.kickWithAddtionalData(type: .referrer, data: acquisitionContextData)
+            analyticsDatabase?.kickWithAdditionalData(type: .referrer, data: acquisitionContextData)
         } else {
             // Signal that the database, it does not have to wait for referrer data.
-            analyticsDatabase?.kickWithAddtionalData(type: .referrer, data: nil)
+            analyticsDatabase?.cancelWaitForAdditionalData(type: .referrer)
 
             Log.debug(label: LOG_TAG, "trackAcquisition - Sending referrer data as seperate tracking hit")
             // Send Acquisition data as a seperate tracking hit.
@@ -774,7 +774,7 @@ public class Analytics: NSObject, Extension {
         analyticsDatabase?.waitForAdditionalData(type: .lifecycle)
         self.analyticsTimer.startLifecycleTimer(timeout: AnalyticsConstants.Default.LIFECYCLE_RESPONSE_WAIT_TIMEOUT) { [weak self] in
             Log.warning(label: "Analytics", "waitForLifecycleData - Lifecycle timeout has expired without Lifecycle data")
-            self?.analyticsDatabase?.kickWithAddtionalData(type: .lifecycle, data: nil)
+            self?.analyticsDatabase?.cancelWaitForAdditionalData(type: .lifecycle)
         }
     }
 
@@ -784,7 +784,7 @@ public class Analytics: NSObject, Extension {
         analyticsDatabase?.waitForAdditionalData(type: .referrer)
         self.analyticsTimer.startReferrerTimer(timeout: timeout) { [weak self] in
             Log.warning(label: "Analytics", "WaitForAcquisitionData - Launch hit delay has expired without referrer data.")
-            self?.analyticsDatabase?.kickWithAddtionalData(type: .referrer, data: nil)
+            self?.analyticsDatabase?.cancelWaitForAdditionalData(type: .referrer)
         }
     }
 }

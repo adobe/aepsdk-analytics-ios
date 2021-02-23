@@ -99,11 +99,11 @@ class AnalyticsHitProcessor: HitProcessing {
                                                 connectTimeout: AnalyticsConstants.Default.CONNECTION_TIMEOUT,
                                                 readTimeout: AnalyticsConstants.Default.CONNECTION_TIMEOUT)
 
-            self.networkService.connectAsync(networkRequest: networkRequest) { connection in
-                self.handleNetworkResponse(url: url,
-                                           hit: AnalyticsHit(payload: payload, timestamp: timestamp, eventIdentifier: eventIdentifier),
-                                           connection: connection,
-                                           completion: completion
+            self.networkService.connectAsync(networkRequest: networkRequest) { [weak self] connection in
+                self?.handleNetworkResponse(url: url,
+                                            hit: AnalyticsHit(payload: payload, timestamp: timestamp, eventIdentifier: eventIdentifier),
+                                            connection: connection,
+                                            completion: completion
                 )
             }
         }
@@ -132,9 +132,10 @@ class AnalyticsHitProcessor: HitProcessing {
             ]
 
             let eventData: [String: Any] = [
-                AnalyticsConstants.EventDataKeys.ANALYTICS_SERVER_RESPONSE: httpHeaders,
-                AnalyticsConstants.EventDataKeys.HEADERS_RESPONSE: url.absoluteString,
+                AnalyticsConstants.EventDataKeys.ANALYTICS_SERVER_RESPONSE: (connection.responseString ?? ""),
+                AnalyticsConstants.EventDataKeys.HEADERS_RESPONSE: httpHeaders,
                 AnalyticsConstants.EventDataKeys.HIT_URL: hit.payload,
+                AnalyticsConstants.EventDataKeys.HIT_HOST: url.absoluteString,
                 AnalyticsConstants.EventDataKeys.REQUEST_EVENT_IDENTIFIER: hit.eventIdentifier
             ]
 

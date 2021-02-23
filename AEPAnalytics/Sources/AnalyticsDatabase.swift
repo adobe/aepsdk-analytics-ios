@@ -51,18 +51,19 @@ class AnalyticsDatabase {
     private var additionalData: [String: Any]
 
     init?(state: AnalyticsState, processor: HitProcessing) {
-        self.analyticsState = state
 
         guard let reorderDataQueue = AnalyticsDatabase.dataQueueService.getDataQueue(label: AnalyticsConstants.REORDER_QUEUE_NAME) else {
             Log.error(label: self.LOG_TAG, "Failed to create Reorder Queue, Analytics Database could not be initialized")
             return nil
         }
-        self.reorderQueue = reorderDataQueue
 
         guard let hitDataQueue = AnalyticsDatabase.dataQueueService.getDataQueue(label: AnalyticsConstants.DATA_QUEUE_NAME) else {
             Log.error(label: self.LOG_TAG, "Failed to create Data Queue, Analytics Database could not be initialized")
             return nil
         }
+
+        self.analyticsState = state
+        self.reorderQueue = reorderDataQueue
         self.mainQueue = hitDataQueue
         self.hitQueue = PersistentHitQueue(dataQueue: hitDataQueue, processor: processor)
 
@@ -84,7 +85,12 @@ class AnalyticsDatabase {
         }
     }
 
-    func kickWithAddtionalData(type: DataType, data: [String: Any]?) {
+    func cancelWaitForAdditionalData(type: DataType) {
+        Log.debug(label: self.LOG_TAG, "cancelWaitForAdditionalData - \(type)")
+        kickWithAdditionalData(type: type, data: nil)
+    }
+
+    func kickWithAdditionalData(type: DataType, data: [String: Any]?) {
         Log.debug(label: self.LOG_TAG, "KickWithAdditionalData - \(type) \(String(describing: data))")
         switch type {
         case .lifecycle:
@@ -169,7 +175,7 @@ class AnalyticsDatabase {
             return nil
         }
 
-        let payload = ContextDataUtil.appendContextData(data: additionalData, payload: analyticsHit.payload)
+        let payload = ContextDataUtil.appendContextData(contextData: additionalData as? [String: String], source: analyticsHit.payload)
         guard let hitData = try? JSONEncoder().encode(AnalyticsHit(payload: payload, timestamp: analyticsHit.timestamp, eventIdentifier: analyticsHit.eventIdentifier)) else {
             Log.debug(label: self.LOG_TAG, "appendAdditionalData - Dropping Analytics hit, failed to encode AnalyticsHit")
             return nil

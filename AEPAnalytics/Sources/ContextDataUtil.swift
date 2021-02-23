@@ -141,10 +141,6 @@ class ContextDataUtil {
         }
     }
 
-    static func appendContextData(data: [String: Any]?, payload: String) -> String {
-        return payload
-    }
-
     /**
      Recursively add the `subkeys` and `value` to `contextData` passed as an arguement.
      - Parameters:
