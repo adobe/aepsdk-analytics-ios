@@ -81,12 +81,16 @@ class AnalyticsDatabaseTest : XCTestCase {
         return getHitFromDataEntityArray(hits: mockProcessor.processedEntities)
     }
     
+    private func assertHit(_ expected: AnalyticsHit, _ actual: AnalyticsHit) {
+        XCTAssertEqual(expected.payload, actual.payload)
+        XCTAssertEqual(expected.eventIdentifier, actual.eventIdentifier)
+        XCTAssertEqual(expected.timestamp, actual.timestamp, accuracy: 0.0000001)
+    }
+
     private func assertHits(_ expected: [AnalyticsHit], _ actual: [AnalyticsHit]) {
         XCTAssertEqual(expected.count, actual.count)
         for (e1, e2) in zip(expected, actual) {
-            XCTAssertEqual(e1.payload, e2.payload)
-            XCTAssertEqual(e1.eventIdentifier, e2.eventIdentifier)
-            XCTAssertEqual(e1.timestamp, e2.timestamp, accuracy: 0.0000001)
+            assertHit(e1, e2)
         }
     }
     
@@ -98,14 +102,45 @@ class AnalyticsDatabaseTest : XCTestCase {
         assertHits(getMainHits(), [hit1])
         assertHits(getReorderHits(), [hit2])
         
-        database.kickWithAddtionalData(type: .lifecycle, data: nil)
+        database.kickWithAdditionalData(type: .lifecycle, data: nil)
         assertHits(getMainHits(), [hit1, hit2])
         assertHits(getReorderHits(), [])
         
     }
     
     func testKickWithAdditionalData_appendDataToFirstHit() {
-        // TBD
+        queueHit(hit1) // Mainqueue
+        database.waitForAdditionalData(type: .lifecycle)
+        database.waitForAdditionalData(type: .referrer)
+        
+        queueHit(hit2) // ReorderQueue as we are waiting for lifecycle and referrer
+        
+        assertHits(getMainHits(), [hit1])
+        assertHits(getReorderHits(), [hit2])
+                
+        database.kickWithAdditionalData(type: .lifecycle, data: ["lk1":"v1", "lk2":"v2"])
+        
+        queueHit(hit3) // ReorderQueue as we are waiting for referrer
+        
+        assertHits(getMainHits(), [hit1])
+        assertHits(getReorderHits(), [hit2, hit3])
+        
+        database.kickWithAdditionalData(type: .referrer, data: ["rk1":"v1", "rk2":"v2"])
+                
+        assertHits(getReorderHits(), [])
+        let mainHits = getMainHits()
+        XCTAssertEqual(mainHits.count, 3)
+        
+        assertHit(mainHits[0], hit1)
+        
+        // Second hit contains additional data
+        let secondHit = mainHits[1]
+        XCTAssertTrue(secondHit.payload.contains("lk1=v1"))
+        XCTAssertTrue(secondHit.payload.contains("lk2=v2"))
+        XCTAssertTrue(secondHit.payload.contains("rk1=v1"))
+        XCTAssertTrue(secondHit.payload.contains("rk2=v2"))
+                        
+        assertHit(mainHits[2], hit3)
     }
     
     func testQueue_appendToReorderQueueWhenWaiting() {
