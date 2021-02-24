@@ -59,7 +59,7 @@ class AnalyticsHitProcessor: HitProcessing {
             // If offline tracking is disabled, drop hits whose timestamp exceeds the offline disabled wait threshold
             if !self.analyticsState.offlineEnabled &&
                 timestamp < (Date().timeIntervalSince1970 - AnalyticsConstants.Default.TIMESTAMP_DISABLED_WAIT_THRESHOLD_SECONDS) {
-                Log.debug(label: "\(self.LOG_TAG):\(#function)", "Dropping Analytics hit, timestamp exceeds offline disabled wait threshold")
+                Log.debug(label: self.LOG_TAG, "\(#function) - Dropping Analytics hit, timestamp exceeds offline disabled wait threshold")
                 completion(true)
                 return
             }
@@ -69,20 +69,20 @@ class AnalyticsHitProcessor: HitProcessing {
                 (timestamp - self.lastHitTimestamp) < 0 {
 
                 let newTimestamp = self.lastHitTimestamp + 1
-                Log.debug(label: "\(self.LOG_TAG):\(#function)", "Adjusting out of order hit timestamp \(analyticsHit.timestamp) -> \(newTimestamp)")
+                Log.debug(label: self.LOG_TAG, "\(#function) - Adjusting out of order hit timestamp \(analyticsHit.timestamp) -> \(newTimestamp)")
 
                 payload = self.replaceTimestampInPayload(payload: payload, oldTs: timestamp, newTs: newTimestamp)
                 timestamp = newTimestamp
             }
 
             guard let baseUrl = self.analyticsState.getBaseUrl() else {
-                Log.debug(label: "\(self.LOG_TAG):\(#function)", "Retrying Analytics hit, error generating base url.")
+                Log.debug(label: self.LOG_TAG, "\(#function) - Retrying Analytics hit, error generating base url.")
                 completion(false)
                 return
             }
 
             guard let url = URL(string: "\(baseUrl.absoluteString)\(Int.random(in: 0...100000000))") else {
-                Log.debug(label: "\(self.LOG_TAG):\(#function)", "Retrying Analytics hit, error generating url.")
+                Log.debug(label: self.LOG_TAG, "\(#function) - Retrying Analytics hit, error generating url.")
                 completion(false)
                 return
             }
@@ -119,7 +119,7 @@ class AnalyticsHitProcessor: HitProcessing {
     private func handleNetworkResponse(url: URL, hit: AnalyticsHit, connection: HttpConnection, completion: @escaping (Bool) -> Void) {
         if connection.responseCode == 200 {
             // Hit sent successfully
-            Log.debug(label: "\(LOG_TAG):\(#function)", "Analytics hit request with url \(url.absoluteString) sent successfully")
+            Log.debug(label: LOG_TAG, "\(#function) - Analytics hit request with url \(url.absoluteString) and payload \(hit.payload) sent successfully")
 
             let contentType = connection.responseHttpHeader(forKey: AnalyticsConstants.Assurance.EventDataKeys.CONTENT_TYPE_HEADER)
             let eTag = connection.responseHttpHeader(forKey: AnalyticsConstants.Assurance.EventDataKeys.ETAG_HEADER)
@@ -148,11 +148,11 @@ class AnalyticsHitProcessor: HitProcessing {
 
         } else if NetworkServiceConstants.RECOVERABLE_ERROR_CODES.contains(connection.responseCode ?? -1) {
             // retry this hit later
-            Log.warning(label: "\(LOG_TAG):\(#function)", "Retrying Analytics hit, request with url \(url.absoluteString) failed with error \(connection.error?.localizedDescription ?? "") and recoverable status code \(connection.responseCode ?? -1)")
+            Log.warning(label: LOG_TAG, "\(#function) - Retrying Analytics hit, request with url \(url.absoluteString) failed with error \(connection.error?.localizedDescription ?? "") and recoverable status code \(connection.responseCode ?? -1)")
             completion(false)
         } else {
             // unrecoverable error. delete the hit from the database and continue
-            Log.warning(label: "\(LOG_TAG):\(#function)", "Dropping Analytics hit, request with url \(url.absoluteString) failed with error \(connection.error?.localizedDescription ?? "") and unrecoverable status code \(connection.responseCode ?? -1)")
+            Log.warning(label: LOG_TAG, "\(#function) - Dropping Analytics hit, request with url \(url.absoluteString) failed with error \(connection.error?.localizedDescription ?? "") and unrecoverable status code \(connection.responseCode ?? -1)")
             completion(true)
         }
     }
