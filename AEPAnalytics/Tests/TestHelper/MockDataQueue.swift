@@ -9,15 +9,18 @@
  governing permissions and limitations under the License.
  */
 
-import AEPCore
+@testable import AEPServices
 import Foundation
 
-/// Struct which represents an Analytics hit
-struct AnalyticsHit: Codable {
-    /// Payload for Analytics hit
-    let payload: String
-    /// Timestamp of Analytics hit
-    let timestamp: TimeInterval
-    /// Event responsible for triggering this Analytics hit
-    let eventIdentifier: String
+public class MockDataQueueService: DataQueuing {
+    let queueMap = ThreadSafeDictionary<String,DataQueue>()
+
+    public init() {}
+
+    public func getDataQueue(label: String) -> DataQueue? {
+        if queueMap[label] == nil {
+            queueMap[label] = MockDataQueue()
+        }
+        return queueMap[label]
+    }
 }

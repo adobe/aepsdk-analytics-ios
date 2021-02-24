@@ -120,7 +120,9 @@ class ContextDataUtil {
             return
         }
 
-        parameters.forEach { key, value in
+        parameters.keys.sorted().forEach { key in
+            let value = parameters[key]
+
             if let urlEncodedKey = key.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) {
                 if let contextData = value as? ContextData {
                     if let urlEncodedValue = contextData.value?.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed), !urlEncodedKey.isEmpty {

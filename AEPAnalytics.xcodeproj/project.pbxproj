@@ -41,8 +41,12 @@
 		AC277D01252C23E600987C67 /* Analytics+PublicAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC277CF8252C23E600987C67 /* Analytics+PublicAPI.swift */; };
 		AC277D03252C23F400987C67 /* AnalyticsAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC277CF0252C23E600987C67 /* AnalyticsAPITests.swift */; };
 		AC3333702536590600BF8A56 /* MockExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC33336F2536590600BF8A56 /* MockExtension.swift */; };
+		AC73D2BD25E026030068AB96 /* AnalyticsDatabaseTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC73D2BC25E026030068AB96 /* AnalyticsDatabaseTest.swift */; };
+		AC73D2C525E028D80068AB96 /* MockDataQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC73D2C425E028D80068AB96 /* MockDataQueue.swift */; };
+		AC73D2DB25E02A590068AB96 /* MockHitProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC73D2DA25E02A590068AB96 /* MockHitProcessor.swift */; };
+		AC73D2E625E03BD70068AB96 /* MockDataQueuing.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC73D2E525E03BD70068AB96 /* MockDataQueuing.swift */; };
 		AC76C17B2534D67B00211DE2 /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = AC76C1632534D66300211DE2 /* .swiftlint.yml */; };
-		D639E23625B8B25600955FBA /* Analytics+Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = D639E23525B8B25600955FBA /* Analytics+Version.swift */; };
+		D639E23625B8B25600955FBA /* AnalyticsVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = D639E23525B8B25600955FBA /* AnalyticsVersion.swift */; };
 		D639E25525B8C70400955FBA /* AnalyticsVersionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D639E23925B8C25500955FBA /* AnalyticsVersionTest.swift */; };
 		D676B38E25928D4F0099E5AC /* TestHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67AC995257874BE000FA306 /* TestHelper.swift */; };
 		D67AC98C2578285F000FA306 /* AnalyticsHitResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67AC98B2578285F000FA306 /* AnalyticsHitResponse.swift */; };
@@ -105,7 +109,6 @@
 		AC0BF6E525CDF50A00182896 /* TestUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestUtils.swift; sourceTree = "<group>"; };
 		AC0BF6F625CE1B3E00182896 /* AnalyticsDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsDatabase.swift; sourceTree = "<group>"; };
 		AC0BF70C25D46B8400182896 /* AnalyticsHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsHelper.swift; sourceTree = "<group>"; };
-		AC277CEE252C23E600987C67 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AC277CF0252C23E600987C67 /* AnalyticsAPITests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsAPITests.swift; sourceTree = "<group>"; };
 		AC277CF3252C23E600987C67 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AC277CF5252C23E600987C67 /* Analytics.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Analytics.swift; sourceTree = "<group>"; };
@@ -114,10 +117,14 @@
 		AC277CF8252C23E600987C67 /* Analytics+PublicAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Analytics+PublicAPI.swift"; sourceTree = "<group>"; };
 		AC277CF9252C23E600987C67 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AC33336F2536590600BF8A56 /* MockExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockExtension.swift; sourceTree = "<group>"; };
+		AC73D2BC25E026030068AB96 /* AnalyticsDatabaseTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsDatabaseTest.swift; sourceTree = "<group>"; };
+		AC73D2C425E028D80068AB96 /* MockDataQueue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockDataQueue.swift; sourceTree = "<group>"; };
+		AC73D2DA25E02A590068AB96 /* MockHitProcessor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockHitProcessor.swift; sourceTree = "<group>"; };
+		AC73D2E525E03BD70068AB96 /* MockDataQueuing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockDataQueuing.swift; sourceTree = "<group>"; };
 		AC76C1612534D66300211DE2 /* TestableExtensionRuntime.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestableExtensionRuntime.swift; sourceTree = "<group>"; };
 		AC76C1632534D66300211DE2 /* .swiftlint.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
 		CE85C4421313D5BBE96D5060 /* Pods-AnalyticsSampleApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AnalyticsSampleApp.debug.xcconfig"; path = "Target Support Files/Pods-AnalyticsSampleApp/Pods-AnalyticsSampleApp.debug.xcconfig"; sourceTree = "<group>"; };
-		D639E23525B8B25600955FBA /* Analytics+Version.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Analytics+Version.swift"; sourceTree = "<group>"; };
+		D639E23525B8B25600955FBA /* AnalyticsVersion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsVersion.swift; sourceTree = "<group>"; };
 		D639E23925B8C25500955FBA /* AnalyticsVersionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsVersionTest.swift; sourceTree = "<group>"; };
 		D67AC98B2578285F000FA306 /* AnalyticsHitResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsHitResponse.swift; sourceTree = "<group>"; };
 		D67AC995257874BE000FA306 /* TestHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestHelper.swift; sourceTree = "<group>"; };
@@ -203,24 +210,16 @@
 		AC277CEC252C23E600987C67 /* AEPAnalytics */ = {
 			isa = PBXGroup;
 			children = (
-				AC277CED252C23E600987C67 /* Mocks */,
 				AC277CEF252C23E600987C67 /* Tests */,
 				AC277CF4252C23E600987C67 /* Sources */,
 			);
 			path = AEPAnalytics;
 			sourceTree = "<group>";
 		};
-		AC277CED252C23E600987C67 /* Mocks */ = {
-			isa = PBXGroup;
-			children = (
-				AC277CEE252C23E600987C67 /* Info.plist */,
-			);
-			path = Mocks;
-			sourceTree = "<group>";
-		};
 		AC277CEF252C23E600987C67 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				AC73D2BC25E026030068AB96 /* AnalyticsDatabaseTest.swift */,
 				AC277CF0252C23E600987C67 /* AnalyticsAPITests.swift */,
 				2ED53FF4255F37ED000F0B23 /* AnalyticsHitProcessorTests.swift */,
 				AC0BF6D625CDAA6600182896 /* AnalyticsMigratorTests.swift */,
@@ -242,7 +241,6 @@
 				AC277CF7252C23E600987C67 /* AEPAnalytics.h */,
 				AC277CF5252C23E600987C67 /* Analytics.swift */,
 				AC277CF8252C23E600987C67 /* Analytics+PublicAPI.swift */,
-				D639E23525B8B25600955FBA /* Analytics+Version.swift */,
 				AC277CF6252C23E600987C67 /* AnalyticsConstants.swift */,
 				AC0BF6F625CE1B3E00182896 /* AnalyticsDatabase.swift */,
 				AC0BF70C25D46B8400182896 /* AnalyticsHelper.swift */,
@@ -254,6 +252,7 @@
 				3D1D45AE25391B410053CB47 /* AnalyticsRequestSerializer.swift */,
 				3D1D45AC2537B0990053CB47 /* AnalyticsState.swift */,
 				3DD8E6FB256F0BC2009234FD /* AnalyticsTimer.swift */,
+				D639E23525B8B25600955FBA /* AnalyticsVersion.swift */,
 				3DAA40BA2548C58100703509 /* ContextData.swift */,
 				3D1D45B525425F230053CB47 /* ContextDataUtil.swift */,
 				AC277CF9252C23E600987C67 /* Info.plist */,
@@ -264,9 +263,12 @@
 		AC76C1602534D66300211DE2 /* TestHelper */ = {
 			isa = PBXGroup;
 			children = (
+				AC73D2E525E03BD70068AB96 /* MockDataQueuing.swift */,
 				AC76C1632534D66300211DE2 /* .swiftlint.yml */,
 				3DDC3E8A258AA16700ED05BC /* AnalyticsRequestSerializerTests+Helper.swift */,
 				3D1D45B3253F9EE60053CB47 /* AnalyticsTestConstants.swift */,
+				AC73D2C425E028D80068AB96 /* MockDataQueue.swift */,
+				AC73D2DA25E02A590068AB96 /* MockHitProcessor.swift */,
 				AC0BF6E425CDF50A00182896 /* MockDataStore.swift */,
 				AC33336F2536590600BF8A56 /* MockExtension.swift */,
 				2ED53FF0255F37D7000F0B23 /* MockNetworking.swift */,
@@ -595,7 +597,7 @@
 				AC277D01252C23E600987C67 /* Analytics+PublicAPI.swift in Sources */,
 				2ED53FE9255F37A4000F0B23 /* AnalyticsHit.swift in Sources */,
 				3DD8E6FC256F0BC2009234FD /* AnalyticsTimer.swift in Sources */,
-				D639E23625B8B25600955FBA /* Analytics+Version.swift in Sources */,
+				D639E23625B8B25600955FBA /* AnalyticsVersion.swift in Sources */,
 				AC0BF6D225CDAA5900182896 /* AnalyticsMigrator.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -612,9 +614,13 @@
 				2ED53FF1255F37D7000F0B23 /* MockNetworking.swift in Sources */,
 				AC3333702536590600BF8A56 /* MockExtension.swift in Sources */,
 				3DDC3E8B258AA16700ED05BC /* AnalyticsRequestSerializerTests+Helper.swift in Sources */,
+				AC73D2BD25E026030068AB96 /* AnalyticsDatabaseTest.swift in Sources */,
+				AC73D2DB25E02A590068AB96 /* MockHitProcessor.swift in Sources */,
 				3D1D45B2253F99130053CB47 /* AnalyticsStateTest.swift in Sources */,
 				AC0BF6E825CDF50B00182896 /* TestUtils.swift in Sources */,
 				3DD0693F253516EC00877781 /* AnalyticsPropertiesTest.swift in Sources */,
+				AC73D2C525E028D80068AB96 /* MockDataQueue.swift in Sources */,
+				AC73D2E625E03BD70068AB96 /* MockDataQueuing.swift in Sources */,
 				3DD8E6E82566FDEB009234FD /* AnalyticsTest.swift in Sources */,
 				D676B38E25928D4F0099E5AC /* TestHelper.swift in Sources */,
 				AC0BF6D725CDAA6600182896 /* AnalyticsMigratorTests.swift in Sources */,

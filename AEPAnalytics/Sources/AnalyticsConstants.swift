@@ -19,6 +19,10 @@ enum AnalyticsConstants {
     static let FRIENDLY_NAME                            = "Analytics"
     static let EXTENSION_VERSION                        = "0.0.1"
     static let DATASTORE_NAME                           = EXTENSION_NAME
+
+    static let DATA_QUEUE_NAME                           = EXTENSION_NAME
+    static let REORDER_QUEUE_NAME                        = "com.adobe.module.analyticsreorderqueue"
+
     static let IGNORE_PAGE_NAME_VALUE                   = "lnk_o"
     static let ACTION_PREFIX                            = "AMACTION:"
     static let INTERNAL_ACTION_PREFIX                   = "ADBINTERNAL:"
@@ -56,6 +60,14 @@ enum AnalyticsConstants {
         static let HIT_URL = "hitUrl"
         static let SHARED_STATE_NAME = ""
         static let SERVER_RESPONSE = ""
+        static let TRIGGERED_CONSEQUENCE = "triggeredconsequence"
+        static let ID = "id"
+        static let DETAIL = "detail"
+        static let TYPE = "type"
+    }
+
+    enum ConsequenceTypes {
+        static let TRACK = "an"
     }
 
     enum ContextDataKeys {
@@ -111,6 +123,7 @@ enum AnalyticsConstants {
         static let LIFECYCLE_MAX_SESSION_LENGTH = TimeInterval.init()
         static let LIFECYCLE_SESSION_START_TIMESTAMP = TimeInterval.init()
         static let LIFECYCLE_PAUSE_START_TIMEOUT = TimeInterval.init(1)
+        static let TIMESTAMP_DISABLED_WAIT_THRESHOLD_SECONDS = TimeInterval.init(60)
     }
 
     enum ParameterKeys {
@@ -295,6 +308,10 @@ enum AnalyticsConstants {
         enum EventDataKeys {
             static let SHARED_STATE_NAME = "com.adobe.assurance"
             static let SESSION_ID = "sessionid"
+            static let CONTENT_TYPE_HEADER = "Content-Type"
+            static let ETAG_HEADER = "Etag"
+            static let SERVER_HEADER = "Server"
+            static let ENABLE_DEBUG_REQUEST  = "&p.&debug=true&.p"
         }
 
         enum DEFAULT {

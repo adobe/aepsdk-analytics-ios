@@ -9,15 +9,22 @@
  governing permissions and limitations under the License.
  */
 
-import AEPCore
+@testable import AEPServices
 import Foundation
 
-/// Struct which represents an Analytics hit
-struct AnalyticsHit: Codable {
-    /// Payload for Analytics hit
-    let payload: String
-    /// Timestamp of Analytics hit
-    let timestamp: TimeInterval
-    /// Event responsible for triggering this Analytics hit
-    let eventIdentifier: String
+public class MockHitProcessor: HitProcessing {
+
+    var processedEntities: [DataEntity] = []
+
+    public var processResult: Bool = false
+
+    public func retryInterval(for entity: DataEntity) -> TimeInterval {
+        return TimeInterval(30)
+    }
+    public func processHit(entity: DataEntity, completion: @escaping (Bool) -> Void) {
+        if (processResult) {
+            processedEntities.append(entity)
+        }
+        completion(processResult)
+    }
 }

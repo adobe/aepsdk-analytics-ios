@@ -12,18 +12,18 @@
 import AEPCore
 
 /// Builds a version string for Analytics.
-extension Analytics {
+class AnalyticsVersion {
 
     /// Returns the built Analytics version string.
     /// - Returns a `String` containing the built Analytics version string.
-    internal func getVersion() -> String {
+    static func getVersion() -> String {
         let builtVersionString = buildVersionString(osType: getOSType(), analyticsVersion: Analytics.extensionVersion, coreVersion: MobileCore.extensionVersion)
         return builtVersionString
     }
 
     /// Builds a version string to be used for Analytics pings.
     /// - Returns a `String` containing the built Analytics version string.
-    internal func buildVersionString(osType: String, analyticsVersion: String, coreVersion: String) -> String {
+    static func buildVersionString(osType: String, analyticsVersion: String, coreVersion: String) -> String {
         var wrapperType = String()
         // split core version into version number and wrapper type if possible
         let coreVersionComponents = coreVersion.components(separatedBy: "-")
@@ -38,7 +38,7 @@ extension Analytics {
     /// Determines which OS is present on the device and returns the
     /// appropriate OS type string.
     /// - Returns a `String` containing the device's OS type.
-    private func getOSType() -> String {
+    private static func getOSType() -> String {
         #if os(iOS)
             return "IOS"
         #elseif os(tvOS)
@@ -50,7 +50,7 @@ extension Analytics {
 
     /// Creates a zero padded representation from the provided extension version.
     /// - Returns a `String` containing a zero padded representation of the provided version.
-    private func getFormattedExtensionVersion(_ version: String) -> String {
+    private static func getFormattedExtensionVersion(_ version: String) -> String {
         var formattedVersionString = "000000"
         let versionArray = version.components(separatedBy: ".")
         if versionArray.count == 3 {
@@ -63,7 +63,7 @@ extension Analytics {
     }
 
     /// Pads the version number with a zero if needed
-    private func formatVersionNumber(_ versionNumber: String) -> String {
+    private static func formatVersionNumber(_ versionNumber: String) -> String {
         return versionNumber.count == 1 ? "0\(versionNumber)" : versionNumber
     }
 }

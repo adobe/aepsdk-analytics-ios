@@ -276,7 +276,7 @@ class AnalyticsStateTest : XCTestCase {
         analyticsState.host = "test.com"
         analyticsState.rsids = "rsid1,rsid2"
 
-        XCTAssertEqual("https://test.com/b/ss/rsid1,rsid2/10/version1.0/s", analyticsState.getBaseUrl(sdkVersion: "version1.0")?.absoluteString)
+        XCTAssertEqual("https://test.com/b/ss/rsid1,rsid2/10/\(AnalyticsVersion.getVersion())/s", analyticsState.getBaseUrl()?.absoluteString)
     }
 
     func testGetBaseUrlWhenSSLAndNotForwarding() {
@@ -284,7 +284,7 @@ class AnalyticsStateTest : XCTestCase {
         analyticsState.host = "test.com"
         analyticsState.rsids = "rsid1,rsid2"
 
-        XCTAssertEqual("https://test.com/b/ss/rsid1,rsid2/0/version1.0/s", analyticsState.getBaseUrl(sdkVersion: "version1.0")?.absoluteString)
+        XCTAssertEqual("https://test.com/b/ss/rsid1,rsid2/0/\(AnalyticsVersion.getVersion())/s", analyticsState.getBaseUrl()?.absoluteString)
     }
 
     func testIsAnalyticsConfiguredHappyFlow() {
