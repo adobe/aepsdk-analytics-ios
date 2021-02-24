@@ -46,6 +46,7 @@
 		D639E25525B8C70400955FBA /* AnalyticsVersionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D639E23925B8C25500955FBA /* AnalyticsVersionTest.swift */; };
 		D676B38E25928D4F0099E5AC /* TestHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67AC995257874BE000FA306 /* TestHelper.swift */; };
 		D67AC98C2578285F000FA306 /* AnalyticsHitResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67AC98B2578285F000FA306 /* AnalyticsHitResponse.swift */; };
+		D6C7406625E6C5C100D1040C /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = D6C7406525E6C5C100D1040C /* README.md */; };
 		D6D5F35925C8806D008148B3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6D5F35825C8806D008148B3 /* AppDelegate.swift */; };
 		D6D5F35B25C8806D008148B3 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6D5F35A25C8806D008148B3 /* SceneDelegate.swift */; };
 		D6D5F35D25C8806D008148B3 /* AnalyticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6D5F35C25C8806D008148B3 /* AnalyticsView.swift */; };
@@ -120,6 +121,8 @@
 		D639E23925B8C25500955FBA /* AnalyticsVersionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsVersionTest.swift; sourceTree = "<group>"; };
 		D67AC98B2578285F000FA306 /* AnalyticsHitResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsHitResponse.swift; sourceTree = "<group>"; };
 		D67AC995257874BE000FA306 /* TestHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestHelper.swift; sourceTree = "<group>"; };
+		D6C7406525E6C5C100D1040C /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		D6C7406B25E6C70C00D1040C /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
 		D6D5F35625C8806D008148B3 /* AnalyticsSampleApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AnalyticsSampleApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D6D5F35825C8806D008148B3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D6D5F35A25C8806D008148B3 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -177,6 +180,8 @@
 		2EBEE7662525A35300880E72 = {
 			isa = PBXGroup;
 			children = (
+				D6C7406B25E6C70C00D1040C /* Package.swift */,
+				D6C7406525E6C5C100D1040C /* README.md */,
 				AC277CEC252C23E600987C67 /* AEPAnalytics */,
 				D6D5F35725C8806D008148B3 /* AnalyticsSampleApp */,
 				2EBEE7712525A35400880E72 /* Products */,
@@ -427,6 +432,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D6C7406625E6C5C100D1040C /* README.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
