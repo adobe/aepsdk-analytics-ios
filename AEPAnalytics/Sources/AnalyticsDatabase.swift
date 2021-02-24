@@ -18,14 +18,14 @@ import Foundation
 /**
  Analytics hit reordering
  If backDateSessionInfo and offlineTracking is enabled, we should send hit with previous session information / crash information before sending any hits for current session. (We get this information from `lifecycle.responseContent` event)
- Lifecycle information for current session should be attached to queued hit or as separate hit (If we have no queued hit) for every lifecyle session. (We get this information from `lifecycle.responseContent` event)
+ Lifecycle information for current session should be attached to queued hit or as separate hit (If we have no queued hit) for every lifecycle session. (We get this information from `lifecycle.responseContent` event)
  Referrer information for current install/launch should be attached to queued hit or as separate hit (If we have no queued hit) (We get this information from `acquisition.responseContent` event)
 
  Given that Lifecycle, Acquisition and MobileServices extensions are optional we rely on timeouts to wait for each of the above events and reorder hits
  Any `genericTrack` request we receive before `genericLifecycle` event is processed and reported to backend. (If lifecycle extension is implemented, we recommend calling MobileCore.lifecycleStart() before any track calls.)
- After receiving `genericLifeycle` event, we wait `AnalyticsConstants.Default.LIFECYCLE_RESPONSE_WAIT_TIMEOUT` for `lifecycle.responseContent` event
+ After receiving `genericLifecycle` event, we wait `AnalyticsConstants.Default.LIFECYCLE_RESPONSE_WAIT_TIMEOUT` for `lifecycle.responseContent` event
  If we receive `lifecycle.responseContent` before timeout, we append lifecycle data to first waiting hit. It is sent as a separate hit if we don't have any waiting hit
- After receiving `lifecycle.responseContent` we wait for `acquition.responseContent`. If it is install we wait for `analyticsState.launchHitDelay` and for launch we wait for `AnalyticsConstants.Default.LAUNCH_DEEPLINK_DATA_WAIT_TIMEOUT`
+ After receiving `lifecycle.responseContent` we wait for `acquisition.responseContent`. If it is install we wait for `analyticsState.launchHitDelay` and for launch we wait for `AnalyticsConstants.Default.LAUNCH_DEEPLINK_DATA_WAIT_TIMEOUT`
  If we receive `acquisition.responseContent` before timeout, we append lifecycle data to first waiting hit. It is sent as a separate hit if we don't have any waiting hit
  Any `genericTrack` request we receive when waiting for `lifecycle.responseContent` or `acquisition.responseContent` is placed in the reorder queue till we receive these events or until timeout
  */

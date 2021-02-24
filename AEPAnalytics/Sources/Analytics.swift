@@ -231,7 +231,7 @@ public class Analytics: NSObject, Extension {
 
                 // If we receive extra lifecycle start events after the first one, then just ignore rest of it
                 if analyticsTimer.isLifecycleTimerRunning() {
-                    Log.debug(label: LOG_TAG, "handleLifecycleEvents - Exiting as Lifecycle timer is already running and this is duplicate request")
+                    Log.debug(label: LOG_TAG, "handleLifecycleEvents - Exiting, Lifecycle timer is already running and this is a duplicate request")
                     return
                 }
 
