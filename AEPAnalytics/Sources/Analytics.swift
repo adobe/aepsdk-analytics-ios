@@ -27,7 +27,7 @@ public class Analytics: NSObject, Extension {
 
     private let dataStore = NamedCollectionDataStore(name: AnalyticsConstants.DATASTORE_NAME)
     private var analyticsTimer: AnalyticsTimer
-    private var analyticsDatabase: AnalyticsDatabase
+    private var analyticsDatabase: AnalyticsDatabase?
     private var analyticsProperties: AnalyticsProperties
     private var analyticsState: AnalyticsState
     private let analyticsHardDependencies: [String] = [AnalyticsConstants.Configuration.EventDataKeys.SHARED_STATE_NAME, AnalyticsConstants.Identity.EventDataKeys.SHARED_STATE_NAME]
@@ -38,32 +38,38 @@ public class Analytics: NSObject, Extension {
     private var sdkBootUpCompleted = false
     // MARK: Extension
 
-    public required init(runtime: ExtensionRuntime) {
+    public required init?(runtime: ExtensionRuntime) {
         self.runtime = runtime
         // Migrate datastore for apps switching from v4 or v5 implementations.
         AnalyticsMigrator.migrateLocalStorage(dataStore: dataStore)
-        self.analyticsDatabase = AnalyticsDatabase()
+
         self.analyticsTimer = AnalyticsTimer.init(dispatchQueue: dispatchQueue)
         self.analyticsState = AnalyticsState()
         self.analyticsProperties = AnalyticsProperties.init(dataStore: dataStore)
         super.init()
+
+        let processor = AnalyticsHitProcessor(dispatchQueue: dispatchQueue, state: analyticsState, responseHandler: dispatchAnalyticsTrackResponse(eventData:))
+        self.analyticsDatabase = AnalyticsDatabase(state: analyticsState, processor: processor)
+
     }
 
     #if DEBUG
         // Internal init added for tests
         init(runtime: ExtensionRuntime, state: AnalyticsState, properties: AnalyticsProperties) {
             self.runtime = runtime
-            self.analyticsDatabase = AnalyticsDatabase()
             self.analyticsTimer = AnalyticsTimer(dispatchQueue: dispatchQueue)
             self.analyticsState = state
             self.analyticsProperties = properties
             super.init()
+
+            let processor = AnalyticsHitProcessor(dispatchQueue: dispatchQueue, state: analyticsState, responseHandler: dispatchAnalyticsTrackResponse(eventData:))
+            self.analyticsDatabase = AnalyticsDatabase(state: analyticsState, processor: processor)
         }
     #endif
 
     public func onRegistered() {
         registerListener(type: EventType.genericTrack, source: EventSource.requestContent, listener: handleIncomingEvent)
-        //registerListener(type: EventType.rulesEngine, source: EventSource.responseContent, listener: handleIncomingEvent)
+        registerListener(type: EventType.rulesEngine, source: EventSource.responseContent, listener: handleIncomingEvent)
         registerListener(type: EventType.analytics, source: EventSource.requestContent, listener: handleIncomingEvent)
         registerListener(type: EventType.configuration, source: EventSource.responseContent, listener: handleIncomingEvent)
         registerListener(type: EventType.analytics, source: EventSource.requestIdentity, listener: handleIncomingEvent)
@@ -77,9 +83,7 @@ public class Analytics: NSObject, Extension {
 
     public func readyForEvent(_ event: Event) -> Bool {
         let configurationStatus = getSharedState(extensionName: AnalyticsConstants.Configuration.EventDataKeys.SHARED_STATE_NAME, event: event)?.status ?? .none
-
         let identityStatus = getSharedState(extensionName: AnalyticsConstants.Identity.EventDataKeys.SHARED_STATE_NAME, event: event)?.status ?? .none
-
         return configurationStatus == .set && identityStatus == .set
     }
 
@@ -103,8 +107,10 @@ public class Analytics: NSObject, Extension {
     private func handleIncomingEvent(event: Event) {
         dispatchQueue.async {
             switch event.type {
-            // case EventType.rulesEngine:
-            // TODO: implement handler
+            case EventType.genericTrack:
+                self.handleGenericTrackEvent(event)
+            case EventType.rulesEngine:
+                self.handleRuleEngineResponse(event)
             case EventType.configuration:
                 self.handleConfigurationResponseEvent(event)
             case EventType.lifecycle:
@@ -122,6 +128,66 @@ public class Analytics: NSObject, Extension {
             default:
                 break
             }
+        }
+    }
+
+    private func handleRuleEngineResponse(_ event: Event) {
+        if event.data == nil {
+            Log.trace(label: LOG_TAG, "Event with id \(event.id.uuidString) contained no data, ignoring.")
+            return
+        }
+        Log.trace(label: LOG_TAG, "handleRulesEngineResponse - Processing event with id \(event.id.uuidString).")
+        guard let consequence = event.data?[AnalyticsConstants.EventDataKeys.TRIGGERED_CONSEQUENCE] as? [String: Any] else {
+            Log.trace(label: LOG_TAG, "handleRulesEngineResponse - Ignoring as missing consequence data for \(event.id.uuidString).")
+            return
+        }
+        guard let consequenceType = consequence[AnalyticsConstants.EventDataKeys.TYPE] as? String, consequenceType == AnalyticsConstants.ConsequenceTypes.TRACK else {
+            Log.trace(label: LOG_TAG, "handleRulesEngineResponse - Ignoring as consequence type is not analytics for \(event.id.uuidString).")
+            return
+        }
+        guard let _ = consequence[AnalyticsConstants.EventDataKeys.ID] as? String else {
+            Log.trace(label: LOG_TAG, "handleRulesEngineResponse - Ignoring as consequence id is missing for \(event.id.uuidString).")
+            return
+        }
+
+        let softDependencies: [String] = [
+            AnalyticsConstants.Lifecycle.EventDataKeys.SHARED_STATE_NAME,
+            AnalyticsConstants.Assurance.EventDataKeys.SHARED_STATE_NAME,
+            AnalyticsConstants.Places.EventDataKeys.SHARED_STATE_NAME
+        ]
+        updateAnalyticsState(forEvent: event, dependencies: analyticsHardDependencies + softDependencies)
+
+        let consequenceDetail = consequence[AnalyticsConstants.EventDataKeys.DETAIL] as? [String: Any] ?? [:]
+        handleTrackRequest(event: event, eventData: consequenceDetail)
+    }
+
+    /// Handle the following events
+    ///`EventType.genericTrack` and `EventSource.requestContent`
+    /// - Parameter event: an event containing track data for processing
+    private func handleGenericTrackEvent(_ event: Event) {
+        guard event.type == EventType.genericTrack && event.source == EventSource.requestContent else {
+            Log.debug(label: LOG_TAG, "handleAnalyticsTrackEvent - Ignoring track event (event is of unexpected type or source).")
+            return
+        }
+
+        let softDependencies: [String] = [
+            AnalyticsConstants.Lifecycle.EventDataKeys.SHARED_STATE_NAME,
+            AnalyticsConstants.Assurance.EventDataKeys.SHARED_STATE_NAME,
+            AnalyticsConstants.Places.EventDataKeys.SHARED_STATE_NAME
+        ]
+        updateAnalyticsState(forEvent: event, dependencies: analyticsHardDependencies + softDependencies)
+        handleTrackRequest(event: event, eventData: event.data)
+    }
+
+    func handleTrackRequest(event: Event, eventData: [String: Any]?) {
+        guard let eventData = eventData, !eventData.isEmpty else {
+            Log.debug(label: LOG_TAG, "track - event data is nil or empty.")
+            return
+        }
+        if eventData.keys.contains(AnalyticsConstants.EventDataKeys.TRACK_ACTION) ||
+            eventData.keys.contains(AnalyticsConstants.EventDataKeys.TRACK_STATE) ||
+            eventData.keys.contains(AnalyticsConstants.EventDataKeys.CONTEXT_DATA) {
+            track(eventData: eventData, timeStampInSeconds: event.timestamp.timeIntervalSince1970, isBackdatedHit: false, eventUniqueIdentifier: "\(event.id)")
         }
     }
 
@@ -148,7 +214,7 @@ public class Analytics: NSObject, Extension {
     /// Clears all the Analytics Properties and any queued hits in the HitsDatabase.
     private func handleOptOut(event: Event) {
         Log.debug(label: LOG_TAG, "handleOptOut - Privacy status is opted-out. Queued Analytics hits, stored state data, and properties will be cleared.")
-        analyticsDatabase.reset()
+        analyticsDatabase?.reset()
         analyticsProperties.reset()
         // Clear shared state for analytics extension
         createSharedState(data: getSharedState(), event: event)
@@ -163,16 +229,21 @@ public class Analytics: NSObject, Extension {
             let lifecycleAction = event.data?[AnalyticsConstants.Lifecycle.EventDataKeys.LIFECYCLE_ACTION_KEY] as? String
             if lifecycleAction == AnalyticsConstants.Lifecycle.EventDataKeys.LIFECYCLE_START {
 
+                // For apps coming from background, manually flush any queued hits before waiting for lifecycle data.
+                analyticsDatabase?.cancelWaitForAdditionalData(type: .lifecycle)
+                analyticsDatabase?.cancelWaitForAdditionalData(type: .referrer)
+
                 // If we receive extra lifecycle start events after the first one, then just ignore rest of it
                 if analyticsTimer.isLifecycleTimerRunning() {
+                    Log.debug(label: LOG_TAG, "handleLifecycleEvents - Exiting, Lifecycle timer is already running and this is a duplicate request")
                     return
                 }
 
                 waitForLifecycleData()
 
             } else if lifecycleAction == AnalyticsConstants.Lifecycle.EventDataKeys.LIFECYCLE_PAUSE {
-                self.analyticsTimer.cancelLifecycleTimer()
-                self.analyticsTimer.cancelReferrerTimer()
+                analyticsTimer.cancelLifecycleTimer()
+                analyticsTimer.cancelReferrerTimer()
             }
         } else if event.type == EventType.lifecycle && event.source == EventSource.responseContent {
             let softDependencies: [String] = [
@@ -222,12 +293,12 @@ public class Analytics: NSObject, Extension {
         }
 
         if eventData.keys.contains(AnalyticsConstants.EventDataKeys.CLEAR_HITS_QUEUE) {
-            analyticsDatabase.reset()
+            analyticsDatabase?.reset()
         } else if eventData.keys.contains(AnalyticsConstants.EventDataKeys.GET_QUEUE_SIZE) {
-            let queueSize = analyticsDatabase.getQueueSize()
+            let queueSize = analyticsDatabase?.getQueueSize() ?? 0
             dispatchQueueSizeResponse(event: event, queueSize: queueSize)
         } else if eventData.keys.contains(AnalyticsConstants.EventDataKeys.FORCE_KICK_HITS) {
-            analyticsDatabase.forceKickHits()
+            analyticsDatabase?.forceKickHits()
         }
     }
 
@@ -348,6 +419,11 @@ public class Analytics: NSObject, Extension {
         dispatch(event: responseContentEvent)
     }
 
+    private func dispatchAnalyticsTrackResponse(eventData: [String: Any]) {
+        let responseEvent = Event.init(name: "AnalyticsResponse", type: EventType.analytics, source: EventSource.responseContent, data: eventData)
+        dispatch(event: responseEvent)
+    }
+
     /// Builds an analytics identity `NetworkRequest`.
     /// - Parameters:
     ///   - url: the url of the analytics identity request.
@@ -458,10 +534,18 @@ public class Analytics: NSObject, Extension {
             }
         }
 
-        if analyticsTimer.isLifecycleTimerRunning() && analyticsDatabase.isHitWaiting() {
+        if analyticsTimer.isLifecycleTimerRunning() {
+            Log.debug(label: LOG_TAG, "trackLifecycle - Cancelling lifecycle timer")
             analyticsTimer.cancelLifecycleTimer()
-            analyticsDatabase.kickWithAddtionalData(data: lifecycleContextData)
+        }
+        if analyticsDatabase?.isHitWaiting() ?? false {
+            Log.debug(label: LOG_TAG, "trackLifecycle - Append lifecycle data to pending hit")
+            analyticsDatabase?.kickWithAdditionalData(type: .lifecycle, data: lifecycleContextData)
         } else {
+            // Signal the database, it does not have to wait for lifecyle data.
+            analyticsDatabase?.cancelWaitForAdditionalData(type: .lifecycle)
+
+            Log.debug(label: LOG_TAG, "trackLifecycle - Sending lifecycle data as seperate tracking hit")
             // Send Lifecycle data as a seperate tracking hit.
             var lifecycleEventData: [String: Any] = [:]
             lifecycleEventData[AnalyticsConstants.EventDataKeys.TRACK_ACTION] = AnalyticsConstants.LIFECYCLE_INTERNAL_ACTION_NAME
@@ -484,10 +568,18 @@ public class Analytics: NSObject, Extension {
         let acquisitionContextData = event.data?[AnalyticsConstants.EventDataKeys.CONTEXT_DATA] as? [String: String]
 
         if analyticsTimer.isReferrerTimerRunning() {
+            Log.debug(label: LOG_TAG, "trackAcquisition - Cancelling referrer timer")
             analyticsTimer.cancelReferrerTimer()
+        }
 
-            analyticsDatabase.kickWithAddtionalData(data: acquisitionContextData)
+        if analyticsDatabase?.isHitWaiting() ?? false {
+            Log.debug(label: LOG_TAG, "trackAcquisition - Append referrer data to pending hit")
+            analyticsDatabase?.kickWithAdditionalData(type: .referrer, data: acquisitionContextData)
         } else {
+            // Signal that the database, it does not have to wait for referrer data.
+            analyticsDatabase?.cancelWaitForAdditionalData(type: .referrer)
+
+            Log.debug(label: LOG_TAG, "trackAcquisition - Sending referrer data as seperate tracking hit")
             // Send Acquisition data as a seperate tracking hit.
             var acquisitionEventData: [String: Any] = [:]
             acquisitionEventData[AnalyticsConstants.EventDataKeys.TRACK_ACTION] = AnalyticsConstants.TRACK_INTERNAL_ADOBE_LINK
@@ -527,7 +619,7 @@ public class Analytics: NSObject, Extension {
 
         let builtRequest = analyticsRequestSerializer.buildRequest(analyticsState: analyticsState, data: analyticsData, vars: analyticsVars)
 
-        analyticsDatabase.queue(state: analyticsState, url: builtRequest, timestamp: timeStampInSeconds, eventIdentifier: eventUniqueIdentifier, isBackdateHit: isBackdatedHit)
+        analyticsDatabase?.queue(payload: builtRequest, timestamp: timeStampInSeconds, eventIdentifier: eventUniqueIdentifier, isBackdateHit: isBackdatedHit)
     }
 
     /// Creates the context data Dictionary from the `trackData`
@@ -605,7 +697,7 @@ public class Analytics: NSObject, Extension {
         analyticsVars[AnalyticsConstants.Request.FORMATTED_TIMESTAMP_KEY] = analyticsProperties.timezoneOffset
 
         if analyticsState.offlineEnabled {
-            analyticsVars[AnalyticsConstants.Request.STRING_TIMESTAMP_KEY] = "\(timestamp)"
+            analyticsVars[AnalyticsConstants.Request.STRING_TIMESTAMP_KEY] = "\(Int(timestamp))"
         }
 
         if analyticsState.isVisitorIdServiceEnabled() {
@@ -683,20 +775,20 @@ public class Analytics: NSObject, Extension {
     /// Wait for lifecycle data after receiving Lifecycle Request event.
     func waitForLifecycleData() {
         Log.debug(label: "Analytics", "waitForLifecycleData - Lifecycle timer scheduled with timeout \(AnalyticsConstants.Default.LIFECYCLE_RESPONSE_WAIT_TIMEOUT)")
-        analyticsDatabase.setWaiting(wait: true)
-        self.analyticsTimer.startLifecycleTimer(timeout: AnalyticsConstants.Default.LIFECYCLE_RESPONSE_WAIT_TIMEOUT) { [weak self] in
+        analyticsDatabase?.waitForAdditionalData(type: .lifecycle)
+        analyticsTimer.startLifecycleTimer(timeout: AnalyticsConstants.Default.LIFECYCLE_RESPONSE_WAIT_TIMEOUT) { [weak self] in
             Log.warning(label: "Analytics", "waitForLifecycleData - Lifecycle timeout has expired without Lifecycle data")
-            self?.analyticsDatabase.setWaiting(wait: false)
+            self?.analyticsDatabase?.cancelWaitForAdditionalData(type: .lifecycle)
         }
     }
 
     /// Wait for Acquisition data after receiving Acquisition Response event.
     func waitForAcquisitionData(timeout: TimeInterval) {
         Log.debug(label: "Analytics", "waitForAcquisitionData - Referrer timer scheduled with timeout \(timeout)")
-        analyticsDatabase.setWaiting(wait: true)
-        self.analyticsTimer.startReferrerTimer(timeout: timeout) { [weak self] in
+        analyticsDatabase?.waitForAdditionalData(type: .referrer)
+        analyticsTimer.startReferrerTimer(timeout: timeout) { [weak self] in
             Log.warning(label: "Analytics", "WaitForAcquisitionData - Launch hit delay has expired without referrer data.")
-            self?.analyticsDatabase.setWaiting(wait: false)
+            self?.analyticsDatabase?.cancelWaitForAdditionalData(type: .referrer)
         }
     }
 }

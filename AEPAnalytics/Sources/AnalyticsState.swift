@@ -21,18 +21,13 @@ class AnalyticsState {
     private let LOG_TAG = "AnalyticsState"
     /// Instance of `AnalyticsRequestSerializer`, use to serialize visitor id's List.
     private let analyticsRequestSerializer = AnalyticsRequestSerializer()
-    /// `Offline enabled` configuration setting. If true analytics hits are queued when device is offline and sent when device is online.
-    private(set) var offlineEnabled: Bool = AnalyticsConstants.Default.OFFLINE_ENABLED
-    /// `Batch limit` configuration setting. Number of hits to queue before sending to Analytics.
-    private(set) var batchLimit: Int = AnalyticsConstants.Default.BATCH_LIMIT
-    /// Holds the value for privacy status opted by the user.
-    private(set) var privacyStatus: PrivacyStatus = AnalyticsConstants.Default.PRIVACY_STATUS
-    /// `Launch hit delay` configuration setting. Number of seconds to wait before Analytics launch hits are sent.
-    private(set) var launchHitDelay: TimeInterval = AnalyticsConstants.Default.LAUNCH_HIT_DELAY
-    /// `Backdate Previous Session Info` configuration setting. If enable backdates session information hits.
-    private(set) var backDateSessionInfoEnabled: Bool = AnalyticsConstants.Default.BACKDATE_SESSION_INFO_ENABLED
 
     #if DEBUG
+        var offlineEnabled: Bool = AnalyticsConstants.Default.OFFLINE_ENABLED
+        var batchLimit: Int = AnalyticsConstants.Default.BATCH_LIMIT
+        var privacyStatus: PrivacyStatus = AnalyticsConstants.Default.PRIVACY_STATUS
+        var launchHitDelay: TimeInterval = AnalyticsConstants.Default.LAUNCH_HIT_DELAY
+        var backDateSessionInfoEnabled: Bool = AnalyticsConstants.Default.BACKDATE_SESSION_INFO_ENABLED
         var analyticForwardingEnabled: Bool = AnalyticsConstants.Default.FORWARDING_ENABLED
         var marketingCloudId: String?
         var marketingCloudOrganizationId: String?
@@ -44,7 +39,21 @@ class AnalyticsState {
         var lifecycleMaxSessionLength: TimeInterval = AnalyticsConstants.Default.LIFECYCLE_MAX_SESSION_LENGTH
         var lifecycleSessionStartTimestamp: TimeInterval = AnalyticsConstants.Default.LIFECYCLE_SESSION_START_TIMESTAMP
         var orgId: String?
+        var serializedVisitorIdsList: String?
+        var applicationId: String?
+        var advertisingId: String?
+        var assuranceSessionActive = AnalyticsConstants.Assurance.DEFAULT.SESSION_ENABLED
     #else
+        /// `Offline enabled` configuration setting. If true analytics hits are queued when device is offline and sent when device is online.
+        private(set) var offlineEnabled: Bool = AnalyticsConstants.Default.OFFLINE_ENABLED
+        /// `Batch limit` configuration setting. Number of hits to queue before sending to Analytics.
+        private(set) var batchLimit: Int = AnalyticsConstants.Default.BATCH_LIMIT
+        /// Holds the value for privacy status opted by the user.
+        private(set) var privacyStatus: PrivacyStatus = AnalyticsConstants.Default.PRIVACY_STATUS
+        /// `Launch hit delay` configuration setting. Number of seconds to wait before Analytics launch hits are sent.
+        private(set) var launchHitDelay: TimeInterval = AnalyticsConstants.Default.LAUNCH_HIT_DELAY
+        /// `Backdate Previous Session Info` configuration setting. If enable backdates session information hits.
+        private(set) var backDateSessionInfoEnabled: Bool = AnalyticsConstants.Default.BACKDATE_SESSION_INFO_ENABLED
         /// Configuration setting for forwarding Analytics hits to Audience manager.
         private(set) var analyticForwardingEnabled: Bool = AnalyticsConstants.Default.FORWARDING_ENABLED
         /// Unique id for device.
@@ -66,15 +75,15 @@ class AnalyticsState {
         private(set) var lifecycleSessionStartTimestamp: TimeInterval = AnalyticsConstants.Default.LIFECYCLE_SESSION_START_TIMESTAMP
         /// The Experience Cloud Org ID provided by the Configuration extension.
         private(set) var orgId: String?
+        /// A serialized form of list of visitor identifiers.
+        private(set) var serializedVisitorIdsList: String?
+        /// Stores the Application name and version.
+        private(set) var applicationId: String?
+        /// The value of advertising identifier.
+        private(set) var advertisingId: String?
+        /// Whether or not Assurance session is active.
+        private(set) var assuranceSessionActive = AnalyticsConstants.Assurance.DEFAULT.SESSION_ENABLED
     #endif
-    /// A serialized form of list of visitor identifiers.
-    private(set) var serializedVisitorIdsList: String?
-    /// Stores the Application name and version.
-    private(set) var applicationId: String?
-    /// The value of advertising identifier.
-    private(set) var advertisingId: String?
-    /// Whether or not Assurance session is active.
-    private(set) var assuranceSessionActive = AnalyticsConstants.Assurance.DEFAULT.SESSION_ENABLED
     /// Typealias for Lifecycle Event Data keys.
     private typealias LifeCycleEventDataKeys = AnalyticsConstants.Lifecycle.EventDataKeys
     /// Typealias for Configuration Event Data keys.
@@ -244,13 +253,12 @@ class AnalyticsState {
     }
 
     /// Creates and returns the base url for analytics requests.
-    /// - Parameter sdkVersion: the version of the SDK.
     /// - Returns the base URL for an Analytics request.
-    func getBaseUrl(sdkVersion: String) -> URL? {
+    func getBaseUrl() -> URL? {
         var urlComponent = URLComponents()
         urlComponent.scheme = "https"
         urlComponent.host = host
-        urlComponent.path = "/b/ss/\(rsids ?? "")/\(getAnalyticsResponseType())/\(sdkVersion)/s"
+        urlComponent.path = "/b/ss/\(rsids ?? "")/\(getAnalyticsResponseType())/\(AnalyticsVersion.getVersion())/s"
         guard let url = urlComponent.url else {
             Log.debug(label: LOG_TAG, "Error in creating Analytics base URL.")
             return nil

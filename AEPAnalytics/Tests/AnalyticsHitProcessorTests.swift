@@ -15,22 +15,31 @@
 import XCTest
 
 class AnalyticsHitProcessorTests: XCTestCase {
-    let DEFAULT_TIMEOUT : TimeInterval = 2;
     var hitProcessor: AnalyticsHitProcessor!
-    var responseCallbackArgs = [(DataEntity, Data?)]()
+    var analyticsState: AnalyticsState!
+    var responseCallbackArgs = [[String: Any]]()
     var mockNetworkService: MockNetworking? {
         return ServiceProvider.shared.networkService as? MockNetworking
     }
 
     override func setUp() {
         ServiceProvider.shared.networkService = MockNetworking()
-        hitProcessor = AnalyticsHitProcessor(responseHandler: { [weak self] entity, data in
-            self?.responseCallbackArgs.append((entity, data))
+
+        responseCallbackArgs = [[String: Any]]()
+
+        // Setup dummy values
+        analyticsState = AnalyticsState()
+        analyticsState.rsids = "rsid"
+        analyticsState.host = "test.com"
+
+        let dispatchQueue = DispatchQueue(label: "dispatchqueue")
+        hitProcessor = AnalyticsHitProcessor(dispatchQueue: dispatchQueue, state: analyticsState, responseHandler: { [weak self] data in
+            self?.responseCallbackArgs.append(data)
         })
     }
 
     /// Tests that when a `DataEntity` with bad data is passed, that it is not retried and is removed from the queue
-    func testProcessHitBadHit() {
+    func testProcessHitFailedBadHit() {
         // setup
         let expectation = XCTestExpectation(description: "Callback should be invoked with true signaling this hit should not be retried")
         let entity = DataEntity(uniqueIdentifier: "test-uuid", timestamp: Date(), data: nil) // entity data does not contain an `AnalyticsHit`
@@ -47,38 +56,13 @@ class AnalyticsHitProcessorTests: XCTestCase {
         XCTAssertFalse(mockNetworkService?.connectAsyncCalled ?? true) // no network request should have been made
     }
 
-    /// Tests that when a good hit is processed that a network request is made and the request returns 200
-    func testProcessHitHappy() {
+    func testProcessHit_NetworkFailureRecoverableError() {
         // setup
         let expectation = XCTestExpectation(description: "Callback should be invoked with true signaling this hit should not be retried")
-        let expectedUrl = URL(string: "adobe.com")!
-        let expectedEvent = Event(name: "Hit Event", type: EventType.analytics, source: EventSource.requestContent, data: ["key1":"value1"])
-        let hit = AnalyticsHit(url: expectedUrl, timeout: DEFAULT_TIMEOUT, event: expectedEvent)
-        mockNetworkService?.expectedResponse = HttpConnection(data: nil, response: HTTPURLResponse(url: expectedUrl, statusCode: 200, httpVersion: nil, headerFields: nil), error: nil)
+        let expectedUrl = analyticsState.getBaseUrl()
+        mockNetworkService?.expectedResponse = HttpConnection(data: nil, response: HTTPURLResponse(url: expectedUrl!, statusCode: 408, httpVersion: nil, headerFields: nil), error: nil)
 
-        let entity = DataEntity(uniqueIdentifier: "test-uuid", timestamp: Date(), data: try! JSONEncoder().encode(hit))
-
-        // test
-        hitProcessor.processHit(entity: entity) { success in
-            XCTAssertTrue(success)
-            expectation.fulfill()
-        }
-
-        // verify
-        wait(for: [expectation], timeout: 0.5)
-        XCTAssertFalse(responseCallbackArgs.isEmpty) // response handler should have been invoked
-        XCTAssertTrue(mockNetworkService?.connectAsyncCalled ?? false) // network request should have been made
-        XCTAssertEqual(mockNetworkService?.connectAsyncCalledWithNetworkRequest?.url, expectedUrl) // network request should be made with the url in the hit
-    }
-
-    /// Tests that when the network request fails but has a recoverable error that we will retry the hit and do not invoke the response handler for that hit
-    func testProcessHitRecoverableNetworkError() {
-        // setup
-        let expectation = XCTestExpectation(description: "Callback should be invoked with true signaling this hit should be retried")
-        let expectedUrl = URL(string: "adobe.com")!
-        let expectedEvent = Event(name: "Hit Event", type: EventType.analytics, source: EventSource.requestContent, data: nil)
-        let hit = AnalyticsHit(url: expectedUrl, timeout: DEFAULT_TIMEOUT, event: expectedEvent)
-        mockNetworkService?.expectedResponse = HttpConnection(data: nil, response: HTTPURLResponse(url: expectedUrl, statusCode: NetworkServiceConstants.RECOVERABLE_ERROR_CODES.first!, httpVersion: nil, headerFields: nil), error: nil)
+        let hit = AnalyticsHit(payload: "payload", timestamp: Date().timeIntervalSince1970, eventIdentifier: UUID().uuidString)
 
         let entity = DataEntity(uniqueIdentifier: "test-uuid", timestamp: Date(), data: try! JSONEncoder().encode(hit))
 
@@ -90,19 +74,17 @@ class AnalyticsHitProcessorTests: XCTestCase {
 
         // verify
         wait(for: [expectation], timeout: 0.5)
-        XCTAssertTrue(responseCallbackArgs.isEmpty) // response handler should have not been invoked
+
         XCTAssertTrue(mockNetworkService?.connectAsyncCalled ?? false) // network request should have been made
-        XCTAssertEqual(mockNetworkService?.connectAsyncCalledWithNetworkRequest?.url, expectedUrl) // network request should be made with the url in the hit
     }
 
-    /// Tests that when the network request fails and does not have a recoverable response code that we invoke the response handler and do not retry the hit
-    func testProcessHitUnrecoverableNetworkError() {
+    func testProcessHit_NetworkFailure() {
         // setup
         let expectation = XCTestExpectation(description: "Callback should be invoked with true signaling this hit should not be retried")
-        let expectedUrl = URL(string: "adobe.com")!
-        let expectedEvent = Event(name: "Hit Event", type: EventType.analytics, source: EventSource.requestContent, data: nil)
-        let hit = AnalyticsHit(url: expectedUrl, timeout: DEFAULT_TIMEOUT, event: expectedEvent)
-        mockNetworkService?.expectedResponse = HttpConnection(data: nil, response: HTTPURLResponse(url: expectedUrl, statusCode: -1, httpVersion: nil, headerFields: nil), error: nil)
+        let expectedUrl = analyticsState.getBaseUrl()
+        mockNetworkService?.expectedResponse = HttpConnection(data: nil, response: HTTPURLResponse(url: expectedUrl!, statusCode: 404, httpVersion: nil, headerFields: nil), error: nil)
+
+        let hit = AnalyticsHit(payload: "payload", timestamp: Date().timeIntervalSince1970, eventIdentifier: UUID().uuidString)
 
         let entity = DataEntity(uniqueIdentifier: "test-uuid", timestamp: Date(), data: try! JSONEncoder().encode(hit))
 
@@ -114,8 +96,123 @@ class AnalyticsHitProcessorTests: XCTestCase {
 
         // verify
         wait(for: [expectation], timeout: 0.5)
+
+        XCTAssertTrue(mockNetworkService?.connectAsyncCalled ?? false) // network request should have been made
+    }
+
+    // Tests that when a good hit is processed that a network request is made and the request returns 200
+    func testProcessHitSuccessfulResponseEventData() {
+        // setup
+        let expectation = XCTestExpectation(description: "Callback should be invoked with true signaling this hit should not be retried")
+        let expectedUrl = analyticsState.getBaseUrl()
+        mockNetworkService?.expectedResponse = HttpConnection(data: nil, response: HTTPURLResponse(url: expectedUrl!, statusCode: 200, httpVersion: nil, headerFields: nil), error: nil)
+
+        let hit = AnalyticsHit(payload: "payload", timestamp: Date().timeIntervalSince1970, eventIdentifier: UUID().uuidString)
+
+        let entity = DataEntity(uniqueIdentifier: "test-uuid", timestamp: Date(), data: try! JSONEncoder().encode(hit))
+
+        // test
+        hitProcessor.processHit(entity: entity) { success in
+            XCTAssertTrue(success)
+            expectation.fulfill()
+        }
+
+        // verify
+        wait(for: [expectation], timeout: 0.5)
+
         XCTAssertFalse(responseCallbackArgs.isEmpty) // response handler should have been invoked
         XCTAssertTrue(mockNetworkService?.connectAsyncCalled ?? false) // network request should have been made
-        XCTAssertEqual(mockNetworkService?.connectAsyncCalledWithNetworkRequest?.url, expectedUrl) // network request should be made with the url in the hit
+
+        let actualUrlString = mockNetworkService?.connectAsyncCalledWithNetworkRequest?.url.absoluteString ?? ""
+        let expectedUrlString = expectedUrl?.absoluteString ?? ""
+        XCTAssertTrue(actualUrlString.hasPrefix(expectedUrlString))
+    }
+
+    // Tests that when a good hit is processed that a network request is made and the request returns 200
+    func testProcessHitOfflineEnabledOutOfOrder() {
+        // setup
+        let expectation = XCTestExpectation(description: "Callback should be invoked with true signaling this hit should not be retried")
+        let expectedUrl = analyticsState.getBaseUrl()
+        mockNetworkService?.expectedResponse = HttpConnection(data: nil, response: HTTPURLResponse(url: expectedUrl!, statusCode: 200, httpVersion: nil, headerFields: nil), error: nil)
+
+        let lastHitTimestamp = Date(timeIntervalSinceNow: 10).timeIntervalSince1970
+        let hitTimestamp = Date().timeIntervalSince1970
+        let payload = "payload&ts=\(Int(hitTimestamp))"
+
+        // Enable offline tracking
+        analyticsState.offlineEnabled = true
+
+        hitProcessor.lastHitTimestamp = lastHitTimestamp
+
+        // For offline enabled :- if hitTimestamp is less than lastHitTimestamp, hitTimestamp is corrected to lastHitTimestamp + 1
+        let expectedHitTimestamp = lastHitTimestamp + 1
+
+        let hit = AnalyticsHit(payload: payload, timestamp: hitTimestamp, eventIdentifier: UUID().uuidString)
+        let entity = DataEntity(uniqueIdentifier: "test-uuid", timestamp: Date(), data: try! JSONEncoder().encode(hit))
+
+        // test
+        hitProcessor.processHit(entity: entity) { success in
+            XCTAssertTrue(success)
+            expectation.fulfill()
+        }
+
+        // verify
+        wait(for: [expectation], timeout: 0.5)
+
+        XCTAssertEqual(mockNetworkService?.connectAsyncCalledWithNetworkRequest?.connectPayload, "payload&ts=\(Int(expectedHitTimestamp))")
+        XCTAssertEqual(hitProcessor.lastHitTimestamp, expectedHitTimestamp)
+    }
+
+    func testProcessHitOfflineDisabledTimestampExceeded() {
+        // setup
+        let expectation = XCTestExpectation(description: "Callback should be invoked with true signaling this hit should not be retried")
+
+        // If offline disabled, the hit should be dropped if it was queued before threshold.
+        let timeStamp = Date(timeIntervalSinceNow: -(AnalyticsTestConstants.Default.TIMESTAMP_DISABLED_WAIT_THRESHOLD_SECONDS + 1))
+
+        let hit = AnalyticsHit(payload: "", timestamp: timeStamp.timeIntervalSince1970, eventIdentifier: UUID().uuidString)
+        let entity = DataEntity(uniqueIdentifier: "test-uuid", timestamp: Date(), data: try! JSONEncoder().encode(hit))
+
+        // test
+        hitProcessor.processHit(entity: entity) { success in
+            XCTAssertTrue(success)
+            expectation.fulfill()
+        }
+
+        // verify
+        wait(for: [expectation], timeout: 0.5)
+        XCTAssertTrue(responseCallbackArgs.isEmpty)
+        XCTAssertFalse(mockNetworkService?.connectAsyncCalled ?? true)
+    }
+
+    func testProcessHit_AssuranceActive() {
+        // setup
+        let expectation = XCTestExpectation(description: "Callback should be invoked with true signaling this hit should not be retried")
+        let expectedUrl = analyticsState.getBaseUrl()
+        mockNetworkService?.expectedResponse = HttpConnection(data: nil, response: HTTPURLResponse(url: expectedUrl!, statusCode: 200, httpVersion: nil, headerFields: nil), error: nil)
+
+        let hit = AnalyticsHit(payload: "payload", timestamp: Date().timeIntervalSince1970, eventIdentifier: UUID().uuidString)
+        let entity = DataEntity(uniqueIdentifier: "test-uuid", timestamp: Date(), data: try! JSONEncoder().encode(hit))
+
+        // Enable assurance
+        analyticsState.assuranceSessionActive = true
+
+        // test
+        hitProcessor.processHit(entity: entity) { success in
+            XCTAssertTrue(success)
+            expectation.fulfill()
+        }
+
+        // verify
+        wait(for: [expectation], timeout: 0.5)
+
+        XCTAssertFalse(responseCallbackArgs.isEmpty) // response handler should have been invoked
+        XCTAssertTrue(mockNetworkService?.connectAsyncCalled ?? false) // network request should have been made
+
+        let actualUrlString = mockNetworkService?.connectAsyncCalledWithNetworkRequest?.url.absoluteString ?? ""
+        let expectedUrlString = expectedUrl?.absoluteString ?? ""
+        XCTAssertTrue(actualUrlString.hasPrefix(expectedUrlString))
+        XCTAssertEqual(mockNetworkService?.connectAsyncCalledWithNetworkRequest?.connectPayload, "payload\(AnalyticsTestConstants.Request.DEBUG_API_PAYLOAD)")
+
     }
 }
