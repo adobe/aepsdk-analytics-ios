@@ -229,6 +229,10 @@ public class Analytics: NSObject, Extension {
             let lifecycleAction = event.data?[AnalyticsConstants.Lifecycle.EventDataKeys.LIFECYCLE_ACTION_KEY] as? String
             if lifecycleAction == AnalyticsConstants.Lifecycle.EventDataKeys.LIFECYCLE_START {
 
+                // For apps coming from background, manually flush any queued hits before waiting for lifecycle data.
+                analyticsDatabase?.cancelWaitForAdditionalData(type: .lifecycle)
+                analyticsDatabase?.cancelWaitForAdditionalData(type: .referrer)
+
                 // If we receive extra lifecycle start events after the first one, then just ignore rest of it
                 if analyticsTimer.isLifecycleTimerRunning() {
                     Log.debug(label: LOG_TAG, "handleLifecycleEvents - Exiting, Lifecycle timer is already running and this is a duplicate request")
@@ -238,8 +242,8 @@ public class Analytics: NSObject, Extension {
                 waitForLifecycleData()
 
             } else if lifecycleAction == AnalyticsConstants.Lifecycle.EventDataKeys.LIFECYCLE_PAUSE {
-                self.analyticsTimer.cancelLifecycleTimer()
-                self.analyticsTimer.cancelReferrerTimer()
+                analyticsTimer.cancelLifecycleTimer()
+                analyticsTimer.cancelReferrerTimer()
             }
         } else if event.type == EventType.lifecycle && event.source == EventSource.responseContent {
             let softDependencies: [String] = [
@@ -772,7 +776,7 @@ public class Analytics: NSObject, Extension {
     func waitForLifecycleData() {
         Log.debug(label: "Analytics", "waitForLifecycleData - Lifecycle timer scheduled with timeout \(AnalyticsConstants.Default.LIFECYCLE_RESPONSE_WAIT_TIMEOUT)")
         analyticsDatabase?.waitForAdditionalData(type: .lifecycle)
-        self.analyticsTimer.startLifecycleTimer(timeout: AnalyticsConstants.Default.LIFECYCLE_RESPONSE_WAIT_TIMEOUT) { [weak self] in
+        analyticsTimer.startLifecycleTimer(timeout: AnalyticsConstants.Default.LIFECYCLE_RESPONSE_WAIT_TIMEOUT) { [weak self] in
             Log.warning(label: "Analytics", "waitForLifecycleData - Lifecycle timeout has expired without Lifecycle data")
             self?.analyticsDatabase?.cancelWaitForAdditionalData(type: .lifecycle)
         }
@@ -782,7 +786,7 @@ public class Analytics: NSObject, Extension {
     func waitForAcquisitionData(timeout: TimeInterval) {
         Log.debug(label: "Analytics", "waitForAcquisitionData - Referrer timer scheduled with timeout \(timeout)")
         analyticsDatabase?.waitForAdditionalData(type: .referrer)
-        self.analyticsTimer.startReferrerTimer(timeout: timeout) { [weak self] in
+        analyticsTimer.startReferrerTimer(timeout: timeout) { [weak self] in
             Log.warning(label: "Analytics", "WaitForAcquisitionData - Launch hit delay has expired without referrer data.")
             self?.analyticsDatabase?.cancelWaitForAdditionalData(type: .referrer)
         }
