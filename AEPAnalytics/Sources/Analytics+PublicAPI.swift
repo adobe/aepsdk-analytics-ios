@@ -28,21 +28,21 @@ import Foundation
     /// - Parameters:
     ///  - completion: closure invoked with the queue size value
     @objc(getQueueSize:)
-    static func getQueueSize(completion: @escaping (Int, AEPError) -> Void) {
+    static func getQueueSize(completion: @escaping (Int, Error?) -> Void) {
         let data  = [AnalyticsConstants.EventDataKeys.GET_QUEUE_SIZE: true]
         let event = Event(name: "GetQueueSize", type: EventType.analytics, source: EventSource.requestContent, data: data)
 
         MobileCore.dispatch(event: event) { responseEvent in
             guard let responseEvent = responseEvent else {
-                completion(0, .callbackTimeout)
+                completion(0, AEPError.callbackTimeout)
                 return
             }
 
             guard let queueSize = responseEvent.data?[AnalyticsConstants.EventDataKeys.QUEUE_SIZE] as? Int else {
-                completion(0, .unexpected)
+                completion(0, AEPError.unexpected)
                 return
             }
-            completion(queueSize, .none)
+            completion(queueSize, AEPError.none)
         }
     }
     /// Forces analytics to send all queued hits regardless of current batch options
@@ -56,40 +56,40 @@ import Foundation
     /// - Parameters:
     ///  - completion: closure invoked with the analytics identifier value
     @objc(getTrackingIdentifier:)
-    static func getTrackingIdentifier(completion: @escaping (String?, AEPError) -> Void) {
+    static func getTrackingIdentifier(completion: @escaping (String?, Error?) -> Void) {
         let event = Event(name: "GetTrackingIdentifier", type: EventType.analytics, source: EventSource.requestIdentity, data: nil)
 
         MobileCore.dispatch(event: event) { responseEvent in
             guard let responseEvent = responseEvent else {
-                completion(nil, .callbackTimeout)
+                completion(nil, AEPError.callbackTimeout)
                 return
             }
 
             guard let trackingIdentifier = responseEvent.data?[AnalyticsConstants.EventDataKeys.ANALYTICS_ID] as? String else {
-                completion(nil, .unexpected)
+                completion(nil, AEPError.unexpected)
                 return
             }
-            completion(trackingIdentifier, .none)
+            completion(trackingIdentifier, AEPError.none)
         }
     }
     /// Retrieves the visitor tracking identifier.
     /// - Parameters:
     ///  - completion: closure invoked with the visitor identifier value
     @objc(getVisitorIdentifier:)
-    static func getVisitorIdentifier(completion: @escaping (String?, AEPError) -> Void) {
+    static func getVisitorIdentifier(completion: @escaping (String?, Error?) -> Void) {
         let event = Event(name: "GetVisitorIdentifier", type: EventType.analytics, source: EventSource.requestIdentity, data: nil)
 
         MobileCore.dispatch(event: event) { responseEvent in
             guard let responseEvent = responseEvent else {
-                completion(nil, .callbackTimeout)
+                completion(nil, AEPError.callbackTimeout)
                 return
             }
 
             guard let visitorIdentifier = responseEvent.data?[AnalyticsConstants.EventDataKeys.VISITOR_IDENTIFIER] as? String else {
-                completion(nil, .unexpected)
+                completion(nil, AEPError.unexpected)
                 return
             }
-            completion(visitorIdentifier, .none)
+            completion(visitorIdentifier, AEPError.none)
         }
     }
     /// Sets the visitor tracking identifier.
