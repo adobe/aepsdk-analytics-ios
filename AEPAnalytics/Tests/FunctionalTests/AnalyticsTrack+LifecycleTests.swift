@@ -70,8 +70,7 @@ class AnalyticsTrack_LifecycleTests : AnalyticsFunctionalTestBase {
             "a.DeviceName"  : "mockDeviceBuildId",
             "a.OSVersion" :  "mockOSName",
             "a.Resolution" : "0x0",
-            "a.RunMode" : "Application",
-            "a.locale" : "en-US"
+            "a.RunMode" : "Application"
         ]
                 
         XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 1)
@@ -105,19 +104,14 @@ class AnalyticsTrack_LifecycleTests : AnalyticsFunctionalTestBase {
                 AnalyticsTestConstants.Lifecycle.EventDataKeys.CARRIER_NAME : "mockMobileCarrier",
                 AnalyticsTestConstants.Lifecycle.EventDataKeys.DEVICE_NAME : "mockDeviceBuildId",
                 AnalyticsTestConstants.Lifecycle.EventDataKeys.APP_ID : "mockAppName",
-                AnalyticsTestConstants.Lifecycle.EventDataKeys.RUN_MODE : "Application"
-            ]
-        ]
-        simulateLifecycleState(data: lifecycleSharedState)
-        
-        let lifecycleEventData = [
-            AnalyticsTestConstants.Lifecycle.EventDataKeys.LIFECYCLE_CONTEXT_DATA : [
+                AnalyticsTestConstants.Lifecycle.EventDataKeys.RUN_MODE : "Application",
                 AnalyticsTestConstants.Lifecycle.EventDataKeys.CRASH_EVENT : "CrashEvent",
                 AnalyticsTestConstants.Lifecycle.EventDataKeys.PREVIOUS_OS_VERSION : "previousOSVersion",
                 AnalyticsTestConstants.Lifecycle.EventDataKeys.PREVIOUS_APP_ID : "previousAppId"
             ]
         ]
-        let lifecycleResponse = Event(name: "", type: EventType.lifecycle, source: EventSource.responseContent, data: lifecycleEventData)
+        simulateLifecycleState(data: lifecycleSharedState)
+        let lifecycleResponse = Event(name: "", type: EventType.lifecycle, source: EventSource.responseContent, data: lifecycleSharedState)
         mockRuntime.simulateComingEvent(event: lifecycleResponse)
         waitFor(interval: 1)
         
@@ -170,7 +164,8 @@ class AnalyticsTrack_LifecycleTests : AnalyticsFunctionalTestBase {
             "a.DeviceName"  : "mockDeviceBuildId",
             "a.OSVersion" :  "mockOSName",
             "a.Resolution" : "0x0",
-            "a.RunMode" : "Application"
+            "a.RunMode" : "Application",
+            "a.locale" : "en-US"
         ]
         
         verifyHit(request: mockNetworkService?.calledNetworkRequests[1],
@@ -213,7 +208,7 @@ class AnalyticsTrack_LifecycleTests : AnalyticsFunctionalTestBase {
         simulateLifecycleState(data: lifecycleEventData)
         mockRuntime.simulateComingEvent(event: lifecycleResponse)
         
-        waitFor(interval: 10)
+        waitFor(interval: 1)
         
         XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 2)
             
@@ -265,7 +260,8 @@ class AnalyticsTrack_LifecycleTests : AnalyticsFunctionalTestBase {
             "a.DeviceName"  : "mockDeviceBuildId",
             "a.OSVersion" :  "mockOSName",
             "a.Resolution" : "0x0",
-            "a.RunMode" : "Application"
+            "a.RunMode" : "Application",
+            "a.locale" : "en-US"
         ]
 
         verifyHit(request: mockNetworkService?.calledNetworkRequests[1],
