@@ -10,9 +10,10 @@
  governing permissions and limitations under the License.
  */
 
-extension AnalyticsRequestSerializerTests {
+@testable import AEPAnalytics
 
-    func getCidData(source: String) -> String {
+class AnalyticsRequestHelper {
+    static func getCidData(source: String) -> String {
         let regex = "&cid\\.(.*)&\\.cid"
         if let range = source.range(of: regex, options: .regularExpression) {
             return String(source[range])
@@ -20,7 +21,7 @@ extension AnalyticsRequestSerializerTests {
         return ""
     }
 
-    func getContextData(source: String) -> String {
+    static func getContextDataString(source: String) -> String {
         let regex = "(&c\\.(.*)&\\.c)"
         if let range = source.range(of: regex, options: .regularExpression) {
             return String(source[range])
@@ -28,9 +29,17 @@ extension AnalyticsRequestSerializerTests {
         return ""
     }
 
-    func getAdditionalData(source: String) -> String {
+    static func getContextData(source: String) -> [String: Any] {
+        var contextDataString = getContextDataString(source: source)
+        // Strip &c. and &.c
+        var strippedString = contextDataString.dropFirst("&c.".count).dropLast("&.c".count)
+        return ContextDataUtil.deserializeContextDataKeyValuePairs(serializedContextData: String(strippedString))
+
+    }
+
+    static func getAdditionalData(source: String) -> String {
         var additionalData = source.replacingOccurrences(of: getCidData(source: source), with: "")
-        additionalData = additionalData.replacingOccurrences(of: getContextData(source: source), with: "")
+        additionalData = additionalData.replacingOccurrences(of: getContextDataString(source: source), with: "")
         return additionalData
     }
 }
