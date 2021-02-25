@@ -13,6 +13,10 @@
 import Foundation
 import AEPServices
 
+extension CharacterSet {
+    static let rfc3986Unreserved = CharacterSet(charactersIn: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~")
+}
+
 class ContextDataUtil {
 
     static let LOG_TAG = "ContextDataUtil"
@@ -70,10 +74,11 @@ class ContextDataUtil {
                 continue
             }
 
-            let scalars = String(char).unicodeScalars
-            if contextDataMask[Int(scalars[scalars.startIndex].value)] {
+            let scalarValue = Int(char.unicodeScalars.first?.value ?? 0)
+            if scalarValue >= 0 && scalarValue < contextDataMask.count, contextDataMask[scalarValue] {
                 cleanedKey.append(char)
             }
+
         }
         if cleanedKey.first == period {
             cleanedKey.removeFirst()
@@ -123,9 +128,9 @@ class ContextDataUtil {
         parameters.keys.sorted().forEach { key in
             let value = parameters[key]
 
-            if let urlEncodedKey = key.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) {
+            if let urlEncodedKey = key.addingPercentEncoding(withAllowedCharacters: .rfc3986Unreserved) {
                 if let contextData = value as? ContextData {
-                    if let urlEncodedValue = contextData.value?.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed), !urlEncodedKey.isEmpty {
+                    if let urlEncodedValue = contextData.value?.addingPercentEncoding(withAllowedCharacters: .rfc3986Unreserved), !urlEncodedKey.isEmpty {
                         requestString.append("&\(urlEncodedKey)=\(urlEncodedValue)")
                     }
 
@@ -134,7 +139,7 @@ class ContextDataUtil {
                         serializeToQueryString(parameters: contextData.data, requestString: &requestString)
                         requestString.append("&.\(urlEncodedKey)")
                     }
-                } else if let urlEncodedValue = (value as? String)?.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed), !urlEncodedKey.isEmpty, !urlEncodedValue.isEmpty {
+                } else if let urlEncodedValue = (value as? String)?.addingPercentEncoding(withAllowedCharacters: .rfc3986Unreserved), !urlEncodedKey.isEmpty, !urlEncodedValue.isEmpty {
                     requestString.append("&\(urlEncodedKey)=\(urlEncodedValue)")
                 }
             }

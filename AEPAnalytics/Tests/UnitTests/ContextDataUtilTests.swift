@@ -31,11 +31,27 @@ class ContextDataUtilTests: XCTestCase {
         XCTAssertEqual("\(sourceUrl)&c.&newkey=value&.c", ContextDataUtil.appendContextData(contextData: data, source: sourceUrl))
     }
 
-    func testAppendContextData_When_ReferreDataIsNullOrEmpty() {
+    func testAppendContextData_When_ContextDataIsNullOrEmpty() {
         let sourceUrl = "http://abc.com"
         XCTAssertEqual(sourceUrl, ContextDataUtil.appendContextData(contextData: nil, source: sourceUrl))
         let data = [String:String]()
         XCTAssertEqual(sourceUrl, ContextDataUtil.appendContextData(contextData: data, source: sourceUrl))
+    }
+
+    func testAppendContextData_When_KeyHasInvalidCharacters() {
+        let sourceUrl = "http://abc.com"
+        var data = [String:String]()
+        data["网页"] = "value"
+        XCTAssertEqual("\(sourceUrl)", ContextDataUtil.appendContextData(contextData: data, source: sourceUrl))
+    }
+
+    func testAppendContextData_When_UnicodeValues() {
+        let sourceUrl = "http://abc.com"
+        var data = [String:String]()
+        data["key"] = "网页"
+
+        let encodedValue = "网页".addingPercentEncoding(withAllowedCharacters: .rfc3986Unreserved)!
+        XCTAssertEqual("\(sourceUrl)&c.&key=\(encodedValue)&.c", ContextDataUtil.appendContextData(contextData: data, source: sourceUrl))
     }
 
     func testAppendContextData_When_ContextDataOnePair() {
