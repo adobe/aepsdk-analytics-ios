@@ -229,15 +229,15 @@ public class Analytics: NSObject, Extension {
             let lifecycleAction = event.data?[AnalyticsConstants.Lifecycle.EventDataKeys.LIFECYCLE_ACTION_KEY] as? String
             if lifecycleAction == AnalyticsConstants.Lifecycle.EventDataKeys.LIFECYCLE_START {
 
-                // For apps coming from background, manually flush any queued hits before waiting for lifecycle data.
-                analyticsDatabase?.cancelWaitForAdditionalData(type: .lifecycle)
-                analyticsDatabase?.cancelWaitForAdditionalData(type: .referrer)
-
-                // If we receive extra lifecycle start events after the first one, then just ignore rest of it
+                // If we receive duplicate lifecycle start events when waiting for lifecycle.responseContext, ignore them.
                 if analyticsTimer.isLifecycleTimerRunning() {
                     Log.debug(label: LOG_TAG, "handleLifecycleEvents - Exiting, Lifecycle timer is already running and this is a duplicate request")
                     return
                 }
+
+                // For apps coming from background, manually flush any queued hits before waiting for lifecycle data.
+                analyticsDatabase?.cancelWaitForAdditionalData(type: .lifecycle)
+                analyticsDatabase?.cancelWaitForAdditionalData(type: .referrer)
 
                 waitForLifecycleData()
 
@@ -741,7 +741,7 @@ public class Analytics: NSObject, Extension {
     }
 
     /// Creates an internal analytics event with the previous lifecycle session info.
-    /// - Parameters:    
+    /// - Parameters:
     ///      - previousSessionLength: The length of previous session
     ///      - previousOSVersion: The OS version in the backdated session
     ///      - previousAppIdVersion: The App Id in the backdated session
@@ -766,7 +766,6 @@ public class Analytics: NSObject, Extension {
         lifecycleSessionData[AnalyticsConstants.EventDataKeys.TRACK_ACTION] = AnalyticsConstants.SESSION_INFO_INTERNAL_ACTION_NAME
         lifecycleSessionData[AnalyticsConstants.EventDataKeys.CONTEXT_DATA] = sessionContextData
         lifecycleSessionData[AnalyticsConstants.EventDataKeys.TRACK_INTERNAL] = true
-
 
         let backDateTimeStamp = max(analyticsProperties.getMostRecentHitTimestamp(), previousSessionPauseTimestamp ?? 0)
 
