@@ -171,6 +171,7 @@ class AnalyticsState {
             }
             if let applicationId = lifecyleContextData[LifeCycleEventDataKeys.APP_ID] {
                 defaultData[AnalyticsConstants.ContextDataKeys.APPLICATION_IDENTIFIER] = applicationId
+                self.applicationId = applicationId
             }
         }
     }
