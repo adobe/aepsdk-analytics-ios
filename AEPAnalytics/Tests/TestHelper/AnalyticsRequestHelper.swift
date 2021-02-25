@@ -30,11 +30,27 @@ class AnalyticsRequestHelper {
     }
 
     static func getContextData(source: String) -> [String: Any] {
-        var contextDataString = getContextDataString(source: source)
+        let contextDataString = getContextDataString(source: source)
         // Strip &c. and &.c
-        var strippedString = contextDataString.dropFirst("&c.".count).dropLast("&.c".count)
+        let strippedString = contextDataString.dropFirst("&c.".count).dropLast("&.c".count)
         return ContextDataUtil.deserializeContextDataKeyValuePairs(serializedContextData: String(strippedString))
 
+    }
+
+    static func getQueryParams(source: String) -> [String: Any] {
+        let contextDataString = getContextDataString(source: source)
+        let queryString = source.replacingOccurrences(of: contextDataString, with: "")
+        var ret = [String: String]()
+
+        if !queryString.isEmpty {
+            for item in queryString.components(separatedBy: "&") {
+                let pairs = item.components(separatedBy: "=")
+                let key = pairs[0]
+                let value = pairs.count > 1 ? pairs[1] : ""
+                ret[key] = value.removingPercentEncoding
+            }
+        }
+        return ret            
     }
 
     static func getAdditionalData(source: String) -> String {

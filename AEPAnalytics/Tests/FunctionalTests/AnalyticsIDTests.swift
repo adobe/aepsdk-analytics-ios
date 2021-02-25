@@ -46,7 +46,8 @@ class AnalyticsIDTests : AnalyticsFunctionalTestBase {
             "pe" : "lnk_o",
             "mid" : "mid",
             "aamb" : "blob",
-            "aamlh" : "lochint"
+            "aamlh" : "lochint",
+            "ts" : String(Int(trackEvent.timestamp.timeIntervalSince1970))
         ]
         let expectedContextData = [
             "k1" : "v1",
@@ -56,6 +57,58 @@ class AnalyticsIDTests : AnalyticsFunctionalTestBase {
                 
         XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 2)
         verifyHit(request: mockNetworkService?.calledNetworkRequests[1],
+                  host: "https://test.com/b/ss/rsid/0/",
+                  vars: expectedVars,
+                  contextData: expectedContextData)
+    }
+        
+    func testHitsContainAIDandVID() {
+        let dataStore = NamedCollectionDataStore(name: AnalyticsTestConstants.DATASTORE_NAME)
+        dataStore.set(key: AnalyticsTestConstants.DataStoreKeys.IGNORE_AID, value: false)
+        dataStore.set(key: AnalyticsTestConstants.DataStoreKeys.AID, value: "testaid")
+        dataStore.set(key: AnalyticsTestConstants.DataStoreKeys.VID, value: "testvid")
+        
+        mockNetworkService?.reset()
+        resetExtension()
+        
+        dispatchDefaultConfigAndIdentityStates()
+        waitFor(interval: 1.0)
+        
+        
+        let trackData: [String: Any] = [
+            CoreConstants.Keys.ACTION : "testActionName",
+            CoreConstants.Keys.CONTEXT_DATA : [
+                "k1": "v1",
+                "k2": "v2"
+            ]
+        ]
+        let trackEvent = Event(name: "Generic track event", type: EventType.genericTrack, source: EventSource.requestContent, data: trackData)
+        
+        mockRuntime.simulateComingEvent(event: trackEvent)
+                
+        waitFor(interval: 1)
+        
+        let expectedVars = [
+            "ce": "UTF-8",
+            "cp": "foreground",
+            "ndh": "1",
+            "pev2" : "AMACTION:testActionName",
+            "pe" : "lnk_o",
+            "mid" : "mid",
+            "aid" : "testaid",
+            "vid" : "testvid",
+            "aamb" : "blob",
+            "aamlh" : "lochint",
+            "ts" : String(Int(trackEvent.timestamp.timeIntervalSince1970))
+        ]
+        let expectedContextData = [
+            "k1" : "v1",
+            "k2" : "v2",
+            "a.action" : "testActionName"
+        ]
+                
+        XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 1)
+        verifyHit(request: mockNetworkService?.calledNetworkRequests[0],
                   host: "https://test.com/b/ss/rsid/0/",
                   vars: expectedVars,
                   contextData: expectedContextData)

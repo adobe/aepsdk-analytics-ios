@@ -54,7 +54,8 @@ class AnalyticsTrack_PlacesTests : AnalyticsFunctionalTestBase {
             "pe" : "lnk_o",
             "mid" : "mid",
             "aamb" : "blob",
-            "aamlh" : "lochint"
+            "aamlh" : "lochint",
+            "ts" : String((Int(trackEvent.timestamp.timeIntervalSince1970)))
         ]
         let expectedContextData = [
             "k1" : "v1",
@@ -112,7 +113,8 @@ class AnalyticsTrack_PlacesTests : AnalyticsFunctionalTestBase {
             "pe" : "lnk_o",
             "mid" : "mid",
             "aamb" : "blob",
-            "aamlh" : "lochint"
+            "aamlh" : "lochint",
+            "ts" : String((Int(trackEvent.timestamp.timeIntervalSince1970)))
         ]
         let expectedContextData = [
             "k1" : "v1",

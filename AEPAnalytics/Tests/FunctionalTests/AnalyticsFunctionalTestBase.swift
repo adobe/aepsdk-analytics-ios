@@ -97,17 +97,22 @@ class AnalyticsFunctionalTestBase : XCTestCase {
                                         data: (data, .set))
     }
 
-    func verifyHit(request: NetworkRequest?, host: String, vars: [String: Any]? = nil, contextData expectedContextData:[String: Any]? = nil) {
+    func verifyHit(request: NetworkRequest?, host: String, vars expectedVars: [String: Any]? = nil, contextData expectedContextData:[String: Any]? = nil) {
         guard let request = request else {
             XCTFail("Request is nil")
             return
         }
         XCTAssertTrue(request.url.absoluteString.starts(with: host))
-        if let vars = vars {
-            for (key, value) in vars {
-                XCTAssertTrue(request.connectPayload.contains("\(key)=\(value)"))
-            }
+        
+        if expectedVars == nil, expectedContextData == nil {
+            return
         }
+        
+        let actualVars = AnalyticsRequestHelper.getQueryParams(source: request.connectPayload)
+        var expectedVars = expectedVars ?? [:]
+        // This is appended for each request
+        expectedVars[AnalyticsConstants.Request.FORMATTED_TIMESTAMP_KEY] = TimeZone.current.getOffsetFromGmtInMinutes()
+        XCTAssertTrue(NSDictionary(dictionary: actualVars).isEqual(to: expectedVars))
                 
         let actualContextData = AnalyticsRequestHelper.getContextData(source: request.connectPayload)
         let expectedContextData = expectedContextData ?? [:]
