@@ -11,7 +11,6 @@
  */
 
 import XCTest
-import AEPIdentity
 @testable import AEPAnalytics
 
 class AnalyticsRequestSerializerTests : XCTestCase {
@@ -25,18 +24,18 @@ class AnalyticsRequestSerializerTests : XCTestCase {
     }
 
     func testGenerateAnalyticsCustomerIdString() {
-        var visitorIdList = [Identifiable]()
-        visitorIdList.append(TestIdentifiable.init(origin: "d_cid_ic", type: "loginidhash", identifier: "97717", authenticationState: MobileVisitorAuthenticationState.unknown))
-        visitorIdList.append(TestIdentifiable.init(origin: "d_cid_ic", type: "xboxlivehash", identifier: "1629158955", authenticationState: MobileVisitorAuthenticationState.authenticated))
-        visitorIdList.append(TestIdentifiable.init(origin: "d_cid_ic", type: "psnidhash", identifier: "1144032295", authenticationState: MobileVisitorAuthenticationState.loggedOut))
-        visitorIdList.append(TestIdentifiable.init(origin: "d_cid", type: "pushid", identifier: "testPushId", authenticationState: MobileVisitorAuthenticationState.authenticated))
+        var visitorIdArray = [[String:Any]]()
+        visitorIdArray.append(["id.origin": "d_cid_ic", "id.type": "loginidhash", "id": "97717", "authentication.state": 0])
+        visitorIdArray.append(["id.origin": "d_cid_ic", "id.type": "xboxlivehash", "id": "1629158955", "authentication.state": 1])
+        visitorIdArray.append(["id.origin": "d_cid_ic", "id.type": "psnidhash", "id": "1144032295", "authentication.state": 2])
+        visitorIdArray.append(["id.origin": "d_cid_ic", "id.type": "pushid", "id": "testPushId", "authentication.state": 1])
 
         let expectedString = "&cid.&loginidhash.&id=97717&as=0&.loginidhash&xboxlivehash.&id=1629158955&as=1&.xboxlivehash&psnidhash.&id=1144032295&as=2&.psnidhash&pushid.&id=testPushId&as=1&.pushid&.cid"
 
         var expectedArray = expectedString.split(separator: "&")
         expectedArray.sort()
 
-        let analyticsIdString = analyticsRequestSerializer.generateAnalyticsCustomerIdString(from: visitorIdList)
+        let analyticsIdString = analyticsRequestSerializer.generateAnalyticsCustomerIdString(from: visitorIdArray)
         var testArray = analyticsIdString.split(separator: "&")
         testArray.sort()
 
@@ -46,10 +45,10 @@ class AnalyticsRequestSerializerTests : XCTestCase {
     }
 
     func testGenerateAnalyticsCustomerIdStringWithEmptyIdentifiableList() {
-        let visitorIdList = [Identifiable]()
+        let visitorIdArray = [[String:Any]]()
 
         let expectedString = ""
-        let analyticsIdString = analyticsRequestSerializer.generateAnalyticsCustomerIdString(from: visitorIdList)
+        let analyticsIdString = analyticsRequestSerializer.generateAnalyticsCustomerIdString(from: visitorIdArray)
         XCTAssertEqual(expectedString, analyticsIdString)
     }
 
@@ -159,8 +158,8 @@ class AnalyticsRequestSerializerTests : XCTestCase {
 
         var data: [String:String] = [:]
         data["key1"] = "val1"
-        var visitorIdList = [Identifiable]()
-        visitorIdList.append(TestIdentifiable.init(origin: "orig1", type: "type1", identifier: "97717", authenticationState: MobileVisitorAuthenticationState.authenticated))
+        var visitorIdList = [[String: Any]]()
+        visitorIdList.append(["id.origin": "orig1", "id.type": "type1", "id": "97717", "authentication.state": 1])
 
         var identityData: [String:Any] = [:]
         identityData["visitoridslist"] = visitorIdList

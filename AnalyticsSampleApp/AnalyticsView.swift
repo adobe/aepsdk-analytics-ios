@@ -57,9 +57,7 @@ struct AnalyticsView: View {
                         Text("Core Privacy API").bold()
 
                         Button(action: {
-                            var config: [String: Any] = [:]
-                            config["global.privacy"] = "optedout"
-                            MobileCore.updateConfigurationWith(configDict: config)
+                            MobileCore.setPrivacyStatus(PrivacyStatus.optedOut)
                         }) {
                             Text("OptOut")
                                 .frame(minWidth: 0, maxWidth: .infinity)
@@ -70,11 +68,20 @@ struct AnalyticsView: View {
                         }.cornerRadius(5)
 
                         Button(action: {
-                            var config: [String: Any] = [:]
-                            config["global.privacy"] = "optedin"
-                            MobileCore.updateConfigurationWith(configDict: config)
+                            MobileCore.setPrivacyStatus(PrivacyStatus.optedIn)
                         }) {
                             Text("OptIn")
+                                .frame(minWidth: 0, maxWidth: .infinity)
+                                .padding()
+                                .background(Color.gray)
+                                .foregroundColor(.white)
+                                .font(.caption)
+                        }.cornerRadius(5)
+
+                        Button(action: {
+                            MobileCore.setPrivacyStatus(PrivacyStatus.unknown)
+                        }) {
+                            Text("Unknown")
                                 .frame(minWidth: 0, maxWidth: .infinity)
                                 .padding()
                                 .background(Color.gray)

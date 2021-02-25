@@ -250,6 +250,10 @@ enum AnalyticsConstants {
             static let VISITOR_IDS_LIST = "visitoridslist"
             static let ADVERTISING_IDENTIFIER = "a.adid"
             static let USER_IDENTIFIER = "vid"
+            static let VISITOR_ID_TYPE = "id.type"
+            static let VISITOR_ID_ORIGIN = "id.origin"
+            static let VISITOR_ID = "id"
+            static let VISITOR_ID_AUTHENTICATION_STATE = "authentication.state"
         }
     }
 

@@ -27,8 +27,6 @@
 		3DD8E6F025676159009234FD /* AnalyticsTestConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1D45B3253F9EE60053CB47 /* AnalyticsTestConstants.swift */; };
 		3DD8E6FC256F0BC2009234FD /* AnalyticsTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DD8E6FB256F0BC2009234FD /* AnalyticsTimer.swift */; };
 		3DDC3E8B258AA16700ED05BC /* AnalyticsRequestSerializerTests+Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DDC3E8A258AA16700ED05BC /* AnalyticsRequestSerializerTests+Helper.swift */; };
-		3DDC3E8F258AA1D400ED05BC /* TestIdentifiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DDC3E8E258AA1D400ED05BC /* TestIdentifiable.swift */; };
-		3FBA5746150DF4619268622F /* Pods_AnalyticsSampleApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0E355386B606F5D58291BC54 /* Pods_AnalyticsSampleApp.framework */; };
 		AC0BF6D225CDAA5900182896 /* AnalyticsMigrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC0BF6D125CDAA5800182896 /* AnalyticsMigrator.swift */; };
 		AC0BF6D725CDAA6600182896 /* AnalyticsMigratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC0BF6D625CDAA6600182896 /* AnalyticsMigratorTests.swift */; };
 		AC0BF6E725CDF50B00182896 /* MockDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC0BF6E425CDF50A00182896 /* MockDataStore.swift */; };
@@ -48,6 +46,7 @@
 		AC76C17B2534D67B00211DE2 /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = AC76C1632534D66300211DE2 /* .swiftlint.yml */; };
 		D639E23625B8B25600955FBA /* AnalyticsVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = D639E23525B8B25600955FBA /* AnalyticsVersion.swift */; };
 		D639E25525B8C70400955FBA /* AnalyticsVersionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D639E23925B8C25500955FBA /* AnalyticsVersionTest.swift */; };
+		D66587BA25E8151F00D8593E /* Pods_AnalyticsSampleApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0E355386B606F5D58291BC54 /* Pods_AnalyticsSampleApp.framework */; };
 		D676B38E25928D4F0099E5AC /* TestHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67AC995257874BE000FA306 /* TestHelper.swift */; };
 		D67AC98C2578285F000FA306 /* AnalyticsHitResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67AC98B2578285F000FA306 /* AnalyticsHitResponse.swift */; };
 		D6C7406625E6C5C100D1040C /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = D6C7406525E6C5C100D1040C /* README.md */; };
@@ -101,7 +100,6 @@
 		3DD8E6E72566FDEB009234FD /* AnalyticsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsTest.swift; sourceTree = "<group>"; };
 		3DD8E6FB256F0BC2009234FD /* AnalyticsTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsTimer.swift; sourceTree = "<group>"; };
 		3DDC3E8A258AA16700ED05BC /* AnalyticsRequestSerializerTests+Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AnalyticsRequestSerializerTests+Helper.swift"; sourceTree = "<group>"; };
-		3DDC3E8E258AA1D400ED05BC /* TestIdentifiable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestIdentifiable.swift; sourceTree = "<group>"; };
 		56DA22A3CE773DE7E7380769 /* Pods_AEPAnalytics.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AEPAnalytics.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		AC0BF6D125CDAA5800182896 /* AnalyticsMigrator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsMigrator.swift; sourceTree = "<group>"; };
 		AC0BF6D625CDAA6600182896 /* AnalyticsMigratorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsMigratorTests.swift; sourceTree = "<group>"; };
@@ -164,7 +162,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3FBA5746150DF4619268622F /* Pods_AnalyticsSampleApp.framework in Frameworks */,
+				D66587BA25E8151F00D8593E /* Pods_AnalyticsSampleApp.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -274,7 +272,6 @@
 				2ED53FF0255F37D7000F0B23 /* MockNetworking.swift */,
 				AC76C1612534D66300211DE2 /* TestableExtensionRuntime.swift */,
 				D67AC995257874BE000FA306 /* TestHelper.swift */,
-				3DDC3E8E258AA1D400ED05BC /* TestIdentifiable.swift */,
 				AC0BF6E525CDF50A00182896 /* TestUtils.swift */,
 			);
 			path = TestHelper;
@@ -624,7 +621,6 @@
 				3DD8E6E82566FDEB009234FD /* AnalyticsTest.swift in Sources */,
 				D676B38E25928D4F0099E5AC /* TestHelper.swift in Sources */,
 				AC0BF6D725CDAA6600182896 /* AnalyticsMigratorTests.swift in Sources */,
-				3DDC3E8F258AA1D400ED05BC /* TestIdentifiable.swift in Sources */,
 				3DC1E0242575CB5100E0AA16 /* AnalyticsRequestSerializerTests.swift in Sources */,
 				2ED53FF5255F37ED000F0B23 /* AnalyticsHitProcessorTests.swift in Sources */,
 				AC0BF6E725CDF50B00182896 /* MockDataStore.swift in Sources */,
@@ -902,8 +898,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"AnalyticsSampleApp/Preview Content\"";
+				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = AnalyticsSampleApp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -914,6 +912,7 @@
 				MACH_O_TYPE = mh_execute;
 				PRODUCT_BUNDLE_IDENTIFIER = com.adobe.AnalyticsSampleApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -925,8 +924,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"AnalyticsSampleApp/Preview Content\"";
+				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = AnalyticsSampleApp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -937,6 +938,7 @@
 				MACH_O_TYPE = mh_execute;
 				PRODUCT_BUNDLE_IDENTIFIER = com.adobe.AnalyticsSampleApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
