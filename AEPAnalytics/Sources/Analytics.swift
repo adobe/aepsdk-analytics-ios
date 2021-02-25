@@ -602,13 +602,13 @@ public class Analytics: NSObject, Extension {
             return
         }
 
-        guard analyticsState.isAnalyticsConfigured() else {
-            Log.debug(label: LOG_TAG, "track - Dropping the request, Analytics is not configured.")
+        guard analyticsState.privacyStatus != .optedOut else {
+            Log.debug(label: LOG_TAG, "track - Dropping the , privacy status is opted out.")
             return
         }
 
-        guard analyticsState.privacyStatus != .optedOut else {
-            Log.debug(label: LOG_TAG, "track - Dropping the , privacy status is opted out.")
+        guard analyticsState.isAnalyticsConfigured() else {
+            Log.debug(label: LOG_TAG, "track - Dropping the request, Analytics is not configured.")
             return
         }
 

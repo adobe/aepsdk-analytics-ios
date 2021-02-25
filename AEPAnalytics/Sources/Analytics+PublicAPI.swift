@@ -21,7 +21,7 @@ import Foundation
     @objc(clearQueue)
     static func clearQueue() {
         let data  = [AnalyticsConstants.EventDataKeys.CLEAR_HITS_QUEUE: true]
-        let event = Event(name: "ClearHitsQueue", type: EventType.analytics, source: EventSource.requestContent, data: data)
+        let event = Event(name: "AnalyticsClearQueue", type: EventType.analytics, source: EventSource.requestContent, data: data)
         MobileCore.dispatch(event: event)
     }
     /// Retrieves the number of hits currently in the tracking queue
@@ -30,7 +30,7 @@ import Foundation
     @objc(getQueueSize:)
     static func getQueueSize(completion: @escaping (Int, Error?) -> Void) {
         let data  = [AnalyticsConstants.EventDataKeys.GET_QUEUE_SIZE: true]
-        let event = Event(name: "GetQueueSize", type: EventType.analytics, source: EventSource.requestContent, data: data)
+        let event = Event(name: "AnalyticsGetQueueSize", type: EventType.analytics, source: EventSource.requestContent, data: data)
 
         MobileCore.dispatch(event: event) { responseEvent in
             guard let responseEvent = responseEvent else {
@@ -49,7 +49,7 @@ import Foundation
     @objc(sendQueuedHits)
     static func sendQueuedHits() {
         let data  = [AnalyticsConstants.EventDataKeys.FORCE_KICK_HITS: true]
-        let event = Event(name: "SendQueuedHits", type: EventType.analytics, source: EventSource.requestContent, data: data)
+        let event = Event(name: "AnalyticsSendQueuedHits", type: EventType.analytics, source: EventSource.requestContent, data: data)
         MobileCore.dispatch(event: event)
     }
     /// Retrieves the analytics tracking identifier.
@@ -57,7 +57,7 @@ import Foundation
     ///  - completion: closure invoked with the analytics identifier value
     @objc(getTrackingIdentifier:)
     static func getTrackingIdentifier(completion: @escaping (String?, Error?) -> Void) {
-        let event = Event(name: "GetTrackingIdentifier", type: EventType.analytics, source: EventSource.requestIdentity, data: nil)
+        let event = Event(name: "AnalyticsGetTrackingIdentifier", type: EventType.analytics, source: EventSource.requestIdentity, data: nil)
 
         MobileCore.dispatch(event: event) { responseEvent in
             guard let responseEvent = responseEvent else {
@@ -77,7 +77,7 @@ import Foundation
     ///  - completion: closure invoked with the visitor identifier value
     @objc(getVisitorIdentifier:)
     static func getVisitorIdentifier(completion: @escaping (String?, Error?) -> Void) {
-        let event = Event(name: "GetVisitorIdentifier", type: EventType.analytics, source: EventSource.requestIdentity, data: nil)
+        let event = Event(name: "AnalyticsGetVisitorIdentifier", type: EventType.analytics, source: EventSource.requestIdentity, data: nil)
 
         MobileCore.dispatch(event: event) { responseEvent in
             guard let responseEvent = responseEvent else {
@@ -98,7 +98,7 @@ import Foundation
     @objc(setVisitorIdentifier:)
     static func setVisitorIdentifier(visitorIdentifier: String) {
         let data  = [AnalyticsConstants.EventDataKeys.VISITOR_IDENTIFIER: visitorIdentifier]
-        let event = Event(name: "SetVisitorIdentifier", type: EventType.analytics, source: EventSource.requestIdentity, data: data)
+        let event = Event(name: "AnalyticsUpdateVisitorIdentifier", type: EventType.analytics, source: EventSource.requestIdentity, data: data)
         MobileCore.dispatch(event: event)
     }
 }
