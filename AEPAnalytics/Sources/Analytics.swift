@@ -529,7 +529,7 @@ public class Analytics: NSObject, Extension {
 
             if lifecycleContextData.keys.contains(AnalyticsConstants.ContextDataKeys.PREVIOUS_SESSION_LENGTH) {
                 let previousSessionLength: String? = lifecycleContextData.removeValue(forKey: AnalyticsConstants.ContextDataKeys.PREVIOUS_SESSION_LENGTH)
-                let previousSessionPauseTimestamp: Date? = event.data?[AnalyticsConstants.Lifecycle.EventDataKeys.PREVIOUS_SESSION_PAUSE_TIMESTAMP] as? Date
+                let previousSessionPauseTimestamp: TimeInterval? = event.data?[AnalyticsConstants.Lifecycle.EventDataKeys.PREVIOUS_SESSION_PAUSE_TIMESTAMP] as? TimeInterval
                 backdateLifecycleSessionInfo(previousSessionLength: previousSessionLength, previousSessionPauseTimestamp: previousSessionPauseTimestamp, previousOSVersion: previousOsVersion, previousAppIdVersion: previousAppIdVersion, eventUniqueIdentifier: "\(event.id)")
             }
         }
@@ -746,7 +746,7 @@ public class Analytics: NSObject, Extension {
     ///      - previousOSVersion: The OS version in the backdated session
     ///      - previousAppIdVersion: The App Id in the backdated session
     ///      - eventUniqueIdentifier: The event identifier of backdated Lifecycle session event.
-    private func backdateLifecycleSessionInfo(previousSessionLength: String?, previousSessionPauseTimestamp: Date?, previousOSVersion: String?, previousAppIdVersion: String?, eventUniqueIdentifier: String) {
+    private func backdateLifecycleSessionInfo(previousSessionLength: String?, previousSessionPauseTimestamp: TimeInterval?, previousOSVersion: String?, previousAppIdVersion: String?, eventUniqueIdentifier: String) {
         Log.trace(label: LOG_TAG, "backdateLifecycleSessionInfo - Backdating the previous lifecycle session.")
         var sessionContextData: [String: String] = [:]
 
@@ -767,9 +767,10 @@ public class Analytics: NSObject, Extension {
         lifecycleSessionData[AnalyticsConstants.EventDataKeys.CONTEXT_DATA] = sessionContextData
         lifecycleSessionData[AnalyticsConstants.EventDataKeys.TRACK_INTERNAL] = true
 
-        let backDateTimeStamp = max(Date.init(timeIntervalSince1970: analyticsProperties.getMostRecentHitTimestamp()), previousSessionPauseTimestamp ?? Date.init(timeIntervalSince1970: 0))
 
-        track(eventData: lifecycleSessionData, timeStampInSeconds: backDateTimeStamp.timeIntervalSince1970 + 1, isBackdatedHit: true, eventUniqueIdentifier: eventUniqueIdentifier)
+        let backDateTimeStamp = max(analyticsProperties.getMostRecentHitTimestamp(), previousSessionPauseTimestamp ?? 0)
+
+        track(eventData: lifecycleSessionData, timeStampInSeconds: backDateTimeStamp + 1, isBackdatedHit: true, eventUniqueIdentifier: eventUniqueIdentifier)
     }
 
     /// Wait for lifecycle data after receiving Lifecycle Request event.
