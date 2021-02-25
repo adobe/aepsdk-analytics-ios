@@ -22,6 +22,8 @@
 		AC0BF6D225CDAA5900182896 /* AnalyticsMigrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC0BF6D125CDAA5800182896 /* AnalyticsMigrator.swift */; };
 		AC0BF6F725CE1B3E00182896 /* AnalyticsDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC0BF6F625CE1B3E00182896 /* AnalyticsDatabase.swift */; };
 		AC0BF70D25D46B8400182896 /* AnalyticsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC0BF70C25D46B8400182896 /* AnalyticsHelper.swift */; };
+		AC26B11E25E76782008AC68F /* AnalyticsHitReorderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC26B11C25E76782008AC68F /* AnalyticsHitReorderTests.swift */; };
+		AC26B11F25E76782008AC68F /* AnalyticsTrack+ConfigurationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC26B11D25E76782008AC68F /* AnalyticsTrack+ConfigurationTests.swift */; };
 		AC277CFE252C23E600987C67 /* Analytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC277CF5252C23E600987C67 /* Analytics.swift */; };
 		AC277CFF252C23E600987C67 /* AnalyticsConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC277CF6252C23E600987C67 /* AnalyticsConstants.swift */; };
 		AC277D00252C23E600987C67 /* AEPAnalytics.h in Headers */ = {isa = PBXBuildFile; fileRef = AC277CF7252C23E600987C67 /* AEPAnalytics.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -128,6 +130,8 @@
 		AC0BF6D125CDAA5800182896 /* AnalyticsMigrator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsMigrator.swift; sourceTree = "<group>"; };
 		AC0BF6F625CE1B3E00182896 /* AnalyticsDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsDatabase.swift; sourceTree = "<group>"; };
 		AC0BF70C25D46B8400182896 /* AnalyticsHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsHelper.swift; sourceTree = "<group>"; };
+		AC26B11C25E76782008AC68F /* AnalyticsHitReorderTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsHitReorderTests.swift; sourceTree = "<group>"; };
+		AC26B11D25E76782008AC68F /* AnalyticsTrack+ConfigurationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AnalyticsTrack+ConfigurationTests.swift"; sourceTree = "<group>"; };
 		AC277CF3252C23E600987C67 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AC277CF5252C23E600987C67 /* Analytics.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Analytics.swift; sourceTree = "<group>"; };
 		AC277CF6252C23E600987C67 /* AnalyticsConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsConstants.swift; sourceTree = "<group>"; };
@@ -166,8 +170,6 @@
 		AC73D39425E6F4160068AB96 /* AnalyticsTrack+PlacesTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AnalyticsTrack+PlacesTests.swift"; sourceTree = "<group>"; };
 		AC73D39525E6F4160068AB96 /* AnalyticsFunctionalTestBase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsFunctionalTestBase.swift; sourceTree = "<group>"; };
 		AC73D3B625E6F4E50068AB96 /* AEPAnalyticsFunctionalTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AEPAnalyticsFunctionalTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		AC73D3B825E6F4E50068AB96 /* AEPAnalyticsFunctionalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AEPAnalyticsFunctionalTests.swift; sourceTree = "<group>"; };
-		AC73D3BA25E6F4E50068AB96 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C6E8A785E3798BE1F32F63B1 /* Pods-AEPAnalyticsFunctionalTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AEPAnalyticsFunctionalTests.debug.xcconfig"; path = "Target Support Files/Pods-AEPAnalyticsFunctionalTests/Pods-AEPAnalyticsFunctionalTests.debug.xcconfig"; sourceTree = "<group>"; };
 		CE85C4421313D5BBE96D5060 /* Pods-AnalyticsSampleApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AnalyticsSampleApp.debug.xcconfig"; path = "Target Support Files/Pods-AnalyticsSampleApp/Pods-AnalyticsSampleApp.debug.xcconfig"; sourceTree = "<group>"; };
 		D639E23525B8B25600955FBA /* AnalyticsVersion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsVersion.swift; sourceTree = "<group>"; };
@@ -244,7 +246,6 @@
 			children = (
 				AC277CEC252C23E600987C67 /* AEPAnalytics */,
 				D6D5F35725C8806D008148B3 /* AnalyticsSampleApp */,
-				AC73D3B725E6F4E50068AB96 /* AEPAnalyticsFunctionalTests */,
 				2EBEE7712525A35400880E72 /* Products */,
 				CEBDCEF550A14091A479F5C5 /* Frameworks */,
 				13AC300B194721A7FF402F99 /* Pods */,
@@ -349,23 +350,16 @@
 			children = (
 				AC73D38F25E6F4160068AB96 /* AnalyticsConsequenceTests.swift */,
 				AC73D39525E6F4160068AB96 /* AnalyticsFunctionalTestBase.swift */,
+				AC26B11C25E76782008AC68F /* AnalyticsHitReorderTests.swift */,
 				AC73D39325E6F4160068AB96 /* AnalyticsIDTests.swift */,
 				AC73D39025E6F4160068AB96 /* AnalyticsQueueTests.swift */,
 				AC73D38E25E6F4160068AB96 /* AnalyticsTrack+AssuranceTests.swift */,
+				AC26B11D25E76782008AC68F /* AnalyticsTrack+ConfigurationTests.swift */,
 				AC73D39125E6F4160068AB96 /* AnalyticsTrack+LifecycleTests.swift */,
 				AC73D39425E6F4160068AB96 /* AnalyticsTrack+PlacesTests.swift */,
 				AC73D39225E6F4160068AB96 /* AnalyticsTrackTests.swift */,
 			);
 			path = FunctionalTests;
-			sourceTree = "<group>";
-		};
-		AC73D3B725E6F4E50068AB96 /* AEPAnalyticsFunctionalTests */ = {
-			isa = PBXGroup;
-			children = (
-				AC73D3B825E6F4E50068AB96 /* AEPAnalyticsFunctionalTests.swift */,
-				AC73D3BA25E6F4E50068AB96 /* Info.plist */,
-			);
-			path = AEPAnalyticsFunctionalTests;
 			sourceTree = "<group>";
 		};
 		CEBDCEF550A14091A479F5C5 /* Frameworks */ = {
@@ -794,6 +788,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AC73D3D225E6F5010068AB96 /* AnalyticsQueueTests.swift in Sources */,
+				AC26B11F25E76782008AC68F /* AnalyticsTrack+ConfigurationTests.swift in Sources */,
 				AC73D3E525E6F5060068AB96 /* MockDataStore.swift in Sources */,
 				AC73D3E225E6F5060068AB96 /* AnalyticsRequestHelper.swift in Sources */,
 				AC73D3CE25E6F5010068AB96 /* AnalyticsTrack+PlacesTests.swift in Sources */,
@@ -805,6 +800,7 @@
 				AC73D3D125E6F5010068AB96 /* AnalyticsTrack+AssuranceTests.swift in Sources */,
 				AC73D3D325E6F5010068AB96 /* AnalyticsFunctionalTestBase.swift in Sources */,
 				AC73D3E825E6F5060068AB96 /* MockDataQueuing.swift in Sources */,
+				AC26B11E25E76782008AC68F /* AnalyticsHitReorderTests.swift in Sources */,
 				AC73D40D25E7016F0068AB96 /* AnalyticsTrackTests.swift in Sources */,
 				AC73D3D425E6F5010068AB96 /* AnalyticsConsequenceTests.swift in Sources */,
 				AC73D3E025E6F5060068AB96 /* TestableExtensionRuntime.swift in Sources */,

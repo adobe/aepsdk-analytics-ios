@@ -61,6 +61,11 @@
                BlueprintName = "AEPAnalyticsFunctionalTests"
                ReferencedContainer = "container:AEPAnalytics.xcodeproj">
             </BuildableReference>
+            <SkippedTests>
+               <Test
+                  Identifier = "AnalyticsFunctionalTestBase">
+               </Test>
+            </SkippedTests>
          </TestableReference>
       </Testables>
    </TestAction>
