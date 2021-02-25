@@ -29,10 +29,10 @@ let package = Package(
     ],
     targets: [
         .target(name: "AEPAnalytics",
-                dependencies: ["AEPCore", .product(name: "AEPServices", package: "AEPCore"), .product(name: "AEPIdentity", package: "AEPCore")],
+                dependencies: ["AEPCore", .product(name: "AEPServices", package: "AEPCore")],
                 path: "AEPAnalytics/Sources"),
         .target(name: "AEPAnalyticsTests",
-                dependencies: ["AEPAnalytics", "AEPCore", .product(name: "AEPServices", package: "AEPCore"), .product(name: "AEPIdentity", package: "AEPCore")],
+                dependencies: ["AEPAnalytics", "AEPCore", .product(name: "AEPServices", package: "AEPCore")],
                 path: "AEPAnalytics/Tests"),
     ]
 )
