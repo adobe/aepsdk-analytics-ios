@@ -60,7 +60,9 @@ class AnalyticsTrack_LifecycleTests : AnalyticsFunctionalTestBase {
             "mid" : "mid",
             "aamb" : "blob",
             "aamlh" : "lochint",
-            "ts" : String(Int(trackEvent.timestamp.timeIntervalSince1970))
+            "ts" : String(Int(trackEvent.timestamp.timeIntervalSince1970)),
+            "pageName" : "mockAppName",
+            "t" : TimeZone.current.getOffsetFromGmtInMinutes()
         ]
         let expectedContextData = [
             "k1" : "v1",
@@ -128,7 +130,9 @@ class AnalyticsTrack_LifecycleTests : AnalyticsFunctionalTestBase {
             "mid" : "mid",
             "aamb" : "blob",
             "aamlh" : "lochint",
-            "ts" : "12345679" //Most recent timestamp + 1
+            "ts" : "12345679", //Most recent timestamp + 1
+            "pageName" : "mockAppName",
+            "t" : TimeZone.current.getOffsetFromGmtInMinutes()
         ]
         let crashContextData = [
             "a.CrashEvent" : "CrashEvent",
@@ -156,7 +160,9 @@ class AnalyticsTrack_LifecycleTests : AnalyticsFunctionalTestBase {
             "mid" : "mid",
             "aamb" : "blob",
             "aamlh" : "lochint",
-            "ts" : String(Int(lifecycleResponse.timestamp.timeIntervalSince1970))
+            "ts" : String(Int(lifecycleResponse.timestamp.timeIntervalSince1970)),
+            "pageName" : "mockAppName",
+            "t" : TimeZone.current.getOffsetFromGmtInMinutes()
         ]
         let lifecycleContextData = [
             "a.internalaction" : "Lifecycle",
@@ -223,7 +229,9 @@ class AnalyticsTrack_LifecycleTests : AnalyticsFunctionalTestBase {
             "mid" : "mid",
             "aamb" : "blob",
             "aamlh" : "lochint",
-            "ts" : String(Int(previousSessionPauseTs + 1))
+            "ts" : String(Int(previousSessionPauseTs + 1)),
+            "pageName" : "mockAppName",
+            "t" : TimeZone.current.getOffsetFromGmtInMinutes()
         ]
         let sessionInfoContextData = [
             "a.internalaction" : "SessionInfo",
@@ -251,7 +259,9 @@ class AnalyticsTrack_LifecycleTests : AnalyticsFunctionalTestBase {
             "mid" : "mid",
             "aamb" : "blob",
             "aamlh" : "lochint",
-            "ts" : String(Int(lifecycleResponse.timestamp.timeIntervalSince1970))
+            "ts" : String(Int(lifecycleResponse.timestamp.timeIntervalSince1970)),
+            "pageName" : "mockAppName",
+            "t" : TimeZone.current.getOffsetFromGmtInMinutes()
         ]
         
         let lifecycleContextData = [

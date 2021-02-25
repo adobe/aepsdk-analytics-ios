@@ -17,7 +17,7 @@
 		3DBF23076C39DD73E2F0E701 /* Pods_AEPAnalyticsFunctionalTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1FA80748307DC427902C440F /* Pods_AEPAnalyticsFunctionalTests.framework */; };
 		3DCDB3DF252E853200ABA819 /* AnalyticsProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DCDB3DE252E853200ABA819 /* AnalyticsProperties.swift */; };
 		3DD8E6FC256F0BC2009234FD /* AnalyticsTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DD8E6FB256F0BC2009234FD /* AnalyticsTimer.swift */; };
-		3FBA5746150DF4619268622F /* Pods_AnalyticsSampleApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0E355386B606F5D58291BC54 /* Pods_AnalyticsSampleApp.framework */; };
+		80040470C87BDF5145139B30 /* Pods_AnalyticsSampleApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0E355386B606F5D58291BC54 /* Pods_AnalyticsSampleApp.framework */; };
 		9973631F691E3A9D5F8D37D6 /* Pods_AEPAnalyticsUnitTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 47CCE7FD8C2C3B63390649D7 /* Pods_AEPAnalyticsUnitTests.framework */; };
 		AC0BF6D225CDAA5900182896 /* AnalyticsMigrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC0BF6D125CDAA5800182896 /* AnalyticsMigrator.swift */; };
 		AC0BF6F725CE1B3E00182896 /* AnalyticsDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC0BF6F625CE1B3E00182896 /* AnalyticsDatabase.swift */; };
@@ -43,7 +43,6 @@
 		AC73D33325E5C8730068AB96 /* TestableExtensionRuntime.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC73D31925E5C8730068AB96 /* TestableExtensionRuntime.swift */; };
 		AC73D33425E5C8730068AB96 /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = AC73D31A25E5C8730068AB96 /* .swiftlint.yml */; };
 		AC73D33525E5C8730068AB96 /* MockNetworking.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC73D31B25E5C8730068AB96 /* MockNetworking.swift */; };
-		AC73D33625E5C8730068AB96 /* TestIdentifiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC73D31C25E5C8730068AB96 /* TestIdentifiable.swift */; };
 		AC73D33725E5C8730068AB96 /* MockHitProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC73D31D25E5C8730068AB96 /* MockHitProcessor.swift */; };
 		AC73D33825E5C8730068AB96 /* AnalyticsRequestHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC73D31E25E5C8730068AB96 /* AnalyticsRequestHelper.swift */; };
 		AC73D33925E5C8730068AB96 /* MockExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC73D31F25E5C8730068AB96 /* MockExtension.swift */; };
@@ -66,7 +65,6 @@
 		AC73D3E125E6F5060068AB96 /* MockNetworking.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC73D31B25E5C8730068AB96 /* MockNetworking.swift */; };
 		AC73D3E225E6F5060068AB96 /* AnalyticsRequestHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC73D31E25E5C8730068AB96 /* AnalyticsRequestHelper.swift */; };
 		AC73D3E325E6F5060068AB96 /* AnalyticsTestConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC73D31725E5C8730068AB96 /* AnalyticsTestConstants.swift */; };
-		AC73D3E425E6F5060068AB96 /* TestIdentifiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC73D31C25E5C8730068AB96 /* TestIdentifiable.swift */; };
 		AC73D3E525E6F5060068AB96 /* MockDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC73D32025E5C8730068AB96 /* MockDataStore.swift */; };
 		AC73D3E625E6F5060068AB96 /* TestUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC73D32325E5C8730068AB96 /* TestUtils.swift */; };
 		AC73D3E725E6F5060068AB96 /* MockDataQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC73D32125E5C8730068AB96 /* MockDataQueue.swift */; };
@@ -154,7 +152,6 @@
 		AC73D31925E5C8730068AB96 /* TestableExtensionRuntime.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestableExtensionRuntime.swift; sourceTree = "<group>"; };
 		AC73D31A25E5C8730068AB96 /* .swiftlint.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
 		AC73D31B25E5C8730068AB96 /* MockNetworking.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockNetworking.swift; sourceTree = "<group>"; };
-		AC73D31C25E5C8730068AB96 /* TestIdentifiable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestIdentifiable.swift; sourceTree = "<group>"; };
 		AC73D31D25E5C8730068AB96 /* MockHitProcessor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockHitProcessor.swift; sourceTree = "<group>"; };
 		AC73D31E25E5C8730068AB96 /* AnalyticsRequestHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsRequestHelper.swift; sourceTree = "<group>"; };
 		AC73D31F25E5C8730068AB96 /* MockExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockExtension.swift; sourceTree = "<group>"; };
@@ -220,7 +217,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D66587BA25E8151F00D8593E /* Pods_AnalyticsSampleApp.framework in Frameworks */,
+				80040470C87BDF5145139B30 /* Pods_AnalyticsSampleApp.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -344,7 +341,6 @@
 				AC73D31B25E5C8730068AB96 /* MockNetworking.swift */,
 				AC73D31925E5C8730068AB96 /* TestableExtensionRuntime.swift */,
 				AC73D32225E5C8730068AB96 /* TestHelper.swift */,
-				AC73D31C25E5C8730068AB96 /* TestIdentifiable.swift */,
 				AC73D32325E5C8730068AB96 /* TestUtils.swift */,
 			);
 			path = TestHelper;
@@ -764,7 +760,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AC73D33625E5C8730068AB96 /* TestIdentifiable.swift in Sources */,
 				AC73D32825E5C8730068AB96 /* AnalyticsTests.swift in Sources */,
 				AC73D32725E5C8730068AB96 /* AnalyticsMigratorTests.swift in Sources */,
 				AC73D33A25E5C8730068AB96 /* MockDataStore.swift in Sources */,
@@ -800,7 +795,6 @@
 				AC73D3CE25E6F5010068AB96 /* AnalyticsTrack+PlacesTests.swift in Sources */,
 				AC73D3DE25E6F5060068AB96 /* TestHelper.swift in Sources */,
 				AC73D3E725E6F5060068AB96 /* MockDataQueue.swift in Sources */,
-				AC73D3E425E6F5060068AB96 /* TestIdentifiable.swift in Sources */,
 				AC73D3E125E6F5060068AB96 /* MockNetworking.swift in Sources */,
 				AC73D3D025E6F5010068AB96 /* AnalyticsIDTests.swift in Sources */,
 				AC73D3D125E6F5010068AB96 /* AnalyticsTrack+AssuranceTests.swift in Sources */,
