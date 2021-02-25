@@ -229,15 +229,15 @@ public class Analytics: NSObject, Extension {
             let lifecycleAction = event.data?[AnalyticsConstants.Lifecycle.EventDataKeys.LIFECYCLE_ACTION_KEY] as? String
             if lifecycleAction == AnalyticsConstants.Lifecycle.EventDataKeys.LIFECYCLE_START {
 
-                // For apps coming from background, manually flush any queued hits before waiting for lifecycle data.
-                analyticsDatabase?.cancelWaitForAdditionalData(type: .lifecycle)
-                analyticsDatabase?.cancelWaitForAdditionalData(type: .referrer)
-
-                // If we receive extra lifecycle start events after the first one, then just ignore rest of it
+                // If we receive duplicate lifecycle start events when waiting for lifecycle.responseContext, ignore them.
                 if analyticsTimer.isLifecycleTimerRunning() {
                     Log.debug(label: LOG_TAG, "handleLifecycleEvents - Exiting, Lifecycle timer is already running and this is a duplicate request")
                     return
                 }
+
+                // For apps coming from background, manually flush any queued hits before waiting for lifecycle data.
+                analyticsDatabase?.cancelWaitForAdditionalData(type: .lifecycle)
+                analyticsDatabase?.cancelWaitForAdditionalData(type: .referrer)
 
                 waitForLifecycleData()
 
@@ -529,7 +529,7 @@ public class Analytics: NSObject, Extension {
 
             if lifecycleContextData.keys.contains(AnalyticsConstants.ContextDataKeys.PREVIOUS_SESSION_LENGTH) {
                 let previousSessionLength: String? = lifecycleContextData.removeValue(forKey: AnalyticsConstants.ContextDataKeys.PREVIOUS_SESSION_LENGTH)
-                let previousSessionPauseTimestamp: Date? = event.data?[AnalyticsConstants.Lifecycle.EventDataKeys.PREVIOUS_SESSION_PAUSE_TIMESTAMP] as? Date
+                let previousSessionPauseTimestamp: TimeInterval? = event.data?[AnalyticsConstants.Lifecycle.EventDataKeys.PREVIOUS_SESSION_PAUSE_TIMESTAMP] as? TimeInterval
                 backdateLifecycleSessionInfo(previousSessionLength: previousSessionLength, previousSessionPauseTimestamp: previousSessionPauseTimestamp, previousOSVersion: previousOsVersion, previousAppIdVersion: previousAppIdVersion, eventUniqueIdentifier: "\(event.id)")
             }
         }
@@ -602,13 +602,13 @@ public class Analytics: NSObject, Extension {
             return
         }
 
-        guard analyticsState.isAnalyticsConfigured() else {
-            Log.debug(label: LOG_TAG, "track - Dropping the request, Analytics is not configured.")
+        guard analyticsState.privacyStatus != .optedOut else {
+            Log.debug(label: LOG_TAG, "track - Dropping the request, privacy status is opted out.")
             return
         }
 
-        guard analyticsState.privacyStatus != .optedOut else {
-            Log.debug(label: LOG_TAG, "track - Dropping the , privacy status is opted out.")
+        guard analyticsState.isAnalyticsConfigured() else {
+            Log.debug(label: LOG_TAG, "track - Dropping the request, Analytics is not configured.")
             return
         }
 
@@ -741,12 +741,12 @@ public class Analytics: NSObject, Extension {
     }
 
     /// Creates an internal analytics event with the previous lifecycle session info.
-    /// - Parameters:    
+    /// - Parameters:
     ///      - previousSessionLength: The length of previous session
     ///      - previousOSVersion: The OS version in the backdated session
     ///      - previousAppIdVersion: The App Id in the backdated session
     ///      - eventUniqueIdentifier: The event identifier of backdated Lifecycle session event.
-    private func backdateLifecycleSessionInfo(previousSessionLength: String?, previousSessionPauseTimestamp: Date?, previousOSVersion: String?, previousAppIdVersion: String?, eventUniqueIdentifier: String) {
+    private func backdateLifecycleSessionInfo(previousSessionLength: String?, previousSessionPauseTimestamp: TimeInterval?, previousOSVersion: String?, previousAppIdVersion: String?, eventUniqueIdentifier: String) {
         Log.trace(label: LOG_TAG, "backdateLifecycleSessionInfo - Backdating the previous lifecycle session.")
         var sessionContextData: [String: String] = [:]
 
@@ -767,9 +767,9 @@ public class Analytics: NSObject, Extension {
         lifecycleSessionData[AnalyticsConstants.EventDataKeys.CONTEXT_DATA] = sessionContextData
         lifecycleSessionData[AnalyticsConstants.EventDataKeys.TRACK_INTERNAL] = true
 
-        let backDateTimeStamp = max(Date.init(timeIntervalSince1970: analyticsProperties.getMostRecentHitTimestamp()), previousSessionPauseTimestamp ?? Date.init(timeIntervalSince1970: 0))
+        let backDateTimeStamp = max(analyticsProperties.getMostRecentHitTimestamp(), previousSessionPauseTimestamp ?? 0)
 
-        track(eventData: lifecycleSessionData, timeStampInSeconds: backDateTimeStamp.timeIntervalSince1970 + 1, isBackdatedHit: true, eventUniqueIdentifier: eventUniqueIdentifier)
+        track(eventData: lifecycleSessionData, timeStampInSeconds: backDateTimeStamp + 1, isBackdatedHit: true, eventUniqueIdentifier: eventUniqueIdentifier)
     }
 
     /// Wait for lifecycle data after receiving Lifecycle Request event.

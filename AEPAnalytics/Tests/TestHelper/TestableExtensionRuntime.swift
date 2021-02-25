@@ -23,13 +23,17 @@ class TestableExtensionRuntime: ExtensionRuntime {
     var otherSharedStates: [String: SharedStateResult] = [:]
     var otherXDMSharedStates: [String: SharedStateResult] = [:]
 
+    let dispatchQueue = DispatchQueue(label: "")
+
     func getListener(type: String, source: String) -> EventListener? {
         return listeners["\(type)-\(source)"]
     }
 
     func simulateComingEvent(event: Event) {
-        listeners["\(event.type)-\(event.source)"]?(event)
-        listeners["\(EventType.wildcard)-\(EventSource.wildcard)"]?(event)
+        dispatchQueue.async {
+            self.listeners["\(event.type)-\(event.source)"]?(event)
+            self.listeners["\(EventType.wildcard)-\(EventSource.wildcard)"]?(event)
+        }
     }
 
     func unregisterExtension() {
@@ -55,7 +59,13 @@ class TestableExtensionRuntime: ExtensionRuntime {
     }
 
     func getSharedState(extensionName: String, event: Event?, barrier: Bool) -> SharedStateResult? {
-        return otherSharedStates["\(extensionName)-\(String(describing: event?.id))"] ?? nil
+        dispatchQueue.sync {
+            let state = self.otherSharedStates["\(extensionName)-\(String(describing: event?.id))"] ?? nil
+            if state == nil && event != nil {
+                return self.otherSharedStates["\(extensionName)-nil"] ?? nil
+            }
+            return state
+        }
     }
 
     public func createXDMSharedState(data: [String : Any], event: Event?) {
@@ -73,7 +83,10 @@ class TestableExtensionRuntime: ExtensionRuntime {
     }
 
     func simulateSharedState(extensionName: String, event: Event?, data: (value: [String: Any]?, status: SharedStateStatus)) {
-        otherSharedStates["\(extensionName)-\(String(describing: event?.id))"] = SharedStateResult(status: data.status, value: data.value)
+        dispatchQueue.async {
+            self.otherSharedStates["\(extensionName)-\(String(describing: event?.id))"] = SharedStateResult(status: data.status, value: data.value)
+        }
+
     }
 
     public func simulateXDMSharedState(for extensionName: String, data: (value: [String: Any]?, status: SharedStateStatus)) {

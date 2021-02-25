@@ -91,6 +91,8 @@ class AnalyticsDatabase {
     }
 
     func kickWithAdditionalData(type: DataType, data: [String: Any]?) {
+        guard waitingForAdditionalData else { return }
+
         Log.debug(label: self.LOG_TAG, "KickWithAdditionalData - \(type) \(String(describing: data))")
         switch type {
         case .lifecycle:
@@ -106,7 +108,7 @@ class AnalyticsDatabase {
         }
 
         if !waitingForAdditionalData {
-            Log.debug(label: self.LOG_TAG, "KickWithAdditionalData - Merging additional data to first hit and moving hits from reorderQueue to mainQueue")
+            Log.debug(label: self.LOG_TAG, "KickWithAdditionalData - done waiting for additional data")
 
             if isHitWaiting(), let firstHit = reorderQueue.peek() {
                 if let appendedHit = appendAdditionalData(additionalData: additionalData, dataEntity: firstHit) {
@@ -121,6 +123,8 @@ class AnalyticsDatabase {
     }
 
     func queue(payload: String, timestamp: TimeInterval, eventIdentifier: String, isBackdateHit: Bool) {
+        Log.debug(label: self.LOG_TAG, "queueHit - \(payload) isBackdateHit:\(isBackdateHit)")
+
         guard let hitData = try? JSONEncoder().encode(AnalyticsHit(payload: payload, timestamp: timestamp, eventIdentifier: eventIdentifier)) else {
             Log.debug(label: self.LOG_TAG, "queueHit - Dropping Analytics hit, failed to encode AnalyticsHit")
             return
@@ -137,10 +141,10 @@ class AnalyticsDatabase {
             }
         } else {
             if waitingForAdditionalData {
-                Log.debug(label: self.LOG_TAG, "queueHit - Queueing hit to reorder queue")
+                Log.debug(label: self.LOG_TAG, "queueHit - Queueing hit in reorder queue as we are waiting for additional data")
                 reorderQueue.add(dataEntity: hit)
             } else {
-                Log.debug(label: self.LOG_TAG, "queueHit - Queueing hit to main queue")
+                Log.debug(label: self.LOG_TAG, "queueHit - Queueing hit in main queue")
                 mainQueue.add(dataEntity: hit)
             }
         }
@@ -185,12 +189,13 @@ class AnalyticsDatabase {
     }
 
     private func moveHitsFromReorderQueue() {
-        Log.trace(label: self.LOG_TAG, "moveHitsFromReorderQueue - Moving queued hits from reorder queue -> main queue")
         let n = reorderQueue.count()
         guard n > 0 else {
             Log.trace(label: self.LOG_TAG, "moveHitsFromReorderQueue - No hits in reorder queue")
             return
         }
+
+        Log.trace(label: self.LOG_TAG, "moveHitsFromReorderQueue - Moving queued hits \(n) from reorder queue -> main queue")
 
         if let hits = reorderQueue.peek(n: n) {
             for hit in hits {
