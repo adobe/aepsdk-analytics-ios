@@ -174,13 +174,13 @@ class ContextDataUtil {
      exists and serialize it back to the initial format. Otherwise it returns the initial url fragment
 
      - Parameters:
-        - referrerData: the `Dictionary` that we want to append to the initial url fragment
+        - contextData: the `Dictionary` that we want to append to the initial url fragment
         - source: the url fragment as `String`
      - Returns: the url fragment that has the given `Dictionary` merged inside the context data node
      */
     static func appendContextData(contextData: [String: String]?, source: String) -> String {
 
-        guard let referrerData = contextData, !referrerData.isEmpty else {
+        guard let contextData = contextData, !contextData.isEmpty else {
             Log.debug(label: LOG_TAG, "\(#function) - Returning early. Context data passed is nil or empty.")
             return source
         }
@@ -200,9 +200,9 @@ class ContextDataUtil {
             let start = innerContextDataRange.lowerBound
             let end = innerContextDataRange.upperBound
             let contextDataString = source[source.index(source.startIndex, offsetBy: start)..<source.index(source.startIndex, offsetBy: end)]
-            var contextData = deserializeContextDataKeyValuePairs(serializedContextData: String(contextDataString))
-            referrerData.forEach { key, value in
-                contextData[key] = value
+            var deserializedContextData = deserializeContextDataKeyValuePairs(serializedContextData: String(contextDataString))
+            contextData.forEach { key, value in
+                deserializedContextData[key] = value
             }
 
             let outerContextDataRange = regexResult.range(at: 1) //It includes the context data &c.&.c for ex: in &c.abc&.c will return &c.abc&.c
@@ -211,7 +211,7 @@ class ContextDataUtil {
 
             var serializedUrl = String(source[source.startIndex..<source.index(source.startIndex, offsetBy: startOuter)])
             var contextMap: [String: Any] = [:]
-            contextMap["c"] = translateContextData(data: contextData)
+            contextMap["c"] = translateContextData(data: deserializedContextData)
             serializeToQueryString(parameters: contextMap, requestString: &serializedUrl)
             if endOuter < source.count {
                 serializedUrl += String(source[source.index(source.startIndex, offsetBy: endOuter)..<source.index(source.startIndex, offsetBy: source.count)])
@@ -221,7 +221,7 @@ class ContextDataUtil {
         } else {
             var serializedUrl = source
             var contextMap: [String: Any] = [:]
-            contextMap["c"] = translateContextData(data: referrerData)
+            contextMap["c"] = translateContextData(data: contextData)
             serializeToQueryString(parameters: contextMap, requestString: &serializedUrl)
             return serializedUrl
         }
@@ -233,7 +233,7 @@ class ContextDataUtil {
      - Parameter contextDataString: the context data url fragment that we want to deserialize
      - Returns: context data as `Dictionary`
      */
-    private static func deserializeContextDataKeyValuePairs(serializedContextData data: String) -> [String: String] {
+    static func deserializeContextDataKeyValuePairs(serializedContextData data: String) -> [String: String] {
         var contextData: [String: String] = [:]
         var keyPath = [String]()
 

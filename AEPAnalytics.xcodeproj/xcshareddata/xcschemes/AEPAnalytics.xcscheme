@@ -29,8 +29,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "2EBEE7782525A35400880E72"
-               BuildableName = "AEPAnalyticsTests.xctest"
-               BlueprintName = "AEPAnalyticsTests"
+               BuildableName = "AEPAnalyticsUnitTests.xctest"
+               BlueprintName = "AEPAnalyticsUnitTests"
                ReferencedContainer = "container:AEPAnalytics.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -47,10 +47,25 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "2EBEE7782525A35400880E72"
-               BuildableName = "AEPAnalyticsTests.xctest"
-               BlueprintName = "AEPAnalyticsTests"
+               BuildableName = "AEPAnalyticsUnitTests.xctest"
+               BlueprintName = "AEPAnalyticsUnitTests"
                ReferencedContainer = "container:AEPAnalytics.xcodeproj">
             </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "AC73D3B525E6F4E50068AB96"
+               BuildableName = "AEPAnalyticsFunctionalTests.xctest"
+               BlueprintName = "AEPAnalyticsFunctionalTests"
+               ReferencedContainer = "container:AEPAnalytics.xcodeproj">
+            </BuildableReference>
+            <SkippedTests>
+               <Test
+                  Identifier = "AnalyticsFunctionalTestBase">
+               </Test>
+            </SkippedTests>
          </TestableReference>
       </Testables>
    </TestAction>

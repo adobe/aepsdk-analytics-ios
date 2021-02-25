@@ -28,10 +28,8 @@ extension UserDefaults {
     }
 }
 extension FileManager {
-
     func clearCache() {
         if let _ = self.urls(for: .cachesDirectory, in: .userDomainMask).first {
-
             do {
                 try self.removeItem(at: URL(fileURLWithPath: "Library/Caches/com.adobe.module.identity"))
             } catch {
@@ -43,9 +41,6 @@ extension FileManager {
             } catch {
                 print("ERROR DESCRIPTION: \(error)")
             }
-
         }
-
     }
-
 }

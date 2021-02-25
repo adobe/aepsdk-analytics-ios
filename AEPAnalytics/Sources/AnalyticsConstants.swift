@@ -17,7 +17,7 @@ enum AnalyticsConstants {
 
     static let EXTENSION_NAME                           = "com.adobe.module.analytics"
     static let FRIENDLY_NAME                            = "Analytics"
-    static let EXTENSION_VERSION                        = "0.0.1"
+    static let EXTENSION_VERSION                        = "3.0.0"
     static let DATASTORE_NAME                           = EXTENSION_NAME
 
     static let DATA_QUEUE_NAME                           = EXTENSION_NAME
@@ -114,14 +114,14 @@ enum AnalyticsConstants {
         static let FORWARDING_ENABLED = false
         static let OFFLINE_ENABLED = false
         static let BACKDATE_SESSION_INFO_ENABLED = false
+        static let ASSURANCE_SESSION_ENABLED = false
         static let BATCH_LIMIT = 0
         static let CONNECTION_TIMEOUT = TimeInterval(5)
-        static let LAUNCH_HIT_DELAY = TimeInterval.init()
+        static let LAUNCH_HIT_DELAY = TimeInterval.init(0)
         static let LIFECYCLE_RESPONSE_WAIT_TIMEOUT = TimeInterval.init(1)
         static let LAUNCH_DEEPLINK_DATA_WAIT_TIMEOUT = TimeInterval.init(0.5)
-        static let ASSURANCE_SESSION_ENABLED = false
-        static let LIFECYCLE_MAX_SESSION_LENGTH = TimeInterval.init()
-        static let LIFECYCLE_SESSION_START_TIMESTAMP = TimeInterval.init()
+        static let LIFECYCLE_MAX_SESSION_LENGTH = TimeInterval.init(0)
+        static let LIFECYCLE_SESSION_START_TIMESTAMP = TimeInterval.init(0)
         static let LIFECYCLE_PAUSE_START_TIMEOUT = TimeInterval.init(1)
         static let TIMESTAMP_DISABLED_WAIT_THRESHOLD_SECONDS = TimeInterval.init(60)
     }
@@ -288,11 +288,11 @@ enum AnalyticsConstants {
             static let MONTHLY_ENGAGED_EVENT = "monthlyenguserevent"
             static let OPERATING_SYSTEM = "osversion"
             static let PREVIOUS_SESSION_LENGTH = "prevsessionlength"
-            static let PREVIOUS_SESSION_PAUSE_TIMESTAMP = "previoussessionpausetimestampseconds"
-            static let PREVIOUS_SESSION_START_TIMESTAMP = "previoussessionstarttimestampseconds"
+            static let PREVIOUS_SESSION_PAUSE_TIMESTAMP = "previoussessionpausetimestampmillis"
+            static let PREVIOUS_SESSION_START_TIMESTAMP = "previoussessionstarttimestampmillis"
             static let RUN_MODE = "runmode"
             static let SESSION_EVENT = "sessionevent"
-            static let SESSION_START_TIMESTAMP = "starttimestampseconds"
+            static let SESSION_START_TIMESTAMP = "starttimestampmillis"
             static let UPGRADE_EVENT = "upgradeevent"
             static let PREVIOUS_OS_VERSION = "previousosversion"
             static let PREVIOUS_APP_ID = "previousappid"

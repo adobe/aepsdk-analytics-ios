@@ -118,7 +118,7 @@ class AnalyticsHitProcessorTests: XCTestCase {
         }
 
         // verify
-        wait(for: [expectation], timeout: 0.5)
+        wait(for: [expectation], timeout: 1)
 
         XCTAssertFalse(responseCallbackArgs.isEmpty) // response handler should have been invoked
         XCTAssertTrue(mockNetworkService?.connectAsyncCalled ?? false) // network request should have been made

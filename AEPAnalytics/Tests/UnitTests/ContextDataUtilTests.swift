@@ -127,8 +127,3 @@ class ContextDataUtilTests: XCTestCase {
     }
 
 }
-
-
-class ABC: Error {
-
-}

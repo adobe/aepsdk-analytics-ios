@@ -156,4 +156,5 @@ class AnalyticsAPITests: XCTestCase {
         // verify
         wait(for: [expectation], timeout: 1.0)
     }
+
 }

@@ -72,8 +72,6 @@ class AnalyticsState {
         private(set) var lifecycleMaxSessionLength: TimeInterval = AnalyticsConstants.Default.LIFECYCLE_MAX_SESSION_LENGTH
         /// Start timestamp of new session.
         private(set) var lifecycleSessionStartTimestamp: TimeInterval = AnalyticsConstants.Default.LIFECYCLE_SESSION_START_TIMESTAMP
-        /// The Experience Cloud Org ID provided by the Configuration extension.
-        private(set) var orgId: String?
         /// A serialized form of list of visitor identifiers.
         private(set) var serializedVisitorIdsList: String?
         /// Stores the Application name and version.
@@ -290,9 +288,9 @@ class AnalyticsState {
             return queryItems
         }
 
-        queryItems += [URLQueryItem(name: AnalyticsConstants.ParameterKeys.KEY_MID, value: marketingCloudId)]
         queryItems += [URLQueryItem(name: AnalyticsConstants.ParameterKeys.KEY_ORG, value: marketingCloudOrganizationId)]
-
+        queryItems += [URLQueryItem(name: AnalyticsConstants.ParameterKeys.KEY_MID, value: marketingCloudId)]
+        
         return queryItems
     }
 
