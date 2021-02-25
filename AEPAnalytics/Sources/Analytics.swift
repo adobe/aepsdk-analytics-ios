@@ -603,7 +603,7 @@ public class Analytics: NSObject, Extension {
         }
 
         guard analyticsState.privacyStatus != .optedOut else {
-            Log.debug(label: LOG_TAG, "track - Dropping the , privacy status is opted out.")
+            Log.debug(label: LOG_TAG, "track - Dropping the request, privacy status is opted out.")
             return
         }
 
