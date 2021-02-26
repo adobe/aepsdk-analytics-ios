@@ -31,9 +31,10 @@ extension URL {
         urlComponent.scheme = "https"
         urlComponent.host = state.host
         urlComponent.path = "/b/ss/\(state.rsids ?? "")/\(getAnalyticsResponseType(state: state))/\(version)/s"
-        guard let url = urlComponent.url else {
-            Log.debug(label: LOG_TAG, "Error in creating Analytics base URL.")
-            return nil
+
+        let url = urlComponent.url
+        if url == nil {
+            Log.warning(label: LOG_TAG, "getAnalyticsBaseUrl - Error building Analytics base URL, returning nil")
         }
         return url
     }
@@ -53,9 +54,9 @@ extension URL {
         components.path = "/id"
         components.queryItems = getMarketingCloudIdQueryParameters(state: state)
 
-        guard let url = components.url else {
-            Log.error(label: LOG_TAG, "getAnalyticsIdRequestURL - Building Analytics Identity Request URL failed, returning nil.")
-            return nil
+        let url = components.url
+        if url == nil {
+            Log.warning(label: LOG_TAG, "getAnalyticsIdRequestURL - Error building Analytics Identity Request URL, returning nil")
         }
         return url
     }
