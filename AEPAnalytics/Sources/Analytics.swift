@@ -31,7 +31,6 @@ public class Analytics: NSObject, Extension {
     private var analyticsProperties: AnalyticsProperties
     private var analyticsState: AnalyticsState
     private let analyticsHardDependencies: [String] = [AnalyticsConstants.Configuration.EventDataKeys.SHARED_STATE_NAME, AnalyticsConstants.Identity.EventDataKeys.SHARED_STATE_NAME]
-    private let analyticsRequestSerializer = AnalyticsRequestSerializer()
     // The `DispatchQueue` used to process events in FIFO order and wait for Lifecycle and Acquisition response events.
     private var dispatchQueue: DispatchQueue = DispatchQueue(label: AnalyticsConstants.FRIENDLY_NAME)
     // Maintains the boot up state of sdk. The first shared state update event indicates the boot up completion.
@@ -358,7 +357,7 @@ public class Analytics: NSObject, Extension {
                 return
             }
 
-            guard let url = analyticsState.buildAnalyticsIdRequestURL() else {
+            guard let url = URL.getAnalyticsIdRequestURL(state: analyticsState) else {
                 Log.warning(label: self.LOG_TAG, "sendAnalyticsIdRequest - Failed to build the Analytics ID Request URL.")
                 return
             }
@@ -621,9 +620,9 @@ public class Analytics: NSObject, Extension {
         let analyticsData = processAnalyticsContextData(trackData: eventData)
         let analyticsVars = processAnalyticsVars(trackData: eventData, timestamp: timeStampInSeconds)
 
-        let builtRequest = analyticsRequestSerializer.buildRequest(analyticsState: analyticsState, data: analyticsData, vars: analyticsVars)
+        let payload = URL.buildAnalyticsPayload(analyticsState: analyticsState, data: analyticsData, vars: analyticsVars)
 
-        analyticsDatabase?.queue(payload: builtRequest, timestamp: timeStampInSeconds, eventIdentifier: eventUniqueIdentifier, isBackdateHit: isBackdatedHit)
+        analyticsDatabase?.queue(payload: payload, timestamp: timeStampInSeconds, eventIdentifier: eventUniqueIdentifier, isBackdateHit: isBackdatedHit)
     }
 
     /// Creates the context data Dictionary from the `trackData`
