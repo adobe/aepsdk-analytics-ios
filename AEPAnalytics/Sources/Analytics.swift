@@ -202,7 +202,7 @@ public class Analytics: NSObject, Extension {
         }
 
         if analyticsState.privacyStatus == .optedIn {
-            analyticsDatabase?.forceKickHits()
+            analyticsDatabase?.kick(ignoreBatchLimit: false)
         }
 
         // send an analytics id request on boot if the analytics configuration is valid

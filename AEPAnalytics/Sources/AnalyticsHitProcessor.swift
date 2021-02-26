@@ -150,6 +150,10 @@ class AnalyticsHitProcessor: HitProcessing {
             // retry this hit later
             Log.warning(label: LOG_TAG, "\(#function) - Retrying Analytics hit, request with url \(url.absoluteString) failed with error \(connection.error?.localizedDescription ?? "") and recoverable status code \(connection.responseCode ?? -1)")
             completion(false)
+        } else if connection.responseCode == nil {
+            // retry this hit later if connection response code is nil (no network connectivity)
+            Log.warning(label: LOG_TAG, "\(#function) - Retrying Analytics hit, there is currently no network connectivity")
+            completion(false)
         } else {
             // unrecoverable error. delete the hit from the database and continue
             Log.warning(label: LOG_TAG, "\(#function) - Dropping Analytics hit, request with url \(url.absoluteString) failed with error \(connection.error?.localizedDescription ?? "") and unrecoverable status code \(connection.responseCode ?? -1)")

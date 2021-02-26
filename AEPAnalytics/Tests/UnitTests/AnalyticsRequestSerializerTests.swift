@@ -25,10 +25,10 @@ class AnalyticsRequestSerializerTests : XCTestCase {
 
     func testGenerateAnalyticsCustomerIdString() {
         var visitorIdArray = [[String:Any]]()
-        visitorIdArray.append(["id.origin": "d_cid_ic", "id.type": "loginidhash", "id": "97717", "authentication.state": 0])
-        visitorIdArray.append(["id.origin": "d_cid_ic", "id.type": "xboxlivehash", "id": "1629158955", "authentication.state": 1])
-        visitorIdArray.append(["id.origin": "d_cid_ic", "id.type": "psnidhash", "id": "1144032295", "authentication.state": 2])
-        visitorIdArray.append(["id.origin": "d_cid_ic", "id.type": "pushid", "id": "testPushId", "authentication.state": 1])
+        visitorIdArray.append(["id_origin": "d_cid_ic", "id_type": "loginidhash", "id": "97717", "authentication_state": 0])
+        visitorIdArray.append(["id_origin": "d_cid_ic", "id_type": "xboxlivehash", "id": "1629158955", "authentication_state": 1])
+        visitorIdArray.append(["id_origin": "d_cid_ic", "id_type": "psnidhash", "id": "1144032295", "authentication_state": 2])
+        visitorIdArray.append(["id_origin": "d_cid_ic", "id_type": "pushid", "id": "testPushId", "authentication_state": 1])
 
         let expectedString = "&cid.&loginidhash.&id=97717&as=0&.loginidhash&xboxlivehash.&id=1629158955&as=1&.xboxlivehash&psnidhash.&id=1144032295&as=2&.psnidhash&pushid.&id=testPushId&as=1&.pushid&.cid"
 
@@ -159,7 +159,7 @@ class AnalyticsRequestSerializerTests : XCTestCase {
         var data: [String:String] = [:]
         data["key1"] = "val1"
         var visitorIdList = [[String: Any]]()
-        visitorIdList.append(["id.origin": "orig1", "id.type": "type1", "id": "97717", "authentication.state": 1])
+        visitorIdList.append(["id_origin": "orig1", "id_type": "type1", "id": "97717", "authentication_state": 1])
 
         var identityData: [String:Any] = [:]
         identityData["visitoridslist"] = visitorIdList
