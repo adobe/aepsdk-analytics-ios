@@ -162,8 +162,8 @@ class AnalyticsHitProcessor: HitProcessing {
     }
 
     private func replaceTimestampInPayload(payload: String, oldTs: TimeInterval, newTs: TimeInterval) -> String {
-        let oldTsString = "&ts=\(Int(oldTs))"
-        let newTsString = "&ts=\(Int(newTs))"
+        let oldTsString = "&ts=\(Int64(oldTs))"
+        let newTsString = "&ts=\(Int64(newTs))"
         return payload.replacingOccurrences(of: oldTsString, with: newTsString)
     }
 }
