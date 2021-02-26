@@ -191,7 +191,7 @@ class AnalyticsState {
         if let advertisingId = identityData[IdentityEventDataKeys.ADVERTISING_IDENTIFIER] as? String {
             self.advertisingId = advertisingId
         }
-        if let visitorIDDict = identityData[IdentityEventDataKeys.VISITOR_IDS_LIST] as? [[String:Any]] {
+        if let visitorIDDict = identityData[IdentityEventDataKeys.VISITOR_IDS_LIST] as? [[String: Any]] {
             serializedVisitorIdsList = URL.generateAnalyticsCustomerIdString(from: visitorIDDict)
         }
     }

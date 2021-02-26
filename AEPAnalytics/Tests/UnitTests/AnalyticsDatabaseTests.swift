@@ -278,7 +278,7 @@ class AnalyticsDatabaseTest : XCTestCase {
         assertHits(getProcessedHits(), [])
         
         
-        database.forceKickHits()
+        database.kick(ignoreBatchLimit: true)
         Thread.sleep(forTimeInterval:0.5)
         assertHits(getProcessedHits(), [hit1, hit2])
     }

@@ -55,7 +55,7 @@ class AnalyticsTrack_AssuranceTests : AnalyticsFunctionalTestBase {
         
         simulateAssuranceState()
         let event2 = Event(name: "Generic track event", type: EventType.genericTrack, source: EventSource.requestContent, data: trackData)
-        mockRuntime.simulateComingEvent(event: event1)
+        mockRuntime.simulateComingEvent(event: event2)
         waitForProcessing()
                 
         XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 2)

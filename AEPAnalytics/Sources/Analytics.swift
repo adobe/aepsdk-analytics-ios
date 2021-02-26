@@ -198,19 +198,14 @@ public class Analytics: NSObject, Extension {
 
         if analyticsState.privacyStatus == .optedOut {
             handleOptOut(event: event)
-        }
-
-        if analyticsState.privacyStatus == .optedIn {
+        } else if analyticsState.privacyStatus == .optedIn {
             analyticsDatabase?.kick(ignoreBatchLimit: false)
         }
 
-        // send an analytics id request on boot if the analytics configuration is valid
         if !sdkBootUpCompleted {
-            if analyticsState.isAnalyticsConfigured() {
-                sdkBootUpCompleted.toggle()
-                Log.trace(label: LOG_TAG, "handleConfigurationResponseEvent - Configuration ready, sending analytics id request.")
-                retrieveAnalyticsId(event: event)
-            }
+            Log.trace(label: LOG_TAG, "handleConfigurationResponseEvent - Publish analytics shared state on bootup.")
+            sdkBootUpCompleted = true
+            retrieveAnalyticsId(event: event)
         }
     }
 
@@ -301,7 +296,7 @@ public class Analytics: NSObject, Extension {
             let queueSize = analyticsDatabase?.getQueueSize() ?? 0
             dispatchQueueSizeResponse(event: event, queueSize: queueSize)
         } else if eventData.keys.contains(AnalyticsConstants.EventDataKeys.FORCE_KICK_HITS) {
-            analyticsDatabase?.forceKickHits()
+            analyticsDatabase?.kick(ignoreBatchLimit: true)
         }
     }
 

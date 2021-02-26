@@ -155,10 +155,6 @@ class AnalyticsDatabase {
         return reorderQueue.count() > 0
     }
 
-    func forceKickHits() {
-        kick(ignoreBatchLimit: true)
-    }
-
     func getQueueSize() -> Int {
         return mainQueue.count() + reorderQueue.count()
     }
