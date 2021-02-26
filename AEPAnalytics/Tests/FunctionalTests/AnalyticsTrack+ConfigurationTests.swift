@@ -41,23 +41,26 @@ class AnalyticsTrack_ConfigurationTests : AnalyticsFunctionalTestBase {
         mockRuntime.simulateComingEvent(event: trackEvent)
         mockRuntime.simulateComingEvent(event: trackEvent)
         mockRuntime.simulateComingEvent(event: trackEvent)
-        waitFor(interval: 1)
+        waitForProcessing()
+
         // verify datastore values set
         XCTAssertEqual("aid", dataStore.getString(key: AnalyticsTestConstants.DataStoreKeys.AID))
         XCTAssertEqual("vid", dataStore.getString(key: AnalyticsTestConstants.DataStoreKeys.VID))
         // verify 3 hits queued
         dispatchGetQueueSize()
-        waitFor(interval: 0.5)
+        waitForProcessing()
         verifyQueueSize(size: 3)
         // set privacy status to opt out
         dispatchDefaultConfigAndIdentityStates(configData: [AnalyticsTestConstants.Configuration.EventDataKeys.GLOBAL_PRIVACY: "optedout"])
-        waitFor(interval: 0.5)
+        waitForProcessing()
         // verify datastore values cleared
         XCTAssertNil(dataStore.getString(key: AnalyticsTestConstants.DataStoreKeys.AID))
         XCTAssertNil(dataStore.getString(key: AnalyticsTestConstants.DataStoreKeys.VID))
+        // verify no hits are sent
+        XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count , 0)
         // verify 0 hits queued
         dispatchGetQueueSize()
-        waitFor(interval: 0.5)
+        waitForProcessing()
         verifyQueueSize(size: 0)
     }
 
@@ -76,10 +79,12 @@ class AnalyticsTrack_ConfigurationTests : AnalyticsFunctionalTestBase {
         ]
         let trackEvent = Event(name: "Generic track event", type: EventType.genericTrack, source: EventSource.requestContent, data: trackData)
         mockRuntime.simulateComingEvent(event: trackEvent)
-        waitFor(interval: 0.5)
+        waitForProcessing()
+
         // set privacy status to optin
         dispatchDefaultConfigAndIdentityStates(configData: [AnalyticsTestConstants.Configuration.EventDataKeys.GLOBAL_PRIVACY: "optedin"])
-        waitFor(interval: 0.5)
+        waitForProcessing()
+
         let expectedVars = [
             "ce": "UTF-8",
             "cp": "foreground",
@@ -121,14 +126,14 @@ class AnalyticsTrack_ConfigurationTests : AnalyticsFunctionalTestBase {
         ]
         let trackEvent = Event(name: "Generic track event", type: EventType.genericTrack, source: EventSource.requestContent, data: trackData)
         mockRuntime.simulateComingEvent(event: trackEvent)
-        waitFor(interval: 0.5)
+        waitForProcessing()
         // verify no hits sent
         XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 0)
         // setup config with analytics server and rsid
         dispatchDefaultConfigAndIdentityStates(configData: [AnalyticsTestConstants.Configuration.EventDataKeys.ANALYTICS_REPORT_SUITES: "rsid", AnalyticsTestConstants.Configuration.EventDataKeys.ANALYTICS_SERVER: "test.com"])
         // dispatch track event
         mockRuntime.simulateComingEvent(event: trackEvent)
-        waitFor(interval: 0.5)
+        waitForProcessing()
         // verify
         let expectedVars = [
             "ce": "UTF-8",
@@ -150,6 +155,68 @@ class AnalyticsTrack_ConfigurationTests : AnalyticsFunctionalTestBase {
                   host: "https://test.com/b/ss/rsid/0/",
                   vars: expectedVars,
                   contextData: expectedContextData)
+    }
+
+    // Offline hits should not contain timestamp
+    func testTrackHitsOfflineDisabled() {
+        dispatchDefaultConfigAndIdentityStates(configData: ["analytics.offlineEnabled" : false])
+        waitForProcessing()
+
+        let trackData: [String: Any] = [
+            CoreConstants.Keys.STATE : "testState",
+            CoreConstants.Keys.CONTEXT_DATA : [
+                "k1": "v1",
+                "k2": "v2"
+            ]
+        ]
+        let trackEvent = Event(name: "Generic track event", type: EventType.genericTrack, source: EventSource.requestContent, data: trackData)
+        mockRuntime.simulateComingEvent(event: trackEvent)
+
+        waitForProcessing()
+        let expectedVars = [
+            "ce": "UTF-8",
+            "cp": "foreground",
+            "ndh": "1",
+            "pageName" : "testState",
+            "mid" : "mid",
+            "aamb" : "blob",
+            "aamlh" : "lochint",
+        ]
+
+        let expectedContextData = [
+            "k1" : "v1",
+            "k2" : "v2",
+        ]
+
+        XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 1)
+        verifyHit(request: mockNetworkService?.calledNetworkRequests[0],
+                  host: "https://test.com/b/ss/rsid/0/",
+                  vars: expectedVars,
+                  contextData: expectedContextData)
+    }
+
+    // Offline hits should be dropped after 60 sec
+    func testTrackHitsOfflineDroppedAfterTimeout() {
+        dispatchDefaultConfigAndIdentityStates(configData: ["analytics.offlineEnabled" : false])
+        waitForProcessing()
+
+        let trackData: [String: Any] = [
+            CoreConstants.Keys.STATE : "testState",
+            CoreConstants.Keys.CONTEXT_DATA : [
+                "k1": "v1",
+                "k2": "v2"
+            ]
+        ]
+        let trackEvent = Event(name: "Generic track event", type: EventType.genericTrack, source: EventSource.requestContent, data: trackData)
+
+        let trackEventBefore60secs = trackEvent.copyWithNewTimeStamp(Date().addingTimeInterval(-61))
+
+
+        mockRuntime.simulateComingEvent(event: trackEventBefore60secs)
+
+        waitForProcessing()
+
+        XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 0)
     }
 
 }

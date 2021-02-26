@@ -18,8 +18,6 @@ import Foundation
 /// These properties are retrieved from the shared states.
 class AnalyticsState {
     private let LOG_TAG = "AnalyticsState"
-    /// Instance of `AnalyticsRequestSerializer`, use to serialize visitor id's List.
-    private let analyticsRequestSerializer = AnalyticsRequestSerializer()
 
     #if DEBUG
         var offlineEnabled: Bool = AnalyticsConstants.Default.OFFLINE_ENABLED
@@ -133,7 +131,9 @@ class AnalyticsState {
         analyticForwardingEnabled = configurationData[ConfigurationEventDataKeys.ANALYTICS_AAMFORWARDING] as? Bool ?? AnalyticsConstants.Default.FORWARDING_ENABLED
         offlineEnabled = configurationData[ConfigurationEventDataKeys.ANALYTICS_OFFLINE_TRACKING] as? Bool ?? AnalyticsConstants.Default.OFFLINE_ENABLED
         batchLimit = configurationData[ConfigurationEventDataKeys.ANALYTICS_BATCH_LIMIT] as? Int ?? AnalyticsConstants.Default.BATCH_LIMIT
-        launchHitDelay =  TimeInterval.init(configurationData[ConfigurationEventDataKeys.ANALYTICS_LAUNCH_HIT_DELAY] as? Double ?? AnalyticsConstants.Default.LAUNCH_HIT_DELAY)
+        if let launchHitDelayValue = configurationData[ConfigurationEventDataKeys.ANALYTICS_LAUNCH_HIT_DELAY] as? Int {
+            launchHitDelay = TimeInterval(launchHitDelayValue)
+        }
         marketingCloudOrganizationId = configurationData[ConfigurationEventDataKeys.MARKETING_CLOUD_ORGID_KEY] as? String
         backDateSessionInfoEnabled = configurationData[ConfigurationEventDataKeys.ANALYTICS_BACKDATE_PREVIOUS_SESSION] as? Bool ?? AnalyticsConstants.Default.BACKDATE_SESSION_INFO_ENABLED
     }
@@ -148,8 +148,8 @@ class AnalyticsState {
         if let lifecycleSessionStartTime = lifecycleData[LifeCycleEventDataKeys.SESSION_START_TIMESTAMP] as? TimeInterval {
             lifecycleSessionStartTimestamp = lifecycleSessionStartTime
         }
-        if let lifecycleMaxSessionLen = lifecycleData[LifeCycleEventDataKeys.MAX_SESSION_LENGTH] as? TimeInterval {
-            lifecycleMaxSessionLength = lifecycleMaxSessionLen
+        if let lifecycleMaxSessionLength = lifecycleData[LifeCycleEventDataKeys.MAX_SESSION_LENGTH] as? TimeInterval {
+            self.lifecycleMaxSessionLength = lifecycleMaxSessionLength
         }
         if let lifecyleContextData = lifecycleData[LifeCycleEventDataKeys.LIFECYCLE_CONTEXT_DATA] as? [String: String] {
             if let operatingSystem = lifecyleContextData[LifeCycleEventDataKeys.OPERATING_SYSTEM] {
@@ -193,8 +193,8 @@ class AnalyticsState {
         if let advertisingId = identityData[IdentityEventDataKeys.ADVERTISING_IDENTIFIER] as? String {
             self.advertisingId = advertisingId
         }
-        if let visitorIDDict = identityData[IdentityEventDataKeys.VISITOR_IDS_LIST] as? [[String:Any]] {
-            serializedVisitorIdsList = analyticsRequestSerializer.generateAnalyticsCustomerIdString(from: visitorIDDict)
+        if let visitorIDDict = identityData[IdentityEventDataKeys.VISITOR_IDS_LIST] as? [[String: Any]] {
+            serializedVisitorIdsList = URL.generateAnalyticsCustomerIdString(from: visitorIDDict)
         }
     }
 
@@ -250,60 +250,10 @@ class AnalyticsState {
         return !(rsids?.isEmpty ?? true) && !(host?.isEmpty ?? true)
     }
 
-    /// Creates and returns the base url for analytics requests.
-    /// - Returns the base URL for an Analytics request.
-    func getBaseUrl() -> URL? {
-        var urlComponent = URLComponents()
-        urlComponent.scheme = "https"
-        urlComponent.host = host
-        urlComponent.path = "/b/ss/\(rsids ?? "")/\(getAnalyticsResponseType())/\(AnalyticsVersion.getVersion())/s"
-        guard let url = urlComponent.url else {
-            Log.debug(label: LOG_TAG, "Error in creating Analytics base URL.")
-            return nil
-        }
-        return url
-    }
-
-    /// Creates a new Analytics ID Request URL
-    /// - Parameters:
-    ///   - properties: the analytics properties
-    func buildAnalyticsIdRequestURL() -> URL? {
-        var components = URLComponents()
-        components.scheme = "https"
-        components.host = host
-        components.path = "/id"
-        components.queryItems = getMarketingCloudIdQueryParameters()
-
-        guard let url = components.url else {
-            Log.error(label: LOG_TAG, "getMarketingCloudIdQueryParameters - Building Analytics Identity Request URL failed, returning nil.")
-            return nil
-        }
-        return url
-    }
-
-    private func getMarketingCloudIdQueryParameters() -> [URLQueryItem] {
-        var queryItems: [URLQueryItem] = []
-        guard let marketingCloudId = marketingCloudId else {
-            Log.debug(label: self.LOG_TAG, "getMarketingCloudIdQueryParameters - Experience Cloud ID is nil, no query items to return.")
-            return queryItems
-        }
-
-        queryItems += [URLQueryItem(name: AnalyticsConstants.ParameterKeys.KEY_ORG, value: marketingCloudOrganizationId)]
-        queryItems += [URLQueryItem(name: AnalyticsConstants.ParameterKeys.KEY_MID, value: marketingCloudId)]
-
-        return queryItems
-    }
-
     /// Determines and return whether visitor id service is enabled or not.
     /// - Returns true if enabled else false.
     func isVisitorIdServiceEnabled() -> Bool {
         return !(marketingCloudOrganizationId?.isEmpty ?? true)
-    }
-
-    /// Returns the response type for analytics request url on basis of whether aam forwarding is enabled or not.
-    /// - Returns 10 if aam forwarding is enabled in configuration else returns 0
-    private func getAnalyticsResponseType() -> String {
-        return analyticForwardingEnabled ? "10" : "0"
     }
 
     /// Determines and returns whether user is opted in or not.

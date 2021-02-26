@@ -30,7 +30,7 @@ class AnalyticsStateTest : XCTestCase {
         let rsids = "rsid1, rsid2"
         let marketingCloudOrgId = "marketingserver"
         let privacyStatusString = "optedin"
-        let launchHitDelay : TimeInterval = 300
+        let launchHitDelay : Int = 300
 
         var configurationData = [String: Any]()
         configurationData[AnalyticsTestConstants.Configuration.EventDataKeys.ANALYTICS_SERVER] = server
@@ -50,7 +50,7 @@ class AnalyticsStateTest : XCTestCase {
         XCTAssertEqual(analyticsState.rsids, rsids)
         XCTAssertTrue(analyticsState.analyticForwardingEnabled)
         XCTAssertTrue(analyticsState.offlineEnabled)
-        XCTAssertEqual(analyticsState.launchHitDelay, launchHitDelay, accuracy: 0)
+        XCTAssertEqual(analyticsState.launchHitDelay, 300.0 , accuracy: 0)
         XCTAssertEqual(analyticsState.marketingCloudOrganizationId, marketingCloudOrgId)
         XCTAssertTrue(analyticsState.backDateSessionInfoEnabled)
         XCTAssertEqual(analyticsState.privacyStatus, PrivacyStatus.optedIn)
@@ -61,7 +61,7 @@ class AnalyticsStateTest : XCTestCase {
         let rsids = "rsid1, rsid2"
         let marketingCloudOrgId = "marketingserver"
         let privacyStatusString = "optedin"
-        let launchHitDelay : TimeInterval = 300
+        let launchHitDelay : Int = 300
 
         var configurationData = [String: Any]()
         configurationData[AnalyticsTestConstants.Configuration.EventDataKeys.ANALYTICS_SERVER] = server
@@ -81,7 +81,7 @@ class AnalyticsStateTest : XCTestCase {
         XCTAssertEqual(analyticsState.rsids, rsids)
         XCTAssertTrue(analyticsState.analyticForwardingEnabled)
         XCTAssertTrue(analyticsState.offlineEnabled)
-        XCTAssertEqual(analyticsState.launchHitDelay, launchHitDelay, accuracy: 0)
+        XCTAssertEqual(analyticsState.launchHitDelay, 300, accuracy: 0.000001)
         XCTAssertEqual(analyticsState.marketingCloudOrganizationId, marketingCloudOrgId)
         XCTAssertTrue(analyticsState.backDateSessionInfoEnabled)
         XCTAssertEqual(analyticsState.privacyStatus, PrivacyStatus.optedIn)
@@ -211,7 +211,6 @@ class AnalyticsStateTest : XCTestCase {
     }
 
     func testExtractPlacesInfoHappyFlow() {
-
         let regionId = "regionId"
         let regionName = "regionName"
         typealias PlacesEventDataKeys = AnalyticsTestConstants.Places.EventDataKeys
@@ -271,22 +270,6 @@ class AnalyticsStateTest : XCTestCase {
         XCTAssertFalse(analyticsState.assuranceSessionActive)
     }
 
-    func testGetBaseUrlWhenSSLAndForwarding() {
-        analyticsState.analyticForwardingEnabled = true
-        analyticsState.host = "test.com"
-        analyticsState.rsids = "rsid1,rsid2"
-
-        XCTAssertEqual("https://test.com/b/ss/rsid1,rsid2/10/\(AnalyticsVersion.getVersion())/s", analyticsState.getBaseUrl()?.absoluteString)
-    }
-
-    func testGetBaseUrlWhenSSLAndNotForwarding() {
-        analyticsState.analyticForwardingEnabled = false
-        analyticsState.host = "test.com"
-        analyticsState.rsids = "rsid1,rsid2"
-
-        XCTAssertEqual("https://test.com/b/ss/rsid1,rsid2/0/\(AnalyticsVersion.getVersion())/s", analyticsState.getBaseUrl()?.absoluteString)
-    }
-
     func testIsAnalyticsConfiguredHappyFlow() {
         analyticsState.host = "test.com"
         analyticsState.rsids = "rsid1,rsid2"
@@ -299,27 +282,7 @@ class AnalyticsStateTest : XCTestCase {
         XCTAssertFalse(analyticsState.isAnalyticsConfigured())
     }
 
-//    var analyticsIdVisitorParameters = [String: String]()
-//    guard let marketingCloudId = marketingCloudId, !marketingCloudId.isEmpty else {
-//        return analyticsIdVisitorParameters
-//    }
-//    analyticsIdVisitorParameters[AnalyticsConstants.ParameterKeys.KEY_MID] = marketingCloudId
-//    if let blob = blob, !blob.isEmpty {
-//        analyticsIdVisitorParameters[AnalyticsConstants.ParameterKeys.KEY_BLOB] = blob
-//    }
-//    if let locationHint = locationHint, !locationHint.isEmpty {
-//        analyticsIdVisitorParameters[AnalyticsConstants.ParameterKeys.KEY_LOCATION_HINT] = locationHint
-//    }
-//    return analyticsIdVisitorParameters
-
-    func testIsAnalyticsConfiguredReturnsFalseWhenNoRsids() {
-        analyticsState.host = "serverId"
-        analyticsState.rsids = ""
-        XCTAssertFalse(analyticsState.isAnalyticsConfigured())
-    }
-
     func testGetAnalyticsIdVisitorParameters() {
-
         let marketingCloudId = "marketingCloudId"
         let blob = "blob"
         let locationHint = "locationHint"
@@ -333,11 +296,15 @@ class AnalyticsStateTest : XCTestCase {
         XCTAssertEqual(visitorParameterMap[AnalyticsTestConstants.ParameterKeys.KEY_MID], marketingCloudId)
         XCTAssertEqual(visitorParameterMap[AnalyticsTestConstants.ParameterKeys.KEY_BLOB], blob)
         XCTAssertEqual(visitorParameterMap[AnalyticsTestConstants.ParameterKeys.KEY_LOCATION_HINT], locationHint)
+    }
 
+    func testIsAnalyticsConfiguredReturnsFalseWhenNoRsids() {
+        analyticsState.host = "serverId"
+        analyticsState.rsids = ""
+        XCTAssertFalse(analyticsState.isAnalyticsConfigured())
     }
 
     func testGetAnalyticsIdVisitorParametersWhenVisitorDataIsAbsent() {
         XCTAssertTrue(analyticsState.getAnalyticsIdVisitorParameters().isEmpty)
-
     }
 }

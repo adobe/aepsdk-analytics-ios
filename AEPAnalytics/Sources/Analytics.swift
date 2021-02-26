@@ -31,7 +31,6 @@ public class Analytics: NSObject, Extension {
     private var analyticsProperties: AnalyticsProperties
     private var analyticsState: AnalyticsState
     private let analyticsHardDependencies: [String] = [AnalyticsConstants.Configuration.EventDataKeys.SHARED_STATE_NAME, AnalyticsConstants.Identity.EventDataKeys.SHARED_STATE_NAME]
-    private let analyticsRequestSerializer = AnalyticsRequestSerializer()
     // The `DispatchQueue` used to process events in FIFO order and wait for Lifecycle and Acquisition response events.
     private var dispatchQueue: DispatchQueue = DispatchQueue(label: AnalyticsConstants.FRIENDLY_NAME)
     // Maintains the boot up state of sdk. The first shared state update event indicates the boot up completion.
@@ -199,19 +198,14 @@ public class Analytics: NSObject, Extension {
 
         if analyticsState.privacyStatus == .optedOut {
             handleOptOut(event: event)
-        }
-
-        if analyticsState.privacyStatus == .optedIn {
+        } else if analyticsState.privacyStatus == .optedIn {
             analyticsDatabase?.kick(ignoreBatchLimit: false)
         }
 
-        // send an analytics id request on boot if the analytics configuration is valid
         if !sdkBootUpCompleted {
-            if analyticsState.isAnalyticsConfigured() {
-                sdkBootUpCompleted.toggle()
-                Log.trace(label: LOG_TAG, "handleConfigurationResponseEvent - Configuration ready, sending analytics id request.")
-                retrieveAnalyticsId(event: event)
-            }
+            Log.trace(label: LOG_TAG, "handleConfigurationResponseEvent - Publish analytics shared state on bootup.")
+            sdkBootUpCompleted = true
+            retrieveAnalyticsId(event: event)
         }
     }
 
@@ -302,7 +296,7 @@ public class Analytics: NSObject, Extension {
             let queueSize = analyticsDatabase?.getQueueSize() ?? 0
             dispatchQueueSizeResponse(event: event, queueSize: queueSize)
         } else if eventData.keys.contains(AnalyticsConstants.EventDataKeys.FORCE_KICK_HITS) {
-            analyticsDatabase?.forceKickHits()
+            analyticsDatabase?.kick(ignoreBatchLimit: true)
         }
     }
 
@@ -358,7 +352,7 @@ public class Analytics: NSObject, Extension {
                 return
             }
 
-            guard let url = analyticsState.buildAnalyticsIdRequestURL() else {
+            guard let url = URL.getAnalyticsIdRequestURL(state: analyticsState) else {
                 Log.warning(label: self.LOG_TAG, "sendAnalyticsIdRequest - Failed to build the Analytics ID Request URL.")
                 return
             }
@@ -618,19 +612,20 @@ public class Analytics: NSObject, Extension {
 
         analyticsProperties.setMostRecentHitTimestamp(timestampInSeconds: timeStampInSeconds)
 
-        let analyticsData = processAnalyticsContextData(trackData: eventData)
+        let analyticsData = processAnalyticsContextData(trackData: eventData, timestamp: timeStampInSeconds)
         let analyticsVars = processAnalyticsVars(trackData: eventData, timestamp: timeStampInSeconds)
 
-        let builtRequest = analyticsRequestSerializer.buildRequest(analyticsState: analyticsState, data: analyticsData, vars: analyticsVars)
+        let payload = URL.buildAnalyticsPayload(analyticsState: analyticsState, data: analyticsData, vars: analyticsVars)
 
-        analyticsDatabase?.queue(payload: builtRequest, timestamp: timeStampInSeconds, eventIdentifier: eventUniqueIdentifier, isBackdateHit: isBackdatedHit)
+        analyticsDatabase?.queue(payload: payload, timestamp: timeStampInSeconds, eventIdentifier: eventUniqueIdentifier, isBackdateHit: isBackdatedHit)
     }
 
     /// Creates the context data Dictionary from the `trackData`
     /// - Parameters:
     ///     - trackData: Dictionary containing tracking data
+    ///     - timestamp: timestamp to use for tracking
     ///     - Returns a `Dictionary` containing the context data.
-    func processAnalyticsContextData(trackData: [String: Any]?) -> [String: String] {
+    func processAnalyticsContextData(trackData: [String: Any]?, timestamp: TimeInterval) -> [String: String] {
         guard let trackData = trackData else {
             Log.debug(label: LOG_TAG, "processAnalyticsContextData - trackData is nil.")
             return [:]
@@ -649,9 +644,9 @@ public class Analytics: NSObject, Extension {
         }
         let lifecycleSessionStartTimestamp = analyticsState.lifecycleSessionStartTimestamp
         if lifecycleSessionStartTimestamp > 0 {
-            let timeSinceLaunchInSeconds = Date().timeIntervalSince1970 - lifecycleSessionStartTimestamp
-            if timeSinceLaunchInSeconds > 0 && timeSinceLaunchInSeconds.isLessThanOrEqualTo( analyticsState.lifecycleMaxSessionLength) {
-                analyticsData[AnalyticsConstants.ContextDataKeys.TIME_SINCE_LAUNCH_KEY] = "\(timeSinceLaunchInSeconds)"
+            let timeSinceLaunchInSeconds = timestamp - lifecycleSessionStartTimestamp
+            if timeSinceLaunchInSeconds > 0 && timeSinceLaunchInSeconds.isLessThanOrEqualTo(analyticsState.lifecycleMaxSessionLength) {
+                analyticsData[AnalyticsConstants.ContextDataKeys.TIME_SINCE_LAUNCH_KEY] = String(Int(timeSinceLaunchInSeconds))
             }
         }
         if analyticsState.privacyStatus == .unknown {

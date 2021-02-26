@@ -49,7 +49,7 @@ class AnalyticsTrack_LifecycleTests : AnalyticsFunctionalTestBase {
         
         mockRuntime.simulateComingEvent(event: trackEvent)
                 
-        waitFor(interval: 1)
+        waitForProcessing()
         
         let expectedVars = [
             "ce": "UTF-8",
@@ -116,7 +116,7 @@ class AnalyticsTrack_LifecycleTests : AnalyticsFunctionalTestBase {
         simulateLifecycleState(data: lifecycleSharedState)
         let lifecycleResponse = Event(name: "", type: EventType.lifecycle, source: EventSource.responseContent, data: lifecycleSharedState)
         mockRuntime.simulateComingEvent(event: lifecycleResponse)
-        waitFor(interval: 1)
+        waitForProcessing()
         
         XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 2)
             
@@ -215,7 +215,7 @@ class AnalyticsTrack_LifecycleTests : AnalyticsFunctionalTestBase {
         simulateLifecycleState(data: lifecycleEventData)
         mockRuntime.simulateComingEvent(event: lifecycleResponse)
         
-        waitFor(interval: 1)
+        waitForProcessing()
         
         XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 2)
             
@@ -280,5 +280,73 @@ class AnalyticsTrack_LifecycleTests : AnalyticsFunctionalTestBase {
                   vars: lifecycleVars,
                   contextData: lifecycleContextData)
 
+    }
+    
+    //If Lifecycle shared state is available then analytics hits contain lifecycle vars
+    func testHitsContainTimeSinceLaunch() {
+        dispatchDefaultConfigAndIdentityStates()
+
+        let now = Date().timeIntervalSince1970
+        
+        let lifecycleSharedState: [String: Any] = [
+            AnalyticsTestConstants.Lifecycle.EventDataKeys.LIFECYCLE_CONTEXT_DATA : [
+                AnalyticsTestConstants.Lifecycle.EventDataKeys.OPERATING_SYSTEM : "mockOSName",
+                AnalyticsTestConstants.Lifecycle.EventDataKeys.LOCALE : "en-US",
+                AnalyticsTestConstants.Lifecycle.EventDataKeys.DEVICE_RESOLUTION : "0x0",
+                AnalyticsTestConstants.Lifecycle.EventDataKeys.CARRIER_NAME : "mockMobileCarrier",
+                AnalyticsTestConstants.Lifecycle.EventDataKeys.DEVICE_NAME : "mockDeviceBuildId",
+                AnalyticsTestConstants.Lifecycle.EventDataKeys.APP_ID : "mockAppName",
+                AnalyticsTestConstants.Lifecycle.EventDataKeys.RUN_MODE : "Application"
+            ],
+            AnalyticsTestConstants.Lifecycle.EventDataKeys.SESSION_START_TIMESTAMP : now,
+            AnalyticsTestConstants.Lifecycle.EventDataKeys.MAX_SESSION_LENGTH : 300.0
+        ]
+        simulateLifecycleState(data: lifecycleSharedState)
+        
+        let trackData: [String: Any] = [
+            CoreConstants.Keys.ACTION : "testActionName",
+            CoreConstants.Keys.CONTEXT_DATA : [
+                "k1": "v1",
+                "k2": "v2"
+            ]
+        ]
+        let trackEvent = Event(name: "Generic track event", type: EventType.genericTrack, source: EventSource.requestContent, data: trackData)
+        let trackEventAfter10Sec = trackEvent.copyWithNewTimeStamp(Date(timeIntervalSince1970: now + 10))
+        
+        mockRuntime.simulateComingEvent(event: trackEventAfter10Sec)
+                
+        waitForProcessing()
+        
+        let expectedVars = [
+            "ce": "UTF-8",
+            "cp": "foreground",
+            "ndh": "1",
+            "pev2" : "AMACTION:testActionName",
+            "pe" : "lnk_o",
+            "mid" : "mid",
+            "aamb" : "blob",
+            "aamlh" : "lochint",
+            "ts" : String(Int(trackEventAfter10Sec.timestamp.timeIntervalSince1970)),
+            "pageName" : "mockAppName",
+            "t" : TimeZone.current.getOffsetFromGmtInMinutes()
+        ]
+        let expectedContextData = [
+            "k1" : "v1",
+            "k2" : "v2",
+            "a.action" : "testActionName",
+            "a.AppID" : "mockAppName",
+            "a.CarrierName" : "mockMobileCarrier",
+            "a.DeviceName"  : "mockDeviceBuildId",
+            "a.OSVersion" :  "mockOSName",
+            "a.Resolution" : "0x0",
+            "a.RunMode" : "Application",
+            "a.TimeSinceLaunch" : "10"
+        ]
+                
+        XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 1)
+        verifyHit(request: mockNetworkService?.calledNetworkRequests[0],
+                  host: "https://test.com/b/ss/rsid/0/",
+                  vars: expectedVars,
+                  contextData: expectedContextData)
     }
 }

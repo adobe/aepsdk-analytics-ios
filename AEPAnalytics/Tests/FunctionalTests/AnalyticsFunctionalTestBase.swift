@@ -52,7 +52,7 @@ class AnalyticsFunctionalTestBase : XCTestCase {
         analytics.onRegistered()
     }
     
-    func waitFor(interval: TimeInterval) {
+    func waitForProcessing(interval: TimeInterval = 0.5) {
         let expectation = XCTestExpectation()
         DispatchQueue.global().asyncAfter(deadline: DispatchTime.now() + interval - 0.1) {
             expectation.fulfill()

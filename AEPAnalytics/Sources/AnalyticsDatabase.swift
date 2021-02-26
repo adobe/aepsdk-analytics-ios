@@ -155,10 +155,6 @@ class AnalyticsDatabase {
         return reorderQueue.count() > 0
     }
 
-    func forceKickHits() {
-        kick(ignoreBatchLimit: true)
-    }
-
     func getQueueSize() -> Int {
         return mainQueue.count() + reorderQueue.count()
     }
@@ -178,7 +174,7 @@ class AnalyticsDatabase {
             return nil
         }
 
-        let payload = ContextDataUtil.appendContextData(contextData: additionalData as? [String: String], source: analyticsHit.payload)
+        let payload = URL.appendContextDataToAnalyticsPayload(contextData: additionalData as? [String: String], payload: analyticsHit.payload)
         guard let hitData = try? JSONEncoder().encode(AnalyticsHit(payload: payload, timestamp: analyticsHit.timestamp, eventIdentifier: analyticsHit.eventIdentifier)) else {
             Log.debug(label: self.LOG_TAG, "appendAdditionalData - Dropping Analytics hit, failed to encode AnalyticsHit")
             return nil
@@ -206,7 +202,7 @@ class AnalyticsDatabase {
     }
 
     func kick(ignoreBatchLimit: Bool) {
-        Log.trace(label: self.LOG_TAG, "Kick - ignoreBatchLimit\(ignoreBatchLimit).")
+        Log.trace(label: self.LOG_TAG, "Kick - ignoreBatchLimit \(ignoreBatchLimit).")
 
         // If we have not received analytics configuration, no reason to start BG process
         if !analyticsState.isAnalyticsConfigured() {

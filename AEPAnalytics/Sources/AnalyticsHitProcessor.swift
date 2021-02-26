@@ -75,7 +75,7 @@ class AnalyticsHitProcessor: HitProcessing {
                 timestamp = newTimestamp
             }
 
-            guard let baseUrl = self.analyticsState.getBaseUrl() else {
+            guard let baseUrl = URL.getAnalyticsBaseUrl(state: self.analyticsState) else {
                 Log.debug(label: self.LOG_TAG, "\(#function) - Retrying Analytics hit, error generating base url.")
                 completion(false)
                 return

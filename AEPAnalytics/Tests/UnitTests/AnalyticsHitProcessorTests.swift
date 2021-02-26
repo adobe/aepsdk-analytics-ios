@@ -59,7 +59,7 @@ class AnalyticsHitProcessorTests: XCTestCase {
     func testProcessHit_NetworkFailureRecoverableError() {
         // setup
         let expectation = XCTestExpectation(description: "Callback should be invoked with true signaling this hit should not be retried")
-        let expectedUrl = analyticsState.getBaseUrl()
+        let expectedUrl = URL.getAnalyticsBaseUrl(state: analyticsState)
         mockNetworkService?.expectedResponse = HttpConnection(data: nil, response: HTTPURLResponse(url: expectedUrl!, statusCode: 408, httpVersion: nil, headerFields: nil), error: nil)
 
         let hit = AnalyticsHit(payload: "payload", timestamp: Date().timeIntervalSince1970, eventIdentifier: UUID().uuidString)
@@ -81,7 +81,7 @@ class AnalyticsHitProcessorTests: XCTestCase {
     func testProcessHit_NetworkFailure() {
         // setup
         let expectation = XCTestExpectation(description: "Callback should be invoked with true signaling this hit should not be retried")
-        let expectedUrl = analyticsState.getBaseUrl()
+        let expectedUrl = URL.getAnalyticsBaseUrl(state: analyticsState)
         mockNetworkService?.expectedResponse = HttpConnection(data: nil, response: HTTPURLResponse(url: expectedUrl!, statusCode: 404, httpVersion: nil, headerFields: nil), error: nil)
 
         let hit = AnalyticsHit(payload: "payload", timestamp: Date().timeIntervalSince1970, eventIdentifier: UUID().uuidString)
@@ -104,7 +104,7 @@ class AnalyticsHitProcessorTests: XCTestCase {
     func testProcessHitSuccessfulResponseEventData() {
         // setup
         let expectation = XCTestExpectation(description: "Callback should be invoked with true signaling this hit should not be retried")
-        let expectedUrl = analyticsState.getBaseUrl()
+        let expectedUrl = URL.getAnalyticsBaseUrl(state: analyticsState)
         mockNetworkService?.expectedResponse = HttpConnection(data: nil, response: HTTPURLResponse(url: expectedUrl!, statusCode: 200, httpVersion: nil, headerFields: nil), error: nil)
 
         let hit = AnalyticsHit(payload: "payload", timestamp: Date().timeIntervalSince1970, eventIdentifier: UUID().uuidString)
@@ -132,7 +132,7 @@ class AnalyticsHitProcessorTests: XCTestCase {
     func testProcessHitOfflineEnabledOutOfOrder() {
         // setup
         let expectation = XCTestExpectation(description: "Callback should be invoked with true signaling this hit should not be retried")
-        let expectedUrl = analyticsState.getBaseUrl()
+        let expectedUrl = URL.getAnalyticsBaseUrl(state: analyticsState)
         mockNetworkService?.expectedResponse = HttpConnection(data: nil, response: HTTPURLResponse(url: expectedUrl!, statusCode: 200, httpVersion: nil, headerFields: nil), error: nil)
 
         let lastHitTimestamp = Date(timeIntervalSinceNow: 10).timeIntervalSince1970
@@ -188,7 +188,7 @@ class AnalyticsHitProcessorTests: XCTestCase {
     func testProcessHit_AssuranceActive() {
         // setup
         let expectation = XCTestExpectation(description: "Callback should be invoked with true signaling this hit should not be retried")
-        let expectedUrl = analyticsState.getBaseUrl()
+        let expectedUrl = URL.getAnalyticsBaseUrl(state: analyticsState)
         mockNetworkService?.expectedResponse = HttpConnection(data: nil, response: HTTPURLResponse(url: expectedUrl!, statusCode: 200, httpVersion: nil, headerFields: nil), error: nil)
 
         let hit = AnalyticsHit(payload: "payload", timestamp: Date().timeIntervalSince1970, eventIdentifier: UUID().uuidString)

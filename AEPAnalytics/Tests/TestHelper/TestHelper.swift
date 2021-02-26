@@ -44,3 +44,18 @@ extension FileManager {
         }
     }
 }
+
+extension Event {
+    public func copyWithNewTimeStamp(_ timestamp: Date) -> Event {
+        let encoder = JSONEncoder()
+        let decoder = JSONDecoder()
+
+        let data = try! encoder.encode(self)
+        var json = try! JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
+        json?["timestamp"] = timestamp.timeIntervalSinceReferenceDate
+        let jsonData = try! JSONSerialization.data(withJSONObject: json as Any, options: .prettyPrinted)
+
+        let newEvent = try! decoder.decode(Event.self, from: jsonData)
+        return newEvent
+    }
+}

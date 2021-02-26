@@ -24,12 +24,13 @@
 		AC0BF70D25D46B8400182896 /* AnalyticsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC0BF70C25D46B8400182896 /* AnalyticsHelper.swift */; };
 		AC26B11E25E76782008AC68F /* AnalyticsHitReorderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC26B11C25E76782008AC68F /* AnalyticsHitReorderTests.swift */; };
 		AC26B11F25E76782008AC68F /* AnalyticsTrack+ConfigurationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC26B11D25E76782008AC68F /* AnalyticsTrack+ConfigurationTests.swift */; };
+		AC26B14125E8BDCF008AC68F /* URL+Analytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC26B14025E8BDCE008AC68F /* URL+Analytics.swift */; };
+		AC26B15025E8CAA0008AC68F /* URL+AnalyticsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC26B14A25E8CA48008AC68F /* URL+AnalyticsTests.swift */; };
 		AC277CFE252C23E600987C67 /* Analytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC277CF5252C23E600987C67 /* Analytics.swift */; };
 		AC277CFF252C23E600987C67 /* AnalyticsConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC277CF6252C23E600987C67 /* AnalyticsConstants.swift */; };
 		AC277D00252C23E600987C67 /* AEPAnalytics.h in Headers */ = {isa = PBXBuildFile; fileRef = AC277CF7252C23E600987C67 /* AEPAnalytics.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		AC277D01252C23E600987C67 /* Analytics+PublicAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC277CF8252C23E600987C67 /* Analytics+PublicAPI.swift */; };
 		AC73D32725E5C8730068AB96 /* AnalyticsMigratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC73D30C25E5C8730068AB96 /* AnalyticsMigratorTests.swift */; };
-		AC73D32825E5C8730068AB96 /* AnalyticsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC73D30D25E5C8730068AB96 /* AnalyticsTests.swift */; };
 		AC73D32925E5C8730068AB96 /* AnalyticsDatabaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC73D30E25E5C8730068AB96 /* AnalyticsDatabaseTests.swift */; };
 		AC73D32A25E5C8730068AB96 /* AnalyticsHitProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC73D30F25E5C8730068AB96 /* AnalyticsHitProcessorTests.swift */; };
 		AC73D32B25E5C8730068AB96 /* AnalyticsStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC73D31025E5C8730068AB96 /* AnalyticsStateTests.swift */; };
@@ -131,6 +132,8 @@
 		AC0BF70C25D46B8400182896 /* AnalyticsHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsHelper.swift; sourceTree = "<group>"; };
 		AC26B11C25E76782008AC68F /* AnalyticsHitReorderTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsHitReorderTests.swift; sourceTree = "<group>"; };
 		AC26B11D25E76782008AC68F /* AnalyticsTrack+ConfigurationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AnalyticsTrack+ConfigurationTests.swift"; sourceTree = "<group>"; };
+		AC26B14025E8BDCE008AC68F /* URL+Analytics.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "URL+Analytics.swift"; sourceTree = "<group>"; };
+		AC26B14A25E8CA48008AC68F /* URL+AnalyticsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "URL+AnalyticsTests.swift"; sourceTree = "<group>"; };
 		AC277CF3252C23E600987C67 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AC277CF5252C23E600987C67 /* Analytics.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Analytics.swift; sourceTree = "<group>"; };
 		AC277CF6252C23E600987C67 /* AnalyticsConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsConstants.swift; sourceTree = "<group>"; };
@@ -138,7 +141,6 @@
 		AC277CF8252C23E600987C67 /* Analytics+PublicAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Analytics+PublicAPI.swift"; sourceTree = "<group>"; };
 		AC277CF9252C23E600987C67 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AC73D30C25E5C8730068AB96 /* AnalyticsMigratorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsMigratorTests.swift; sourceTree = "<group>"; };
-		AC73D30D25E5C8730068AB96 /* AnalyticsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsTests.swift; sourceTree = "<group>"; };
 		AC73D30E25E5C8730068AB96 /* AnalyticsDatabaseTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsDatabaseTests.swift; sourceTree = "<group>"; };
 		AC73D30F25E5C8730068AB96 /* AnalyticsHitProcessorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsHitProcessorTests.swift; sourceTree = "<group>"; };
 		AC73D31025E5C8730068AB96 /* AnalyticsStateTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsStateTests.swift; sourceTree = "<group>"; };
@@ -305,6 +307,7 @@
 				D639E23525B8B25600955FBA /* AnalyticsVersion.swift */,
 				3DAA40BA2548C58100703509 /* ContextData.swift */,
 				3D1D45B525425F230053CB47 /* ContextDataUtil.swift */,
+				AC26B14025E8BDCE008AC68F /* URL+Analytics.swift */,
 				AC277CF9252C23E600987C67 /* Info.plist */,
 			);
 			path = Sources;
@@ -313,6 +316,7 @@
 		AC73D30B25E5C8730068AB96 /* UnitTests */ = {
 			isa = PBXGroup;
 			children = (
+				AC26B14A25E8CA48008AC68F /* URL+AnalyticsTests.swift */,
 				AC73D31225E5C8730068AB96 /* AnalyticsAPITests.swift */,
 				AC73D30E25E5C8730068AB96 /* AnalyticsDatabaseTests.swift */,
 				AC73D30F25E5C8730068AB96 /* AnalyticsHitProcessorTests.swift */,
@@ -320,7 +324,6 @@
 				AC73D31425E5C8730068AB96 /* AnalyticsPropertiesTest.swift */,
 				AC73D31525E5C8730068AB96 /* AnalyticsRequestSerializerTests.swift */,
 				AC73D31025E5C8730068AB96 /* AnalyticsStateTests.swift */,
-				AC73D30D25E5C8730068AB96 /* AnalyticsTests.swift */,
 				AC73D31125E5C8730068AB96 /* AnalyticsVersionTests.swift */,
 				AC73D31325E5C8730068AB96 /* ContextDataUtilTests.swift */,
 			);
@@ -747,6 +750,7 @@
 				AC277CFE252C23E600987C67 /* Analytics.swift in Sources */,
 				AC0BF70D25D46B8400182896 /* AnalyticsHelper.swift in Sources */,
 				3D1D45AF25391B410053CB47 /* AnalyticsRequestSerializer.swift in Sources */,
+				AC26B14125E8BDCF008AC68F /* URL+Analytics.swift in Sources */,
 				3D1D45B625425F240053CB47 /* ContextDataUtil.swift in Sources */,
 				AC277D01252C23E600987C67 /* Analytics+PublicAPI.swift in Sources */,
 				2ED53FE9255F37A4000F0B23 /* AnalyticsHit.swift in Sources */,
@@ -760,8 +764,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AC73D32825E5C8730068AB96 /* AnalyticsTests.swift in Sources */,
 				AC73D32725E5C8730068AB96 /* AnalyticsMigratorTests.swift in Sources */,
+				AC26B15025E8CAA0008AC68F /* URL+AnalyticsTests.swift in Sources */,
 				AC73D33A25E5C8730068AB96 /* MockDataStore.swift in Sources */,
 				AC73D32D25E5C8730068AB96 /* AnalyticsAPITests.swift in Sources */,
 				AC73D32B25E5C8730068AB96 /* AnalyticsStateTests.swift in Sources */,
