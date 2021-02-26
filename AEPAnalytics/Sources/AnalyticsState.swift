@@ -290,7 +290,7 @@ class AnalyticsState {
 
         queryItems += [URLQueryItem(name: AnalyticsConstants.ParameterKeys.KEY_ORG, value: marketingCloudOrganizationId)]
         queryItems += [URLQueryItem(name: AnalyticsConstants.ParameterKeys.KEY_MID, value: marketingCloudId)]
-        
+
         return queryItems
     }
 
