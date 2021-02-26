@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = "AEPAnalytics"
-  s.version          = "0.0.1"
+  s.version          = "3.0.0"
   s.summary          = "AEPAnalytics"
   s.description      = <<-DESC
 AEPCore
@@ -18,7 +18,6 @@ AEPCore
 
   s.dependency 'AEPCore'
   s.dependency 'AEPServices'
-  s.dependency 'AEPIdentity'
 
   s.source_files          = 'AEPAnalytics/Sources/*.swift'
 
