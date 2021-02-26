@@ -12,7 +12,6 @@
 
 import AEPCore
 import AEPServices
-import AEPIdentity
 import Foundation
 
 /**

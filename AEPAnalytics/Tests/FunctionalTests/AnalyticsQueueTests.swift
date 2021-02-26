@@ -21,12 +21,6 @@ class AnalyticsQueueTests : AnalyticsFunctionalTestBase {
         super.setupBase()
     }
     
-    func dispatchGetQueueSize() {
-        let data  = [AnalyticsConstants.EventDataKeys.GET_QUEUE_SIZE: true]
-        let event = Event(name: "GetQueueSize", type: EventType.analytics, source: EventSource.requestContent, data: data)
-        mockRuntime.simulateComingEvent(event: event)
-    }
-    
     func dispatchForceHitProcessing() {
         let data  = [AnalyticsConstants.EventDataKeys.FORCE_KICK_HITS: true]
         let event = Event(name: "ForceKickHits", type: EventType.analytics, source: EventSource.requestContent, data: data)

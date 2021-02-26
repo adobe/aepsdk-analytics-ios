@@ -12,31 +12,30 @@
 
 import Foundation
 import AEPServices
-import AEPIdentity
 
 class AnalyticsRequestSerializer {
 
     private let TAG = "AnalyticsRequestSerializer"
 
-    /// Creates a Map having the VisitorIDs information (types, ids and authentication state) and serializes it.
-    /// - Parameter identifiableList an array of Identifiable Type that we want to process in the analytics format.
-    /// - Returns the serialized String of Indentifiable VisitorId's. Retuns empty string if Identifiable Array is empty.
-    func generateAnalyticsCustomerIdString(from identifiableList: [Identifiable?]) -> String {
+    /// Creates a Dictionary having the VisitorIDs information (types, ids and authentication state) and serializes it.
+    /// - Parameter visitorIdArray an array containing synced VisitorIDs Dictionaries that we want to process in the analytics format.
+    /// - Returns the serialized String of VisitorId's. Retuns an empty string if the VisitorID Array is empty.
+    func generateAnalyticsCustomerIdString(from visitorIDArray: [[String: Any]]?) -> String {
         var analyticsCustomerIdString = ""
-        guard !identifiableList.isEmpty else {
-            Log.debug(label: TAG, "generateAnalyticsCustomerIdString - Identifiable list is null. Returning empty string.")
+        guard let visitorIDs = visitorIDArray, !visitorIDs.isEmpty else {
+            Log.debug(label: TAG, "generateAnalyticsCustomerIdString - Visitor ID's are nil. Returning empty string.")
             return analyticsCustomerIdString
         }
-        var visitorDataMap = [String: String]()
-        for identifiable in identifiableList {
-            if let identifiable = identifiable, let type = identifiable.type {
-                visitorDataMap[serializeIdentifierKeyForAnalyticsId(idType: type)] = identifiable.identifier
-                visitorDataMap[serializeAuthenticationKeyForAnalyticsId(idType: type)] = "\(identifiable.authenticationState.rawValue)"
+        var visitorDataDict = [String: String]()
+        for id in visitorIDs {
+            if let type = id[AnalyticsConstants.Identity.EventDataKeys.VISITOR_ID_TYPE] as? String, !type.isEmpty {
+                visitorDataDict[serializeIdentifierKeyForAnalyticsId(idType: type)] = id[AnalyticsConstants.Identity.EventDataKeys.VISITOR_ID] as? String
+                visitorDataDict[serializeAuthenticationKeyForAnalyticsId(idType: type)] = "\(id[AnalyticsConstants.Identity.EventDataKeys.VISITOR_ID_AUTHENTICATION_STATE] ?? "")"
             }
         }
 
         var translateIds: [String: ContextData] = [:]
-        translateIds[AnalyticsConstants.Request.CUSTOMER_ID_KEY] = ContextDataUtil.translateContextData(data: visitorDataMap)
+        translateIds[AnalyticsConstants.Request.CUSTOMER_ID_KEY] = ContextDataUtil.translateContextData(data: visitorDataDict)
 
         ContextDataUtil.serializeToQueryString(parameters: translateIds, requestString: &analyticsCustomerIdString)
         return analyticsCustomerIdString

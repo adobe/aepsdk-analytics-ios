@@ -12,7 +12,6 @@
 
 import AEPCore
 import AEPServices
-import AEPIdentity
 import Foundation
 
 /// This class encapsulates the analytics config properties used across the analytics handlers.
@@ -170,6 +169,7 @@ class AnalyticsState {
             }
             if let applicationId = lifecyleContextData[LifeCycleEventDataKeys.APP_ID] {
                 defaultData[AnalyticsConstants.ContextDataKeys.APPLICATION_IDENTIFIER] = applicationId
+                self.applicationId = applicationId
             }
         }
     }
@@ -193,8 +193,8 @@ class AnalyticsState {
         if let advertisingId = identityData[IdentityEventDataKeys.ADVERTISING_IDENTIFIER] as? String {
             self.advertisingId = advertisingId
         }
-        if let identifiableArray = identityData[IdentityEventDataKeys.VISITOR_IDS_LIST] as? [Identifiable] {
-            serializedVisitorIdsList = analyticsRequestSerializer.generateAnalyticsCustomerIdString(from: identifiableArray)
+        if let visitorIDDict = identityData[IdentityEventDataKeys.VISITOR_IDS_LIST] as? [[String:Any]] {
+            serializedVisitorIdsList = analyticsRequestSerializer.generateAnalyticsCustomerIdString(from: visitorIDDict)
         }
     }
 
@@ -290,6 +290,7 @@ class AnalyticsState {
 
         queryItems += [URLQueryItem(name: AnalyticsConstants.ParameterKeys.KEY_ORG, value: marketingCloudOrganizationId)]
         queryItems += [URLQueryItem(name: AnalyticsConstants.ParameterKeys.KEY_MID, value: marketingCloudId)]
+
         return queryItems
     }
 

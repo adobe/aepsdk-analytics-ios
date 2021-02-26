@@ -201,6 +201,10 @@ public class Analytics: NSObject, Extension {
             handleOptOut(event: event)
         }
 
+        if analyticsState.privacyStatus == .optedIn {
+            analyticsDatabase?.kick(ignoreBatchLimit: false)
+        }
+
         // send an analytics id request on boot if the analytics configuration is valid
         if !sdkBootUpCompleted {
             if analyticsState.isAnalyticsConfigured() {

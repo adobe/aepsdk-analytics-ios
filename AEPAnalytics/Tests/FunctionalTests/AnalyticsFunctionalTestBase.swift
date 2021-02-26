@@ -156,6 +156,12 @@ class AnalyticsFunctionalTestBase : XCTestCase {
         }
     }
     
+    func dispatchGetQueueSize() {
+        let data  = [AnalyticsConstants.EventDataKeys.GET_QUEUE_SIZE: true]
+        let event = Event(name: "GetQueueSize", type: EventType.analytics, source: EventSource.requestContent, data: data)
+        mockRuntime.simulateComingEvent(event: event)
+    }
+    
     func verifyQueueSize(size: Int) {
         XCTAssertNotNil(mockRuntime.dispatchedEvents.last ?? nil)
         if let lastEvent = mockRuntime.dispatchedEvents.last {

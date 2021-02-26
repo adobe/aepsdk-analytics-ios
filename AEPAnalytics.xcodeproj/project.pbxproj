@@ -17,7 +17,7 @@
 		3DBF23076C39DD73E2F0E701 /* Pods_AEPAnalyticsFunctionalTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1FA80748307DC427902C440F /* Pods_AEPAnalyticsFunctionalTests.framework */; };
 		3DCDB3DF252E853200ABA819 /* AnalyticsProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DCDB3DE252E853200ABA819 /* AnalyticsProperties.swift */; };
 		3DD8E6FC256F0BC2009234FD /* AnalyticsTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DD8E6FB256F0BC2009234FD /* AnalyticsTimer.swift */; };
-		3FBA5746150DF4619268622F /* Pods_AnalyticsSampleApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0E355386B606F5D58291BC54 /* Pods_AnalyticsSampleApp.framework */; };
+		80040470C87BDF5145139B30 /* Pods_AnalyticsSampleApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0E355386B606F5D58291BC54 /* Pods_AnalyticsSampleApp.framework */; };
 		9973631F691E3A9D5F8D37D6 /* Pods_AEPAnalyticsUnitTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 47CCE7FD8C2C3B63390649D7 /* Pods_AEPAnalyticsUnitTests.framework */; };
 		AC0BF6D225CDAA5900182896 /* AnalyticsMigrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC0BF6D125CDAA5800182896 /* AnalyticsMigrator.swift */; };
 		AC0BF6F725CE1B3E00182896 /* AnalyticsDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC0BF6F625CE1B3E00182896 /* AnalyticsDatabase.swift */; };
@@ -43,7 +43,6 @@
 		AC73D33325E5C8730068AB96 /* TestableExtensionRuntime.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC73D31925E5C8730068AB96 /* TestableExtensionRuntime.swift */; };
 		AC73D33425E5C8730068AB96 /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = AC73D31A25E5C8730068AB96 /* .swiftlint.yml */; };
 		AC73D33525E5C8730068AB96 /* MockNetworking.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC73D31B25E5C8730068AB96 /* MockNetworking.swift */; };
-		AC73D33625E5C8730068AB96 /* TestIdentifiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC73D31C25E5C8730068AB96 /* TestIdentifiable.swift */; };
 		AC73D33725E5C8730068AB96 /* MockHitProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC73D31D25E5C8730068AB96 /* MockHitProcessor.swift */; };
 		AC73D33825E5C8730068AB96 /* AnalyticsRequestHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC73D31E25E5C8730068AB96 /* AnalyticsRequestHelper.swift */; };
 		AC73D33925E5C8730068AB96 /* MockExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC73D31F25E5C8730068AB96 /* MockExtension.swift */; };
@@ -66,7 +65,6 @@
 		AC73D3E125E6F5060068AB96 /* MockNetworking.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC73D31B25E5C8730068AB96 /* MockNetworking.swift */; };
 		AC73D3E225E6F5060068AB96 /* AnalyticsRequestHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC73D31E25E5C8730068AB96 /* AnalyticsRequestHelper.swift */; };
 		AC73D3E325E6F5060068AB96 /* AnalyticsTestConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC73D31725E5C8730068AB96 /* AnalyticsTestConstants.swift */; };
-		AC73D3E425E6F5060068AB96 /* TestIdentifiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC73D31C25E5C8730068AB96 /* TestIdentifiable.swift */; };
 		AC73D3E525E6F5060068AB96 /* MockDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC73D32025E5C8730068AB96 /* MockDataStore.swift */; };
 		AC73D3E625E6F5060068AB96 /* TestUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC73D32325E5C8730068AB96 /* TestUtils.swift */; };
 		AC73D3E725E6F5060068AB96 /* MockDataQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC73D32125E5C8730068AB96 /* MockDataQueue.swift */; };
@@ -74,6 +72,7 @@
 		AC73D40D25E7016F0068AB96 /* AnalyticsTrackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC73D39225E6F4160068AB96 /* AnalyticsTrackTests.swift */; };
 		D639E23625B8B25600955FBA /* AnalyticsVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = D639E23525B8B25600955FBA /* AnalyticsVersion.swift */; };
 		D67AC98C2578285F000FA306 /* AnalyticsHitResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67AC98B2578285F000FA306 /* AnalyticsHitResponse.swift */; };
+		D6C7406625E6C5C100D1040C /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = D6C7406525E6C5C100D1040C /* README.md */; };
 		D6D5F35925C8806D008148B3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6D5F35825C8806D008148B3 /* AppDelegate.swift */; };
 		D6D5F35B25C8806D008148B3 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6D5F35A25C8806D008148B3 /* SceneDelegate.swift */; };
 		D6D5F35D25C8806D008148B3 /* AnalyticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6D5F35C25C8806D008148B3 /* AnalyticsView.swift */; };
@@ -153,7 +152,6 @@
 		AC73D31925E5C8730068AB96 /* TestableExtensionRuntime.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestableExtensionRuntime.swift; sourceTree = "<group>"; };
 		AC73D31A25E5C8730068AB96 /* .swiftlint.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
 		AC73D31B25E5C8730068AB96 /* MockNetworking.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockNetworking.swift; sourceTree = "<group>"; };
-		AC73D31C25E5C8730068AB96 /* TestIdentifiable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestIdentifiable.swift; sourceTree = "<group>"; };
 		AC73D31D25E5C8730068AB96 /* MockHitProcessor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockHitProcessor.swift; sourceTree = "<group>"; };
 		AC73D31E25E5C8730068AB96 /* AnalyticsRequestHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsRequestHelper.swift; sourceTree = "<group>"; };
 		AC73D31F25E5C8730068AB96 /* MockExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockExtension.swift; sourceTree = "<group>"; };
@@ -174,6 +172,8 @@
 		CE85C4421313D5BBE96D5060 /* Pods-AnalyticsSampleApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AnalyticsSampleApp.debug.xcconfig"; path = "Target Support Files/Pods-AnalyticsSampleApp/Pods-AnalyticsSampleApp.debug.xcconfig"; sourceTree = "<group>"; };
 		D639E23525B8B25600955FBA /* AnalyticsVersion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsVersion.swift; sourceTree = "<group>"; };
 		D67AC98B2578285F000FA306 /* AnalyticsHitResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsHitResponse.swift; sourceTree = "<group>"; };
+		D6C7406525E6C5C100D1040C /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		D6C7406B25E6C70C00D1040C /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
 		D6D5F35625C8806D008148B3 /* AnalyticsSampleApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AnalyticsSampleApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D6D5F35825C8806D008148B3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D6D5F35A25C8806D008148B3 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -217,7 +217,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3FBA5746150DF4619268622F /* Pods_AnalyticsSampleApp.framework in Frameworks */,
+				80040470C87BDF5145139B30 /* Pods_AnalyticsSampleApp.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -244,6 +244,8 @@
 		2EBEE7662525A35300880E72 = {
 			isa = PBXGroup;
 			children = (
+				D6C7406B25E6C70C00D1040C /* Package.swift */,
+				D6C7406525E6C5C100D1040C /* README.md */,
 				AC277CEC252C23E600987C67 /* AEPAnalytics */,
 				D6D5F35725C8806D008148B3 /* AnalyticsSampleApp */,
 				2EBEE7712525A35400880E72 /* Products */,
@@ -339,7 +341,6 @@
 				AC73D31B25E5C8730068AB96 /* MockNetworking.swift */,
 				AC73D31925E5C8730068AB96 /* TestableExtensionRuntime.swift */,
 				AC73D32225E5C8730068AB96 /* TestHelper.swift */,
-				AC73D31C25E5C8730068AB96 /* TestIdentifiable.swift */,
 				AC73D32325E5C8730068AB96 /* TestUtils.swift */,
 			);
 			path = TestHelper;
@@ -541,6 +542,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D6C7406625E6C5C100D1040C /* README.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -758,7 +760,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AC73D33625E5C8730068AB96 /* TestIdentifiable.swift in Sources */,
 				AC73D32825E5C8730068AB96 /* AnalyticsTests.swift in Sources */,
 				AC73D32725E5C8730068AB96 /* AnalyticsMigratorTests.swift in Sources */,
 				AC73D33A25E5C8730068AB96 /* MockDataStore.swift in Sources */,
@@ -794,7 +795,6 @@
 				AC73D3CE25E6F5010068AB96 /* AnalyticsTrack+PlacesTests.swift in Sources */,
 				AC73D3DE25E6F5060068AB96 /* TestHelper.swift in Sources */,
 				AC73D3E725E6F5060068AB96 /* MockDataQueue.swift in Sources */,
-				AC73D3E425E6F5060068AB96 /* TestIdentifiable.swift in Sources */,
 				AC73D3E125E6F5060068AB96 /* MockNetworking.swift in Sources */,
 				AC73D3D025E6F5010068AB96 /* AnalyticsIDTests.swift in Sources */,
 				AC73D3D125E6F5010068AB96 /* AnalyticsTrack+AssuranceTests.swift in Sources */,
@@ -1126,8 +1126,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"AnalyticsSampleApp/Preview Content\"";
+				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = AnalyticsSampleApp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -1138,6 +1140,7 @@
 				MACH_O_TYPE = mh_execute;
 				PRODUCT_BUNDLE_IDENTIFIER = com.adobe.AnalyticsSampleApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -1149,8 +1152,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"AnalyticsSampleApp/Preview Content\"";
+				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = AnalyticsSampleApp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -1161,6 +1166,7 @@
 				MACH_O_TYPE = mh_execute;
 				PRODUCT_BUNDLE_IDENTIFIER = com.adobe.AnalyticsSampleApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
