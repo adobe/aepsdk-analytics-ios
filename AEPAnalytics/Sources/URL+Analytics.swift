@@ -19,7 +19,7 @@ extension URL {
     private static let analyticsSerializer = AnalyticsRequestSerializer()
 
     /// Creates and returns the base url for analytics requests.
-    /// - Returns the base URL for an Analytics request.
+    /// - Returns: the base URL for analytics requests.
     /// - Parameters:
     ///   - state: the analytics state
     static func getAnalyticsBaseUrl(state: AnalyticsState) -> URL? {
@@ -39,6 +39,7 @@ extension URL {
     }
 
     /// Creates a new Analytics ID Request URL
+    /// - Returns: the analytics ID request URL
     /// - Parameters:
     ///   - state: the analytics state
     static func getAnalyticsIdRequestURL(state: AnalyticsState) -> URL? {
@@ -60,6 +61,7 @@ extension URL {
     }
 
     /// Build analytics payload from analytics context data and vars
+    /// - Returns: the payload sent in analytics requests
     /// - Parameters:
     ///   - state: the analytics state
     ///   - data : dictionary containing analytics context data
@@ -69,6 +71,7 @@ extension URL {
     }
 
     /// Append context data to analytics payload
+    /// - Returns: the payload with contextData appended
     /// - Parameters:
     ///   - contextData: Dictionary containing context data
     ///   - payload: String representing analytics payload
@@ -76,12 +79,16 @@ extension URL {
         return ContextDataUtil.appendContextData(contextData: contextData, source: payload)
     }
 
+    /// Generates query string to be appended in analytics requests for custom ids from Identity extension
+    /// - Returns: the query string representing custom ids
+    /// - Parameters:
+    ///   - visitorIDArray: Dictionary containing information about custom identifiers
     static func generateAnalyticsCustomerIdString(from visitorIDArray: [[String: Any]]?) -> String {
         return analyticsSerializer.generateAnalyticsCustomerIdString(from: visitorIDArray)
     }
 
     /// Returns the response type for analytics request url on basis of whether aam forwarding is enabled or not.
-    /// - Returns 10 if aam forwarding is enabled in configuration else returns 0
+    /// - Returns: 10 if aam forwarding is enabled in configuration else returns 0
     private static func getAnalyticsResponseType(state: AnalyticsState) -> String {
         return state.analyticForwardingEnabled ? "10" : "0"
     }
