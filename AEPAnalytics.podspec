@@ -3,7 +3,7 @@ Pod::Spec.new do |s|
   s.version          = "3.0.0"
   s.summary          = "AEPAnalytics"
   s.description      = <<-DESC
-AEPCore
+                        The Analytics library provides APIs that allow use of the Analytics product in the Adobe Experience Platform SDK.
                         DESC
   s.homepage         = "https://github.com/adobe/aepsdk-analytics-ios"
   s.license          = 'Apache V2'
