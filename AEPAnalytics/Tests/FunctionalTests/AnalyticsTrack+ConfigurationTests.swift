@@ -104,50 +104,51 @@ class AnalyticsTrack_ConfigurationTests : AnalyticsFunctionalTestBase {
                   contextData: expectedContextData)
     }
 
-    /*
-        //Track hits sent only when configuration contains valid server and rsid(s)
-        func testTrackHitsSentOnValidConfiguration() {
-            // setup config without analytics server and rsid
-            dispatchDefaultConfigAndIdentityStates(configData: [AnalyticsTestConstants.Configuration.EventDataKeys.ANALYTICS_REPORT_SUITES: "", AnalyticsTestConstants.Configuration.EventDataKeys.ANALYTICS_SERVER: ""])
 
-            // dispatch track event
-            let trackData: [String: Any] = [
-                CoreConstants.Keys.STATE : "testState",
-                CoreConstants.Keys.CONTEXT_DATA : [
-                    "k1": "v1",
-                    "k2": "v2"
-                ]
-            ]
-            let trackEvent = Event(name: "Generic track event", type: EventType.genericTrack, source: EventSource.requestContent, data: trackData)
-            mockRuntime.simulateComingEvent(event: trackEvent)
-            // verify 1 hit queued
-            dispatchGetQueueSize()
-            waitFor(interval: 0.5)
-            verifyQueueSize(size: 1)
-            // setup config with analytics server and rsid
-            dispatchDefaultConfigAndIdentityStates(configData: [AnalyticsTestConstants.Configuration.EventDataKeys.ANALYTICS_REPORT_SUITES: "rsid", AnalyticsTestConstants.Configuration.EventDataKeys.ANALYTICS_SERVER: "test.com"])
-            // verify
-            let expectedVars = [
-                "ce": "UTF-8",
-                "cp": "foreground",
-                "ndh": "1",
-                "pageName" : "testState",
-                "mid" : "mid",
-                "aamb" : "blob",
-                "aamlh" : "lochint",
-                "ts" : String((Int(trackEvent.timestamp.timeIntervalSince1970)))
-            ]
+    //Track hits sent only when configuration contains valid server and rsid(s)
+    func testTrackHitsOnlySentOnValidConfiguration() {
+        // setup config without analytics server and rsid
+        dispatchDefaultConfigAndIdentityStates(configData: [AnalyticsTestConstants.Configuration.EventDataKeys.ANALYTICS_REPORT_SUITES: "", AnalyticsTestConstants.Configuration.EventDataKeys.ANALYTICS_SERVER: ""])
 
-            let expectedContextData = [
-                "k1" : "v1",
-                "k2" : "v2",
+        // dispatch track event
+        let trackData: [String: Any] = [
+            CoreConstants.Keys.STATE : "testState",
+            CoreConstants.Keys.CONTEXT_DATA : [
+                "k1": "v1",
+                "k2": "v2"
             ]
-            XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 1)
-            verifyHit(request: mockNetworkService?.calledNetworkRequests[0],
-                      host: "https://test.com/b/ss/rsid/0/",
-                      vars: expectedVars,
-                      contextData: expectedContextData)
-        }
-     */
+        ]
+        let trackEvent = Event(name: "Generic track event", type: EventType.genericTrack, source: EventSource.requestContent, data: trackData)
+        mockRuntime.simulateComingEvent(event: trackEvent)
+        waitFor(interval: 0.5)
+        // verify no hits sent
+        XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 0)
+        // setup config with analytics server and rsid
+        dispatchDefaultConfigAndIdentityStates(configData: [AnalyticsTestConstants.Configuration.EventDataKeys.ANALYTICS_REPORT_SUITES: "rsid", AnalyticsTestConstants.Configuration.EventDataKeys.ANALYTICS_SERVER: "test.com"])
+        // dispatch track event
+        mockRuntime.simulateComingEvent(event: trackEvent)
+        waitFor(interval: 0.5)
+        // verify
+        let expectedVars = [
+            "ce": "UTF-8",
+            "cp": "foreground",
+            "ndh": "1",
+            "pageName" : "testState",
+            "mid" : "mid",
+            "aamb" : "blob",
+            "aamlh" : "lochint",
+            "ts" : String((Int(trackEvent.timestamp.timeIntervalSince1970)))
+        ]
+
+        let expectedContextData = [
+            "k1" : "v1",
+            "k2" : "v2",
+        ]
+        XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 1)
+        verifyHit(request: mockNetworkService?.calledNetworkRequests[0],
+                  host: "https://test.com/b/ss/rsid/0/",
+                  vars: expectedVars,
+                  contextData: expectedContextData)
+    }
 
 }
