@@ -202,7 +202,7 @@ class AnalyticsDatabase {
     }
 
     func kick(ignoreBatchLimit: Bool) {
-        Log.trace(label: self.LOG_TAG, "Kick - ignoreBatchLimit\(ignoreBatchLimit).")
+        Log.trace(label: self.LOG_TAG, "Kick - ignoreBatchLimit \(ignoreBatchLimit).")
 
         // If we have not received analytics configuration, no reason to start BG process
         if !analyticsState.isAnalyticsConfigured() {

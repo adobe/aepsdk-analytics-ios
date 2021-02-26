@@ -30,7 +30,7 @@ class AnalyticsStateTest : XCTestCase {
         let rsids = "rsid1, rsid2"
         let marketingCloudOrgId = "marketingserver"
         let privacyStatusString = "optedin"
-        let launchHitDelay : TimeInterval = 300
+        let launchHitDelay : Int = 300
 
         var configurationData = [String: Any]()
         configurationData[AnalyticsTestConstants.Configuration.EventDataKeys.ANALYTICS_SERVER] = server
@@ -50,7 +50,7 @@ class AnalyticsStateTest : XCTestCase {
         XCTAssertEqual(analyticsState.rsids, rsids)
         XCTAssertTrue(analyticsState.analyticForwardingEnabled)
         XCTAssertTrue(analyticsState.offlineEnabled)
-        XCTAssertEqual(analyticsState.launchHitDelay, launchHitDelay, accuracy: 0)
+        XCTAssertEqual(analyticsState.launchHitDelay, 300.0 , accuracy: 0)
         XCTAssertEqual(analyticsState.marketingCloudOrganizationId, marketingCloudOrgId)
         XCTAssertTrue(analyticsState.backDateSessionInfoEnabled)
         XCTAssertEqual(analyticsState.privacyStatus, PrivacyStatus.optedIn)
@@ -61,7 +61,7 @@ class AnalyticsStateTest : XCTestCase {
         let rsids = "rsid1, rsid2"
         let marketingCloudOrgId = "marketingserver"
         let privacyStatusString = "optedin"
-        let launchHitDelay : TimeInterval = 300
+        let launchHitDelay : Int = 300
 
         var configurationData = [String: Any]()
         configurationData[AnalyticsTestConstants.Configuration.EventDataKeys.ANALYTICS_SERVER] = server
@@ -81,7 +81,7 @@ class AnalyticsStateTest : XCTestCase {
         XCTAssertEqual(analyticsState.rsids, rsids)
         XCTAssertTrue(analyticsState.analyticForwardingEnabled)
         XCTAssertTrue(analyticsState.offlineEnabled)
-        XCTAssertEqual(analyticsState.launchHitDelay, launchHitDelay, accuracy: 0)
+        XCTAssertEqual(analyticsState.launchHitDelay, 300, accuracy: 0.000001)
         XCTAssertEqual(analyticsState.marketingCloudOrganizationId, marketingCloudOrgId)
         XCTAssertTrue(analyticsState.backDateSessionInfoEnabled)
         XCTAssertEqual(analyticsState.privacyStatus, PrivacyStatus.optedIn)

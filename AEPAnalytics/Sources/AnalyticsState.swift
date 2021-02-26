@@ -131,7 +131,9 @@ class AnalyticsState {
         analyticForwardingEnabled = configurationData[ConfigurationEventDataKeys.ANALYTICS_AAMFORWARDING] as? Bool ?? AnalyticsConstants.Default.FORWARDING_ENABLED
         offlineEnabled = configurationData[ConfigurationEventDataKeys.ANALYTICS_OFFLINE_TRACKING] as? Bool ?? AnalyticsConstants.Default.OFFLINE_ENABLED
         batchLimit = configurationData[ConfigurationEventDataKeys.ANALYTICS_BATCH_LIMIT] as? Int ?? AnalyticsConstants.Default.BATCH_LIMIT
-        launchHitDelay =  TimeInterval.init(configurationData[ConfigurationEventDataKeys.ANALYTICS_LAUNCH_HIT_DELAY] as? Double ?? AnalyticsConstants.Default.LAUNCH_HIT_DELAY)
+        if let launchHitDelayValue = configurationData[ConfigurationEventDataKeys.ANALYTICS_LAUNCH_HIT_DELAY] as? Int {
+            launchHitDelay = TimeInterval(launchHitDelayValue)
+        }
         marketingCloudOrganizationId = configurationData[ConfigurationEventDataKeys.MARKETING_CLOUD_ORGID_KEY] as? String
         backDateSessionInfoEnabled = configurationData[ConfigurationEventDataKeys.ANALYTICS_BACKDATE_PREVIOUS_SESSION] as? Bool ?? AnalyticsConstants.Default.BACKDATE_SESSION_INFO_ENABLED
     }
