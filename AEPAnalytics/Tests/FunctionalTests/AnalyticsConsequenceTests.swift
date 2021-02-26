@@ -40,8 +40,7 @@ class AnalyticsConsequenceTests : AnalyticsFunctionalTestBase {
         
         let expectedVars = [
             "ce": "UTF-8",
-            "cp": "foreground",
-            "ndh": "1",
+            "cp": "foreground",            
             "pev2" : "AMACTION:testActionName",
             "pe" : "lnk_o",
             "mid" : "mid",

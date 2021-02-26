@@ -68,7 +68,6 @@ class AnalyticsHitReorderTests : AnalyticsFunctionalTestBase {
         let hitVars = [
             "ce": "UTF-8",
             "cp": "foreground",
-            "ndh": "1",
             "pageName" : "testState",
             "mid" : "mid",
             "aamb" : "blob",
@@ -139,7 +138,6 @@ class AnalyticsHitReorderTests : AnalyticsFunctionalTestBase {
         let firstHitExpectedVars = [
             "ce": "UTF-8",
             "cp": "foreground",
-            "ndh": "1",
             "pev2" : "AMACTION:start",
             "pe" : "lnk_o",
             "mid" : "mid",
@@ -162,7 +160,6 @@ class AnalyticsHitReorderTests : AnalyticsFunctionalTestBase {
         let secondHitExpectedVars = [
             "ce": "UTF-8",
             "cp": "foreground",
-            "ndh": "1",
             "pev2" : "ADBINTERNAL:AdobeLink",
             "pe" : "lnk_o",
             "mid" : "mid",
@@ -234,7 +231,6 @@ class AnalyticsHitReorderTests : AnalyticsFunctionalTestBase {
         let firstHitExpectedVars = [
             "ce": "UTF-8",
             "cp": "foreground",
-            "ndh": "1",
             "pev2" : "AMACTION:start",
             "pe" : "lnk_o",
             "mid" : "mid",
@@ -255,7 +251,6 @@ class AnalyticsHitReorderTests : AnalyticsFunctionalTestBase {
         let secondHitExpectedVars = [
             "ce": "UTF-8",
             "cp": "foreground",
-            "ndh": "1",
             "pev2" : "ADBINTERNAL:Lifecycle",
             "pe" : "lnk_o",
             "mid" : "mid",
@@ -333,7 +328,6 @@ class AnalyticsHitReorderTests : AnalyticsFunctionalTestBase {
         let installHitExpectedVars = [
             "ce": "UTF-8",
             "cp": "foreground",
-            "ndh": "1",
             "pev2" : "ADBINTERNAL:Lifecycle",
             "pe" : "lnk_o",
             "mid" : "mid",
@@ -367,7 +361,6 @@ class AnalyticsHitReorderTests : AnalyticsFunctionalTestBase {
         let trackHitExpectedVars = [
             "ce": "UTF-8",
             "cp": "foreground",
-            "ndh": "1",
             "pev2" : "AMACTION:start",
             "pe" : "lnk_o",
             "mid" : "mid",
@@ -378,7 +371,7 @@ class AnalyticsHitReorderTests : AnalyticsFunctionalTestBase {
             "t" : TimeZone.current.getOffsetFromGmtInMinutes()
         ]
         let trackHitExpectedContextData = [
-            "k1" : "v1",            
+            "k1" : "v1",
             "a.action" : "start",
             "a.AppID" : "mockAppName",
             "a.CarrierName" : "mockMobileCarrier",
@@ -392,5 +385,50 @@ class AnalyticsHitReorderTests : AnalyticsFunctionalTestBase {
                   host: "https://test.com/b/ss/rsid/0/",
                   vars: trackHitExpectedVars,
                   contextData: trackHitExpectedContextData)
+    }
+    
+    // Acquisition as seperate hit
+    func testAcquisitionSentAsSeperateHit() {
+        dispatchDefaultConfigAndIdentityStates()
+        
+        let acquisitionData = [
+            "test_key_1": "test_value_1",
+            "a.deeplink.id": "test_deeplinkId",
+            "test_key_0": "test_value_0"
+        ]
+        
+        let acquisitionSharedState: [String: Any] = [
+            AnalyticsTestConstants.Acquisition.CONTEXT_DATA: acquisitionData
+        ]
+        let acquisitionResponseEvent = simulateAcquisitionState(data: acquisitionSharedState)
+        
+        waitForProcessing()
+    
+        // 1 hits.
+        // First hit contains acquisition data
+        XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 1)
+        
+        let acquisitionExpectedVars = [
+            "ce": "UTF-8",
+            "cp": "foreground",
+            "pev2" : "ADBINTERNAL:AdobeLink",
+            "pe" : "lnk_o",
+            "mid" : "mid",
+            "aamb" : "blob",
+            "aamlh" : "lochint",
+            "ts" : String(acquisitionResponseEvent.timestamp.getUnixTimeInSeconds()),            
+            "t" : TimeZone.current.getOffsetFromGmtInMinutes()
+        ]
+        let acquisitionContextData = [
+            "a.internalaction" : "AdobeLink",
+            "a.deeplink.id" : "test_deeplinkId",
+            "test_key_0" : "test_value_0",
+            "test_key_1" : "test_value_1"
+        ]
+        verifyHit(request: mockNetworkService?.calledNetworkRequests[0],
+                  host: "https://test.com/b/ss/rsid/0/",
+                  vars: acquisitionExpectedVars,
+                  contextData: acquisitionContextData)
+        
     }
 }

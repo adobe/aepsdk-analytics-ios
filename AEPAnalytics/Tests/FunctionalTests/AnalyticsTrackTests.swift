@@ -38,7 +38,6 @@ class AnalyticsTrackTests : AnalyticsFunctionalTestBase {
         let expectedVars = [
             "ce": "UTF-8",
             "cp": "foreground",
-            "ndh": "1",
             "pageName" : "testState",
             "mid" : "mid",
             "aamb" : "blob",
@@ -74,7 +73,6 @@ class AnalyticsTrackTests : AnalyticsFunctionalTestBase {
         let expectedVars = [
             "ce": "UTF-8",
             "cp": "foreground",
-            "ndh": "1",
             "pev2" : "AMACTION:testAction",
             "pe" : "lnk_o",
             "mid" : "mid",
@@ -113,7 +111,6 @@ class AnalyticsTrackTests : AnalyticsFunctionalTestBase {
         let expectedVars = [
             "ce": "UTF-8",
             "cp": "foreground",
-            "ndh": "1",
             "pev2" : "ADBINTERNAL:testAction",
             "pe" : "lnk_o",
             "mid" : "mid",
@@ -149,7 +146,6 @@ class AnalyticsTrackTests : AnalyticsFunctionalTestBase {
         let expectedVars = [
             "ce": "UTF-8",
             "cp": "foreground",
-            "ndh": "1",
             "mid" : "mid",
             "aamb" : "blob",
             "aamlh" : "lochint",
@@ -193,7 +189,6 @@ class AnalyticsTrackTests : AnalyticsFunctionalTestBase {
         let expectedVars = [
             "ce": "UTF-8",
             "cp": "foreground",
-            "ndh": "1",
             "mid" : "mid",
             "aamb" : "blob",
             "aamlh" : "lochint",
@@ -233,7 +228,6 @@ class AnalyticsTrackTests : AnalyticsFunctionalTestBase {
         let expectedVars = [
             "ce": "UTF-8",
             "cp": "foreground",
-            "ndh": "1",
             "pageName" : "testState",
             "pev2" : "AMACTION:testAction",
             "pe" : "lnk_o",
@@ -275,7 +269,6 @@ class AnalyticsTrackTests : AnalyticsFunctionalTestBase {
         let expectedVars = [
             "ce": "UTF-8",
             "cp": "foreground",
-            "ndh": "1",
             "pageName" : "~!@#$%^&*()_.-+",
             "pev2" : "AMACTION:网页",
             "pe" : "lnk_o",

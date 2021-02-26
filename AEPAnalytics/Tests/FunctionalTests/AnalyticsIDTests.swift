@@ -41,7 +41,6 @@ class AnalyticsIDTests : AnalyticsFunctionalTestBase {
         let expectedVars = [
             "ce": "UTF-8",
             "cp": "foreground",
-            "ndh": "1",
             "pev2" : "AMACTION:testActionName",
             "pe" : "lnk_o",
             "mid" : "mid",
@@ -91,7 +90,6 @@ class AnalyticsIDTests : AnalyticsFunctionalTestBase {
         let expectedVars = [
             "ce": "UTF-8",
             "cp": "foreground",
-            "ndh": "1",
             "pev2" : "AMACTION:testActionName",
             "pe" : "lnk_o",
             "mid" : "mid",

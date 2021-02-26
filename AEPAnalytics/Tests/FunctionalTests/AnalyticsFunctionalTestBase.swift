@@ -119,52 +119,17 @@ class AnalyticsFunctionalTestBase : XCTestCase {
         
         let actualVars = AnalyticsRequestHelper.getQueryParams(source: request.connectPayload)
         var expectedVars = expectedVars ?? [:]
-        // This is appended for each request
+        // These vars are appended to all requests
+        expectedVars["ndh"] = "1"
         expectedVars[AnalyticsConstants.Request.FORMATTED_TIMESTAMP_KEY] = TimeZone.current.getOffsetFromGmtInMinutes()
         XCTAssertTrue(NSDictionary(dictionary: actualVars).isEqual(to: expectedVars))
-        printMap(expected: expectedVars, actual: actualVars)
+
         let actualContextData = AnalyticsRequestHelper.getContextData(source: request.connectPayload)
         let expectedContextData = expectedContextData ?? [:]
-        
         XCTAssertTrue(NSDictionary(dictionary: actualContextData).isEqual(to: expectedContextData))
-        printMap(expected: expectedContextData, actual: actualContextData)
-    }
-    
-    private func printMap(expected: [String:Any], actual: [String: Any]) {
-        guard let expected = expected as? [String:String] else {
-            return
-        }
-        guard let actual = actual as? [String:String] else {
-            return
-        }
-        let res = NSDictionary(dictionary: expected).isEqual(to: actual)
-        if(!res) {
-            Log.error(label: "Map", "Expected \(expected.count) Actual \(actual.count)")
-            for (key, value) in actual {
-                if let expectedVal = expected[key]{
-                    if expectedVal != value {
-                        Log.error(label: "Map", "Value for \(key) not equal actual \(value) expected \(expectedVal)")
-                    }
-                } else {
-                    Log.error(label: "Map", "Key \(key) not found in expected")
-                }
-                
-            }
-            
-            for (key, value) in expected {
-                if let actualVal = actual[key]{
-                    if actualVal != value {
-                        Log.error(label: "Map", "Value for \(key) not equal actual \(actualVal) expected \(value)")
-                    }
-                } else {
-                    Log.error(label: "Map", "Key \(key) not found in actual")
-                }
-                
-            }
 
-        }
     }
-    
+
     func verifyIdentityChange(aid: String?, vid: String?) {
         // Verify shared state
         XCTAssertNotNil(mockRuntime.createdSharedStates.last ?? nil)
