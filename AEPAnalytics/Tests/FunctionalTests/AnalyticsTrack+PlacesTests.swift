@@ -49,7 +49,6 @@ class AnalyticsTrack_PlacesTests : AnalyticsFunctionalTestBase {
         let expectedVars = [
             "ce": "UTF-8",
             "cp": "foreground",
-            "ndh": "1",
             "pev2" : "AMACTION:testActionName",
             "pe" : "lnk_o",
             "mid" : "mid",
@@ -108,7 +107,6 @@ class AnalyticsTrack_PlacesTests : AnalyticsFunctionalTestBase {
         let expectedVars = [
             "ce": "UTF-8",
             "cp": "foreground",
-            "ndh": "1",
             "pev2" : "AMACTION:testActionName",
             "pe" : "lnk_o",
             "mid" : "mid",

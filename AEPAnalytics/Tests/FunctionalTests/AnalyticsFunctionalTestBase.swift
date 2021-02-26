@@ -96,6 +96,15 @@ class AnalyticsFunctionalTestBase : XCTestCase {
                                         event: nil,
                                         data: (data, .set))
     }
+    
+    func simulateAcquisitionState(data: [String:Any], event: Event? = nil) -> Event {
+        mockRuntime.simulateSharedState(extensionName: AnalyticsTestConstants.Acquisition.SHARED_STATE_NAME,
+                                        event: nil,
+                                        data: (data, .set))
+        let event = Event(name: "", type: EventType.acquisition, source: EventSource.responseContent, data: data)
+        mockRuntime.simulateComingEvent(event: event)
+        return event
+    }
 
     func verifyHit(request: NetworkRequest?, host: String, vars expectedVars: [String: Any]? = nil, contextData expectedContextData:[String: Any]? = nil) {
         guard let request = request else {
@@ -110,16 +119,17 @@ class AnalyticsFunctionalTestBase : XCTestCase {
         
         let actualVars = AnalyticsRequestHelper.getQueryParams(source: request.connectPayload)
         var expectedVars = expectedVars ?? [:]
-        // This is appended for each request
+        // These vars are appended to all requests
+        expectedVars["ndh"] = "1"
         expectedVars[AnalyticsConstants.Request.FORMATTED_TIMESTAMP_KEY] = TimeZone.current.getOffsetFromGmtInMinutes()
         XCTAssertTrue(NSDictionary(dictionary: actualVars).isEqual(to: expectedVars))
-                
+
         let actualContextData = AnalyticsRequestHelper.getContextData(source: request.connectPayload)
         let expectedContextData = expectedContextData ?? [:]
-        
         XCTAssertTrue(NSDictionary(dictionary: actualContextData).isEqual(to: expectedContextData))
+
     }
-    
+
     func verifyIdentityChange(aid: String?, vid: String?) {
         // Verify shared state
         XCTAssertNotNil(mockRuntime.createdSharedStates.last ?? nil)
@@ -197,5 +207,14 @@ class AnalyticsFunctionalTestBase : XCTestCase {
             }
         }
         simulateConfigState(data: configSharedState)
+    }
+    
+    func simulateLifecycleStartEvent() {
+        let lifecycleStartData = [
+            AnalyticsConstants.Lifecycle.EventDataKeys.LIFECYCLE_ACTION_KEY:
+                AnalyticsConstants.Lifecycle.EventDataKeys.LIFECYCLE_START
+        ]
+        let lifecycleStartEvent = Event(name: "", type: EventType.genericLifecycle, source: EventSource.requestContent, data: lifecycleStartData)
+        mockRuntime.simulateComingEvent(event: lifecycleStartEvent)
     }
 }

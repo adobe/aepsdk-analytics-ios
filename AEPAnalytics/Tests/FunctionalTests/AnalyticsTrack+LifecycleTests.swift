@@ -54,7 +54,6 @@ class AnalyticsTrack_LifecycleTests : AnalyticsFunctionalTestBase {
         let expectedVars = [
             "ce": "UTF-8",
             "cp": "foreground",
-            "ndh": "1",
             "pev2" : "AMACTION:testActionName",
             "pe" : "lnk_o",
             "mid" : "mid",
@@ -124,7 +123,6 @@ class AnalyticsTrack_LifecycleTests : AnalyticsFunctionalTestBase {
         let crashVars = [
             "ce": "UTF-8",
             "cp": "foreground",
-            "ndh": "1",
             "pev2" : "ADBINTERNAL:Crash",
             "pe" : "lnk_o",
             "mid" : "mid",
@@ -154,7 +152,6 @@ class AnalyticsTrack_LifecycleTests : AnalyticsFunctionalTestBase {
         let lifecycleVars = [
             "ce": "UTF-8",
             "cp": "foreground",
-            "ndh": "1",
             "pev2" : "ADBINTERNAL:Lifecycle",
             "pe" : "lnk_o",
             "mid" : "mid",
@@ -223,7 +220,6 @@ class AnalyticsTrack_LifecycleTests : AnalyticsFunctionalTestBase {
         let sessionInfoVars = [
             "ce": "UTF-8",
             "cp": "foreground",
-            "ndh": "1",
             "pev2" : "ADBINTERNAL:SessionInfo",
             "pe" : "lnk_o",
             "mid" : "mid",
@@ -253,7 +249,6 @@ class AnalyticsTrack_LifecycleTests : AnalyticsFunctionalTestBase {
         let lifecycleVars = [
             "ce": "UTF-8",
             "cp": "foreground",
-            "ndh": "1",
             "pev2" : "ADBINTERNAL:Lifecycle",
             "pe" : "lnk_o",
             "mid" : "mid",
@@ -321,7 +316,6 @@ class AnalyticsTrack_LifecycleTests : AnalyticsFunctionalTestBase {
         let expectedVars = [
             "ce": "UTF-8",
             "cp": "foreground",
-            "ndh": "1",
             "pev2" : "AMACTION:testActionName",
             "pe" : "lnk_o",
             "mid" : "mid",

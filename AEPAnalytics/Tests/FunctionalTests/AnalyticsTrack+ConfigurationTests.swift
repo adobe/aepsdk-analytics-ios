@@ -88,7 +88,6 @@ class AnalyticsTrack_ConfigurationTests : AnalyticsFunctionalTestBase {
         let expectedVars = [
             "ce": "UTF-8",
             "cp": "foreground",
-            "ndh": "1",
             "pageName" : "testState",
             "mid" : "mid",
             "aamb" : "blob",
@@ -138,7 +137,6 @@ class AnalyticsTrack_ConfigurationTests : AnalyticsFunctionalTestBase {
         let expectedVars = [
             "ce": "UTF-8",
             "cp": "foreground",
-            "ndh": "1",
             "pageName" : "testState",
             "mid" : "mid",
             "aamb" : "blob",
@@ -176,7 +174,6 @@ class AnalyticsTrack_ConfigurationTests : AnalyticsFunctionalTestBase {
         let expectedVars = [
             "ce": "UTF-8",
             "cp": "foreground",
-            "ndh": "1",
             "pageName" : "testState",
             "mid" : "mid",
             "aamb" : "blob",
