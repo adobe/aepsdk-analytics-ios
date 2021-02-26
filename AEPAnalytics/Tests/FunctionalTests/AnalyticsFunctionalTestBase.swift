@@ -96,6 +96,15 @@ class AnalyticsFunctionalTestBase : XCTestCase {
                                         event: nil,
                                         data: (data, .set))
     }
+    
+    func simulateAcquisitionState(data: [String:Any], event: Event? = nil) -> Event {
+        mockRuntime.simulateSharedState(extensionName: AnalyticsTestConstants.Acquisition.SHARED_STATE_NAME,
+                                        event: nil,
+                                        data: (data, .set))
+        let event = Event(name: "", type: EventType.acquisition, source: EventSource.responseContent, data: data)
+        mockRuntime.simulateComingEvent(event: event)
+        return event
+    }
 
     func verifyHit(request: NetworkRequest?, host: String, vars expectedVars: [String: Any]? = nil, contextData expectedContextData:[String: Any]? = nil) {
         guard let request = request else {
@@ -113,11 +122,47 @@ class AnalyticsFunctionalTestBase : XCTestCase {
         // This is appended for each request
         expectedVars[AnalyticsConstants.Request.FORMATTED_TIMESTAMP_KEY] = TimeZone.current.getOffsetFromGmtInMinutes()
         XCTAssertTrue(NSDictionary(dictionary: actualVars).isEqual(to: expectedVars))
-                
+        printMap(expected: expectedVars, actual: actualVars)
         let actualContextData = AnalyticsRequestHelper.getContextData(source: request.connectPayload)
         let expectedContextData = expectedContextData ?? [:]
         
         XCTAssertTrue(NSDictionary(dictionary: actualContextData).isEqual(to: expectedContextData))
+        printMap(expected: expectedContextData, actual: actualContextData)
+    }
+    
+    private func printMap(expected: [String:Any], actual: [String: Any]) {
+        guard let expected = expected as? [String:String] else {
+            return
+        }
+        guard let actual = actual as? [String:String] else {
+            return
+        }
+        let res = NSDictionary(dictionary: expected).isEqual(to: actual)
+        if(!res) {
+            Log.error(label: "Map", "Expected \(expected.count) Actual \(actual.count)")
+            for (key, value) in actual {
+                if let expectedVal = expected[key]{
+                    if expectedVal != value {
+                        Log.error(label: "Map", "Value for \(key) not equal actual \(value) expected \(expectedVal)")
+                    }
+                } else {
+                    Log.error(label: "Map", "Key \(key) not found in expected")
+                }
+                
+            }
+            
+            for (key, value) in expected {
+                if let actualVal = actual[key]{
+                    if actualVal != value {
+                        Log.error(label: "Map", "Value for \(key) not equal actual \(actualVal) expected \(value)")
+                    }
+                } else {
+                    Log.error(label: "Map", "Key \(key) not found in actual")
+                }
+                
+            }
+
+        }
     }
     
     func verifyIdentityChange(aid: String?, vid: String?) {
@@ -197,5 +242,14 @@ class AnalyticsFunctionalTestBase : XCTestCase {
             }
         }
         simulateConfigState(data: configSharedState)
+    }
+    
+    func simulateLifecycleStartEvent() {
+        let lifecycleStartData = [
+            AnalyticsConstants.Lifecycle.EventDataKeys.LIFECYCLE_ACTION_KEY:
+                AnalyticsConstants.Lifecycle.EventDataKeys.LIFECYCLE_START
+        ]
+        let lifecycleStartEvent = Event(name: "", type: EventType.genericLifecycle, source: EventSource.requestContent, data: lifecycleStartData)
+        mockRuntime.simulateComingEvent(event: lifecycleStartEvent)
     }
 }
