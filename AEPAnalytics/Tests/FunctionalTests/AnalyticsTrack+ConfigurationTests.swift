@@ -22,12 +22,13 @@ class AnalyticsTrack_ConfigurationTests : AnalyticsFunctionalTestBase {
     }
 
     func testClearQueuedHitsAndDatastoreOnOptOut() {
-        // set privacy status to unknown
-        dispatchDefaultConfigAndIdentityStates(configData: [AnalyticsTestConstants.Configuration.EventDataKeys.GLOBAL_PRIVACY: "unknown"])
         // add data to datastore
         let dataStore = NamedCollectionDataStore(name: AnalyticsTestConstants.DATASTORE_NAME)
         dataStore.set(key: AnalyticsTestConstants.DataStoreKeys.AID, value: "aid")
         dataStore.set(key: AnalyticsTestConstants.DataStoreKeys.VID, value: "vid")
+        resetExtension()
+        // set privacy status to unknown
+        dispatchDefaultConfigAndIdentityStates(configData: [AnalyticsTestConstants.Configuration.EventDataKeys.GLOBAL_PRIVACY: "unknown"])
         // dispatch 3 track events
         let trackData: [String: Any] = [
             CoreConstants.Keys.STATE : "testState",
