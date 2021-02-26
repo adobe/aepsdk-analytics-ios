@@ -33,7 +33,7 @@ class AnalyticsTrackTests : AnalyticsFunctionalTestBase {
         let trackEvent = Event(name: "Generic track event", type: EventType.genericTrack, source: EventSource.requestContent, data: trackData)
         mockRuntime.simulateComingEvent(event: trackEvent)
 
-        waitFor(interval: 1)
+        waitForProcessing()
 
         let expectedVars = [
             "ce": "UTF-8",
@@ -69,7 +69,7 @@ class AnalyticsTrackTests : AnalyticsFunctionalTestBase {
         let trackEvent = Event(name: "Generic track event", type: EventType.genericTrack, source: EventSource.requestContent, data: trackData)
         mockRuntime.simulateComingEvent(event: trackEvent)
 
-        waitFor(interval: 1)
+        waitForProcessing()
 
         let expectedVars = [
             "ce": "UTF-8",
@@ -108,7 +108,7 @@ class AnalyticsTrackTests : AnalyticsFunctionalTestBase {
         let trackEvent = Event(name: "Generic track event", type: EventType.genericTrack, source: EventSource.requestContent, data: trackData)
         mockRuntime.simulateComingEvent(event: trackEvent)
 
-        waitFor(interval: 1)
+        waitForProcessing()
 
         let expectedVars = [
             "ce": "UTF-8",
@@ -144,7 +144,7 @@ class AnalyticsTrackTests : AnalyticsFunctionalTestBase {
         let trackEvent = Event(name: "Generic track event", type: EventType.genericTrack, source: EventSource.requestContent, data: trackData)
         mockRuntime.simulateComingEvent(event: trackEvent)
 
-        waitFor(interval: 1)
+        waitForProcessing()
 
         let expectedVars = [
             "ce": "UTF-8",
@@ -188,7 +188,7 @@ class AnalyticsTrackTests : AnalyticsFunctionalTestBase {
         let trackEvent = Event(name: "Generic track event", type: EventType.genericTrack, source: EventSource.requestContent, data: trackData)
         mockRuntime.simulateComingEvent(event: trackEvent)
 
-        waitFor(interval: 1)
+        waitForProcessing()
 
         let expectedVars = [
             "ce": "UTF-8",
@@ -228,7 +228,7 @@ class AnalyticsTrackTests : AnalyticsFunctionalTestBase {
         let trackEvent = Event(name: "Generic track event", type: EventType.genericTrack, source: EventSource.requestContent, data: trackData)
         mockRuntime.simulateComingEvent(event: trackEvent)
 
-        waitFor(interval: 1)
+        waitForProcessing()
 
         let expectedVars = [
             "ce": "UTF-8",
@@ -270,7 +270,7 @@ class AnalyticsTrackTests : AnalyticsFunctionalTestBase {
         let trackEvent = Event(name: "Generic track event", type: EventType.genericTrack, source: EventSource.requestContent, data: trackData)
         mockRuntime.simulateComingEvent(event: trackEvent)
 
-        waitFor(interval: 1)
+        waitForProcessing()
 
         let expectedVars = [
             "ce": "UTF-8",
@@ -295,5 +295,5 @@ class AnalyticsTrackTests : AnalyticsFunctionalTestBase {
                   host: "https://test.com/b/ss/rsid/0/",
                   vars: expectedVars,
                   contextData: expectedContextData)
-    }
+    }    
 }

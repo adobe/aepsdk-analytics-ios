@@ -36,7 +36,7 @@ class AnalyticsIDTests : AnalyticsFunctionalTestBase {
         
         mockRuntime.simulateComingEvent(event: trackEvent)
                 
-        waitFor(interval: 1)
+        waitForProcessing()
         
         let expectedVars = [
             "ce": "UTF-8",
@@ -72,7 +72,7 @@ class AnalyticsIDTests : AnalyticsFunctionalTestBase {
         resetExtension()
         
         dispatchDefaultConfigAndIdentityStates()
-        waitFor(interval: 1.0)
+        waitForProcessing()
         
         
         let trackData: [String: Any] = [
@@ -86,7 +86,7 @@ class AnalyticsIDTests : AnalyticsFunctionalTestBase {
         
         mockRuntime.simulateComingEvent(event: trackEvent)
                 
-        waitFor(interval: 1)
+        waitForProcessing()
         
         let expectedVars = [
             "ce": "UTF-8",
@@ -125,7 +125,7 @@ class AnalyticsIDTests : AnalyticsFunctionalTestBase {
         
         dispatchDefaultConfigAndIdentityStates()
                 
-        waitFor(interval: 1.0)
+        waitForProcessing()
         
         // Id request was succesfully sent
         verifyHit(request: mockNetworkService?.calledNetworkRequests[0], host: "https://test.com/id?mcorgid=orgid&mid=mid")
@@ -139,7 +139,7 @@ class AnalyticsIDTests : AnalyticsFunctionalTestBase {
         dispatchDefaultConfigAndIdentityStates(configData: [
             AnalyticsTestConstants.Configuration.EventDataKeys.GLOBAL_PRIVACY : "optunknown"
         ])
-        waitFor(interval: 1.0)
+        waitForProcessing()
         
         // No id request should be sent
         XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 0)
@@ -159,7 +159,7 @@ class AnalyticsIDTests : AnalyticsFunctionalTestBase {
         
         dispatchDefaultConfigAndIdentityStates()
                 
-        waitFor(interval: 1.0)
+        waitForProcessing()
                 
         // Id request was succesfully sent
         verifyHit(request: mockNetworkService?.calledNetworkRequests[0], host: "https://test.com/id?mcorgid=orgid&mid=mid")
@@ -172,7 +172,7 @@ class AnalyticsIDTests : AnalyticsFunctionalTestBase {
         resetExtension()
         
         dispatchDefaultConfigAndIdentityStates()
-        waitFor(interval: 0.5)
+        waitForProcessing()
         
         // No id request should be sent
         XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 0)
@@ -186,7 +186,7 @@ class AnalyticsIDTests : AnalyticsFunctionalTestBase {
             AnalyticsTestConstants.Configuration.EventDataKeys.GLOBAL_PRIVACY : "optedout"
         ])
         
-        waitFor(interval: 0.5)
+        waitForProcessing()
                                 
         // No id request should be sent
         XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 0)
@@ -205,7 +205,7 @@ class AnalyticsIDTests : AnalyticsFunctionalTestBase {
         
         dispatchDefaultConfigAndIdentityStates()
                 
-        waitFor(interval: 0.5)
+        waitForProcessing()
                                 
         // No id request should be sent
         XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 1)
@@ -226,7 +226,7 @@ class AnalyticsIDTests : AnalyticsFunctionalTestBase {
             AnalyticsTestConstants.Configuration.EventDataKeys.MARKETING_CLOUD_ORGID_KEY : ""
         ])
                 
-        waitFor(interval: 0.5)
+        waitForProcessing()
         
         verifyIdentityChange(aid: "*", vid: nil)
     }
@@ -240,7 +240,7 @@ class AnalyticsIDTests : AnalyticsFunctionalTestBase {
         let event = Event(name: "", type: EventType.analytics, source: EventSource.requestIdentity, data: data)
         mockRuntime.simulateComingEvent(event: event)
         
-        waitFor(interval: 0.5)
+        waitForProcessing()
         
         verifyIdentityChange(aid: nil, vid: "myvid")
     }

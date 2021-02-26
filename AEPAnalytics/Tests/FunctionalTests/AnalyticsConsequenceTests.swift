@@ -36,7 +36,7 @@ class AnalyticsConsequenceTests : AnalyticsFunctionalTestBase {
         ]
         let ruleEngineEvent = Event(name: "Rule event", type: EventType.rulesEngine, source: EventSource.responseContent, data: eventData)
         mockRuntime.simulateComingEvent(event: ruleEngineEvent)
-        waitFor(interval: 1)
+        waitForProcessing()
         
         let expectedVars = [
             "ce": "UTF-8",
@@ -77,7 +77,7 @@ class AnalyticsConsequenceTests : AnalyticsFunctionalTestBase {
         ]
         let ruleEngineEvent = Event(name: "Rule event", type: EventType.rulesEngine, source: EventSource.responseContent, data: eventData)
         mockRuntime.simulateComingEvent(event: ruleEngineEvent)
-        waitFor(interval: 1)
+        waitForProcessing()
         
         XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 0)
     }

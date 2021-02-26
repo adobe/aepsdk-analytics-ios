@@ -49,7 +49,7 @@ class AnalyticsTrack_LifecycleTests : AnalyticsFunctionalTestBase {
         
         mockRuntime.simulateComingEvent(event: trackEvent)
                 
-        waitFor(interval: 1)
+        waitForProcessing()
         
         let expectedVars = [
             "ce": "UTF-8",
@@ -116,7 +116,7 @@ class AnalyticsTrack_LifecycleTests : AnalyticsFunctionalTestBase {
         simulateLifecycleState(data: lifecycleSharedState)
         let lifecycleResponse = Event(name: "", type: EventType.lifecycle, source: EventSource.responseContent, data: lifecycleSharedState)
         mockRuntime.simulateComingEvent(event: lifecycleResponse)
-        waitFor(interval: 1)
+        waitForProcessing()
         
         XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 2)
             
@@ -215,7 +215,7 @@ class AnalyticsTrack_LifecycleTests : AnalyticsFunctionalTestBase {
         simulateLifecycleState(data: lifecycleEventData)
         mockRuntime.simulateComingEvent(event: lifecycleResponse)
         
-        waitFor(interval: 1)
+        waitForProcessing()
         
         XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 2)
             

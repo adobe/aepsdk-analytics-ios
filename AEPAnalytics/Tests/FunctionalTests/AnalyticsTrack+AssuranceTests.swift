@@ -32,7 +32,7 @@ class AnalyticsTrack_AssuranceTests : AnalyticsFunctionalTestBase {
         let event1 = Event(name: "Generic track event", type: EventType.genericTrack, source: EventSource.requestContent, data: trackData)
         mockRuntime.simulateComingEvent(event: event1)
         
-        waitFor(interval: 0.5)
+        waitForProcessing()
         
         XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 1)
         let payload = mockNetworkService?.calledNetworkRequests[0]?.connectPayload
@@ -51,12 +51,12 @@ class AnalyticsTrack_AssuranceTests : AnalyticsFunctionalTestBase {
         let event1 = Event(name: "Generic track event", type: EventType.genericTrack, source: EventSource.requestContent, data: trackData)
         mockRuntime.simulateComingEvent(event: event1)
         
-        waitFor(interval: 0.5)
+        waitForProcessing()
         
         simulateAssuranceState()
         let event2 = Event(name: "Generic track event", type: EventType.genericTrack, source: EventSource.requestContent, data: trackData)
         mockRuntime.simulateComingEvent(event: event1)
-        waitFor(interval: 0.5)
+        waitForProcessing()
                 
         XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 2)
         let payload1 = mockNetworkService?.calledNetworkRequests[0]?.connectPayload

@@ -48,7 +48,7 @@ class AnalyticsQueueTests : AnalyticsFunctionalTestBase {
         mockRuntime.simulateComingEvent(event: event2)
         
         dispatchGetQueueSize()
-        waitFor(interval: 0.5)
+        waitForProcessing()
         verifyQueueSize(size: 2)
         
         // Dispatch lifecycle start
@@ -60,7 +60,7 @@ class AnalyticsQueueTests : AnalyticsFunctionalTestBase {
         mockRuntime.simulateComingEvent(event: event3)
         
         dispatchGetQueueSize()
-        waitFor(interval: 0.5)
+        waitForProcessing()
         verifyQueueSize(size: 3)
     }
     
@@ -80,7 +80,7 @@ class AnalyticsQueueTests : AnalyticsFunctionalTestBase {
         mockNetworkService?.reset()
         
         dispatchForceHitProcessing()
-        waitFor(interval: 0.5)
+        waitForProcessing()
         
         // Should force send both requests
         XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 2)
@@ -100,7 +100,7 @@ class AnalyticsQueueTests : AnalyticsFunctionalTestBase {
 
         dispatchClearQueue()
         dispatchGetQueueSize()
-        waitFor(interval: 0.5)
+        waitForProcessing()
         
         verifyQueueSize(size: 0)
     }
@@ -120,13 +120,13 @@ class AnalyticsQueueTests : AnalyticsFunctionalTestBase {
         let event2 = Event(name: "Generic track event", type: EventType.genericTrack, source: EventSource.requestContent, data: trackData)
         mockRuntime.simulateComingEvent(event: event2)
         
-        waitFor(interval: 0.5)
+        waitForProcessing()
         XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 0)
         
         let event3 = Event(name: "Generic track event", type: EventType.genericTrack, source: EventSource.requestContent, data: trackData)
         mockRuntime.simulateComingEvent(event: event3)
         
-        waitFor(interval: 0.5)
+        waitForProcessing()
         XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 3)
     }
 }

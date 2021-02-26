@@ -44,7 +44,7 @@ class AnalyticsTrack_PlacesTests : AnalyticsFunctionalTestBase {
         
         mockRuntime.simulateComingEvent(event: trackEvent)
                 
-        waitFor(interval: 1)
+        waitForProcessing()
         
         let expectedVars = [
             "ce": "UTF-8",
@@ -103,7 +103,7 @@ class AnalyticsTrack_PlacesTests : AnalyticsFunctionalTestBase {
         
         mockRuntime.simulateComingEvent(event: trackEvent)
                 
-        waitFor(interval: 1)
+        waitForProcessing()
         
         let expectedVars = [
             "ce": "UTF-8",
