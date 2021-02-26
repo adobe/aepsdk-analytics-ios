@@ -612,7 +612,7 @@ public class Analytics: NSObject, Extension {
 
         analyticsProperties.setMostRecentHitTimestamp(timestampInSeconds: timeStampInSeconds)
 
-        let analyticsData = processAnalyticsContextData(trackData: eventData)
+        let analyticsData = processAnalyticsContextData(trackData: eventData, timestamp: timeStampInSeconds)
         let analyticsVars = processAnalyticsVars(trackData: eventData, timestamp: timeStampInSeconds)
 
         let payload = URL.buildAnalyticsPayload(analyticsState: analyticsState, data: analyticsData, vars: analyticsVars)
@@ -623,8 +623,9 @@ public class Analytics: NSObject, Extension {
     /// Creates the context data Dictionary from the `trackData`
     /// - Parameters:
     ///     - trackData: Dictionary containing tracking data
+    ///     - timestamp: timestamp to use for tracking
     ///     - Returns a `Dictionary` containing the context data.
-    func processAnalyticsContextData(trackData: [String: Any]?) -> [String: String] {
+    func processAnalyticsContextData(trackData: [String: Any]?, timestamp: TimeInterval) -> [String: String] {
         guard let trackData = trackData else {
             Log.debug(label: LOG_TAG, "processAnalyticsContextData - trackData is nil.")
             return [:]
@@ -643,9 +644,9 @@ public class Analytics: NSObject, Extension {
         }
         let lifecycleSessionStartTimestamp = analyticsState.lifecycleSessionStartTimestamp
         if lifecycleSessionStartTimestamp > 0 {
-            let timeSinceLaunchInSeconds = Date().timeIntervalSince1970 - lifecycleSessionStartTimestamp
-            if timeSinceLaunchInSeconds > 0 && timeSinceLaunchInSeconds.isLessThanOrEqualTo( analyticsState.lifecycleMaxSessionLength) {
-                analyticsData[AnalyticsConstants.ContextDataKeys.TIME_SINCE_LAUNCH_KEY] = "\(timeSinceLaunchInSeconds)"
+            let timeSinceLaunchInSeconds = timestamp - lifecycleSessionStartTimestamp
+            if timeSinceLaunchInSeconds > 0 && timeSinceLaunchInSeconds.isLessThanOrEqualTo(analyticsState.lifecycleMaxSessionLength) {
+                analyticsData[AnalyticsConstants.ContextDataKeys.TIME_SINCE_LAUNCH_KEY] = String(Int(timeSinceLaunchInSeconds))
             }
         }
         if analyticsState.privacyStatus == .unknown {

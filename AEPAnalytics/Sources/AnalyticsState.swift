@@ -146,8 +146,8 @@ class AnalyticsState {
         if let lifecycleSessionStartTime = lifecycleData[LifeCycleEventDataKeys.SESSION_START_TIMESTAMP] as? TimeInterval {
             lifecycleSessionStartTimestamp = lifecycleSessionStartTime
         }
-        if let lifecycleMaxSessionLen = lifecycleData[LifeCycleEventDataKeys.MAX_SESSION_LENGTH] as? TimeInterval {
-            lifecycleMaxSessionLength = lifecycleMaxSessionLen
+        if let lifecycleMaxSessionLength = lifecycleData[LifeCycleEventDataKeys.MAX_SESSION_LENGTH] as? TimeInterval {
+            self.lifecycleMaxSessionLength = lifecycleMaxSessionLength
         }
         if let lifecyleContextData = lifecycleData[LifeCycleEventDataKeys.LIFECYCLE_CONTEXT_DATA] as? [String: String] {
             if let operatingSystem = lifecyleContextData[LifeCycleEventDataKeys.OPERATING_SYSTEM] {
