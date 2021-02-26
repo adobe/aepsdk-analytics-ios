@@ -47,7 +47,7 @@ class AnalyticsConsequenceTests : AnalyticsFunctionalTestBase {
             "mid" : "mid",
             "aamb" : "blob",
             "aamlh" : "lochint",
-            "ts" : String((Int(ruleEngineEvent.timestamp.timeIntervalSince1970)))
+            "ts" : String(ruleEngineEvent.timestamp.getUnixTimeInSeconds())
         ]
         let expectedContextData = [
             "k1" : "v1",

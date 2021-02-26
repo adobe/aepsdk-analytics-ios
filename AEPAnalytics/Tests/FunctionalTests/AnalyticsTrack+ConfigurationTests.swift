@@ -93,7 +93,7 @@ class AnalyticsTrack_ConfigurationTests : AnalyticsFunctionalTestBase {
             "mid" : "mid",
             "aamb" : "blob",
             "aamlh" : "lochint",
-            "ts" : String((Int(trackEvent.timestamp.timeIntervalSince1970)))
+            "ts" : String(trackEvent.timestamp.getUnixTimeInSeconds())
         ]
 
         let expectedContextData = [
@@ -143,7 +143,7 @@ class AnalyticsTrack_ConfigurationTests : AnalyticsFunctionalTestBase {
             "mid" : "mid",
             "aamb" : "blob",
             "aamlh" : "lochint",
-            "ts" : String((Int(trackEvent.timestamp.timeIntervalSince1970)))
+            "ts" : String(trackEvent.timestamp.getUnixTimeInSeconds())
         ]
 
         let expectedContextData = [

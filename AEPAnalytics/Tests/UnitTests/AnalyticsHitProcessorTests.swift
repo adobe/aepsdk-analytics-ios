@@ -137,7 +137,7 @@ class AnalyticsHitProcessorTests: XCTestCase {
 
         let lastHitTimestamp = Date(timeIntervalSinceNow: 10).timeIntervalSince1970
         let hitTimestamp = Date().timeIntervalSince1970
-        let payload = "payload&ts=\(Int(hitTimestamp))"
+        let payload = "payload&ts=\(Int64(hitTimestamp))"
 
         // Enable offline tracking
         analyticsState.offlineEnabled = true
@@ -159,7 +159,7 @@ class AnalyticsHitProcessorTests: XCTestCase {
         // verify
         wait(for: [expectation], timeout: 0.5)
 
-        XCTAssertEqual(mockNetworkService?.connectAsyncCalledWithNetworkRequest?.connectPayload, "payload&ts=\(Int(expectedHitTimestamp))")
+        XCTAssertEqual(mockNetworkService?.connectAsyncCalledWithNetworkRequest?.connectPayload, "payload&ts=\(Int64(expectedHitTimestamp))")
         XCTAssertEqual(hitProcessor.lastHitTimestamp, expectedHitTimestamp)
     }
 

@@ -646,7 +646,7 @@ public class Analytics: NSObject, Extension {
         if lifecycleSessionStartTimestamp > 0 {
             let timeSinceLaunchInSeconds = timestamp - lifecycleSessionStartTimestamp
             if timeSinceLaunchInSeconds > 0 && timeSinceLaunchInSeconds.isLessThanOrEqualTo(analyticsState.lifecycleMaxSessionLength) {
-                analyticsData[AnalyticsConstants.ContextDataKeys.TIME_SINCE_LAUNCH_KEY] = String(Int(timeSinceLaunchInSeconds))
+                analyticsData[AnalyticsConstants.ContextDataKeys.TIME_SINCE_LAUNCH_KEY] = String(Int64(timeSinceLaunchInSeconds))
             }
         }
         if analyticsState.privacyStatus == .unknown {
@@ -696,7 +696,7 @@ public class Analytics: NSObject, Extension {
         analyticsVars[AnalyticsConstants.Request.FORMATTED_TIMESTAMP_KEY] = analyticsProperties.timezoneOffset
 
         if analyticsState.offlineEnabled {
-            analyticsVars[AnalyticsConstants.Request.STRING_TIMESTAMP_KEY] = "\(Int(timestamp))"
+            analyticsVars[AnalyticsConstants.Request.STRING_TIMESTAMP_KEY] = String((Int64(timestamp)))
         }
 
         if analyticsState.isVisitorIdServiceEnabled() {

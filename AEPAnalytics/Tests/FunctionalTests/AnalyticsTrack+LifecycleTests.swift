@@ -60,7 +60,7 @@ class AnalyticsTrack_LifecycleTests : AnalyticsFunctionalTestBase {
             "mid" : "mid",
             "aamb" : "blob",
             "aamlh" : "lochint",
-            "ts" : String(Int(trackEvent.timestamp.timeIntervalSince1970)),
+            "ts" : String(trackEvent.timestamp.getUnixTimeInSeconds()),
             "pageName" : "mockAppName",
             "t" : TimeZone.current.getOffsetFromGmtInMinutes()
         ]
@@ -160,7 +160,7 @@ class AnalyticsTrack_LifecycleTests : AnalyticsFunctionalTestBase {
             "mid" : "mid",
             "aamb" : "blob",
             "aamlh" : "lochint",
-            "ts" : String(Int(lifecycleResponse.timestamp.timeIntervalSince1970)),
+            "ts" : String(lifecycleResponse.timestamp.getUnixTimeInSeconds()),
             "pageName" : "mockAppName",
             "t" : TimeZone.current.getOffsetFromGmtInMinutes()
         ]
@@ -229,7 +229,7 @@ class AnalyticsTrack_LifecycleTests : AnalyticsFunctionalTestBase {
             "mid" : "mid",
             "aamb" : "blob",
             "aamlh" : "lochint",
-            "ts" : String(Int(previousSessionPauseTs + 1)),
+            "ts" : String(Int64(previousSessionPauseTs + 1)),
             "pageName" : "mockAppName",
             "t" : TimeZone.current.getOffsetFromGmtInMinutes()
         ]
@@ -259,7 +259,8 @@ class AnalyticsTrack_LifecycleTests : AnalyticsFunctionalTestBase {
             "mid" : "mid",
             "aamb" : "blob",
             "aamlh" : "lochint",
-            "ts" : String(Int(lifecycleResponse.timestamp.timeIntervalSince1970)),
+            "ts" : String(lifecycleResponse.timestamp.getUnixTimeInSeconds()),
+            
             "pageName" : "mockAppName",
             "t" : TimeZone.current.getOffsetFromGmtInMinutes()
         ]
@@ -326,7 +327,7 @@ class AnalyticsTrack_LifecycleTests : AnalyticsFunctionalTestBase {
             "mid" : "mid",
             "aamb" : "blob",
             "aamlh" : "lochint",
-            "ts" : String(Int(trackEventAfter10Sec.timestamp.timeIntervalSince1970)),
+            "ts" : String(trackEventAfter10Sec.timestamp.getUnixTimeInSeconds()),
             "pageName" : "mockAppName",
             "t" : TimeZone.current.getOffsetFromGmtInMinutes()
         ]
