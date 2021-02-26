@@ -32,8 +32,6 @@ end
 target 'YOUR_TARGET_NAME' do
     pod 'AEPAnalytics'
     pod 'AEPCore'
-    pod 'AEPServices'
-    pod 'AEPIdentity'
 end
 ```
 
