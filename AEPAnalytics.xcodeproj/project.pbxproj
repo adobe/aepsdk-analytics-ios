@@ -80,6 +80,7 @@
 		D6D5F35F25C88070008148B3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D6D5F35E25C88070008148B3 /* Assets.xcassets */; };
 		D6D5F36225C88070008148B3 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D6D5F36125C88070008148B3 /* Preview Assets.xcassets */; };
 		D6D5F36525C88070008148B3 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D6D5F36325C88070008148B3 /* LaunchScreen.storyboard */; };
+		D6F54EED2612452E000362D1 /* AnalyticsTrack+TargetTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6F54EEC2612452E000362D1 /* AnalyticsTrack+TargetTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -184,6 +185,7 @@
 		D6D5F36125C88070008148B3 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		D6D5F36425C88070008148B3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		D6D5F36625C88070008148B3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D6F54EEC2612452E000362D1 /* AnalyticsTrack+TargetTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AnalyticsTrack+TargetTests.swift"; sourceTree = "<group>"; };
 		E274320DD947E7BB2B2E8A33 /* Pods-AEPAnalyticsTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AEPAnalyticsTests.release.xcconfig"; path = "Target Support Files/Pods-AEPAnalyticsTests/Pods-AEPAnalyticsTests.release.xcconfig"; sourceTree = "<group>"; };
 		EF12C9A6B24908684CC8EA6C /* Pods-AEPAnalytics.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AEPAnalytics.release.xcconfig"; path = "Target Support Files/Pods-AEPAnalytics/Pods-AEPAnalytics.release.xcconfig"; sourceTree = "<group>"; };
 		F09743C2FA04519BE26C974E /* Pods-AnalyticsSampleApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AnalyticsSampleApp.release.xcconfig"; path = "Target Support Files/Pods-AnalyticsSampleApp/Pods-AnalyticsSampleApp.release.xcconfig"; sourceTree = "<group>"; };
@@ -362,6 +364,7 @@
 				AC73D39125E6F4160068AB96 /* AnalyticsTrack+LifecycleTests.swift */,
 				AC73D39425E6F4160068AB96 /* AnalyticsTrack+PlacesTests.swift */,
 				AC73D39225E6F4160068AB96 /* AnalyticsTrackTests.swift */,
+				D6F54EEC2612452E000362D1 /* AnalyticsTrack+TargetTests.swift */,
 			);
 			path = FunctionalTests;
 			sourceTree = "<group>";
@@ -802,6 +805,7 @@
 				AC73D3E125E6F5060068AB96 /* MockNetworking.swift in Sources */,
 				AC73D3D025E6F5010068AB96 /* AnalyticsIDTests.swift in Sources */,
 				AC73D3D125E6F5010068AB96 /* AnalyticsTrack+AssuranceTests.swift in Sources */,
+				D6F54EED2612452E000362D1 /* AnalyticsTrack+TargetTests.swift in Sources */,
 				AC73D3D325E6F5010068AB96 /* AnalyticsFunctionalTestBase.swift in Sources */,
 				AC73D3E825E6F5060068AB96 /* MockDataQueuing.swift in Sources */,
 				AC26B11E25E76782008AC68F /* AnalyticsHitReorderTests.swift in Sources */,

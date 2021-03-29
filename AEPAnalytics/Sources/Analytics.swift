@@ -297,6 +297,14 @@ public class Analytics: NSObject, Extension {
             dispatchQueueSizeResponse(event: event, queueSize: queueSize)
         } else if eventData.keys.contains(AnalyticsConstants.EventDataKeys.FORCE_KICK_HITS) {
             analyticsDatabase?.kick(ignoreBatchLimit: true)
+        } else { // this is an internal track action / state event
+            let softDependencies: [String] = [
+                AnalyticsConstants.Lifecycle.EventDataKeys.SHARED_STATE_NAME,
+                AnalyticsConstants.Assurance.EventDataKeys.SHARED_STATE_NAME,
+                AnalyticsConstants.Places.EventDataKeys.SHARED_STATE_NAME
+            ]
+            updateAnalyticsState(forEvent: event, dependencies: analyticsHardDependencies + softDependencies)
+            handleTrackRequest(event: event, eventData: eventData)
         }
     }
 
