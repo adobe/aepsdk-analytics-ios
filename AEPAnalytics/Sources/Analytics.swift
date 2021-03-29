@@ -284,6 +284,13 @@ public class Analytics: NSObject, Extension {
         }
     }
 
+    /// Handles the following events
+    /// `EventType.analytics` and `EventSource.requestContent`
+    ///  The Analytics Request Content event can contain a clearQueue, getQueueSize, sendQueuedHits, or internal track event.
+    ///  If it is an internal track event, an internal track request will be queued containing the event's context data and action name.
+    ///  State data from the hard dependencies (Configuration and Identity) will be used when generating the request as well as state
+    ///  data from any soft dependencies present (Lifecycle, Assurance, or Places).
+    /// - Parameter event: The `Event` to be processed.
     private func handleAnalyticsRequestContentEvent(_ event: Event) {
         guard let eventData = event.data, !eventData.isEmpty else {
             Log.debug(label: LOG_TAG, "handleAnalyticsRequestContentEvent - Returning early, event data is nil or empty.")

@@ -39,13 +39,28 @@ class AnalyticsTrack_TargetTests : AnalyticsFunctionalTestBase {
 
         waitForProcessing()
 
+        let expectedVars = [
+            "ce": "UTF-8",
+            "cp": "foreground",
+            "mid" : "mid",
+            "aamb" : "blob",
+            "aamlh" : "lochint",
+            "tnta" : "285408:0:0|2",
+            "pe" : "tnt",
+            "pev2" : "ADBINTERNAL:AnalyticsForTarget",
+            "ts" : String(event1.timestamp.getUnixTimeInSeconds())
+        ]
+
+        let expectedContextData = [
+            "a.internalaction" : "AnalyticsForTarget",
+            "a.target.sessionId" : "8E0988F2-57C7-42CA-B5A6-6458D370F315"
+        ]
+
+        // verify
         XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 1)
-        let payload = mockNetworkService?.calledNetworkRequests[0]?.connectPayload ?? ""
-        let contextData = AnalyticsRequestHelper.getContextData(source: payload) as? [String: String]
-        XCTAssertEqual("AnalyticsForTarget", contextData?["a.internalaction"])
-        XCTAssertEqual("8E0988F2-57C7-42CA-B5A6-6458D370F315", contextData?["a.target.sessionId"])
-        XCTAssertTrue(payload.contains("tnta=285408%3A0%3A0%7C2"))
-        XCTAssertTrue(payload.contains("&pe=tnt"))
-        XCTAssertTrue(payload.contains("&pev2=ADBINTERNAL%3AAnalyticsForTarget"))
+        verifyHit(request: mockNetworkService?.calledNetworkRequests[0],
+                  host: "https://test.com/b/ss/rsid/0/",
+                  vars: expectedVars,
+                  contextData: expectedContextData)
     }
 }
