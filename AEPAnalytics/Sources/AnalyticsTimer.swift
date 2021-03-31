@@ -30,6 +30,7 @@ class AnalyticsTimer {
         self.dispatchQueue = dispatchQueue
     }
 
+    /// Schedules the referrer task after *timeout*
     func startReferrerTimer(timeout: TimeInterval, task: @escaping () -> Void) {
         if self.referrerDispatchWorkItem != nil {
             Log.warning(label: self.LOG_TAG, "Referrer timer is already running.")
@@ -51,6 +52,7 @@ class AnalyticsTimer {
         referrerDispatchWorkItem = nil
     }
 
+    /// Schedules the lifecycle task after *timeout* 
     func startLifecycleTimer(timeout: TimeInterval, task: @escaping () -> Void) {
         if self.lifecycleDispatchWorkItem != nil {
             Log.warning(label: self.LOG_TAG, "Lifecycle timer is already running.")
