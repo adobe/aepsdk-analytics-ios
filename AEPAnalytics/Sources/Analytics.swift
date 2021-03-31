@@ -30,13 +30,24 @@ public class Analytics: NSObject, Extension {
     private var analyticsDatabase: AnalyticsDatabase?
     private var analyticsProperties: AnalyticsProperties
     private var analyticsState: AnalyticsState
-    private let analyticsHardDependencies: [String] = [AnalyticsConstants.Configuration.EventDataKeys.SHARED_STATE_NAME, AnalyticsConstants.Identity.EventDataKeys.SHARED_STATE_NAME]
+
+    private let analyticsHardDependencies: [String] = [
+        AnalyticsConstants.Configuration.EventDataKeys.SHARED_STATE_NAME,
+        AnalyticsConstants.Identity.EventDataKeys.SHARED_STATE_NAME
+    ]
+
+    private let analyticsSoftDependencies: [String] = [
+        AnalyticsConstants.Lifecycle.EventDataKeys.SHARED_STATE_NAME,
+        AnalyticsConstants.Assurance.EventDataKeys.SHARED_STATE_NAME,
+        AnalyticsConstants.Places.EventDataKeys.SHARED_STATE_NAME
+    ]
     // The `DispatchQueue` used to process events in FIFO order and wait for Lifecycle and Acquisition response events.
     private var dispatchQueue: DispatchQueue = DispatchQueue(label: AnalyticsConstants.FRIENDLY_NAME)
     // Maintains the boot up state of sdk. The first shared state update event indicates the boot up completion.
     private var sdkBootUpCompleted = false
     // MARK: Extension
 
+    /// Initializes Analytics extension and its dependencies
     public required init?(runtime: ExtensionRuntime) {
         self.runtime = runtime
         // Migrate datastore for apps switching from v4 or v5 implementations.
@@ -53,7 +64,7 @@ public class Analytics: NSObject, Extension {
     }
 
     #if DEBUG
-        // Internal init added for tests
+        /// Internal init added for tests
         init(runtime: ExtensionRuntime, state: AnalyticsState, properties: AnalyticsProperties) {
             self.runtime = runtime
             self.analyticsTimer = AnalyticsTimer(dispatchQueue: dispatchQueue)
@@ -66,6 +77,7 @@ public class Analytics: NSObject, Extension {
         }
     #endif
 
+    /// Invoked when the Analytics extension has been registered by the `EventHub`
     public func onRegistered() {
         registerListener(type: EventType.genericTrack, source: EventSource.requestContent, listener: handleIncomingEvent)
         registerListener(type: EventType.rulesEngine, source: EventSource.responseContent, listener: handleIncomingEvent)
@@ -78,20 +90,22 @@ public class Analytics: NSObject, Extension {
         registerListener(type: EventType.hub, source: EventSource.sharedState, listener: handleIncomingEvent)
     }
 
+    /// Invoked when the Analytics extension has been unregistered by the `EventHub`, currently a no-op.
     public func onUnregistered() {}
 
+    /// Called before each `Event` processed by Analytics extension
+    /// - Parameter event: event that will be processed next
+    /// - Returns: *true* if Configuration and Identity shared states are available
     public func readyForEvent(_ event: Event) -> Bool {
         let configurationStatus = getSharedState(extensionName: AnalyticsConstants.Configuration.EventDataKeys.SHARED_STATE_NAME, event: event)?.status ?? .none
         let identityStatus = getSharedState(extensionName: AnalyticsConstants.Identity.EventDataKeys.SHARED_STATE_NAME, event: event)?.status ?? .none
         return configurationStatus == .set && identityStatus == .set
     }
 
-    /**
-     Tries to retrieve the shared data for all the dependencies of the given event. When all the dependencies are resolved, it will update the `AnalyticsState` with the shared states.
-     - Parameters:
-          - event: The `Event` for which shared state is to be retrieved.
-          - dependencies: An array of names of event's dependencies.
-     */
+    /// Tries to retrieve the shared data for all the dependencies of the given event. When all the dependencies are resolved, it will update the `AnalyticsState` with the shared states.
+    /// - Parameters:
+    ///     - event: The `Event` for which shared state is to be retrieved.
+    ///     - dependencies: An array of names of event's dependencies.
     private func updateAnalyticsState(forEvent event: Event, dependencies: [String]) {
         var sharedStates = [String: [String: Any]?]()
         for extensionName in dependencies {
@@ -100,9 +114,9 @@ public class Analytics: NSObject, Extension {
         analyticsState.update(dataMap: sharedStates)
     }
 
-    /// Handles all `Events` heard by the Analytics Extension. The processing of events will
+    /// Handles all `Events` listened by the Analytics Extension. The processing of events will
     /// be done on the Analytics Extension's `DispatchQueue`.
-    /// - Parameter event: The instance of `Event` that needs to be processed.
+    ///  - Parameter event: the `Event` to be processed
     private func handleIncomingEvent(event: Event) {
         dispatchQueue.async {
             switch event.type {
@@ -130,6 +144,9 @@ public class Analytics: NSObject, Extension {
         }
     }
 
+    ///  Handles the following events
+    /// `EventType.rulesEngine` and `EventSource.responseContent`
+    ///  - Parameter event: the `Event` to be processed
     private func handleRuleEngineResponse(_ event: Event) {
         if event.data == nil {
             Log.trace(label: LOG_TAG, "Event with id \(event.id.uuidString) contained no data, ignoring.")
@@ -149,12 +166,7 @@ public class Analytics: NSObject, Extension {
             return
         }
 
-        let softDependencies: [String] = [
-            AnalyticsConstants.Lifecycle.EventDataKeys.SHARED_STATE_NAME,
-            AnalyticsConstants.Assurance.EventDataKeys.SHARED_STATE_NAME,
-            AnalyticsConstants.Places.EventDataKeys.SHARED_STATE_NAME
-        ]
-        updateAnalyticsState(forEvent: event, dependencies: analyticsHardDependencies + softDependencies)
+        updateAnalyticsState(forEvent: event, dependencies: analyticsHardDependencies + analyticsSoftDependencies)
 
         let consequenceDetail = consequence[AnalyticsConstants.EventDataKeys.DETAIL] as? [String: Any] ?? [:]
         handleTrackRequest(event: event, eventData: consequenceDetail)
@@ -162,23 +174,24 @@ public class Analytics: NSObject, Extension {
 
     /// Handle the following events
     ///`EventType.genericTrack` and `EventSource.requestContent`
-    /// - Parameter event: an event containing track data for processing
+    ///  - Parameter event: the `Event` to be processed
     private func handleGenericTrackEvent(_ event: Event) {
         guard event.type == EventType.genericTrack && event.source == EventSource.requestContent else {
             Log.debug(label: LOG_TAG, "handleAnalyticsTrackEvent - Ignoring track event (event is of unexpected type or source).")
             return
         }
 
-        let softDependencies: [String] = [
-            AnalyticsConstants.Lifecycle.EventDataKeys.SHARED_STATE_NAME,
-            AnalyticsConstants.Assurance.EventDataKeys.SHARED_STATE_NAME,
-            AnalyticsConstants.Places.EventDataKeys.SHARED_STATE_NAME
-        ]
-        updateAnalyticsState(forEvent: event, dependencies: analyticsHardDependencies + softDependencies)
+        updateAnalyticsState(forEvent: event, dependencies: analyticsHardDependencies + analyticsSoftDependencies)
         handleTrackRequest(event: event, eventData: event.data)
     }
 
-    func handleTrackRequest(event: Event, eventData: [String: Any]?) {
+    /// Handles track request from following events
+    ///`EventType.genericTrack` and `EventSource.requestContent`
+    ///`EventType.rulesEngine` and `EventSource.responseContent`
+    ///`EventType.analytics` and `EventSource.requestContent`
+    ///  - Parameter event: the `Event` to be processed
+    ///  - Parameter eventData: the track state/action data.
+    private func handleTrackRequest(event: Event, eventData: [String: Any]?) {
         guard let eventData = eventData, !eventData.isEmpty else {
             Log.debug(label: LOG_TAG, "track - event data is nil or empty.")
             return
@@ -190,9 +203,9 @@ public class Analytics: NSObject, Extension {
         }
     }
 
-    /// Processes Configuration Response content events to retrieve the configuration data and privacy status settings.
-    /// - Parameter:
-    ///   - event: The configuration response event
+    /// Handle the following events
+    ///`EventType.configuration` and `EventSource.responseContent`
+    ///  - Parameter event: the `Event` to be processed
     private func handleConfigurationResponseEvent(_ event: Event) {
         updateAnalyticsState(forEvent: event, dependencies: analyticsHardDependencies)
 
@@ -209,7 +222,7 @@ public class Analytics: NSObject, Extension {
         }
     }
 
-    /// Clears all the Analytics Properties and any queued hits in the HitsDatabase.
+    /// Clears all the Analytics Properties and any queued hits in AnalyticsDatabase.
     private func handleOptOut(event: Event) {
         Log.debug(label: LOG_TAG, "handleOptOut - Privacy status is opted-out. Queued Analytics hits, stored state data, and properties will be cleared.")
         analyticsDatabase?.reset()
@@ -244,13 +257,7 @@ public class Analytics: NSObject, Extension {
                 analyticsTimer.cancelReferrerTimer()
             }
         } else if event.type == EventType.lifecycle && event.source == EventSource.responseContent {
-            let softDependencies: [String] = [
-                AnalyticsConstants.Lifecycle.EventDataKeys.SHARED_STATE_NAME,
-                AnalyticsConstants.Assurance.EventDataKeys.SHARED_STATE_NAME,
-                AnalyticsConstants.Places.EventDataKeys.SHARED_STATE_NAME
-            ]
-            updateAnalyticsState(forEvent: event, dependencies: analyticsHardDependencies + softDependencies)
-
+            updateAnalyticsState(forEvent: event, dependencies: analyticsHardDependencies + analyticsSoftDependencies)
             trackLifecycle(event: event)
         }
     }
@@ -260,12 +267,7 @@ public class Analytics: NSObject, Extension {
     /// - Parameter event: The `Event` to be processed.
     private func handleAcquisitionEvent(_ event: Event) {
         if event.type == EventType.acquisition && event.source == EventSource.responseContent {
-            let softDependencies: [String] = [
-                AnalyticsConstants.Lifecycle.EventDataKeys.SHARED_STATE_NAME,
-                AnalyticsConstants.Assurance.EventDataKeys.SHARED_STATE_NAME
-            ]
-            updateAnalyticsState(forEvent: event, dependencies: analyticsHardDependencies + softDependencies)
-
+            updateAnalyticsState(forEvent: event, dependencies: analyticsHardDependencies + analyticsSoftDependencies)
             trackAcquisitionData(event: event)
         }
     }
@@ -288,8 +290,6 @@ public class Analytics: NSObject, Extension {
     /// `EventType.analytics` and `EventSource.requestContent`
     ///  The Analytics Request Content event can contain a clearQueue, getQueueSize, sendQueuedHits, or internal track event.
     ///  If it is an internal track event, an internal track request will be queued containing the event's context data and action name.
-    ///  State data from the hard dependencies (Configuration and Identity) will be used when generating the request as well as state
-    ///  data from any soft dependencies present (Lifecycle, Assurance, or Places).
     /// - Parameter event: The `Event` to be processed.
     private func handleAnalyticsRequestContentEvent(_ event: Event) {
         guard let eventData = event.data, !eventData.isEmpty else {
@@ -305,12 +305,7 @@ public class Analytics: NSObject, Extension {
         } else if eventData.keys.contains(AnalyticsConstants.EventDataKeys.FORCE_KICK_HITS) {
             analyticsDatabase?.kick(ignoreBatchLimit: true)
         } else { // this is an internal track action / state event
-            let softDependencies: [String] = [
-                AnalyticsConstants.Lifecycle.EventDataKeys.SHARED_STATE_NAME,
-                AnalyticsConstants.Assurance.EventDataKeys.SHARED_STATE_NAME,
-                AnalyticsConstants.Places.EventDataKeys.SHARED_STATE_NAME
-            ]
-            updateAnalyticsState(forEvent: event, dependencies: analyticsHardDependencies + softDependencies)
+            updateAnalyticsState(forEvent: event, dependencies: analyticsHardDependencies + analyticsSoftDependencies)
             handleTrackRequest(event: event, eventData: eventData)
         }
     }
@@ -420,9 +415,9 @@ public class Analytics: NSObject, Extension {
         dispatch(event: responseIdentityEvent)
     }
 
-    /// Creates a new analytics shared state then dispatches an analytics response identity event.
+    /// Dispatches an analytics response content event containing the queue size.
     /// - Parameters:
-    ///   - event: the event which triggered the analytics identity request.
+    ///   - event: the analytics request content event.
     private func dispatchQueueSizeResponse(event: Event, queueSize: Int) {
         let eventData = [
             AnalyticsConstants.EventDataKeys.QUEUE_SIZE: queueSize
@@ -432,6 +427,9 @@ public class Analytics: NSObject, Extension {
         dispatch(event: responseContentEvent)
     }
 
+    /// Dispatches an analytics response content event
+    /// - Parameters:
+    ///   - eventData: the response event data which includes serverResonse, headers, requestEventIdentifier, hitHost, hitURL corresponding to track request.
     private func dispatchAnalyticsTrackResponse(eventData: [String: Any]) {
         let responseEvent = Event.init(name: "AnalyticsResponse", type: EventType.analytics, source: EventSource.responseContent, data: eventData)
         dispatch(event: responseEvent)
@@ -507,7 +505,7 @@ public class Analytics: NSObject, Extension {
     /// If ignored session is present, it will be sent as part of the Lifecycle hit and no SessionInfo hit will be sent.
     /// - Parameters:
     ///     - event: the `Lifecycle Event` to process.
-    func trackLifecycle(event: Event) {
+    private func trackLifecycle(event: Event) {
         guard var eventLifecycleContextData: [String: String] = event.data?[AnalyticsConstants.Lifecycle.EventDataKeys.LIFECYCLE_CONTEXT_DATA] as? [String: String], !eventLifecycleContextData.isEmpty else {
             Log.debug(label: LOG_TAG, "trackLifecycle - Failed to track lifecycle event (context data was null or empty)")
             return
@@ -577,7 +575,7 @@ public class Analytics: NSObject, Extension {
     ///     - analyticsState: The `AnalyticsState` object representing shared states of other dependent
     ///      extensions
     ///     - event: The `acquisition event` to process
-    func trackAcquisitionData(event: Event) {
+    private func trackAcquisitionData(event: Event) {
         let acquisitionContextData = event.data?[AnalyticsConstants.EventDataKeys.CONTEXT_DATA] as? [String: String]
 
         if analyticsTimer.isReferrerTimerRunning() {
@@ -609,7 +607,7 @@ public class Analytics: NSObject, Extension {
     ///     - timeStampInSeconds: current event timestamp used for tracking
     ///     - isBackdatedHit: boolean indicating whether the data corresponds to backdated session hit
     ///     - eventUniqueIdentifier: the event unique identifier responsible for this track
-    func track(eventData: [String: Any]?, timeStampInSeconds: TimeInterval, isBackdatedHit: Bool, eventUniqueIdentifier: String) {
+    private func track(eventData: [String: Any]?, timeStampInSeconds: TimeInterval, isBackdatedHit: Bool, eventUniqueIdentifier: String) {
         guard eventData != nil else {
             Log.debug(label: LOG_TAG, "track - Dropping the request, eventData is nil.")
             return
@@ -640,7 +638,7 @@ public class Analytics: NSObject, Extension {
     ///     - trackData: Dictionary containing tracking data
     ///     - timestamp: timestamp to use for tracking
     ///     - Returns a `Dictionary` containing the context data.
-    func processAnalyticsContextData(trackData: [String: Any]?, timestamp: TimeInterval) -> [String: String] {
+    private func processAnalyticsContextData(trackData: [String: Any]?, timestamp: TimeInterval) -> [String: String] {
         guard let trackData = trackData else {
             Log.debug(label: LOG_TAG, "processAnalyticsContextData - trackData is nil.")
             return [:]
@@ -680,7 +678,7 @@ public class Analytics: NSObject, Extension {
     ///     - trackData: Dictionary containing tracking data
     ///     - timestamp: timestamp to use for tracking
     ///     - Returns a `Dictionary` containing the vars data
-    func processAnalyticsVars(trackData: [String: Any]?, timestamp: TimeInterval) -> [String: String] {
+    private func processAnalyticsVars(trackData: [String: Any]?, timestamp: TimeInterval) -> [String: String] {
         var analyticsVars: [String: String] = [:]
 
         guard let trackData = trackData else {
@@ -787,7 +785,7 @@ public class Analytics: NSObject, Extension {
     }
 
     /// Wait for lifecycle data after receiving Lifecycle Request event.
-    func waitForLifecycleData() {
+    private func waitForLifecycleData() {
         Log.debug(label: "Analytics", "waitForLifecycleData - Lifecycle timer scheduled with timeout \(AnalyticsConstants.Default.LIFECYCLE_RESPONSE_WAIT_TIMEOUT)")
         analyticsDatabase?.waitForAdditionalData(type: .lifecycle)
         analyticsTimer.startLifecycleTimer(timeout: AnalyticsConstants.Default.LIFECYCLE_RESPONSE_WAIT_TIMEOUT) { [weak self] in
@@ -797,7 +795,7 @@ public class Analytics: NSObject, Extension {
     }
 
     /// Wait for Acquisition data after receiving Acquisition Response event.
-    func waitForAcquisitionData(timeout: TimeInterval) {
+    private func waitForAcquisitionData(timeout: TimeInterval) {
         Log.debug(label: "Analytics", "waitForAcquisitionData - Referrer timer scheduled with timeout \(timeout)")
         analyticsDatabase?.waitForAdditionalData(type: .referrer)
         analyticsTimer.startReferrerTimer(timeout: timeout) { [weak self] in
