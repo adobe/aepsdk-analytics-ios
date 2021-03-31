@@ -14,13 +14,13 @@ on:
         required: true
         default: 'yes'
         
-      release_AEPAudience:
+      release_AEPAnalytics:
         description: 'release AEPAnalytics ("no" to skip)'
         required: true
         default: 'yes'
 
 jobs:
-  release_audience:
+  release_analytics:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v2
