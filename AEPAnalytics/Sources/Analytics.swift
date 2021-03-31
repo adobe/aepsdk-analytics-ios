@@ -429,7 +429,7 @@ public class Analytics: NSObject, Extension {
 
     /// Dispatches an analytics response content event
     /// - Parameters:
-    ///   - eventData: the response event data which includes serverResonse, headers, requestEventIdentifier, hitHost, hitURL corresponding to track request.
+    ///   - eventData: the response event data which includes serverResponse, headers, requestEventIdentifier, hitHost and hitURL corresponding to track request.
     private func dispatchAnalyticsTrackResponse(eventData: [String: Any]) {
         let responseEvent = Event.init(name: "AnalyticsResponse", type: EventType.analytics, source: EventSource.responseContent, data: eventData)
         dispatch(event: responseEvent)
