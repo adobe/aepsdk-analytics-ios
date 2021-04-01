@@ -51,3 +51,16 @@ lint:
 
 checkFormat:
 		swiftformat . --lint --swiftversion 5.2
+
+# release checks
+check-version:
+	(sh ./Script/version.sh $(VERSION))
+
+test-SPM-integration:
+	(sh ./Script/test-SPM.sh)
+
+test-podspec:
+	(sh ./Script/test-podspec.sh)
+
+pod-lint:
+	(pod lib lint --allow-warnings --verbose --swift-version=5.1)
