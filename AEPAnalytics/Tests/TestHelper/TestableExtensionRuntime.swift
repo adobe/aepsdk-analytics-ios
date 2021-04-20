@@ -102,4 +102,8 @@ class TestableExtensionRuntime: ExtensionRuntime {
     func startEvents() {}
 
     func stopEvents() {}
+
+    func getXDMSharedState(extensionName: String, event: Event?, barrier: Bool) -> SharedStateResult? {
+        return nil
+    }
 }
