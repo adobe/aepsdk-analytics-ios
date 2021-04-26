@@ -25,7 +25,7 @@ let package = Package(
         .library(name: "AEPAnalyticsStatic", type: .static, targets: ["AEPAnalytics"]),
     ],
     dependencies: [
-        .package(name: "AEPCore", url: "https://github.com/adobe/aepsdk-core-ios.git", .branch("main")),
+        .package(url: "https://github.com/adobe/aepsdk-core-ios.git", from: "3.0.0"),
     ],
     targets: [
         .target(name: "AEPAnalytics",
