@@ -17,22 +17,14 @@ let package = Package(
     name: "AEPAnalytics",
     platforms: [.iOS(.v10)],
     products: [
-        // default
         .library(name: "AEPAnalytics", targets: ["AEPAnalytics"]),
-        // dynamic
-        .library(name: "AEPAnalyticsDynamic", type: .dynamic, targets: ["AEPAnalytics"]),
-        // static
-        .library(name: "AEPAnalyticsStatic", type: .static, targets: ["AEPAnalytics"]),
     ],
     dependencies: [
-        .package(name: "AEPCore", url: "https://github.com/adobe/aepsdk-core-ios.git", .branch("main")),
+        .package(name: "AEPCore", url: "https://github.com/adobe/aepsdk-core-ios.git", from: "3.0.0"),
     ],
     targets: [
         .target(name: "AEPAnalytics",
                 dependencies: ["AEPCore", .product(name: "AEPServices", package: "AEPCore")],
-                path: "AEPAnalytics/Sources"),
-        .target(name: "AEPAnalyticsTests",
-                dependencies: ["AEPAnalytics", "AEPCore", .product(name: "AEPServices", package: "AEPCore")],
-                path: "AEPAnalytics/Tests"),
+                path: "AEPAnalytics/Sources")
     ]
 )
