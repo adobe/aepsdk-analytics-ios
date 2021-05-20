@@ -6,22 +6,22 @@ PODS:
     - AEPRulesEngine
     - AEPServices
     - AEPSignal
-  - AEPAssurance (1.1.0):
+  - AEPAssurance (1.1.1):
     - ACPCore (>= 2.9.0)
-    - AEPAssurance/xcframeworks (= 1.1.0)
-  - AEPAssurance/xcframeworks (1.1.0):
+    - AEPAssurance/xcframeworks (= 1.1.1)
+  - AEPAssurance/xcframeworks (1.1.1):
     - ACPCore (>= 2.9.0)
-  - AEPCore (3.1.1):
-    - AEPRulesEngine (= 1.0.0)
-    - AEPServices (= 3.1.1)
-  - AEPIdentity (3.1.1):
-    - AEPCore (= 3.1.1)
-  - AEPLifecycle (3.1.1):
-    - AEPCore (= 3.1.1)
-  - AEPRulesEngine (1.0.0)
-  - AEPServices (3.1.1)
-  - AEPSignal (3.1.1):
-    - AEPCore (= 3.1.1)
+  - AEPCore (3.1.3):
+    - AEPRulesEngine (= 1.0.1)
+    - AEPServices (= 3.1.3)
+  - AEPIdentity (3.1.3):
+    - AEPCore (= 3.1.3)
+  - AEPLifecycle (3.1.3):
+    - AEPCore (= 3.1.3)
+  - AEPRulesEngine (1.0.1)
+  - AEPServices (3.1.3)
+  - AEPSignal (3.1.3):
+    - AEPCore (= 3.1.3)
 
 DEPENDENCIES:
   - ACPCore (from `https://github.com/adobe/aepsdk-compatibility-ios.git`, branch `main`)
@@ -56,30 +56,30 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   ACPCore:
-    :commit: 4a91fb32b9c656251f127c7bf85823a72e51edf7
+    :commit: c43675de0c97ee76fd51b005e8c9cdc7515e4a78
     :git: https://github.com/adobe/aepsdk-compatibility-ios.git
   AEPCore:
-    :commit: ee0aff1670b4ef283f62b1ee993e8bf611f31b6b
+    :commit: 151dca2aa811dc8759f2115e4468ff4ea106cdfb
     :git: https://github.com/adobe/aepsdk-core-ios.git
   AEPIdentity:
-    :commit: ee0aff1670b4ef283f62b1ee993e8bf611f31b6b
+    :commit: 151dca2aa811dc8759f2115e4468ff4ea106cdfb
     :git: https://github.com/adobe/aepsdk-core-ios.git
   AEPRulesEngine:
-    :commit: 1e270654b330b9f07a6b1ec374e686f2e631e039
+    :commit: c3337be0f893db495aa497fef760e0518a1e5fe2
     :git: https://github.com/adobe/aepsdk-rulesengine-ios.git
   AEPServices:
-    :commit: ee0aff1670b4ef283f62b1ee993e8bf611f31b6b
+    :commit: 151dca2aa811dc8759f2115e4468ff4ea106cdfb
     :git: https://github.com/adobe/aepsdk-core-ios.git
 
 SPEC CHECKSUMS:
   ACPCore: 67e4b855bf16cfb6a63024a4ddb73d15c0fd30e5
-  AEPAssurance: c9c21b7e57bf993db210766631db2ef3732d4fa4
-  AEPCore: 46ed4c5ed27ba49490990e397bb7454cf9906601
-  AEPIdentity: 017d2ee5e49dd7a7cd29761339c535924e89d968
-  AEPLifecycle: 580d11bb4262e7b154751540852a2ff9febbde0d
-  AEPRulesEngine: 8bbc694fce6900cd33b2496c7d4b33ee2eeffc46
-  AEPServices: bdd8a78f1d6cda0165f6a58e42cce0d7e9f43ae1
-  AEPSignal: 4259aed43857c9e0ae89590a682c6d12865b7ce3
+  AEPAssurance: b62fc1be16efbc8d137b945b29da7e5ec7c7965a
+  AEPCore: 6ec14ec9b1ff45999ea53be112aba85522ad00c4
+  AEPIdentity: 49e6c742238be0f77d5ae8928c13acfd1d8bec3c
+  AEPLifecycle: 9ed7ceabd98cc5c94b13c3b085c9f1eef2c714fe
+  AEPRulesEngine: 5075ed294026a12e37bd26fe260f74604d205354
+  AEPServices: e032bfacfcb31f3a583b2aa1e87df5d427cca95d
+  AEPSignal: c0619814fbf50dbb1dde4e79141d528aa2606e9e
 
 PODFILE CHECKSUM: e42f254a44e3438bacd446a0901924ca25e54294
 

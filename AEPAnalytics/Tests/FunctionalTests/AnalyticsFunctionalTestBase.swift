@@ -199,6 +199,7 @@ class AnalyticsFunctionalTestBase : XCTestCase {
             AnalyticsTestConstants.Configuration.EventDataKeys.ANALYTICS_BATCH_LIMIT : 0,
             AnalyticsTestConstants.Configuration.EventDataKeys.ANALYTICS_OFFLINE_TRACKING : true,
             AnalyticsTestConstants.Configuration.EventDataKeys.ANALYTICS_BACKDATE_PREVIOUS_SESSION : true,
+            AnalyticsTestConstants.Configuration.EventDataKeys.ANALYTICS_AAMFORWARDING : true,
             AnalyticsTestConstants.Configuration.EventDataKeys.ANALYTICS_LAUNCH_HIT_DELAY : 0
         ]
         if let configData = configData {
