@@ -28,8 +28,14 @@ public class Analytics: NSObject, Extension {
     private let dataStore = NamedCollectionDataStore(name: AnalyticsConstants.DATASTORE_NAME)
     private var analyticsTimer: AnalyticsTimer
     private var analyticsDatabase: AnalyticsDatabase?
-    private var analyticsProperties: AnalyticsProperties
-    private var analyticsState: AnalyticsState
+
+    #if DEBUG
+        var analyticsProperties: AnalyticsProperties
+        var analyticsState: AnalyticsState
+    #else
+        private var analyticsProperties: AnalyticsProperties
+        private var analyticsState: AnalyticsState
+    #endif
 
     private let analyticsHardDependencies: [String] = [
         AnalyticsConstants.Configuration.EventDataKeys.SHARED_STATE_NAME,
@@ -88,6 +94,7 @@ public class Analytics: NSObject, Extension {
         registerListener(type: EventType.lifecycle, source: EventSource.responseContent, listener: handleIncomingEvent)
         registerListener(type: EventType.genericLifecycle, source: EventSource.requestContent, listener: handleIncomingEvent)
         registerListener(type: EventType.hub, source: EventSource.sharedState, listener: handleIncomingEvent)
+        registerListener(type: EventType.genericIdentity, source: EventSource.requestReset, listener: handleResetIdentitiesEvent)
     }
 
     /// Invoked when the Analytics extension has been unregistered by the `EventHub`, currently a no-op.
@@ -308,6 +315,15 @@ public class Analytics: NSObject, Extension {
             updateAnalyticsState(forEvent: event, dependencies: analyticsHardDependencies + analyticsSoftDependencies)
             handleTrackRequest(event: event, eventData: eventData)
         }
+    }
+
+    /// Processes Reset identites event
+    /// - Parameter:
+    ///   - event: The Reset identities event
+    private func handleResetIdentitiesEvent(_ event: Event) {
+        Log.debug(label: LOG_TAG, "\(#function) - Resetting all Identifiers")
+        analyticsState.resetIdentities()
+        analyticsProperties.reset()
     }
 
     /// Stores the passed in visitor identifier in the analytics datastore via the `AnalyticsProperties`.

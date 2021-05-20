@@ -268,19 +268,24 @@ class AnalyticsState {
         batchLimit = AnalyticsConstants.Default.BATCH_LIMIT
         launchHitDelay = AnalyticsConstants.Default.LAUNCH_HIT_DELAY
         backDateSessionInfoEnabled = AnalyticsConstants.Default.BACKDATE_SESSION_INFO_ENABLED
-        marketingCloudOrganizationId = nil
         analyticForwardingEnabled = AnalyticsConstants.Default.FORWARDING_ENABLED
+        lifecycleMaxSessionLength = AnalyticsConstants.Default.LIFECYCLE_MAX_SESSION_LENGTH
+        lifecycleSessionStartTimestamp = AnalyticsConstants.Default.LIFECYCLE_SESSION_START_TIMESTAMP
+        assuranceSessionActive = AnalyticsConstants.Default.ASSURANCE_SESSION_ENABLED
+        rsids = nil
+        host = nil
+        resetIdentities()
+    }
+
+    /// Clears all identities.
+    func resetIdentities() {
+        marketingCloudOrganizationId = nil
         marketingCloudId = nil
         locationHint = nil
         blob = nil
-        rsids = nil
-        host = nil
         defaultData = [String: String]()
-        lifecycleMaxSessionLength = AnalyticsConstants.Default.LIFECYCLE_MAX_SESSION_LENGTH
-        lifecycleSessionStartTimestamp = AnalyticsConstants.Default.LIFECYCLE_SESSION_START_TIMESTAMP
         serializedVisitorIdsList = nil
         applicationId = nil
         advertisingId = nil
-        assuranceSessionActive = AnalyticsConstants.Default.ASSURANCE_SESSION_ENABLED
     }
 }
