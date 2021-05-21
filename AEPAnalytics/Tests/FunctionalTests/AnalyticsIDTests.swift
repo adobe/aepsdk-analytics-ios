@@ -266,7 +266,7 @@ class AnalyticsIDTests : AnalyticsFunctionalTestBase {
         
         XCTAssertEqual(analyticsState.host, "test.com")
         XCTAssertEqual(analyticsState.rsids, "rsid")
-        XCTAssertTrue(analyticsState.analyticForwardingEnabled)
+        XCTAssertFalse(analyticsState.analyticForwardingEnabled)
         XCTAssertTrue(analyticsState.offlineEnabled)
         XCTAssertEqual(analyticsState.launchHitDelay, 0 , accuracy: 0)
         XCTAssertEqual(analyticsState.marketingCloudOrganizationId, "orgid")
@@ -300,7 +300,7 @@ class AnalyticsIDTests : AnalyticsFunctionalTestBase {
         //should not reset
         XCTAssertEqual(analyticsState.host, "test.com")
         XCTAssertEqual(analyticsState.rsids, "rsid")
-        XCTAssertTrue(analyticsState.analyticForwardingEnabled)
+        XCTAssertFalse(analyticsState.analyticForwardingEnabled)
         XCTAssertTrue(analyticsState.offlineEnabled)
         XCTAssertEqual(analyticsState.launchHitDelay, 0 , accuracy: 0)
         XCTAssertTrue(analyticsState.backDateSessionInfoEnabled)
