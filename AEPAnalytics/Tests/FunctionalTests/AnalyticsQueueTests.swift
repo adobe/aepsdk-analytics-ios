@@ -129,4 +129,42 @@ class AnalyticsQueueTests : AnalyticsFunctionalTestBase {
         waitForProcessing()
         XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 3)
     }
+    
+    // Queued hits should be dropped when resetIdentities event is received
+    func testHitsDroppedWhenResetIdentities() {
+        dispatchDefaultConfigAndIdentityStates(configData: [
+            AnalyticsTestConstants.Configuration.EventDataKeys.ANALYTICS_BATCH_LIMIT : 5
+        ])
+        
+        let trackData: [String: Any] = [
+            CoreConstants.Keys.ACTION : "testActionName"
+        ]
+        let event1 = Event(name: "Generic track event", type: EventType.genericTrack, source: EventSource.requestContent, data: trackData)
+        mockRuntime.simulateComingEvent(event: event1)
+                
+        let event2 = Event(name: "Generic track event", type: EventType.genericTrack, source: EventSource.requestContent, data: trackData)
+        mockRuntime.simulateComingEvent(event: event2)
+        
+        let event3 = Event(name: "Generic track event", type: EventType.genericTrack, source: EventSource.requestContent, data: trackData)
+        mockRuntime.simulateComingEvent(event: event3)
+        
+        let event4 = Event(name: "Generic track event", type: EventType.genericTrack, source: EventSource.requestContent, data: trackData)
+        mockRuntime.simulateComingEvent(event: event4)
+        
+        dispatchGetQueueSize()
+        waitForProcessing()
+        XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 0)
+        verifyQueueSize(size: 4)
+        
+        let resetEvent = Event(name: "test reset event", type: EventType.genericIdentity, source: EventSource.requestReset, data: nil)
+
+        // test
+        mockRuntime.simulateComingEvent(event: resetEvent)
+        dispatchGetQueueSize()
+        waitForProcessing()
+        
+        //verify
+        verifyQueueSize(size: 0)
+        XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 0)
+    }
 }

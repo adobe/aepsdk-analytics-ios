@@ -322,8 +322,10 @@ public class Analytics: NSObject, Extension {
     ///   - event: The Reset identities event
     private func handleResetIdentitiesEvent(_ event: Event) {
         Log.debug(label: LOG_TAG, "\(#function) - Resetting all Identifiers")
+        analyticsDatabase?.reset()
         analyticsState.resetIdentities()
         analyticsProperties.reset()
+        createSharedState(data: getSharedState(), event: event)
     }
 
     /// Stores the passed in visitor identifier in the analytics datastore via the `AnalyticsProperties`.
