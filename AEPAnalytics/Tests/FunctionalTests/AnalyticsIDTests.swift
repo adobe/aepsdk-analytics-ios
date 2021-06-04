@@ -244,6 +244,19 @@ class AnalyticsIDTests : AnalyticsFunctionalTestBase {
     }
     
     func testHandleRequestResetEvent() {
+        let placesSharedState: [String: Any] = [
+            AnalyticsTestConstants.Places.EventDataKeys.CURRENT_POI : [
+                AnalyticsTestConstants.Places.EventDataKeys.REGION_ID : "myRegionId",
+                AnalyticsTestConstants.Places.EventDataKeys.REGION_NAME : "myRegionName"
+            ]
+        ]
+        let lifecycleSharedState: [String: Any] = [
+            AnalyticsTestConstants.Lifecycle.EventDataKeys.LIFECYCLE_CONTEXT_DATA : [
+                AnalyticsTestConstants.Lifecycle.EventDataKeys.OPERATING_SYSTEM : "mockOSName",
+                AnalyticsTestConstants.Lifecycle.EventDataKeys.APP_ID : "mockAppName",
+            ]
+        ]
+        
         let dataStore = NamedCollectionDataStore(name: AnalyticsTestConstants.DATASTORE_NAME)
         dataStore.set(key: AnalyticsTestConstants.DataStoreKeys.MOST_RECENT_HIT_TIMESTAMP, value: TimeInterval(100))
         dataStore.set(key: AnalyticsTestConstants.DataStoreKeys.IGNORE_AID, value: true)
@@ -253,6 +266,9 @@ class AnalyticsIDTests : AnalyticsFunctionalTestBase {
         mockNetworkService?.reset()
         resetExtension()
         
+        
+        simulateLifecycleState(data: lifecycleSharedState)
+        simulatePlacesState(data: placesSharedState)
         dispatchDefaultConfigAndIdentityStates()
         waitForProcessing()
         
@@ -276,6 +292,11 @@ class AnalyticsIDTests : AnalyticsFunctionalTestBase {
         XCTAssertEqual(analyticsState.blob, "blob")
         XCTAssertEqual(analyticsState.locationHint, "lochint")
         
+        XCTAssertEqual(analyticsState.defaultData[AnalyticsConstants.ContextDataKeys.OPERATING_SYSTEM], "mockOSName")
+        XCTAssertEqual(analyticsState.defaultData[AnalyticsConstants.ContextDataKeys.APPLICATION_IDENTIFIER], "mockAppName")
+        XCTAssertEqual(analyticsState.defaultData[AnalyticsConstants.ContextDataKeys.REGION_ID], "myRegionId")
+        XCTAssertEqual(analyticsState.defaultData[AnalyticsConstants.ContextDataKeys.REGION_NAME], "myRegionName")
+        
         let resetEvent = Event(name: "test reset event", type: EventType.genericIdentity, source: EventSource.requestReset, data: nil)
 
         // test
@@ -294,16 +315,19 @@ class AnalyticsIDTests : AnalyticsFunctionalTestBase {
         XCTAssertNil(analyticsState.locationHint)
         XCTAssertNil(analyticsState.advertisingId)
         XCTAssertNil(analyticsState.serializedVisitorIdsList)
-        XCTAssertNil(analyticsState.marketingCloudOrganizationId)
-        XCTAssertTrue(analyticsState.defaultData.isEmpty)
+        XCTAssertNil(analyticsState.defaultData[AnalyticsConstants.ContextDataKeys.REGION_ID])
+        XCTAssertNil(analyticsState.defaultData[AnalyticsConstants.ContextDataKeys.REGION_NAME])
         
         //should not reset
         XCTAssertEqual(analyticsState.host, "test.com")
         XCTAssertEqual(analyticsState.rsids, "rsid")
+        XCTAssertEqual(analyticsState.marketingCloudOrganizationId, "orgid")
         XCTAssertFalse(analyticsState.analyticForwardingEnabled)
         XCTAssertTrue(analyticsState.offlineEnabled)
         XCTAssertEqual(analyticsState.launchHitDelay, 0 , accuracy: 0)
         XCTAssertTrue(analyticsState.backDateSessionInfoEnabled)
         XCTAssertEqual(analyticsState.privacyStatus, PrivacyStatus.optedIn)
+        XCTAssertEqual(analyticsState.defaultData[AnalyticsConstants.ContextDataKeys.OPERATING_SYSTEM], "mockOSName")
+        XCTAssertEqual(analyticsState.defaultData[AnalyticsConstants.ContextDataKeys.APPLICATION_IDENTIFIER], "mockAppName")
     }
 }
