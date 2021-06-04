@@ -262,8 +262,19 @@ class AnalyticsState {
         return privacyStatus == PrivacyStatus.optedIn
     }
 
+    /// Clears places data
+    private func clearPlacesData() {
+        defaultData.removeValue(forKey: AnalyticsConstants.ContextDataKeys.REGION_ID)
+        defaultData.removeValue(forKey: AnalyticsConstants.ContextDataKeys.REGION_NAME)
+    }
+
     /// Clears data stored and sets default values if possible in the Analytics State when privacy status is opted out.
     private func handleOptOut() {
+        resetIdentities()
+        rsids = nil
+        host = nil
+        marketingCloudOrganizationId = nil
+        defaultData = [String: String]()
         offlineEnabled = AnalyticsConstants.Default.OFFLINE_ENABLED
         batchLimit = AnalyticsConstants.Default.BATCH_LIMIT
         launchHitDelay = AnalyticsConstants.Default.LAUNCH_HIT_DELAY
@@ -272,18 +283,14 @@ class AnalyticsState {
         lifecycleMaxSessionLength = AnalyticsConstants.Default.LIFECYCLE_MAX_SESSION_LENGTH
         lifecycleSessionStartTimestamp = AnalyticsConstants.Default.LIFECYCLE_SESSION_START_TIMESTAMP
         assuranceSessionActive = AnalyticsConstants.Default.ASSURANCE_SESSION_ENABLED
-        rsids = nil
-        host = nil
-        resetIdentities()
     }
 
     /// Clears all identities.
     func resetIdentities() {
-        marketingCloudOrganizationId = nil
+        clearPlacesData()
         marketingCloudId = nil
         locationHint = nil
         blob = nil
-        defaultData = [String: String]()
         serializedVisitorIdsList = nil
         applicationId = nil
         advertisingId = nil
