@@ -214,7 +214,7 @@ public class Analytics: NSObject, Extension {
     ///`EventType.configuration` and `EventSource.responseContent`
     ///  - Parameter event: the `Event` to be processed
     private func handleConfigurationResponseEvent(_ event: Event) {
-        updateAnalyticsState(forEvent: event, dependencies: analyticsHardDependencies)
+        updateAnalyticsState(forEvent: event, dependencies: analyticsHardDependencies + analyticsSoftDependencies)
 
         if analyticsState.privacyStatus == .optedOut {
             handleOptOut(event: event)
