@@ -38,7 +38,7 @@ class AnalyticsProperties {
     }
 
     /// Current locale of the user
-    var locale: Locale?
+    var locale: String?
 
     init(dataStore: NamedCollectionDataStore) {
         self.dataStore = dataStore
@@ -122,10 +122,15 @@ class AnalyticsProperties {
     /// Clears or resets to default values any saved properties present in the `AnalyticsProperties` instance.
     func reset() {
         locale = nil
-        aid = nil
+        resetIdentities()
+    }
+
+    /// Clears or resets Identifiers to default values any saved properties present in the `AnalyticsProperties` instance.
+    func resetIdentities() {
+        mostRecentHitTimeStampInSeconds = 0
         ignoreAid = false
         vid = nil
-        mostRecentHitTimeStampInSeconds = 0
+        aid = nil
         // Clear datastore
         dataStore.remove(key: AnalyticsConstants.DataStoreKeys.AID)
         dataStore.remove(key: AnalyticsConstants.DataStoreKeys.VID)
