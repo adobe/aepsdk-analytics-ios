@@ -89,6 +89,8 @@ class AnalyticsState {
     private typealias PlacesEventDataKeys = AnalyticsConstants.Places.EventDataKeys
     /// Typealias for Assurance Event Data keys.
     private typealias AssuranceEventDataKeys = AnalyticsConstants.Assurance.EventDataKeys
+    /// Store the timestamp for most recent resetIdentities API call
+    var lastResetIdentitiesTimestamp = TimeInterval()
 
     /// Takes the shared states map and updates the data within the Analytics State.
     /// - Parameter dataMap: The map contains the shared state data required by the Analytics SDK.
