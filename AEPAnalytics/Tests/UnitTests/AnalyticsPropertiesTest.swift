@@ -27,7 +27,6 @@ class AnalyticsPropertiesTest: XCTestCase {
         dataStore.set(key: AnalyticsTestConstants.DataStoreKeys.AID, value: "testaid")
         dataStore.set(key: AnalyticsTestConstants.DataStoreKeys.VID, value: "testvid")
         analyticsProperties = AnalyticsProperties.init(dataStore: dataStore)
-        analyticsProperties.locale = "en-US"
     }
 
     func testTimezoneOffsetFormat() {
@@ -56,17 +55,15 @@ class AnalyticsPropertiesTest: XCTestCase {
     }
 
     func testResetIdentities() {
-        XCTAssertEqual("en-US", analyticsProperties.locale)
         XCTAssertEqual(true, analyticsProperties.getIgnoreAidStatus())
         XCTAssertEqual("testvid", analyticsProperties.getVisitorIdentifier())
         XCTAssertEqual("testaid", analyticsProperties.getAnalyticsIdentifier())
         XCTAssertEqual(100, analyticsProperties.getMostRecentHitTimestamp())
 
         //test
-        analyticsProperties.resetIdentities()
+        analyticsProperties.reset()
 
         //verify
-        XCTAssertEqual("en-US", analyticsProperties.locale)
         XCTAssertEqual(false, analyticsProperties.getIgnoreAidStatus())
         XCTAssertNil(analyticsProperties.getVisitorIdentifier())
         XCTAssertNil(analyticsProperties.getAnalyticsIdentifier())

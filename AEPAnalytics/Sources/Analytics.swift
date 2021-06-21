@@ -324,9 +324,9 @@ public class Analytics: NSObject, Extension {
         Log.debug(label: LOG_TAG, "\(#function) - Resetting all Identifiers")
         analyticsDatabase?.reset()
         analyticsState.resetIdentities()
-        analyticsProperties.resetIdentities()
-        createSharedState(data: getSharedState(), event: event)
+        analyticsProperties.reset()
         analyticsState.lastResetIdentitiesTimestamp = event.timestamp.timeIntervalSince1970
+        createSharedState(data: getSharedState(), event: event)
     }
 
     /// Stores the passed in visitor identifier in the analytics datastore via the `AnalyticsProperties`.
@@ -463,7 +463,6 @@ public class Analytics: NSObject, Extension {
         let locale = ServiceProvider.shared.systemInfoService.getActiveLocaleName()
         if !locale.isEmpty {
             headers[AnalyticsConstants.HttpConnection.HEADER_KEY_ACCEPT_LANGUAGE] = locale
-            analyticsProperties.locale = locale
         }
 
         return NetworkRequest(url: url, httpMethod: .get, connectPayload: "", httpHeaders: headers, connectTimeout: AnalyticsConstants.Default.CONNECTION_TIMEOUT, readTimeout: AnalyticsConstants.Default.CONNECTION_TIMEOUT)

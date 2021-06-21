@@ -58,7 +58,7 @@ class AnalyticsHitProcessor: HitProcessing {
 
             // If reset Identities was called, do not process the hit queued before reset identities was called.
             if timestamp < self.analyticsState.lastResetIdentitiesTimestamp {
-                Log.debug(label: self.LOG_TAG, "\(#function) - Dropping Analytics hit, reset identities API called.")
+                Log.debug(label: self.LOG_TAG, "\(#function) - Dropping Analytics hit, reset identities API was called after this request.")
                 completion(true)
                 return
             }
@@ -152,6 +152,7 @@ class AnalyticsHitProcessor: HitProcessing {
                 // Dispatch response only if the hit was sent after the reset Identities was called.
                 // So that we only populate UUID if the hit was sent after reset in case where AAMForwarding is enabled.
                 if hit.timestamp > self.analyticsState.lastResetIdentitiesTimestamp {
+                    Log.debug(label: self.LOG_TAG, "\(#function) - Dispatching Analytics hit response.")
                     self.responseHandler(eventData)
                 }
 
