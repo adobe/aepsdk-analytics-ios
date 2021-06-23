@@ -73,7 +73,7 @@ func application(_ application: UIApplication, didFinishLaunchingWithOptions lau
 (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 
   // Enable debug logging
-  [AEPMobileCore setLogLevel: AEPLogLevelTrace];
+  [AEPMobileCore setLogLevel: AEPLogLevelDebug];
     
   [AEPMobileCore registerExtensions:@[AEPMobileAnalytics.class, AEPMobileIdentity.class] completion:^{
   // Use the App id assigned to this application via Adobe Launch
@@ -153,7 +153,7 @@ static func getQueueSize(completion: @escaping (Int, Error?) -> Void)
 **Swift**
 
 ```swift
-Analytics.getQueueSize { (queueSize, _) in
+Analytics.getQueueSize { (queueSize, error) in
     // handle queue size 
 }
 ```
@@ -162,7 +162,7 @@ Analytics.getQueueSize { (queueSize, _) in
 
 ```objectivec
 [AEPMobileAnalytics getQueueSize:^(NSInteger queueSize, NSError * _Nullable error) {
-    //  queue size
+    // handle queue size
  }];
 ```
 
@@ -213,8 +213,8 @@ Retrieves the Analytics tracking identifier that is generated for this app/devic
 **Swift**
 
 ```swift
-Analytics.getTrackingIdentifier { (trackingId, _) in
-   // check the trackingIdentifier value  
+Analytics.getTrackingIdentifier { (trackingIdentifier, error) in
+   // handle the trackingIdentifier value  
 }
 ```
 
@@ -222,7 +222,7 @@ Analytics.getTrackingIdentifier { (trackingId, _) in
 
 ```objectivec
 AEPMobileAnalytics getTrackingIdentifier:^(NSString * _Nullable trackingIdentifier, NSError * _Nullable error) {
-   // check the trackingIdentifier value  
+   // handle the trackingIdentifier value  
 }];
 ```
 
@@ -272,8 +272,8 @@ static func getVisitorIdentifier(completion: @escaping (String?, Error?) -> Void
 **Swift**
 
 ```swift
-Analytics.getVisitorIdentifier { (visitorId, _) in
-   // check the visitorIdentifier value or handle error
+Analytics.getVisitorIdentifier { (visitorIdentifier, error) in
+   // check the visitorIdentifier value
 }
 ```
 
@@ -281,7 +281,7 @@ Analytics.getVisitorIdentifier { (visitorId, _) in
 
 ```objectivec
 [AEPMobileAnalytics getVisitorIdentifier:^(NSString * _Nullable visitorIdentifier, NSError * _Nullable error) {
-    // check the visitorIdentifier value or handle error
+    // check the visitorIdentifier value
 }];
 ```
 
