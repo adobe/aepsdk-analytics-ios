@@ -201,7 +201,7 @@ class ContextDataUtil {
 
         let result = regex?.firstMatch(in: source, options: [], range: NSRange.init(location: 0, length: source.count))
         if let regexResult = result, regexResult.numberOfRanges >= 2 {
-            let innerContextDataRange = regexResult.range(at: 2)  //It excludes the context data &c.&.c for ex: in &c.abc&.c will return abc
+            let innerContextDataRange = regexResult.range(at: 2)  // It excludes the context data &c.&.c for ex: in &c.abc&.c will return abc
             let start = innerContextDataRange.lowerBound
             let end = innerContextDataRange.upperBound
             let contextDataString = source[source.index(source.startIndex, offsetBy: start)..<source.index(source.startIndex, offsetBy: end)]
@@ -210,7 +210,7 @@ class ContextDataUtil {
                 deserializedContextData[key] = value
             }
 
-            let outerContextDataRange = regexResult.range(at: 1) //It includes the context data &c.&.c for ex: in &c.abc&.c will return &c.abc&.c
+            let outerContextDataRange = regexResult.range(at: 1) // It includes the context data &c.&.c for ex: in &c.abc&.c will return &c.abc&.c
             let startOuter = outerContextDataRange.lowerBound
             let endOuter = outerContextDataRange.upperBound
 
