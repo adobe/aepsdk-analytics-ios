@@ -35,7 +35,7 @@ class AnalyticsTrack_AssuranceTests : AnalyticsFunctionalTestBase {
         waitForProcessing()
         
         XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 1)
-        let payload = mockNetworkService?.calledNetworkRequests[0]?.connectPayload
+        let payload = mockNetworkService?.calledNetworkRequests[0]?.payloadAsString()
         XCTAssertTrue(payload?.contains("&p.&debug=true&.p") ?? false)
     }
     
@@ -59,9 +59,9 @@ class AnalyticsTrack_AssuranceTests : AnalyticsFunctionalTestBase {
         waitForProcessing()
                 
         XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 2)
-        let payload1 = mockNetworkService?.calledNetworkRequests[0]?.connectPayload
+        let payload1 = mockNetworkService?.calledNetworkRequests[0]?.payloadAsString()
         XCTAssertTrue(payload1?.contains("&p.&debug=true&.p") ?? false)
-        let payload2 = mockNetworkService?.calledNetworkRequests[0]?.connectPayload
+        let payload2 = mockNetworkService?.calledNetworkRequests[0]?.payloadAsString()
         XCTAssertTrue(payload2?.contains("&p.&debug=true&.p") ?? false)
     }
 }
