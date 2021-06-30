@@ -4,13 +4,13 @@
   * [Get the Swift Mobile Analytics](#get-the-swift-mobile-analytics)
   * [Initial SDK Setup](#initial-sdk-setup)
 - [Analytics API reference](#analytics-api-reference)
-  * [extensionVersion](#extensionversion)
   * [clearQueue](#clearqueue)
+  * [extensionVersion](#extensionversion)
   * [getQueueSize](#getqueuesize)
   * [sendQueuedHits](#sendqueuedhits)
   * [getTrackingIdentifier](#gettrackingidentifier)
-  * [setVisitorIdentifier](#setvisitoridentifier)
   * [getVisitorIdentifier](#getvisitoridentifier)
+  * [setVisitorIdentifier](#setvisitoridentifier)
 - [Related Project](#related-project)
   * [AEP SDK Compatibility for iOS](#aep-sdk-compatibility-for-ios)
 
@@ -90,31 +90,11 @@ func application(_ application: UIApplication, didFinishLaunchingWithOptions lau
 
 This section details all the APIs provided by AEPAnalytics, along with sample code snippets on how to properly use the APIs.
 
-## extensionVersion
-
-The `extensionVersion()` API returns the version of the Analytics extension that is registered with the Mobile Core extension.
-
-**Examples**
-
-**Swift**
-
-```
-let version = Analytics.extensionVersion
-```
-
-**Objective-C**
-
-```
-NSString *version = [AEPMobileAnalytics extensionVersion];
-```
-
-
-
 ## clearQueue
 
 Clears all hits from the tracking queue and removes them from the database.
 
-**Warning:** Use caution when manually clearing the queue. This process cannot be reversed.
+**Warning:** Use caution when manually clearing the queue. This operation cannot be reverted.
 
 **Syntax**
 
@@ -138,6 +118,26 @@ Analytics.clearQueue()
 
 
 
+## extensionVersion
+
+The `extensionVersion()` API returns the version of the Analytics extension that is registered with the Mobile Core extension.
+
+**Examples**
+
+**Swift**
+
+```
+let version = Analytics.extensionVersion
+```
+
+**Objective-C**
+
+```
+NSString *version = [AEPMobileAnalytics extensionVersion];
+```
+
+
+
 ## getQueueSize
 
 Retrieves the total number of Analytics hits in the tracking queue.
@@ -154,7 +154,7 @@ static func getQueueSize(completion: @escaping (Int, Error?) -> Void)
 
 ```swift
 Analytics.getQueueSize { (queueSize, error) in
-    // handle queue size 
+    // Handle the error (if non-nil) or use queue size 
 }
 ```
 
@@ -162,7 +162,7 @@ Analytics.getQueueSize { (queueSize, error) in
 
 ```objectivec
 [AEPMobileAnalytics getQueueSize:^(NSInteger queueSize, NSError * _Nullable error) {
-    // handle queue size
+    // Handle the error (if non-nil) or use queue size 
  }];
 ```
 
@@ -196,7 +196,7 @@ Analytics.sendQueuedHits()
 
 ## getTrackingIdentifier
 
-ℹ️ Before use this API, see [Identify unique visitors](https://experienceleague.adobe.com/docs/analytics/components/metrics/unique-visitors.html?lang=en).
+ℹ️ Before use this API, see [Identify unique visitors](https://experienceleague.adobe.com/docs/analytics/components/metrics/unique-visitors.html).
 
 Retrieves the Analytics tracking identifier that is generated for this app/device instance. This identifier is an app-specific, unique visitor ID that is generated at the initial launch and is stored and used after the initial launch. The ID is preserved between app upgrades and is removed when the app is uninstalled.
 
@@ -214,7 +214,7 @@ Retrieves the Analytics tracking identifier that is generated for this app/devic
 
 ```swift
 Analytics.getTrackingIdentifier { (trackingIdentifier, error) in
-   // handle the trackingIdentifier value  
+   // Handle the error (if non-nil) or use the trackingIdentifier value.
 }
 ```
 
@@ -222,16 +222,45 @@ Analytics.getTrackingIdentifier { (trackingIdentifier, error) in
 
 ```objectivec
 AEPMobileAnalytics getTrackingIdentifier:^(NSString * _Nullable trackingIdentifier, NSError * _Nullable error) {
-   // handle the trackingIdentifier value  
+   // Handle the error (if non-nil) or use the trackingIdentifier value.
 }];
 ```
 
+## getVisitorIdentifier
 
+ℹ️ Before use this API, see [Identify unique visitors](https://experienceleague.adobe.com/docs/analytics/components/metrics/unique-visitors.html).
+
+This API gets a custom Analytics visitor identifier, which has been set previously using [setVisitorIdentifier](#setvisitoridentifier).
+
+**Syntax**
+
+```swift
+static func getVisitorIdentifier(completion: @escaping (String?, Error?) -> Void)
+```
+
+**Examples**
+
+**Swift**
+
+```swift
+Analytics.getVisitorIdentifier { (visitorIdentifier, error) in
+   // Handle the error (if non-nil) or use the visitorIdentifier value
+}
+```
+
+**Objective-C**
+
+```objectivec
+[AEPMobileAnalytics getVisitorIdentifier:^(NSString * _Nullable visitorIdentifier, NSError * _Nullable error) {
+    // Handle the error (if non-nil) or use the visitorIdentifier value
+}];
+```
 
 ## setVisitorIdentifier
 
-ℹ️ Before use this API, see [Identify unique visitors](https://experienceleague.adobe.com/docs/analytics/components/metrics/unique-visitors.html?lang=en).
-Sets a custom Analytics visitor identifier
+ℹ️ Before use this API, see [Identify unique visitors](https://experienceleague.adobe.com/docs/analytics/components/metrics/unique-visitors.html).
+
+Sets a custom Analytics visitor identifier. For more information, see [Custom Visitor ID](https://experienceleague.adobe.com/docs/analytics/implementation/vars/config-vars/visitorid.html).
 
 **Syntax**
 
@@ -252,40 +281,6 @@ Analytics.setVisitorIdentifier(visitorIdentifier:"custom_identifier")
 ```objectivec
 [AEPMobileAnalytics setVisitorIdentifier:@"custom_identifier"];
 ```
-
-
-
-## getVisitorIdentifier
-
-ℹ️ Before use this API, see [Identify unique visitors](https://experienceleague.adobe.com/docs/analytics/components/metrics/unique-visitors.html?lang=en).
-
-This API gets a custom Analytics visitor identifier, which has been set previously using [setVisitorIdentifier](#setvisitoridentifier).
-
-**Syntax**
-
-```swift
-static func getVisitorIdentifier(completion: @escaping (String?, Error?) -> Void)
-```
-
-**Examples**
-
-**Swift**
-
-```swift
-Analytics.getVisitorIdentifier { (visitorIdentifier, error) in
-   // check the visitorIdentifier value
-}
-```
-
-**Objective-C**
-
-```objectivec
-[AEPMobileAnalytics getVisitorIdentifier:^(NSString * _Nullable visitorIdentifier, NSError * _Nullable error) {
-    // check the visitorIdentifier value
-}];
-```
-
-
 
 # Related Project
 
