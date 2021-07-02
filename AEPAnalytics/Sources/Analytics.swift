@@ -180,7 +180,7 @@ public class Analytics: NSObject, Extension {
     }
 
     /// Handle the following events
-    ///`EventType.genericTrack` and `EventSource.requestContent`
+    /// `EventType.genericTrack` and `EventSource.requestContent`
     ///  - Parameter event: the `Event` to be processed
     private func handleGenericTrackEvent(_ event: Event) {
         guard event.type == EventType.genericTrack && event.source == EventSource.requestContent else {
@@ -193,9 +193,9 @@ public class Analytics: NSObject, Extension {
     }
 
     /// Handles track request from following events
-    ///`EventType.genericTrack` and `EventSource.requestContent`
-    ///`EventType.rulesEngine` and `EventSource.responseContent`
-    ///`EventType.analytics` and `EventSource.requestContent`
+    /// `EventType.genericTrack` and `EventSource.requestContent`
+    /// `EventType.rulesEngine` and `EventSource.responseContent`
+    /// `EventType.analytics` and `EventSource.requestContent`
     ///  - Parameter event: the `Event` to be processed
     ///  - Parameter eventData: the track state/action data.
     private func handleTrackRequest(event: Event, eventData: [String: Any]?) {
@@ -211,7 +211,7 @@ public class Analytics: NSObject, Extension {
     }
 
     /// Handle the following events
-    ///`EventType.configuration` and `EventSource.responseContent`
+    /// `EventType.configuration` and `EventSource.responseContent`
     ///  - Parameter event: the `Event` to be processed
     private func handleConfigurationResponseEvent(_ event: Event) {
         updateAnalyticsState(forEvent: event, dependencies: analyticsHardDependencies + analyticsSoftDependencies)
@@ -519,8 +519,8 @@ public class Analytics: NSObject, Extension {
         return firstPartUuid + "-" + secondPartUuid
     }
 
-    ///Converts the lifecycle event in internal analytics action. If backdate session and offline tracking are enabled,
-    ///and previous session length is present in the contextData map, we send a separate hit with the previous session information and the rest of the keys as a Lifecycle action hit.
+    /// Converts the lifecycle event in internal analytics action. If backdate session and offline tracking are enabled,
+    /// and previous session length is present in the contextData map, we send a separate hit with the previous session information and the rest of the keys as a Lifecycle action hit.
     /// If ignored session is present, it will be sent as part of the Lifecycle hit and no SessionInfo hit will be sent.
     /// - Parameters:
     ///     - event: the `Lifecycle Event` to process.

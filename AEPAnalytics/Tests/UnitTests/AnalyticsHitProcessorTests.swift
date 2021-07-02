@@ -159,7 +159,7 @@ class AnalyticsHitProcessorTests: XCTestCase {
         // verify
         wait(for: [expectation], timeout: 0.5)
 
-        XCTAssertEqual(mockNetworkService?.connectAsyncCalledWithNetworkRequest?.connectPayload, "payload&ts=\(Int64(expectedHitTimestamp))")
+        XCTAssertEqual(mockNetworkService?.connectAsyncCalledWithNetworkRequest?.payloadAsString(), "payload&ts=\(Int64(expectedHitTimestamp))")
         XCTAssertEqual(hitProcessor.lastHitTimestamp, expectedHitTimestamp)
     }
 
@@ -212,7 +212,6 @@ class AnalyticsHitProcessorTests: XCTestCase {
         let actualUrlString = mockNetworkService?.connectAsyncCalledWithNetworkRequest?.url.absoluteString ?? ""
         let expectedUrlString = expectedUrl?.absoluteString ?? ""
         XCTAssertTrue(actualUrlString.hasPrefix(expectedUrlString))
-        XCTAssertEqual(mockNetworkService?.connectAsyncCalledWithNetworkRequest?.connectPayload, "payload\(AnalyticsTestConstants.Request.DEBUG_API_PAYLOAD)")
-
+        XCTAssertEqual(mockNetworkService?.connectAsyncCalledWithNetworkRequest?.payloadAsString(), "payload\(AnalyticsTestConstants.Request.DEBUG_API_PAYLOAD)")
     }
 }
