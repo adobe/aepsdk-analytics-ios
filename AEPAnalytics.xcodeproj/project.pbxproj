@@ -18,6 +18,7 @@
 		3DCDB3DF252E853200ABA819 /* AnalyticsProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DCDB3DE252E853200ABA819 /* AnalyticsProperties.swift */; };
 		3DD8E6FC256F0BC2009234FD /* AnalyticsTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DD8E6FB256F0BC2009234FD /* AnalyticsTimer.swift */; };
 		80040470C87BDF5145139B30 /* Pods_AnalyticsSampleApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0E355386B606F5D58291BC54 /* Pods_AnalyticsSampleApp.framework */; };
+		9598E5DF262E9C8D000BF31A /* AEPAnalytics.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2EBEE7702525A35400880E72 /* AEPAnalytics.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		9973631F691E3A9D5F8D37D6 /* Pods_AEPAnalyticsUnitTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 47CCE7FD8C2C3B63390649D7 /* Pods_AEPAnalyticsUnitTests.framework */; };
 		AC0BF6D225CDAA5900182896 /* AnalyticsMigrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC0BF6D125CDAA5800182896 /* AnalyticsMigrator.swift */; };
 		AC0BF6F725CE1B3E00182896 /* AnalyticsDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC0BF6F625CE1B3E00182896 /* AnalyticsDatabase.swift */; };
@@ -106,6 +107,19 @@
 			remoteInfo = AEPAnalytics;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		9598E5DE262E9C73000BF31A /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				9598E5DF262E9C8D000BF31A /* AEPAnalytics.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		0E355386B606F5D58291BC54 /* Pods_AnalyticsSampleApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AnalyticsSampleApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -486,6 +500,7 @@
 				D6D5F35325C8806D008148B3 /* Frameworks */,
 				D6D5F35425C8806D008148B3 /* Resources */,
 				775B1A8C2AC8BBA87C3E7DD5 /* [CP] Embed Pods Frameworks */,
+				9598E5DE262E9C73000BF31A /* CopyFiles */,
 			);
 			buildRules = (
 			);
