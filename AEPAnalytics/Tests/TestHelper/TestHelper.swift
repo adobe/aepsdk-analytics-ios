@@ -11,6 +11,7 @@
 
 import XCTest
 @testable import AEPCore
+@testable import AEPServices
 
 extension EventHub {
     static func reset() {
@@ -57,5 +58,11 @@ extension Event {
 
         let newEvent = try! decoder.decode(Event.self, from: jsonData)
         return newEvent
+    }
+}
+
+extension NetworkRequest {
+    func payloadAsString() -> String {
+        return String(data: connectPayload, encoding: .utf8) ?? ""
     }
 }
