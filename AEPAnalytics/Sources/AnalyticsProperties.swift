@@ -37,9 +37,6 @@ class AnalyticsProperties {
         return TimeZone.current.getOffsetFromGmtInMinutes()
     }
 
-    /// Current locale of the user
-    var locale: Locale?
-
     init(dataStore: NamedCollectionDataStore) {
         self.dataStore = dataStore
         self.mostRecentHitTimeStampInSeconds = dataStore.getDouble(key: AnalyticsConstants.DataStoreKeys.MOST_RECENT_HIT_TIMESTAMP) ?? 0
@@ -119,20 +116,18 @@ class AnalyticsProperties {
         return vid
     }
 
-    /// Clears or resets to default values any saved properties present in the `AnalyticsProperties` instance.
+    /// Clears or resets Identifiers to default values any saved properties present in the `AnalyticsProperties` instance.
     func reset() {
-        locale = nil
-        aid = nil
+        mostRecentHitTimeStampInSeconds = 0
         ignoreAid = false
         vid = nil
-        mostRecentHitTimeStampInSeconds = 0
+        aid = nil
         // Clear datastore
         dataStore.remove(key: AnalyticsConstants.DataStoreKeys.AID)
         dataStore.remove(key: AnalyticsConstants.DataStoreKeys.VID)
         dataStore.remove(key: AnalyticsConstants.DataStoreKeys.IGNORE_AID)
         dataStore.remove(key: AnalyticsConstants.DataStoreKeys.MOST_RECENT_HIT_TIMESTAMP)
     }
-
 }
 
 extension TimeZone {
