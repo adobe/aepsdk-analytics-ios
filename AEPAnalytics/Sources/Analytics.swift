@@ -645,7 +645,7 @@ public class Analytics: NSObject, Extension {
         }
 
         var analyticsData = analyticsState.defaultData
-        if let contextData = trackData[AnalyticsConstants.EventDataKeys.CONTEXT_DATA] as? [String: String] {
+        if let contextData = cleanContextData(trackData[AnalyticsConstants.EventDataKeys.CONTEXT_DATA] as? [String: Any?]) {
             analyticsData.merge(contextData) { _, newValue in
                 return newValue
             }
@@ -802,5 +802,27 @@ public class Analytics: NSObject, Extension {
             Log.warning(label: "Analytics", "WaitForAcquisitionData - Launch hit delay has expired without referrer data.")
             self?.analyticsDatabase?.cancelWaitForAdditionalData(type: .referrer)
         }
+    }
+}
+
+extension Analytics {
+    /// Remove keys with value other than String, Character or a type convertable to NSNumber.    
+    /// - Parameter data: Analytics context data from track event.
+    /// - Returns: Cleaned context data converted to [String: String] dictionary
+    func cleanContextData(_ data: [String: Any?]?) -> [String: String]? {
+        guard let data = data else {
+            return nil
+        }
+
+        let cleanedData = data.filter {
+            switch $0.value {
+            case is NSNumber, is String, is Character:
+                return true
+            default:
+                Log.warning(label: LOG_TAG, "cleanContextData - Dropping Key(\($0.key)) with Value(\(String(describing: $0.value))). Value should be String, Number, Bool or Character")
+                return false
+            }
+        }.mapValues { String(describing: $0!) }
+        return cleanedData
     }
 }

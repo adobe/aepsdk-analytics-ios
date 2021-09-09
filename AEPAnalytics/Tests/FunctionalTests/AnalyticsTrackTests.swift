@@ -288,5 +288,59 @@ class AnalyticsTrackTests : AnalyticsFunctionalTestBase {
                   host: "https://test.com/b/ss/rsid/0/",
                   vars: expectedVars,
                   contextData: expectedContextData)
-    }    
+    }
+
+    func testTrackContextDataWithNonStringValues() {
+        MobileCore.setLogLevel(.trace)
+        let trackData: [String: Any] = [
+            CoreConstants.Keys.CONTEXT_DATA : [
+                "StringValue": "v1",
+                "IntValue": 1,
+                "UIntValue": UInt(2),
+                "FloatValue": 3.3,
+                "BoolValue": true,
+                "CharValue": Character("c"),
+                "NSNumberValue": NSNumber(4),
+                "NSNumberValue1": NSNumber(5.5),
+                "OptionalInt": Optional(Int(6)),
+                "OptionalString": Optional("v2"),
+                // Keys whose values are not String, Number or Character are dropped
+                "Nil": nil,
+                "ArrayValue": [String](),
+                "ObjValue": NSObject(),
+                "DictValue": [String:String]()
+            ]
+        ]
+        let trackEvent = Event(name: "Generic track event", type: EventType.genericTrack, source: EventSource.requestContent, data: trackData)
+        mockRuntime.simulateComingEvent(event: trackEvent)
+
+        waitForProcessing()
+
+        let expectedVars = [
+            "ce": "UTF-8",
+            "cp": "foreground",
+            "mid" : "mid",
+            "aamb" : "blob",
+            "aamlh" : "lochint",
+            "ts" : String(trackEvent.timestamp.getUnixTimeInSeconds())
+        ]
+        let expectedContextData = [
+            "StringValue": "v1",
+            "IntValue": "1",
+            "UIntValue": "2",
+            "FloatValue": "3.3",
+            "BoolValue": "true",
+            "CharValue": "c",
+            "NSNumberValue": "4",
+            "NSNumberValue1": "5.5",
+            "OptionalInt": "6",
+            "OptionalString": "v2"
+        ]
+
+        XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 1)
+        verifyHit(request: mockNetworkService?.calledNetworkRequests[0],
+                  host: "https://test.com/b/ss/rsid/0/",
+                  vars: expectedVars,
+                  contextData: expectedContextData)
+    }
 }
