@@ -23,10 +23,8 @@ target 'AEPAnalyticsFunctionalTests' do
 end
 
 target 'AnalyticsSampleApp' do
-  pod 'AEPCore'
-  pod 'AEPServices'
+  pod 'AEPCore'  
   pod 'AEPIdentity'
-  pod 'AEPRulesEngine'
-  pod 'ACPCore', :git => 'https://github.com/adobe/aepsdk-compatibility-ios.git', :branch => 'main'
-  pod 'AEPAssurance'
+  pod 'AEPLifecycle'
+  pod 'AEPAssurance', '~> 3.0.0'
 end

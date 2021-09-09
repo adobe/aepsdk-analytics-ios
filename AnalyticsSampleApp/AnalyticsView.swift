@@ -41,7 +41,7 @@ struct AnalyticsView: View {
 
                         Button(action: {
                             if let url = URL(string: self.assuranceSessionUrl) {
-                                AEPAssurance.startSession(url)
+                                Assurance.startSession(url: url)
                             }
                         }) {
                             Text("Start Session")

@@ -20,6 +20,9 @@ class AnalyticsAPITests: XCTestCase {
     override func setUp() {
         EventHub.reset()
         MockExtension.reset()
+
+        registerMockExtension(MockExtension.self)
+        EventHub.shared.start()
     }
 
     private func registerMockExtension<T: Extension>(_ type: T.Type) {
@@ -38,10 +41,6 @@ class AnalyticsAPITests: XCTestCase {
         let expectation = XCTestExpectation(description: "clearQueue should dispatch an event")
         expectation.assertForOverFulfill = true
 
-        registerMockExtension(MockExtension.self)
-        EventHub.shared.start()
-
-
         EventHub.shared.getExtensionContainer(MockExtension.self)?.registerListener(type: EventType.analytics, source: EventSource.requestContent) { (event) in
             XCTAssertTrue(event.data?[AnalyticsConstants.EventDataKeys.CLEAR_HITS_QUEUE] as! Bool)
             expectation.fulfill()
@@ -54,35 +53,10 @@ class AnalyticsAPITests: XCTestCase {
         wait(for: [expectation], timeout: 1.0)
     }
 
-    func testGetQueueSize() {
-        // setup
-        let expectation = XCTestExpectation(description: "getQueueSize should dispatch an event")
-        expectation.assertForOverFulfill = true
-
-        registerMockExtension(MockExtension.self)
-        EventHub.shared.start()
-
-
-        EventHub.shared.getExtensionContainer(MockExtension.self)?.registerListener(type: EventType.analytics, source: EventSource.requestContent) { (event) in
-            XCTAssertTrue(event.data?[AnalyticsConstants.EventDataKeys.GET_QUEUE_SIZE] as! Bool)
-            expectation.fulfill()
-        }
-
-        // test
-        Analytics.getQueueSize(){ (queueSize, error) in }
-
-        // verify
-        wait(for: [expectation], timeout: 1.0)
-    }
-
     func testSendQueuedHits() {
         // setup
         let expectation = XCTestExpectation(description: "sendQueuedHits should dispatch an event")
         expectation.assertForOverFulfill = true
-
-        registerMockExtension(MockExtension.self)
-        EventHub.shared.start()
-
 
         EventHub.shared.getExtensionContainer(MockExtension.self)?.registerListener(type: EventType.analytics, source: EventSource.requestContent) { (event) in
             XCTAssertTrue(event.data?[AnalyticsConstants.EventDataKeys.FORCE_KICK_HITS] as! Bool)
@@ -96,14 +70,88 @@ class AnalyticsAPITests: XCTestCase {
         wait(for: [expectation], timeout: 1.0)
     }
 
+    func testGetQueueSize() {
+        // setup
+        let expectation = XCTestExpectation(description: "getQueueSize should dispatch an event")
+        expectation.assertForOverFulfill = true
+
+        EventHub.shared.getExtensionContainer(MockExtension.self)?.registerListener(type: EventType.analytics, source: EventSource.requestContent) { (event) in
+            XCTAssertTrue(event.data?[AnalyticsConstants.EventDataKeys.GET_QUEUE_SIZE] as! Bool)
+            expectation.fulfill()
+        }
+
+        // test
+        Analytics.getQueueSize(){ (queueSize, error) in }
+
+        // verify
+        wait(for: [expectation], timeout: 1.0)
+    }
+
+    func testGetQueueSize_CorrectResponse() {
+        // setup
+        let expectation = XCTestExpectation(description: "getQueueSize should return correct value")
+        expectation.assertForOverFulfill = true
+
+        EventHub.shared.getExtensionContainer(MockExtension.self)?.registerListener(type: EventType.analytics, source: EventSource.requestContent) { (event) in
+            let responseData = [
+                AnalyticsTestConstants.EventDataKeys.QUEUE_SIZE: 10
+            ]
+            let responseEvent = event.createResponseEvent(name: "ResponseEvent", type: EventType.analytics, source: EventSource.responseContent, data: responseData)
+            EventHub.shared.dispatch(event: responseEvent)
+        }
+
+        // test
+        Analytics.getQueueSize(){ (queueSize, error) in
+            XCTAssertEqual(queueSize, 10)
+            XCTAssertNil(error)
+            expectation.fulfill()
+        }
+
+        // verify
+        wait(for: [expectation], timeout: 1.0)
+    }
+
+    func testGetQueueSize_IncorrectResponse() {
+        // setup
+        let expectation = XCTestExpectation(description: "getQueueSize should return error with invalid response")
+        expectation.assertForOverFulfill = true
+
+        EventHub.shared.getExtensionContainer(MockExtension.self)?.registerListener(type: EventType.analytics, source: EventSource.requestContent) { (event) in
+            let responseEvent = event.createResponseEvent(name: "ResponseEvent", type: EventType.analytics, source: EventSource.responseContent, data: nil)
+            EventHub.shared.dispatch(event: responseEvent)
+        }
+
+        // test
+        Analytics.getQueueSize(){ (queueSize, error) in
+            XCTAssertEqual(queueSize, 0)
+            XCTAssertEqual(error as? AEPError, .unexpected)
+            expectation.fulfill()
+        }
+
+        // verify
+        wait(for: [expectation], timeout: 1.0)
+    }
+
+    func testGetQueueSize_Timeout() {
+        // setup
+        let expectation = XCTestExpectation(description: "getQueueSize should timeout without response")
+        expectation.assertForOverFulfill = true
+
+        // test
+        Analytics.getQueueSize(){ (queueSize, error) in
+            XCTAssertEqual(queueSize, 0)
+            XCTAssertEqual(error as? AEPError, .callbackTimeout)
+            expectation.fulfill()
+        }
+
+        // verify
+        wait(for: [expectation], timeout: 1.5)
+    }
+
     func testGetTrackingIdentifier() {
         // setup
         let expectation = XCTestExpectation(description: "getTrackingIdentifier should dispatch an event")
         expectation.assertForOverFulfill = true
-
-        registerMockExtension(MockExtension.self)
-        EventHub.shared.start()
-
 
         EventHub.shared.getExtensionContainer(MockExtension.self)?.registerListener(type: EventType.analytics, source: EventSource.requestIdentity) { (event) in
             expectation.fulfill()
@@ -116,34 +164,72 @@ class AnalyticsAPITests: XCTestCase {
         wait(for: [expectation], timeout: 1.0)
     }
 
-    func testGetVisitorIdentifier() {
+    func testGetTrackingIdentifier_CorrectResponse() {
         // setup
-        let expectation = XCTestExpectation(description: "getVisitoridentifier should dispatch an event")
+        let expectation = XCTestExpectation(description: "getTrackingIdentifier should return correct response")
         expectation.assertForOverFulfill = true
 
-        registerMockExtension(MockExtension.self)
-        EventHub.shared.start()
-
-
         EventHub.shared.getExtensionContainer(MockExtension.self)?.registerListener(type: EventType.analytics, source: EventSource.requestIdentity) { (event) in
+            let responseData = [
+                AnalyticsTestConstants.EventDataKeys.ANALYTICS_ID: "aidvalue"
+            ]
+            let responseEvent = event.createResponseEvent(name: "ResponseEvent", type: EventType.analytics, source: EventSource.responseContent, data: responseData)
+            EventHub.shared.dispatch(event: responseEvent)
+        }
+
+
+        // test
+        Analytics.getTrackingIdentifier(){(identifier, error) in
+            XCTAssertEqual(identifier, "aidvalue")
+            XCTAssertNil(error)
             expectation.fulfill()
         }
 
+        // verify
+        wait(for: [expectation], timeout: 1.0)
+    }
+
+    func testGetTrackingIdentifier_IncorrectResponse() {
+        // setup
+        let expectation = XCTestExpectation(description: "getTrackingIdentifier should return error with invalid response")
+        expectation.assertForOverFulfill = true
+
+        EventHub.shared.getExtensionContainer(MockExtension.self)?.registerListener(type: EventType.analytics, source: EventSource.requestIdentity) { (event) in
+            let responseEvent = event.createResponseEvent(name: "ResponseEvent", type: EventType.analytics, source: EventSource.responseContent, data: nil)
+            EventHub.shared.dispatch(event: responseEvent)
+        }
+
         // test
-        Analytics.getVisitorIdentifier(){(identifier, error) in }
+        Analytics.getTrackingIdentifier(){(identifier, error) in
+            XCTAssertNil(identifier)
+            XCTAssertEqual(error as? AEPError, .unexpected)
+            expectation.fulfill()
+        }
 
         // verify
         wait(for: [expectation], timeout: 1.0)
+    }
+
+    func testGetTrackingIdentifier_Timeout() {
+        // setup
+        let expectation = XCTestExpectation(description: "getTrackingIdentifier should timeout without response")
+        expectation.assertForOverFulfill = true
+
+        // test
+        Analytics.getTrackingIdentifier(){(identifier, error) in
+            XCTAssertNil(identifier)
+            XCTAssertEqual(error as? AEPError, .callbackTimeout)
+            expectation.fulfill()
+        }
+
+        // verify
+        wait(for: [expectation], timeout: 1.5)
     }
 
     func testSetVisitorIdentifier() {
         // setup
         let expectation = XCTestExpectation(description: "setVisitoridentifier should dispatch an event")
         expectation.assertForOverFulfill = true
-
-        registerMockExtension(MockExtension.self)
-        EventHub.shared.start()
-
 
         EventHub.shared.getExtensionContainer(MockExtension.self)?.registerListener(type: EventType.analytics, source: EventSource.requestIdentity) { (event) in
             XCTAssertEqual(event.data?[AnalyticsConstants.EventDataKeys.VISITOR_IDENTIFIER] as! String, "vid")
@@ -156,5 +242,84 @@ class AnalyticsAPITests: XCTestCase {
         // verify
         wait(for: [expectation], timeout: 1.0)
     }
+
+    func testGetVisitorIdentifier() {
+        // setup
+        let expectation = XCTestExpectation(description: "getVisitoridentifier should dispatch an event")
+        expectation.assertForOverFulfill = true
+
+        EventHub.shared.getExtensionContainer(MockExtension.self)?.registerListener(type: EventType.analytics, source: EventSource.requestIdentity) { (event) in
+            expectation.fulfill()
+        }
+
+        // test
+        Analytics.getVisitorIdentifier(){(identifier, error) in }
+
+        // verify
+        wait(for: [expectation], timeout: 1.0)
+    }
+
+    func testGetVisitorIdentifier_CorrectResponse() {
+        // setup
+        let expectation = XCTestExpectation(description: "getVisitoridentifier should return correct response")
+        expectation.assertForOverFulfill = true
+
+        EventHub.shared.getExtensionContainer(MockExtension.self)?.registerListener(type: EventType.analytics, source: EventSource.requestIdentity) { (event) in
+            let responseData = [
+                AnalyticsTestConstants.EventDataKeys.VISITOR_IDENTIFIER: "vidvalue"
+            ]
+            let responseEvent = event.createResponseEvent(name: "ResponseEvent", type: EventType.analytics, source: EventSource.responseContent, data: responseData)
+            EventHub.shared.dispatch(event: responseEvent)
+        }
+
+        // test
+        Analytics.getVisitorIdentifier(){(identifier, error) in
+            XCTAssertEqual(identifier, "vidvalue")
+            XCTAssertNil(error)
+            expectation.fulfill()
+        }
+
+        // verify
+        wait(for: [expectation], timeout: 1.0)
+    }
+
+    func testGetVisitorIdentifier_IncorrectResponse() {
+        // setup
+        let expectation = XCTestExpectation(description: "getVisitoridentifier should return error with invalid response")
+        expectation.assertForOverFulfill = true
+
+        EventHub.shared.getExtensionContainer(MockExtension.self)?.registerListener(type: EventType.analytics, source: EventSource.requestIdentity) { (event) in
+            let responseEvent = event.createResponseEvent(name: "ResponseEvent", type: EventType.analytics, source: EventSource.responseContent, data: nil)
+            EventHub.shared.dispatch(event: responseEvent)
+        }
+
+        // test
+        Analytics.getVisitorIdentifier(){(identifier, error) in
+            XCTAssertNil(identifier)
+            XCTAssertEqual(error as? AEPError, .unexpected)
+            expectation.fulfill()
+        }
+
+        // verify
+        wait(for: [expectation], timeout: 1.0)
+    }
+
+    func testGetVisitorIdentifier_Timeout() {
+        // setup
+        let expectation = XCTestExpectation(description: "getVisitoridentifier should timeout without response")
+        expectation.assertForOverFulfill = true
+
+        // test
+        Analytics.getVisitorIdentifier(){(identifier, error) in
+            XCTAssertNil(identifier)
+            XCTAssertEqual(error as? AEPError, .callbackTimeout)
+            expectation.fulfill()
+        }
+
+        // verify
+        wait(for: [expectation], timeout: 1.5)
+    }
+
+
 
 }
