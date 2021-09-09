@@ -196,11 +196,9 @@ Analytics.sendQueuedHits()
 
 ## getTrackingIdentifier
 
-ℹ️ Before use this API, see [Identify unique visitors](https://experienceleague.adobe.com/docs/analytics/components/metrics/unique-visitors.html).
+ℹ️ Before using this API, see [Identify unique visitors](https://experienceleague.adobe.com/docs/analytics/components/metrics/unique-visitors.html).
 
-Retrieves the Analytics tracking identifier that is generated for this app/device instance. This identifier is an app-specific, unique visitor ID that is generated at the initial launch and is stored and used after the initial launch. The ID is preserved between app upgrades and is removed when the app is uninstalled.
-
-⚠️ If you have an [Experience Cloud ID](https://app.gitbook.com/@aep-sdks/s/docs/using-mobile-extensions/mobile-core/identity/identity-api-reference#get-experience-cloud-ids), and have not yet configured a visitor ID grace period, the value returned by `getTrackingIdentifier` might be null.
+Retrieves the Analytics tracking identifier. The identifier is only returned for existing users who had AID persisted and migrated from earlier versions of SDK. For new users, no AID is generated and should instead use [Experience Cloud ID](https://aep-sdks.gitbook.io/docs/foundation-extensions/mobile-core/identity/identity-api-reference#getexperiencecloudid) to identify visitors.
 
 **Syntax**
 
