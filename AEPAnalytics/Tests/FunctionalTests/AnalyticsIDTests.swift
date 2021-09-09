@@ -136,4 +136,26 @@ class AnalyticsIDTests : AnalyticsFunctionalTestBase {
         
         verifyIdentityChange(aid: nil, vid: "myvid")
     }
+    
+    func testAIDandVIDShouldBeClearedAfterOptOut() {
+        let dataStore = NamedCollectionDataStore(name: AnalyticsTestConstants.DATASTORE_NAME)
+        dataStore.set(key: AnalyticsTestConstants.DataStoreKeys.AID, value: "testaid")
+        dataStore.set(key: AnalyticsTestConstants.DataStoreKeys.VID, value: "testvid")
+        
+        mockNetworkService?.reset()
+        resetExtension()
+        
+        dispatchDefaultConfigAndIdentityStates()
+        waitForProcessing()
+        
+        verifyIdentityChange(aid: "testaid", vid: "testvid")
+
+        dispatchDefaultConfigAndIdentityStates(configData: [
+            AnalyticsTestConstants.Configuration.EventDataKeys.GLOBAL_PRIVACY : "optedout"
+        ])
+        
+        waitForProcessing()
+        verifyIdentityChange(aid: nil, vid: nil)
+    }
+
 }
