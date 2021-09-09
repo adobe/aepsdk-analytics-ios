@@ -14,7 +14,6 @@ import UIKit
 import AEPCore
 import AEPIdentity
 import AEPAnalytics
-import ACPCore
 import AEPAssurance
 import AEPLifecycle
 
@@ -25,15 +24,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 
         MobileCore.setLogLevel(.trace)
-        MobileCore.registerExtensions([Identity.self, Analytics.self, Lifecycle.self], {
+        MobileCore.registerExtensions([Identity.self, Analytics.self, Lifecycle.self, Assurance.self], {
             // Use the App id assigned to this application via Adobe Launch
             MobileCore.configureWith(appId: self.LAUNCH_ENVIRONMENT_FILE_ID)
         })
-
-        // assurance extension
-        AEPAssurance.registerExtension()
-        ACPCore.start {
-        }
 
         return true
     }

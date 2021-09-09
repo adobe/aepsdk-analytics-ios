@@ -42,7 +42,7 @@ import Foundation
                 completion(0, AEPError.unexpected)
                 return
             }
-            completion(queueSize, AEPError.none)
+            completion(queueSize, nil)
         }
     }
     /// Forces analytics to send all queued hits regardless of current batch options
@@ -69,7 +69,7 @@ import Foundation
                 completion(nil, AEPError.unexpected)
                 return
             }
-            completion(trackingIdentifier, AEPError.none)
+            completion(trackingIdentifier, nil)
         }
     }
     /// Retrieves the visitor tracking identifier.
@@ -89,7 +89,7 @@ import Foundation
                 completion(nil, AEPError.unexpected)
                 return
             }
-            completion(visitorIdentifier, AEPError.none)
+            completion(visitorIdentifier, nil)
         }
     }
     /// Sets the visitor tracking identifier.
