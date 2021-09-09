@@ -173,7 +173,7 @@ public class Analytics: NSObject, Extension {
     }
 
     /// Handle the following events
-    ///`EventType.genericTrack` and `EventSource.requestContent`
+    /// `EventType.genericTrack` and `EventSource.requestContent`
     ///  - Parameter event: the `Event` to be processed
     private func handleGenericTrackEvent(_ event: Event) {
         guard event.type == EventType.genericTrack && event.source == EventSource.requestContent else {
@@ -186,9 +186,9 @@ public class Analytics: NSObject, Extension {
     }
 
     /// Handles track request from following events
-    ///`EventType.genericTrack` and `EventSource.requestContent`
-    ///`EventType.rulesEngine` and `EventSource.responseContent`
-    ///`EventType.analytics` and `EventSource.requestContent`
+    /// `EventType.genericTrack` and `EventSource.requestContent`
+    /// `EventType.rulesEngine` and `EventSource.responseContent`
+    /// `EventType.analytics` and `EventSource.requestContent`
     ///  - Parameter event: the `Event` to be processed
     ///  - Parameter eventData: the track state/action data.
     private func handleTrackRequest(event: Event, eventData: [String: Any]?) {
@@ -204,7 +204,7 @@ public class Analytics: NSObject, Extension {
     }
 
     /// Handle the following events
-    ///`EventType.configuration` and `EventSource.responseContent`
+    /// `EventType.configuration` and `EventSource.responseContent`
     ///  - Parameter event: the `Event` to be processed
     private func handleConfigurationResponseEvent(_ event: Event) {
         updateAnalyticsState(forEvent: event, dependencies: analyticsHardDependencies)
@@ -500,8 +500,8 @@ public class Analytics: NSObject, Extension {
         return firstPartUuid + "-" + secondPartUuid
     }
 
-    ///Converts the lifecycle event in internal analytics action. If backdate session and offline tracking are enabled,
-    ///and previous session length is present in the contextData map, we send a separate hit with the previous session information and the rest of the keys as a Lifecycle action hit.
+    /// Converts the lifecycle event in internal analytics action. If backdate session and offline tracking are enabled,
+    /// and previous session length is present in the contextData map, we send a separate hit with the previous session information and the rest of the keys as a Lifecycle action hit.
     /// If ignored session is present, it will be sent as part of the Lifecycle hit and no SessionInfo hit will be sent.
     /// - Parameters:
     ///     - event: the `Lifecycle Event` to process.
@@ -645,7 +645,7 @@ public class Analytics: NSObject, Extension {
         }
 
         var analyticsData = analyticsState.defaultData
-        if let contextData = trackData[AnalyticsConstants.EventDataKeys.CONTEXT_DATA] as? [String: String] {
+        if let contextData = cleanContextData(trackData[AnalyticsConstants.EventDataKeys.CONTEXT_DATA] as? [String: Any?]) {
             analyticsData.merge(contextData) { _, newValue in
                 return newValue
             }
@@ -802,5 +802,27 @@ public class Analytics: NSObject, Extension {
             Log.warning(label: "Analytics", "WaitForAcquisitionData - Launch hit delay has expired without referrer data.")
             self?.analyticsDatabase?.cancelWaitForAdditionalData(type: .referrer)
         }
+    }
+}
+
+extension Analytics {
+    /// Remove keys with value other than String, Character or a type convertable to NSNumber.    
+    /// - Parameter data: Analytics context data from track event.
+    /// - Returns: Cleaned context data converted to [String: String] dictionary
+    func cleanContextData(_ data: [String: Any?]?) -> [String: String]? {
+        guard let data = data else {
+            return nil
+        }
+
+        let cleanedData = data.filter {
+            switch $0.value {
+            case is NSNumber, is String, is Character:
+                return true
+            default:
+                Log.warning(label: LOG_TAG, "cleanContextData - Dropping Key(\($0.key)) with Value(\(String(describing: $0.value))). Value should be String, Number, Bool or Character")
+                return false
+            }
+        }.mapValues { String(describing: $0!) }
+        return cleanedData
     }
 }

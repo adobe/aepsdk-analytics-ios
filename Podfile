@@ -5,28 +5,26 @@ use_frameworks!
 project 'AEPAnalytics.xcodeproj'
 
 target 'AEPAnalytics' do
-  pod 'AEPCore', :git => 'https://github.com/adobe/aepsdk-core-ios.git', :branch => 'main'
-  pod 'AEPServices', :git => 'https://github.com/adobe/aepsdk-core-ios.git', :branch => 'main'
-  pod 'AEPRulesEngine', :git => 'https://github.com/adobe/aepsdk-rulesengine-ios.git', :branch => 'main'
+  pod 'AEPCore'
+  pod 'AEPServices'
+  pod 'AEPRulesEngine'
 end
 
 target 'AEPAnalyticsUnitTests' do
-  pod 'AEPCore', :git => 'https://github.com/adobe/aepsdk-core-ios.git', :branch => 'main'
-  pod 'AEPServices', :git => 'https://github.com/adobe/aepsdk-core-ios.git', :branch => 'main'
-  pod 'AEPRulesEngine', :git => 'https://github.com/adobe/aepsdk-rulesengine-ios.git', :branch => 'main'
+  pod 'AEPCore'
+  pod 'AEPServices'
+  pod 'AEPRulesEngine'
 end
 
 target 'AEPAnalyticsFunctionalTests' do
-  pod 'AEPCore', :git => 'https://github.com/adobe/aepsdk-core-ios.git', :branch => 'main'
-  pod 'AEPServices', :git => 'https://github.com/adobe/aepsdk-core-ios.git', :branch => 'main'
-  pod 'AEPRulesEngine', :git => 'https://github.com/adobe/aepsdk-rulesengine-ios.git', :branch => 'main'
+  pod 'AEPCore'
+  pod 'AEPServices'
+  pod 'AEPRulesEngine'
 end
 
 target 'AnalyticsSampleApp' do
-  pod 'AEPCore', :git => 'https://github.com/adobe/aepsdk-core-ios.git', :branch => 'main'
-  pod 'AEPServices', :git => 'https://github.com/adobe/aepsdk-core-ios.git', :branch => 'main'
-  pod 'AEPIdentity', :git => 'https://github.com/adobe/aepsdk-core-ios.git', :branch => 'main'
-  pod 'AEPRulesEngine', :git => 'https://github.com/adobe/aepsdk-rulesengine-ios.git', :branch => 'main'
-  pod 'ACPCore', :git => 'https://github.com/adobe/aepsdk-compatibility-ios.git', :branch => 'main'
-  pod 'AEPAssurance'
+  pod 'AEPCore'  
+  pod 'AEPIdentity'
+  pod 'AEPLifecycle'
+  pod 'AEPAssurance', '~> 3.0.0'
 end

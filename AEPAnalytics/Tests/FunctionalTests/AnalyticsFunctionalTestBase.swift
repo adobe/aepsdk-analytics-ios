@@ -117,14 +117,14 @@ class AnalyticsFunctionalTestBase : XCTestCase {
             return
         }
         
-        let actualVars = AnalyticsRequestHelper.getQueryParams(source: request.connectPayload)
+        let actualVars = AnalyticsRequestHelper.getQueryParams(source: request.payloadAsString())
         var expectedVars = expectedVars ?? [:]
         // These vars are appended to all requests
         expectedVars["ndh"] = "1"
         expectedVars[AnalyticsConstants.Request.FORMATTED_TIMESTAMP_KEY] = TimeZone.current.getOffsetFromGmtInMinutes()
         XCTAssertTrue(NSDictionary(dictionary: actualVars).isEqual(to: expectedVars))
 
-        let actualContextData = AnalyticsRequestHelper.getContextData(source: request.connectPayload)
+        let actualContextData = AnalyticsRequestHelper.getContextData(source: request.payloadAsString())
         let expectedContextData = expectedContextData ?? [:]
         XCTAssertTrue(NSDictionary(dictionary: actualContextData).isEqual(to: expectedContextData))
 
