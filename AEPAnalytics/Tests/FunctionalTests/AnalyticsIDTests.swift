@@ -18,7 +18,7 @@ import AEPServices
 class AnalyticsIDTests : AnalyticsFunctionalTestBase {
     
     override func setUp() {
-        super.setupBase(disableIdRequest: false)
+        super.setupBase()
     }
     
     //If Visitor ID Service is enabled then analytics hits contain visitor ID vars
@@ -54,8 +54,8 @@ class AnalyticsIDTests : AnalyticsFunctionalTestBase {
             "a.action" : "testActionName"
         ]
                 
-        XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 2)
-        verifyHit(request: mockNetworkService?.calledNetworkRequests[1],
+        XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 1)
+        verifyHit(request: mockNetworkService?.calledNetworkRequests[0],
                   host: "https://test.com/b/ss/rsid/0/",
                   vars: expectedVars,
                   contextData: expectedContextData)
@@ -63,7 +63,6 @@ class AnalyticsIDTests : AnalyticsFunctionalTestBase {
         
     func testHitsContainAIDandVID() {
         let dataStore = NamedCollectionDataStore(name: AnalyticsTestConstants.DATASTORE_NAME)
-        dataStore.set(key: AnalyticsTestConstants.DataStoreKeys.IGNORE_AID, value: false)
         dataStore.set(key: AnalyticsTestConstants.DataStoreKeys.AID, value: "testaid")
         dataStore.set(key: AnalyticsTestConstants.DataStoreKeys.VID, value: "testvid")
         
@@ -73,7 +72,8 @@ class AnalyticsIDTests : AnalyticsFunctionalTestBase {
         dispatchDefaultConfigAndIdentityStates()
         waitForProcessing()
         
-        
+        verifyIdentityChange(aid: "testaid", vid: "testvid")
+
         let trackData: [String: Any] = [
             CoreConstants.Keys.ACTION : "testActionName",
             CoreConstants.Keys.CONTEXT_DATA : [
@@ -111,73 +111,7 @@ class AnalyticsIDTests : AnalyticsFunctionalTestBase {
                   vars: expectedVars,
                   contextData: expectedContextData)
     }
-    
-    //Request to get AID should return the fetched AID if privacy OPT_IN
-    func testFetchAID() {
-        let aidResponse = """
-        {
-            "id": "7A57620BB5CA4754-30BDF2392F2416C7"
-        }
-        """
-        mockNetworkService?.expectedResponse = HttpConnection(data: aidResponse.data(using: .utf8) , response: HTTPURLResponse(url: URL(string: "test.com")!, statusCode: 200, httpVersion: nil, headerFields: nil), error: nil)
-        
-        dispatchDefaultConfigAndIdentityStates()
-                
-        waitForProcessing()
-        
-        // Id request was succesfully sent
-        verifyHit(request: mockNetworkService?.calledNetworkRequests[0], host: "https://test.com/id?mcorgid=orgid&mid=mid")
-        
-        // Analytics response context with AID was dispatched
-        verifyIdentityChange(aid: "7A57620BB5CA4754-30BDF2392F2416C7", vid: nil)
-    }
-    
-    //Request to get AID should return generated AID if privacy UNKNOWN and no stored AID
-    func testAIDOptUnknown() {
-        dispatchDefaultConfigAndIdentityStates(configData: [
-            AnalyticsTestConstants.Configuration.EventDataKeys.GLOBAL_PRIVACY : "optunknown"
-        ])
-        waitForProcessing()
-        
-        // No id request should be sent
-        XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 0)
-        
-        // Analytics response context with AID was dispatched
-        verifyIdentityChange(aid: "*", vid: nil)
-    }
-    
-    //Request to get AID should return the stored AID if privacy UNKNOWN
-    func testAIDPersistence() {
-        let aidResponse = """
-        {
-            "id": "7A57620BB5CA4754-30BDF2392F2416C7"
-        }
-        """
-        mockNetworkService?.expectedResponse = HttpConnection(data: aidResponse.data(using: .utf8) , response: HTTPURLResponse(url: URL(string: "test.com")!, statusCode: 200, httpVersion: nil, headerFields: nil), error: nil)
-        
-        dispatchDefaultConfigAndIdentityStates()
-                
-        waitForProcessing()
-                
-        // Id request was succesfully sent
-        verifyHit(request: mockNetworkService?.calledNetworkRequests[0], host: "https://test.com/id?mcorgid=orgid&mid=mid")
-        
-        verifyIdentityChange(aid: "7A57620BB5CA4754-30BDF2392F2416C7", vid: nil)
-        
-        // 2nd launch
-        mockRuntime.resetDispatchedEventAndCreatedSharedStates()
-        mockNetworkService?.reset()
-        resetExtension()
-        
-        dispatchDefaultConfigAndIdentityStates()
-        waitForProcessing()
-        
-        // No id request should be sent
-        XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 0)
-        
-        verifyIdentityChange(aid: "7A57620BB5CA4754-30BDF2392F2416C7", vid: nil)
-    }
-        
+
     //Request to get AID should return empty AID if privacy OPT_OUT
     func testAIDOptOut() {
         dispatchDefaultConfigAndIdentityStates(configData: [
@@ -185,48 +119,8 @@ class AnalyticsIDTests : AnalyticsFunctionalTestBase {
         ])
         
         waitForProcessing()
-                                
-        // No id request should be sent
-        XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 0)
-        // Shared state should be cleared
+
         verifyIdentityChange(aid: nil, vid: nil)
-    }
-    
-    //Request to get AID should return empty string if the server returned an invalid AID and Visitor ID Service is enabled
-    func testInvalidAIDResponseVisitorEnabled() {
-        let aidResponse = """
-        {
-            "id": "Not33Length"
-        }
-        """
-        mockNetworkService?.expectedResponse = HttpConnection(data: aidResponse.data(using: .utf8) , response: HTTPURLResponse(url: URL(string: "test.com")!, statusCode: 200, httpVersion: nil, headerFields: nil), error: nil)
-        
-        dispatchDefaultConfigAndIdentityStates()
-                
-        waitForProcessing()
-                                
-        // No id request should be sent
-        XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 1)
-        // Should not generate aid as visitor service is configured
-        verifyIdentityChange(aid: nil, vid: nil)
-    }
-    
-    //Request to get AID should return generated AID if the server returned an invalid AID and Visitor ID Service is disabled
-    func testInvalidAIDResponseVisitorDisabled() {
-        let aidResponse = """
-        {
-            "id": "Not33Length"
-        }
-        """
-        mockNetworkService?.expectedResponse = HttpConnection(data: aidResponse.data(using: .utf8) , response: HTTPURLResponse(url: URL(string: "test.com")!, statusCode: 200, httpVersion: nil, headerFields: nil), error: nil)
-        
-        dispatchDefaultConfigAndIdentityStates(configData: [
-            AnalyticsTestConstants.Configuration.EventDataKeys.MARKETING_CLOUD_ORGID_KEY : ""
-        ])
-                
-        waitForProcessing()
-        
-        verifyIdentityChange(aid: "*", vid: nil)
     }
     
     // Set visitor id should dispatch event

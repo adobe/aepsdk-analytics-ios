@@ -135,7 +135,6 @@ enum AnalyticsTestConstants {
     enum DataStoreKeys {
         static let MOST_RECENT_HIT_TIMESTAMP = "mostrecenthittimestamp"
         static let AID = "aid"
-        static let IGNORE_AID = "ignoreaid"
         static let VID = "vid"
         static let DATA_MIGRATED = "data.migrated"
     }

@@ -34,9 +34,6 @@ class AnalyticsMigrator {
         if let aid = userDefaults.string(forKey: AnalyticsConstants.V4Migration.AID) {
             dataStore.set(key: AnalyticsConstants.DataStoreKeys.AID, value: aid)
         }
-        if let ignoreAid = userDefaults.object(forKey: AnalyticsConstants.V4Migration.IGNORE_AID) {
-            dataStore.set(key: AnalyticsConstants.DataStoreKeys.IGNORE_AID, value: ignoreAid as? Bool)
-        }
         if let vid = userDefaults.string(forKey: AnalyticsConstants.V4Migration.VID) {
             dataStore.set(key: AnalyticsConstants.DataStoreKeys.VID, value: vid)
         }
@@ -62,9 +59,6 @@ class AnalyticsMigrator {
 
         if let aid = userDefaults.string(forKey: AnalyticsConstants.V5Migration.AID) {
             dataStore.set(key: AnalyticsConstants.DataStoreKeys.AID, value: aid)
-        }
-        if let ignoreAid = userDefaults.object(forKey: AnalyticsConstants.V5Migration.IGNORE_AID) {
-            dataStore.set(key: AnalyticsConstants.DataStoreKeys.IGNORE_AID, value: ignoreAid as? Bool)
         }
         if let vid = userDefaults.string(forKey: AnalyticsConstants.V5Migration.VID) {
             dataStore.set(key: AnalyticsConstants.DataStoreKeys.VID, value: vid)

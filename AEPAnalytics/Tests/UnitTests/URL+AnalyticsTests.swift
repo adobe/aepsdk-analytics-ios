@@ -44,16 +44,4 @@ class URL_AnalyticsTests: XCTestCase {
 
         XCTAssertEqual("https://test.com/b/ss/rsid1,rsid2/0/\(version)/s", URL.getAnalyticsBaseUrl(state: analyticsState)?.absoluteString)
     }
-
-    func testGetIdUrlNilWhenAnalyticsNotConfiguredEmpty() {
-        XCTAssertNil(URL.getAnalyticsIdRequestURL(state: analyticsState))
-    }
-
-    func testGetIdUrl() {
-        analyticsState.host = "test.com"
-        analyticsState.marketingCloudId = "mid"
-        analyticsState.marketingCloudOrganizationId = "org"
-
-        XCTAssertEqual("https://test.com/id?mcorgid=org&mid=mid", URL.getAnalyticsIdRequestURL(state: analyticsState)?.absoluteString)
-    }
 }

@@ -45,7 +45,6 @@ class AnalyticsMigratorTests: XCTestCase {
 
         XCTAssertTrue(dataStore.contains(key: AnalyticsConstants.DataStoreKeys.DATA_MIGRATED))
         XCTAssertFalse(dataStore.contains(key: AnalyticsConstants.DataStoreKeys.AID))
-        XCTAssertFalse(dataStore.contains(key: AnalyticsConstants.DataStoreKeys.IGNORE_AID))
         XCTAssertFalse(dataStore.contains(key: AnalyticsConstants.DataStoreKeys.VID))
     }
 
@@ -65,7 +64,6 @@ class AnalyticsMigratorTests: XCTestCase {
 
         XCTAssertTrue(dataStore.contains(key: AnalyticsConstants.DataStoreKeys.DATA_MIGRATED))
         XCTAssertEqual("aid", dataStore.getString(key: AnalyticsConstants.DataStoreKeys.AID))
-        XCTAssertEqual(true, dataStore.getBool(key: AnalyticsConstants.DataStoreKeys.IGNORE_AID))
         XCTAssertEqual("vid", dataStore.getString(key: AnalyticsConstants.DataStoreKeys.VID))
 
         XCTAssertNil(userDefaults.object(forKey: AnalyticsConstants.V4Migration.AID))
@@ -79,7 +77,7 @@ class AnalyticsMigratorTests: XCTestCase {
 
     func testAnalyticsMigrationFromV5() {
         // Migrate
-        userDefaults.set("aid", forKey: AnalyticsConstants.V5Migration.AID)
+        userDefaults.set("aid", forKey: AnalyticsConstants.V5Migration.AID)        
         userDefaults.set(true, forKey: AnalyticsConstants.V5Migration.IGNORE_AID)
         userDefaults.set("vid", forKey: AnalyticsConstants.V5Migration.VID)
 
@@ -90,7 +88,6 @@ class AnalyticsMigratorTests: XCTestCase {
 
         XCTAssertTrue(dataStore.contains(key: AnalyticsConstants.DataStoreKeys.DATA_MIGRATED))
         XCTAssertEqual("aid", dataStore.getString(key: AnalyticsConstants.DataStoreKeys.AID))
-        XCTAssertEqual(true, dataStore.getBool(key: AnalyticsConstants.DataStoreKeys.IGNORE_AID))
         XCTAssertEqual("vid", dataStore.getString(key: AnalyticsConstants.DataStoreKeys.VID))
 
         XCTAssertNil(userDefaults.object(forKey: AnalyticsConstants.V5Migration.AID))
@@ -140,7 +137,6 @@ class AnalyticsMigratorTests: XCTestCase {
 
         XCTAssertTrue(dataStore.contains(key: AnalyticsConstants.DataStoreKeys.DATA_MIGRATED))
         XCTAssertEqual("aid", dataStore.getString(key: AnalyticsConstants.DataStoreKeys.AID))
-        XCTAssertEqual(true, dataStore.getBool(key: AnalyticsConstants.DataStoreKeys.IGNORE_AID))
         XCTAssertEqual("vid", dataStore.getString(key: AnalyticsConstants.DataStoreKeys.VID))
 
         XCTAssertNil(userDefaults.object(forKey: AnalyticsConstants.V5Migration.AID))
