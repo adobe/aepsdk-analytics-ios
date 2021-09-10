@@ -39,28 +39,6 @@ extension URL {
         return url
     }
 
-    /// Creates a new Analytics ID Request URL
-    /// - Returns: the analytics ID request URL
-    /// - Parameters:
-    ///   - state: the analytics state
-    static func getAnalyticsIdRequestURL(state: AnalyticsState) -> URL? {
-        guard state.host != nil else {
-            return nil
-        }
-
-        var components = URLComponents()
-        components.scheme = "https"
-        components.host = state.host
-        components.path = "/id"
-        components.queryItems = getMarketingCloudIdQueryParameters(state: state)
-
-        let url = components.url
-        if url == nil {
-            Log.warning(label: LOG_TAG, "getAnalyticsIdRequestURL - Error building Analytics Identity Request URL, returning nil")
-        }
-        return url
-    }
-
     /// Build analytics payload from analytics context data and vars
     /// - Returns: the payload sent in analytics requests
     /// - Parameters:
