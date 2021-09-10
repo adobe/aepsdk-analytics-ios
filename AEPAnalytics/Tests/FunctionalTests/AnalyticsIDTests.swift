@@ -111,9 +111,12 @@ class AnalyticsIDTests : AnalyticsFunctionalTestBase {
                   vars: expectedVars,
                   contextData: expectedContextData)
     }
-
-    //Request to get AID should return empty AID if privacy OPT_OUT
-    func testAIDOptOut() {
+    
+    func testOptOut_ShouldNotReadAidVid() {
+        let dataStore = NamedCollectionDataStore(name: AnalyticsTestConstants.DATASTORE_NAME)
+        dataStore.set(key: AnalyticsTestConstants.DataStoreKeys.AID, value: "testaid")
+        dataStore.set(key: AnalyticsTestConstants.DataStoreKeys.VID, value: "testvid")
+        
         dispatchDefaultConfigAndIdentityStates(configData: [
             AnalyticsTestConstants.Configuration.EventDataKeys.GLOBAL_PRIVACY : "optedout"
         ])
@@ -135,6 +138,22 @@ class AnalyticsIDTests : AnalyticsFunctionalTestBase {
         waitForProcessing()
         
         verifyIdentityChange(aid: nil, vid: "myvid")
+    }
+    
+    // Set visitor id should dispatch event
+    func testOptOut_ShouldNotUpdateVid() {
+        dispatchDefaultConfigAndIdentityStates(configData: [
+            AnalyticsTestConstants.Configuration.EventDataKeys.GLOBAL_PRIVACY : "optedout"
+        ])
+
+        // Set VID
+        let data = [AnalyticsTestConstants.EventDataKeys.VISITOR_IDENTIFIER : "myvid"]
+        let event = Event(name: "", type: EventType.analytics, source: EventSource.requestIdentity, data: data)
+        mockRuntime.simulateComingEvent(event: event)
+        
+        waitForProcessing()
+        
+        verifyIdentityChange(aid: nil, vid: nil)
     }
     
     func testAIDandVIDShouldBeClearedAfterOptOut() {

@@ -276,14 +276,13 @@ public class Analytics: NSObject, Extension {
     /// `EventType.analytics` and `EventSource.requestIdentity`
     /// - Parameter event: The `Event` to be processed.
     private func handleAnalyticsRequestIdentityEvent(_ event: Event) {
-        if analyticsState.privacyStatus == .optedOut {
-            Log.debug(label: LOG_TAG, "handleAnalyticsRequestIdentityEvent - Privacy is opted out, ignoring the update visitor identifier request.")
-            return
-        }
-
         if let vid = event.data?[AnalyticsConstants.EventDataKeys.VISITOR_IDENTIFIER] as? String {
-            // Persist the visitor identifier
-            analyticsProperties.setVisitorIdentifier(vid: vid)
+            if analyticsState.privacyStatus != .optedOut {
+                // Persist the visitor identifier
+                analyticsProperties.setVisitorIdentifier(vid: vid)
+            } else {
+                Log.debug(label: LOG_TAG, "handleAnalyticsRequestIdentityEvent - Privacy is opted out, ignoring the update visitor identifier request.")
+            }
         }
 
         publishAnalyticsId(event: event)
