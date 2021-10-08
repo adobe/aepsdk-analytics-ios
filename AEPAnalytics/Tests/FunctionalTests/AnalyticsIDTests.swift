@@ -272,62 +272,17 @@ class AnalyticsIDTests : AnalyticsFunctionalTestBase {
         dispatchDefaultConfigAndIdentityStates()
         waitForProcessing()
         
-        let analyticsProperties = analytics.analyticsProperties
-        let analyticsState = analytics.analyticsState
         
-        XCTAssertEqual(true, analyticsProperties.getIgnoreAidStatus())
-        XCTAssertEqual("testvid", analyticsProperties.getVisitorIdentifier())
-        XCTAssertEqual("testaid", analyticsProperties.getAnalyticsIdentifier())
-        XCTAssertEqual(100, analyticsProperties.getMostRecentHitTimestamp())
-        
-        XCTAssertEqual(analyticsState.host, "test.com")
-        XCTAssertEqual(analyticsState.rsids, "rsid")
-        XCTAssertFalse(analyticsState.analyticForwardingEnabled)
-        XCTAssertTrue(analyticsState.offlineEnabled)
-        XCTAssertEqual(analyticsState.launchHitDelay, 0 , accuracy: 0)
-        XCTAssertEqual(analyticsState.marketingCloudOrganizationId, "orgid")
-        XCTAssertTrue(analyticsState.backDateSessionInfoEnabled)
-        XCTAssertEqual(analyticsState.privacyStatus, PrivacyStatus.optedIn)
-        XCTAssertEqual(analyticsState.marketingCloudId, "mid")
-        XCTAssertEqual(analyticsState.blob, "blob")
-        XCTAssertEqual(analyticsState.locationHint, "lochint")
-        
-        XCTAssertEqual(analyticsState.defaultData[AnalyticsConstants.ContextDataKeys.OPERATING_SYSTEM], "mockOSName")
-        XCTAssertEqual(analyticsState.defaultData[AnalyticsConstants.ContextDataKeys.APPLICATION_IDENTIFIER], "mockAppName")
-        XCTAssertEqual(analyticsState.defaultData[AnalyticsConstants.ContextDataKeys.REGION_ID], "myRegionId")
-        XCTAssertEqual(analyticsState.defaultData[AnalyticsConstants.ContextDataKeys.REGION_NAME], "myRegionName")
-        
-        let resetEvent = Event(name: "test reset event", type: EventType.genericIdentity, source: EventSource.requestReset, data: nil)
+        verifyIdentityChange(aid: "testaid", vid: "testvid")
 
         // test
+        let resetEvent = Event(name: "test reset event", type: EventType.genericIdentity, source: EventSource.requestReset, data: nil)
+
         mockRuntime.simulateComingEvent(event: resetEvent)
         
         waitForProcessing()
         
-        // should reset
-        XCTAssertEqual(false, analyticsProperties.getIgnoreAidStatus())
-        XCTAssertNil(analyticsProperties.getVisitorIdentifier())
-        XCTAssertNil(analyticsProperties.getAnalyticsIdentifier())
-        XCTAssertEqual(0, analyticsProperties.getMostRecentHitTimestamp())
-        
-        XCTAssertNil(analyticsState.marketingCloudId)
-        XCTAssertNil(analyticsState.blob)
-        XCTAssertNil(analyticsState.locationHint)
-        XCTAssertNil(analyticsState.advertisingId)
-        XCTAssertNil(analyticsState.serializedVisitorIdsList)
-        XCTAssertNil(analyticsState.defaultData[AnalyticsConstants.ContextDataKeys.REGION_ID])
-        XCTAssertNil(analyticsState.defaultData[AnalyticsConstants.ContextDataKeys.REGION_NAME])
-        
-        //should not reset
-        XCTAssertEqual(analyticsState.host, "test.com")
-        XCTAssertEqual(analyticsState.rsids, "rsid")
-        XCTAssertEqual(analyticsState.marketingCloudOrganizationId, "orgid")
-        XCTAssertFalse(analyticsState.analyticForwardingEnabled)
-        XCTAssertTrue(analyticsState.offlineEnabled)
-        XCTAssertEqual(analyticsState.launchHitDelay, 0 , accuracy: 0)
-        XCTAssertTrue(analyticsState.backDateSessionInfoEnabled)
-        XCTAssertEqual(analyticsState.privacyStatus, PrivacyStatus.optedIn)
-        XCTAssertEqual(analyticsState.defaultData[AnalyticsConstants.ContextDataKeys.OPERATING_SYSTEM], "mockOSName")
-        XCTAssertEqual(analyticsState.defaultData[AnalyticsConstants.ContextDataKeys.APPLICATION_IDENTIFIER], "mockAppName")
+        //verify
+        verifyIdentityChange(aid: nil, vid: nil)
     }
 }
