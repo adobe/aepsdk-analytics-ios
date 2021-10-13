@@ -176,5 +176,46 @@ class AnalyticsIDTests : AnalyticsFunctionalTestBase {
         waitForProcessing()
         verifyIdentityChange(aid: nil, vid: nil)
     }
+    
+    func testHandleRequestResetEvent() {
+        let placesSharedState: [String: Any] = [
+            AnalyticsTestConstants.Places.EventDataKeys.CURRENT_POI : [
+                AnalyticsTestConstants.Places.EventDataKeys.REGION_ID : "myRegionId",
+                AnalyticsTestConstants.Places.EventDataKeys.REGION_NAME : "myRegionName"
+            ]
+        ]
+        let lifecycleSharedState: [String: Any] = [
+            AnalyticsTestConstants.Lifecycle.EventDataKeys.LIFECYCLE_CONTEXT_DATA : [
+                AnalyticsTestConstants.Lifecycle.EventDataKeys.OPERATING_SYSTEM : "mockOSName",
+                AnalyticsTestConstants.Lifecycle.EventDataKeys.APP_ID : "mockAppName",
+            ]
+        ]
+        
+        let dataStore = NamedCollectionDataStore(name: AnalyticsTestConstants.DATASTORE_NAME)
+        dataStore.set(key: AnalyticsTestConstants.DataStoreKeys.MOST_RECENT_HIT_TIMESTAMP, value: TimeInterval(100))
+        dataStore.set(key: AnalyticsTestConstants.DataStoreKeys.AID, value: "testaid")
+        dataStore.set(key: AnalyticsTestConstants.DataStoreKeys.VID, value: "testvid")
+        
+        mockNetworkService?.reset()
+        resetExtension()
+        
+        
+        simulateLifecycleState(data: lifecycleSharedState)
+        simulatePlacesState(data: placesSharedState)
+        dispatchDefaultConfigAndIdentityStates()
+        waitForProcessing()
+        
+        
+        verifyIdentityChange(aid: "testaid", vid: "testvid")
 
+        // test
+        let resetEvent = Event(name: "test reset event", type: EventType.genericIdentity, source: EventSource.requestReset, data: nil)
+
+        mockRuntime.simulateComingEvent(event: resetEvent)
+        
+        waitForProcessing()
+        
+        //verify
+        verifyIdentityChange(aid: nil, vid: nil)
+    }
 }

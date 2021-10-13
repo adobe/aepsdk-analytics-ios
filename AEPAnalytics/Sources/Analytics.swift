@@ -28,6 +28,7 @@ public class Analytics: NSObject, Extension {
     private let dataStore = NamedCollectionDataStore(name: AnalyticsConstants.DATASTORE_NAME)
     private var analyticsTimer: AnalyticsTimer
     private var analyticsDatabase: AnalyticsDatabase?
+
     private var analyticsProperties: AnalyticsProperties
     private var analyticsState: AnalyticsState
 
@@ -88,6 +89,7 @@ public class Analytics: NSObject, Extension {
         registerListener(type: EventType.lifecycle, source: EventSource.responseContent, listener: handleIncomingEvent)
         registerListener(type: EventType.genericLifecycle, source: EventSource.requestContent, listener: handleIncomingEvent)
         registerListener(type: EventType.hub, source: EventSource.sharedState, listener: handleIncomingEvent)
+        registerListener(type: EventType.genericIdentity, source: EventSource.requestReset, listener: handleResetIdentitiesEvent)
     }
 
     /// Invoked when the Analytics extension has been unregistered by the `EventHub`, currently a no-op.
@@ -207,7 +209,7 @@ public class Analytics: NSObject, Extension {
     /// `EventType.configuration` and `EventSource.responseContent`
     ///  - Parameter event: the `Event` to be processed
     private func handleConfigurationResponseEvent(_ event: Event) {
-        updateAnalyticsState(forEvent: event, dependencies: analyticsHardDependencies)
+        updateAnalyticsState(forEvent: event, dependencies: analyticsHardDependencies + analyticsSoftDependencies)
 
         if analyticsState.privacyStatus == .optedOut {
             handleOptOut(event: event)
@@ -310,6 +312,18 @@ public class Analytics: NSObject, Extension {
             updateAnalyticsState(forEvent: event, dependencies: analyticsHardDependencies + analyticsSoftDependencies)
             handleTrackRequest(event: event, eventData: eventData)
         }
+    }
+
+    /// Processes Reset identities event
+    /// - Parameter:
+    ///   - event: The Reset identities event
+    private func handleResetIdentitiesEvent(_ event: Event) {
+        Log.debug(label: LOG_TAG, "\(#function) - Resetting all identifiers.")
+        analyticsDatabase?.reset()
+        analyticsState.resetIdentities()
+        analyticsProperties.reset()
+        analyticsState.lastResetIdentitiesTimestamp = event.timestamp.timeIntervalSince1970
+        createSharedState(data: getSharedState(), event: event)
     }
 
     /// Dispatches event of type `EventType.analytics` and source `EventSource.responseContent` event with persisted ids and also updates analytics shared state.
