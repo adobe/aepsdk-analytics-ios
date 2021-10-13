@@ -58,7 +58,7 @@ class AnalyticsHitProcessor: HitProcessing {
 
             // If reset Identities was called, do not process the hit queued before reset identities was called.
             if timestamp < self.analyticsState.lastResetIdentitiesTimestamp {
-                Log.debug(label: self.LOG_TAG, "\(#function) - Dropping Analytics hit, reset identities API was called after this request.")
+                Log.debug(label: self.LOG_TAG, "\(#function) - Dropping Analytics hit, resetIdentities API was called after this request.")
                 completion(true)
                 return
             }

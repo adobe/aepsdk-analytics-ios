@@ -94,7 +94,7 @@ class AnalyticsProperties {
         return vid
     }
 
-    /// Clears or resets Identifiers to default values any saved properties present in the `AnalyticsProperties` instance.
+    /// Clears or resets to default values any saved identifiers or properties present in the `AnalyticsProperties` instance.
     func reset() {
         mostRecentHitTimeStampInSeconds = 0
         vid = nil

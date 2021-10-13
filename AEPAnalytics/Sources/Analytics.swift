@@ -323,7 +323,7 @@ public class Analytics: NSObject, Extension {
     /// - Parameter:
     ///   - event: The Reset identities event
     private func handleResetIdentitiesEvent(_ event: Event) {
-        Log.debug(label: LOG_TAG, "\(#function) - Resetting all Identifiers")
+        Log.debug(label: LOG_TAG, "\(#function) - Resetting all identifiers.")
         analyticsDatabase?.reset()
         analyticsState.resetIdentities()
         analyticsProperties.reset()

@@ -18,10 +18,11 @@ import AEPServices
 class AnalyticsPropertiesTest: XCTestCase {
 
     var analyticsProperties:AnalyticsProperties!
+    var dataStore:NamedCollectionDataStore!
 
     override func setUp() {
         ServiceProvider.shared.namedKeyValueService = MockDataStore()
-        let dataStore = NamedCollectionDataStore(name: AnalyticsTestConstants.DATASTORE_NAME)
+        dataStore = NamedCollectionDataStore(name: AnalyticsTestConstants.DATASTORE_NAME)
         dataStore.set(key: AnalyticsTestConstants.DataStoreKeys.MOST_RECENT_HIT_TIMESTAMP, value: TimeInterval(100))
         dataStore.set(key: AnalyticsTestConstants.DataStoreKeys.AID, value: "testaid")
         dataStore.set(key: AnalyticsTestConstants.DataStoreKeys.VID, value: "testvid")
@@ -48,21 +49,7 @@ class AnalyticsPropertiesTest: XCTestCase {
         XCTAssertNil(analyticsProperties.getVisitorIdentifier())
         XCTAssertNil(analyticsProperties.getAnalyticsIdentifier())
         XCTAssertEqual(0, analyticsProperties.getMostRecentHitTimestamp())
-
-    }
-
-    func testResetIdentities() {
-        XCTAssertEqual("testvid", analyticsProperties.getVisitorIdentifier())
-        XCTAssertEqual("testaid", analyticsProperties.getAnalyticsIdentifier())
-        XCTAssertEqual(100, analyticsProperties.getMostRecentHitTimestamp())
-
-        //test
-        analyticsProperties.reset()
-
-        //verify
-        XCTAssertNil(analyticsProperties.getVisitorIdentifier())
-        XCTAssertNil(analyticsProperties.getAnalyticsIdentifier())
-        XCTAssertEqual(0.0, analyticsProperties.getMostRecentHitTimestamp())
-
+        XCTAssertNil(dataStore.getString(key: AnalyticsTestConstants.DataStoreKeys.AID))
+        XCTAssertNil(dataStore.getString(key: AnalyticsTestConstants.DataStoreKeys.VID))
     }
 }

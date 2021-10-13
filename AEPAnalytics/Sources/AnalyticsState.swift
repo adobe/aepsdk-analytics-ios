@@ -287,7 +287,7 @@ class AnalyticsState {
         assuranceSessionActive = AnalyticsConstants.Default.ASSURANCE_SESSION_ENABLED
     }
 
-    /// Clears all identities.
+    /// Clears all identities and related places data.
     func resetIdentities() {
         clearPlacesData()
         marketingCloudId = nil
