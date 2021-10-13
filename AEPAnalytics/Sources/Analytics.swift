@@ -29,13 +29,8 @@ public class Analytics: NSObject, Extension {
     private var analyticsTimer: AnalyticsTimer
     private var analyticsDatabase: AnalyticsDatabase?
 
-    #if DEBUG
-        var analyticsProperties: AnalyticsProperties
-        var analyticsState: AnalyticsState
-    #else
-        private var analyticsProperties: AnalyticsProperties
-        private var analyticsState: AnalyticsState
-    #endif
+    private var analyticsProperties: AnalyticsProperties
+    private var analyticsState: AnalyticsState
 
     private let analyticsHardDependencies: [String] = [
         AnalyticsConstants.Configuration.EventDataKeys.SHARED_STATE_NAME,
