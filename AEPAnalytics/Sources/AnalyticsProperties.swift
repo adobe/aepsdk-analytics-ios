@@ -26,9 +26,6 @@ class AnalyticsProperties {
     /// Analytics VID (legacy)
     private var vid: String?
 
-    /// Indicates if an analytics id request should be ignored.
-    private var ignoreAid: Bool
-
     /// Timestamp of the last hit
     private var mostRecentHitTimeStampInSeconds: TimeInterval = 0
 
@@ -37,13 +34,9 @@ class AnalyticsProperties {
         return TimeZone.current.getOffsetFromGmtInMinutes()
     }
 
-    /// Current locale of the user
-    var locale: Locale?
-
     init(dataStore: NamedCollectionDataStore) {
         self.dataStore = dataStore
         self.mostRecentHitTimeStampInSeconds = dataStore.getDouble(key: AnalyticsConstants.DataStoreKeys.MOST_RECENT_HIT_TIMESTAMP) ?? 0
-        self.ignoreAid = dataStore.getBool(key: AnalyticsConstants.DataStoreKeys.IGNORE_AID) ?? false
         self.aid = dataStore.getString(key: AnalyticsConstants.DataStoreKeys.AID)
         self.vid = dataStore.getString(key: AnalyticsConstants.DataStoreKeys.VID)
     }
@@ -59,22 +52,6 @@ class AnalyticsProperties {
         return mostRecentHitTimeStampInSeconds
     }
 
-    /// Sets the value of the `ignoreAid` status in the `AnalyticsProperties` instance.
-    /// The new value is persisted in the datastore.
-    /// - Parameter:
-    ///   - status: The value for the new `ignoreAid` status.
-    func setIgnoreAidStatus(status: Bool) {
-        dataStore.set(key: AnalyticsConstants.DataStoreKeys.IGNORE_AID, value: status)
-        ignoreAid = status
-    }
-
-    /// Returns the `ignoreAid` status from the `AnalyticsProperties` instance.
-    /// This method attempts to find one from the DataStore first before returning the variable present in `AnalyticsProperties`.
-    /// - Returns: A bool containing the `ignoreAid` status.
-    func getIgnoreAidStatus() -> Bool {
-        return ignoreAid
-    }
-
     /// Sets the value of the `aid` in the `AnalyticsProperties` instance.
     /// The new value is persisted in the datastore.
     /// - Parameter:
@@ -82,10 +59,8 @@ class AnalyticsProperties {
     func setAnalyticsIdentifier(aid: String?) {
         if (aid ?? "").isEmpty {
             dataStore.remove(key: AnalyticsConstants.DataStoreKeys.AID)
-            setIgnoreAidStatus(status: true)
         } else {
             dataStore.set(key: AnalyticsConstants.DataStoreKeys.AID, value: aid)
-            setIgnoreAidStatus(status: false)
         }
 
         self.aid = aid
@@ -119,20 +94,16 @@ class AnalyticsProperties {
         return vid
     }
 
-    /// Clears or resets to default values any saved properties present in the `AnalyticsProperties` instance.
+    /// Clears or resets to default values any saved identifiers or properties present in the `AnalyticsProperties` instance.
     func reset() {
-        locale = nil
-        aid = nil
-        ignoreAid = false
-        vid = nil
         mostRecentHitTimeStampInSeconds = 0
+        vid = nil
+        aid = nil
         // Clear datastore
         dataStore.remove(key: AnalyticsConstants.DataStoreKeys.AID)
         dataStore.remove(key: AnalyticsConstants.DataStoreKeys.VID)
-        dataStore.remove(key: AnalyticsConstants.DataStoreKeys.IGNORE_AID)
         dataStore.remove(key: AnalyticsConstants.DataStoreKeys.MOST_RECENT_HIT_TIMESTAMP)
     }
-
 }
 
 extension TimeZone {

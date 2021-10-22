@@ -56,6 +56,13 @@ class AnalyticsHitProcessor: HitProcessing {
             var payload = analyticsHit.payload
             var timestamp = analyticsHit.timestamp
 
+            // If reset Identities was called, do not process the hit queued before reset identities was called.
+            if timestamp < self.analyticsState.lastResetIdentitiesTimestamp {
+                Log.debug(label: self.LOG_TAG, "\(#function) - Dropping Analytics hit, resetIdentities API was called after this request.")
+                completion(true)
+                return
+            }
+
             // If offline tracking is disabled, drop hits whose timestamp exceeds the offline disabled wait threshold
             if !self.analyticsState.offlineEnabled &&
                 timestamp < (Date().timeIntervalSince1970 - AnalyticsConstants.Default.TIMESTAMP_DISABLED_WAIT_THRESHOLD_SECONDS) {
@@ -141,7 +148,14 @@ class AnalyticsHitProcessor: HitProcessing {
 
             dispatchQueue.async { [weak self] in
                 guard let self = self else { return }
-                self.responseHandler(eventData)
+
+                // Dispatch response only if the hit was sent after the reset Identities was called.
+                // So that we only populate UUID if the hit was sent after reset in case where AAMForwarding is enabled.
+                if hit.timestamp > self.analyticsState.lastResetIdentitiesTimestamp {
+                    Log.debug(label: self.LOG_TAG, "\(#function) - Dispatching Analytics hit response.")
+                    self.responseHandler(eventData)
+                }
+
                 self.lastHitTimestamp = hit.timestamp
                 completion(true)
             }

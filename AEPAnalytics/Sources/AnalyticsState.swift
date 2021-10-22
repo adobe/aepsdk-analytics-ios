@@ -89,6 +89,8 @@ class AnalyticsState {
     private typealias PlacesEventDataKeys = AnalyticsConstants.Places.EventDataKeys
     /// Typealias for Assurance Event Data keys.
     private typealias AssuranceEventDataKeys = AnalyticsConstants.Assurance.EventDataKeys
+    /// Store the timestamp for most recent resetIdentities API call
+    var lastResetIdentitiesTimestamp = TimeInterval()
 
     /// Takes the shared states map and updates the data within the Analytics State.
     /// - Parameter dataMap: The map contains the shared state data required by the Analytics SDK.
@@ -262,25 +264,37 @@ class AnalyticsState {
         return privacyStatus == PrivacyStatus.optedIn
     }
 
+    /// Clears places data
+    private func clearPlacesData() {
+        defaultData.removeValue(forKey: AnalyticsConstants.ContextDataKeys.REGION_ID)
+        defaultData.removeValue(forKey: AnalyticsConstants.ContextDataKeys.REGION_NAME)
+    }
+
     /// Clears data stored and sets default values if possible in the Analytics State when privacy status is opted out.
     private func handleOptOut() {
+        resetIdentities()
+        rsids = nil
+        host = nil
+        marketingCloudOrganizationId = nil
+        defaultData = [String: String]()
         offlineEnabled = AnalyticsConstants.Default.OFFLINE_ENABLED
         batchLimit = AnalyticsConstants.Default.BATCH_LIMIT
         launchHitDelay = AnalyticsConstants.Default.LAUNCH_HIT_DELAY
         backDateSessionInfoEnabled = AnalyticsConstants.Default.BACKDATE_SESSION_INFO_ENABLED
-        marketingCloudOrganizationId = nil
         analyticForwardingEnabled = AnalyticsConstants.Default.FORWARDING_ENABLED
+        lifecycleMaxSessionLength = AnalyticsConstants.Default.LIFECYCLE_MAX_SESSION_LENGTH
+        lifecycleSessionStartTimestamp = AnalyticsConstants.Default.LIFECYCLE_SESSION_START_TIMESTAMP
+        assuranceSessionActive = AnalyticsConstants.Default.ASSURANCE_SESSION_ENABLED
+    }
+
+    /// Clears all identities and related places data.
+    func resetIdentities() {
+        clearPlacesData()
         marketingCloudId = nil
         locationHint = nil
         blob = nil
-        rsids = nil
-        host = nil
-        defaultData = [String: String]()
-        lifecycleMaxSessionLength = AnalyticsConstants.Default.LIFECYCLE_MAX_SESSION_LENGTH
-        lifecycleSessionStartTimestamp = AnalyticsConstants.Default.LIFECYCLE_SESSION_START_TIMESTAMP
         serializedVisitorIdsList = nil
         applicationId = nil
         advertisingId = nil
-        assuranceSessionActive = AnalyticsConstants.Default.ASSURANCE_SESSION_ENABLED
     }
 }
