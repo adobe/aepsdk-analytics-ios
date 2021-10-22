@@ -17,7 +17,7 @@ enum AnalyticsConstants {
 
     static let EXTENSION_NAME                           = "com.adobe.module.analytics"
     static let FRIENDLY_NAME                            = "Analytics"
-    static let EXTENSION_VERSION                        = "3.0.2"
+    static let EXTENSION_VERSION                        = "3.0.3"
     static let DATASTORE_NAME                           = EXTENSION_NAME
 
     static let DATA_QUEUE_NAME                           = EXTENSION_NAME
