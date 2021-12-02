@@ -11,8 +11,6 @@ IOS_ARCHIVE_DSYM_PATH = $(CURR_DIR)/build/ios.xcarchive/dSYMs/
 setup:
 	(pod install)
 
-setup-tools: install-swiftlint install-githook
-
 pod-repo-update:
 	(pod repo update)
 
