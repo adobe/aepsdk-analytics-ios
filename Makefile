@@ -42,7 +42,7 @@ format:
 	swiftformat . --swiftversion 5.1
 
 lint-autocorrect:
-	./Pods/SwiftLint/swiftlint autocorrect --format
+	./Pods/SwiftLint/swiftlint autocorrect
 
 lint:
 	./Pods/SwiftLint/swiftlint lint
