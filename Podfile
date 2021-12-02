@@ -4,6 +4,8 @@ use_frameworks!
 
 project 'AEPAnalytics.xcodeproj'
 
+pod 'SwiftLint', '0.44.0'
+
 target 'AEPAnalytics' do
   pod 'AEPCore'
   pod 'AEPServices'
@@ -23,7 +25,7 @@ target 'AEPAnalyticsFunctionalTests' do
 end
 
 target 'AnalyticsSampleApp' do
-  pod 'AEPCore'  
+  pod 'AEPCore'
   pod 'AEPIdentity'
   pod 'AEPLifecycle'
   pod 'AEPAssurance', '~> 3.0.0'

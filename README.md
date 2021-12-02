@@ -65,7 +65,7 @@ Include `AEPAnalytics.xcodeproj` in the targeted Xcode project and link all nece
 
 ### Binaries
 
-Run `make archive` from the root directory to generate `.xcframeworks` for each module under the `build` folder. Drag and drop all `.xcframeworks` to your app target in Xcode.
+Run the following command, from the project root directory, to generate the `AEPAnalytics.xcframework` in the `build` directory. But, first run `make pod-install` command to ensure the dependencies are installed.
 
 ## Documentation
 
