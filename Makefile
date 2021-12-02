@@ -39,7 +39,7 @@ clean:
 	rm -rf ./build
 
 format:
-	swiftformat . --swiftversion 5.2
+	swiftformat . --swiftversion 5.1
 
 lint-autocorrect:
 	./Pods/SwiftLint/swiftlint autocorrect --format
@@ -48,7 +48,7 @@ lint:
 	./Pods/SwiftLint/swiftlint lint
 
 checkFormat:
-		swiftformat . --lint --swiftversion 5.2
+		swiftformat . --lint --swiftversion 5.1
 
 # release checks
 check-version:
