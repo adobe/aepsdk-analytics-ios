@@ -38,17 +38,11 @@ archive: pod-update
 clean:
 	rm -rf ./build
 
-format:
-	swiftformat . --swiftversion 5.1
-
 lint-autocorrect:
 	./Pods/SwiftLint/swiftlint autocorrect
 
 lint:
 	./Pods/SwiftLint/swiftlint lint
-
-checkFormat:
-		swiftformat . --lint --swiftversion 5.1
 
 # release checks
 check-version:
