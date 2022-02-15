@@ -16,7 +16,7 @@ orbs:
 jobs:
   build-and-test:
     macos:
-      xcode: 11.2.1 # Specify the Xcode version to use
+      xcode: 12.0.1 # Specify the Xcode version to use
 
     steps:
       - checkout
@@ -49,14 +49,6 @@ jobs:
       - run:
           name: Lint Source Code
           command: make lint
-
-      - run:
-          name: Install nicklockwood/SwiftFormat
-          command: brew install swiftformat
-
-      - run:
-          name: Swift Formating
-          command: swiftformat . --lint --swiftversion 5.2
 
       # pre-start the simulator to prevent timeouts
       - run:
