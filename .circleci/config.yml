@@ -16,7 +16,7 @@ orbs:
 jobs:
   build-and-test:
     macos:
-      xcode: 11.2.1 # Specify the Xcode version to use
+      xcode: 12.0.1 # Specify the Xcode version to use
 
     steps:
       - checkout
