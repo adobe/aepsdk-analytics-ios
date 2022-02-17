@@ -62,6 +62,7 @@ jobs:
 
       # code coverage
       - codecov/upload:
+          file: "./build/out"
           xtra_args: -v -X s3 -c -D "./build/out" -J "AEPAnalytics"
 
       # verify XCFramework archive builds
