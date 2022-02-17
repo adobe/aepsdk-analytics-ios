@@ -12,6 +12,7 @@ workflows:
 
 orbs:
   slack: circleci/slack@4.0.2
+  codecov: codecov/codecov@3.1.1
 
 jobs:
   build-and-test:
@@ -60,20 +61,8 @@ jobs:
           command: make test
 
       # code coverage
-      - run:
-          name: Upload Code Coverage Report
-          command: |
-            curl -s https://codecov.io/bash > codecov;
-            VERSION=$(grep 'VERSION=\".*\"' codecov | cut -d'"' -f2);
-            SHAVERSION=$(shasum -v);
-            echo "Using CodeCov version '$VERSION'"
-            echo "Using shasum '$SHAVERSION'"
-            for i in 1 256 512
-            do
-              shasum -a $i -c --ignore-missing <(curl -s "https://raw.githubusercontent.com/codecov/codecov-bash/${VERSION}/SHA${i}SUM") ||
-              shasum -a $i -c <(curl -s "https://raw.githubusercontent.com/codecov/codecov-bash/${VERSION}/SHA${i}SUM" | head -n 1)
-            done
-            bash ./codecov -v -X s3 -c -D "./build/out" -J "AEPAnalytics"
+      - codecov/upload:
+          xtra_args: -v -X s3 -c -D "./build/out" -J "AEPAnalytics"
 
       # verify XCFramework archive builds
       - run:
