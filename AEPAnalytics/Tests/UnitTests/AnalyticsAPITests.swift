@@ -202,7 +202,7 @@ class AnalyticsAPITests: XCTestCase {
         // test
         Analytics.getTrackingIdentifier(){(identifier, error) in
             XCTAssertNil(identifier)
-            XCTAssertEqual(error as? AEPError, .unexpected)
+            XCTAssertNil(error)
             expectation.fulfill()
         }
 
@@ -296,7 +296,7 @@ class AnalyticsAPITests: XCTestCase {
         // test
         Analytics.getVisitorIdentifier(){(identifier, error) in
             XCTAssertNil(identifier)
-            XCTAssertEqual(error as? AEPError, .unexpected)
+            XCTAssertNil(error)
             expectation.fulfill()
         }
 
