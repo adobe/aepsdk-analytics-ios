@@ -65,10 +65,7 @@ import Foundation
                 return
             }
 
-            guard let trackingIdentifier = responseEvent.data?[AnalyticsConstants.EventDataKeys.ANALYTICS_ID] as? String else {
-                completion(nil, AEPError.unexpected)
-                return
-            }
+            let trackingIdentifier = responseEvent.data?[AnalyticsConstants.EventDataKeys.ANALYTICS_ID] as? String
             completion(trackingIdentifier, nil)
         }
     }
@@ -85,10 +82,7 @@ import Foundation
                 return
             }
 
-            guard let visitorIdentifier = responseEvent.data?[AnalyticsConstants.EventDataKeys.VISITOR_IDENTIFIER] as? String else {
-                completion(nil, AEPError.unexpected)
-                return
-            }
+            let visitorIdentifier = responseEvent.data?[AnalyticsConstants.EventDataKeys.VISITOR_IDENTIFIER] as? String
             completion(visitorIdentifier, nil)
         }
     }
