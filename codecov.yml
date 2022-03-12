@@ -22,7 +22,9 @@ coverage:
     - "./AEPAnalytics/Mocks/**/*"
     - "./AEPAnalytics/Tests/**/*"
     - "./AEPAnalytics/Tests/.*"
-    - "./AnalyticsSampleApp/.*"
+    - "./AnalyticsSampleApp"
+    - "./Documentation"
+    - "./Script" 
     - "./build"
 
 parsers:
