@@ -24,9 +24,9 @@ jobs:
       # restore pods related caches
       - restore_cache:
           keys:
-            - cocoapods-cache-v4-{{ arch }}-{{ .Branch }}-{{ checksum "Podfile.lock" }}
-            - cocoapods-cache-v4-{{ arch }}-{{ .Branch }}
-            - cocoapods-cache-v4
+            - cocoapods-cache-v5-{{ arch }}-{{ .Branch }}-{{ checksum "Podfile.lock" }}
+            - cocoapods-cache-v5-{{ arch }}-{{ .Branch }}
+            - cocoapods-cache-v5
             - 1-gems-{{ checksum "Gemfile.lock" }}
 
       # install Gemfile
@@ -40,7 +40,7 @@ jobs:
       # save pods related files
       - save_cache:
           name: Saving CocoaPods Cache
-          key: cocoapods-cache-v4-{{ arch }}-{{ .Branch }}-{{ checksum "Podfile.lock" }}
+          key: cocoapods-cache-v5-{{ arch }}-{{ .Branch }}-{{ checksum "Podfile.lock" }}
           paths:
             - ./Pods
             - ~/.cocoapods
@@ -49,14 +49,6 @@ jobs:
       - run:
           name: Lint Source Code
           command: make lint
-
-      - run:
-          name: Install nicklockwood/SwiftFormat
-          command: brew install swiftformat
-
-      - run:
-          name: Swift Formating
-          command: swiftformat . --lint --swiftversion 5.2
 
       # pre-start the simulator to prevent timeouts
       - run:

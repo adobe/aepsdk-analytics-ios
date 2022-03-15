@@ -16,6 +16,7 @@ import Foundation
 
 
 class TestableExtensionRuntime: ExtensionRuntime {
+
     var listeners: [String: EventListener] = [:]
     var dispatchedEvents: [Event] = []
     var createdSharedStates: [[String: Any]?] = []
@@ -24,6 +25,8 @@ class TestableExtensionRuntime: ExtensionRuntime {
     var otherXDMSharedStates: [String: SharedStateResult] = [:]
 
     let dispatchQueue = DispatchQueue(label: "")
+    
+    public func getHistoricalEvents(_ requests: [EventHistoryRequest], enforceOrder: Bool, handler: @escaping ([EventHistoryResult]) -> Void) {}
 
     func getListener(type: String, source: String) -> EventListener? {
         return listeners["\(type)-\(source)"]
