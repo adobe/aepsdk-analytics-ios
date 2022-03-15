@@ -65,15 +65,13 @@ import Foundation
                 return
             }
 
-            if let responseData = responseEvent.data {
-                if responseData.keys.contains(AnalyticsConstants.EventDataKeys.ANALYTICS_ID) {
-                    guard let trackingIdentifier = responseData[AnalyticsConstants.EventDataKeys.ANALYTICS_ID] as? String else {
-                        completion(nil, AEPError.unexpected)
-                        return
-                    }
-                    completion(trackingIdentifier, nil)
+            if let responseData = responseEvent.data, responseData.keys.contains(AnalyticsConstants.EventDataKeys.ANALYTICS_ID) {
+                guard let trackingIdentifier = responseData[AnalyticsConstants.EventDataKeys.ANALYTICS_ID] as? String else {
+                    completion(nil, AEPError.unexpected)
                     return
                 }
+                completion(trackingIdentifier, nil)
+                return
             }
 
             completion(nil, nil)
@@ -92,15 +90,13 @@ import Foundation
                 return
             }
 
-            if let responseData = responseEvent.data {
-                if responseData.keys.contains(AnalyticsConstants.EventDataKeys.VISITOR_IDENTIFIER) {
-                    guard let visitorIdentifier = responseData[AnalyticsConstants.EventDataKeys.VISITOR_IDENTIFIER] as? String else {
-                        completion(nil, AEPError.unexpected)
-                        return
-                    }
-                    completion(visitorIdentifier, nil)
+            if let responseData = responseEvent.data, responseData.keys.contains(AnalyticsConstants.EventDataKeys.VISITOR_IDENTIFIER) {
+                guard let visitorIdentifier = responseData[AnalyticsConstants.EventDataKeys.VISITOR_IDENTIFIER] as? String else {
+                    completion(nil, AEPError.unexpected)
                     return
                 }
+                completion(visitorIdentifier, nil)
+                return
             }
 
             completion(nil, nil)
