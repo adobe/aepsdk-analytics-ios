@@ -14,10 +14,61 @@ import AEPCore
 import AEPServices
 import Foundation
 
+@available(iOSApplicationExtension, unavailable)
+public class Analytics: AnalyticsBase {
+    override func processAnalyticsVars(trackData: [String: Any]?, timestamp: TimeInterval) -> [String: String] {
+        var analyticsVars: [String: String] = [:]
+
+        guard let trackData = trackData else {
+            Log.debug(label: LOG_TAG, "processAnalyticsVars - track event data is nil.")
+            return analyticsVars
+        }
+
+        if let actionName = trackData[AnalyticsConstants.EventDataKeys.TRACK_ACTION] as? String {
+            analyticsVars[AnalyticsConstants.Request.IGNORE_PAGE_NAME_KEY] = AnalyticsConstants.IGNORE_PAGE_NAME_VALUE
+            let isInternal = trackData[AnalyticsConstants.EventDataKeys.TRACK_INTERNAL] as? Bool ?? false
+            let actionNameWithPrefix = "\(isInternal ? AnalyticsConstants.INTERNAL_ACTION_PREFIX : AnalyticsConstants.ACTION_PREFIX)\(actionName)"
+            analyticsVars[AnalyticsConstants.Request.ACTION_NAME_KEY] = actionNameWithPrefix
+        }
+        analyticsVars[AnalyticsConstants.Request.PAGE_NAME_KEY] = analyticsState.applicationId
+        if let stateName = trackData[AnalyticsConstants.EventDataKeys.TRACK_STATE] as? String {
+            analyticsVars[AnalyticsConstants.Request.PAGE_NAME_KEY] = stateName
+        }
+
+        if let aid = analyticsProperties.getAnalyticsIdentifier() {
+            analyticsVars[AnalyticsConstants.Request.ANALYTICS_ID_KEY] = aid
+        }
+
+        if let vid = analyticsProperties.getVisitorIdentifier() {
+            analyticsVars[AnalyticsConstants.Request.VISITOR_ID_KEY] = vid
+        }
+
+        analyticsVars[AnalyticsConstants.Request.CHARSET_KEY] = AnalyticsProperties.CHARSET
+        analyticsVars[AnalyticsConstants.Request.FORMATTED_TIMESTAMP_KEY] = analyticsProperties.timezoneOffset
+
+        if analyticsState.offlineEnabled {
+            analyticsVars[AnalyticsConstants.Request.STRING_TIMESTAMP_KEY] = String(Int64(timestamp))
+        }
+
+        if analyticsState.isVisitorIdServiceEnabled() {
+            analyticsVars.merge(analyticsState.getAnalyticsIdVisitorParameters()) { _, newValue in
+                newValue
+            }
+        }
+
+        if let appState = AnalyticsHelper.getApplicationState() {
+            analyticsVars[AnalyticsConstants.Request.CUSTOMER_PERSPECTIVE_KEY] =
+                (appState == .background) ? AnalyticsConstants.APP_STATE_BACKGROUND : AnalyticsConstants.APP_STATE_FOREGROUND
+        }
+
+        return analyticsVars
+    }
+}
+
 /// Analytics extension for the Adobe Experience Platform SDK
 @objc(AEPMobileAnalytics)
-public class Analytics: NSObject, Extension {
-    private let LOG_TAG = "Analytics"
+public class AnalyticsBase: NSObject, Extension {
+    fileprivate let LOG_TAG = "Analytics"
 
     public let runtime: ExtensionRuntime
     public let name = AnalyticsConstants.EXTENSION_NAME
@@ -29,8 +80,8 @@ public class Analytics: NSObject, Extension {
     private var analyticsTimer: AnalyticsTimer
     private var analyticsDatabase: AnalyticsDatabase?
 
-    private var analyticsProperties: AnalyticsProperties
-    private var analyticsState: AnalyticsState
+    fileprivate var analyticsProperties: AnalyticsProperties
+    fileprivate var analyticsState: AnalyticsState
 
     private let analyticsHardDependencies: [String] = [
         AnalyticsConstants.Configuration.EventDataKeys.SHARED_STATE_NAME,
@@ -555,7 +606,7 @@ public class Analytics: NSObject, Extension {
     ///     - trackData: Dictionary containing tracking data
     ///     - timestamp: timestamp to use for tracking
     ///     - Returns a `Dictionary` containing the vars data
-    private func processAnalyticsVars(trackData: [String: Any]?, timestamp: TimeInterval) -> [String: String] {
+    fileprivate func processAnalyticsVars(trackData: [String: Any]?, timestamp: TimeInterval) -> [String: String] {
         var analyticsVars: [String: String] = [:]
 
         guard let trackData = trackData else {
@@ -593,11 +644,6 @@ public class Analytics: NSObject, Extension {
             analyticsVars.merge(analyticsState.getAnalyticsIdVisitorParameters()) { _, newValue in
                 return newValue
             }
-        }
-
-        if let appState = AnalyticsHelper.getApplicationState() {
-            analyticsVars[AnalyticsConstants.Request.CUSTOMER_PERSPECTIVE_KEY] =
-                (appState == .background) ? AnalyticsConstants.APP_STATE_BACKGROUND : AnalyticsConstants.APP_STATE_FOREGROUND
         }
 
         return analyticsVars
@@ -682,8 +728,8 @@ public class Analytics: NSObject, Extension {
     }
 }
 
-extension Analytics {
-    /// Remove keys with value other than String, Character or a type convertable to NSNumber.    
+extension AnalyticsBase {
+    /// Remove keys with value other than String, Character or a type convertable to NSNumber.
     /// - Parameter data: Analytics context data from track event.
     /// - Returns: Cleaned context data converted to [String: String] dictionary
     func cleanContextData(_ data: [String: Any?]?) -> [String: String]? {

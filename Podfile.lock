@@ -1,46 +1,46 @@
 PODS:
-  - AEPAssurance (3.0.1):
-    - AEPCore (>= 3.1.0)
-    - AEPServices (>= 3.1.0)
-  - AEPCore (3.4.2):
+  - AEPCore (3.5.0):
     - AEPRulesEngine (>= 1.1.0)
-    - AEPServices (>= 3.4.2)
-  - AEPIdentity (3.4.2):
-    - AEPCore (>= 3.4.2)
-  - AEPLifecycle (3.4.2):
-    - AEPCore (>= 3.4.2)
+    - AEPServices (>= 3.5.0)
+  - AEPIdentity (3.5.0):
+    - AEPCore (>= 3.5.0)
+  - AEPLifecycle (3.5.0):
+    - AEPCore (>= 3.5.0)
   - AEPRulesEngine (1.1.0)
-  - AEPServices (3.4.2)
+  - AEPServices (3.5.0)
   - SwiftLint (0.44.0)
 
 DEPENDENCIES:
-  - AEPAssurance (~> 3.0.0)
-  - AEPCore
-  - AEPIdentity
-  - AEPLifecycle
+  - AEPCore (from `~/code/MobileSDK/Forks/aepsdk-core-ios`)
+  - AEPIdentity (from `~/code/MobileSDK/Forks/aepsdk-core-ios`)
+  - AEPLifecycle (from `~/code/MobileSDK/Forks/aepsdk-core-ios`)
   - AEPRulesEngine
-  - AEPServices
+  - AEPServices (from `~/code/MobileSDK/Forks/aepsdk-core-ios`)
   - SwiftLint (= 0.44.0)
 
 SPEC REPOS:
   trunk:
-    - AEPAssurance
-    - AEPCore
-    - AEPIdentity
-    - AEPLifecycle
     - AEPRulesEngine
-    - AEPServices
     - SwiftLint
 
+EXTERNAL SOURCES:
+  AEPCore:
+    :path: "~/code/MobileSDK/Forks/aepsdk-core-ios"
+  AEPIdentity:
+    :path: "~/code/MobileSDK/Forks/aepsdk-core-ios"
+  AEPLifecycle:
+    :path: "~/code/MobileSDK/Forks/aepsdk-core-ios"
+  AEPServices:
+    :path: "~/code/MobileSDK/Forks/aepsdk-core-ios"
+
 SPEC CHECKSUMS:
-  AEPAssurance: b25880cd4b14f22c61a1dce19807bd0ca0fe9b17
-  AEPCore: b01856bf24972e4720cb0511a358d1e68067252a
-  AEPIdentity: fbf755560afcbb0acd66cd5b6a1c147530fca5f6
-  AEPLifecycle: 1e0e843465fb143f8d8949dcf06de169d5c26f62
+  AEPCore: a3b4159038df33b63ebdab227342cd57d8ded1b0
+  AEPIdentity: d7745fc4df403b7281b18fa7df917e68f061c9b2
+  AEPLifecycle: d3ff90c661c4452fb1c619e7f02dad8ba49a8fd2
   AEPRulesEngine: bb2927ed5501ddf9754c66e97f8d2b1cf8e33b19
-  AEPServices: 3214311f239c8cdc6267d757200b05ec0ab05878
+  AEPServices: 2e869a387b67c04ab5f3f647026412ff410efbb0
   SwiftLint: e96c0a8c770c7ebbc4d36c55baf9096bb65c4584
 
-PODFILE CHECKSUM: 6a829fa8845ca92c3c86857bb7c8469ca0ecc1a2
+PODFILE CHECKSUM: 94afb4f9961c1a57a39184b7b308fceb2d0e4c24
 
 COCOAPODS: 1.11.2

@@ -1005,6 +1005,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 2D24C61FB42A1BDE18FCC7C9 /* Pods-AEPAnalytics.debug.xcconfig */;
 			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
 				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -1034,6 +1035,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = EF12C9A6B24908684CC8EA6C /* Pods-AEPAnalytics.release.xcconfig */;
 			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
 				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
