@@ -14,6 +14,11 @@ import AEPCore
 import AEPServices
 import Foundation
 
+///
+/// Analytics extension for the Adobe Experience Platform SDK to be used in iOS Apps.
+/// This has full support for all App functionality.
+/// Any functionality which is unavailable in App Extensions must be added / overriden in this class.
+///
 @available(iOSApplicationExtension, unavailable)
 public class Analytics: AnalyticsBase {
     override func processAnalyticsVars(trackData: [String: Any]?, timestamp: TimeInterval) -> [String: String] {
@@ -65,7 +70,8 @@ public class Analytics: AnalyticsBase {
     }
 }
 
-/// Analytics extension for the Adobe Experience Platform SDK
+/// Analytics extension for the Adobe Experience Platform SDK base class which holds all base functionality.
+/// Base functionality in this case means all functionality which can be used in both Apps and App Extensions.
 @objc(AEPMobileAnalytics)
 public class AnalyticsBase: NSObject, Extension {
     fileprivate let LOG_TAG = "Analytics"
