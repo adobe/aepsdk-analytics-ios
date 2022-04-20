@@ -19,62 +19,28 @@ import Foundation
 /// This has full support for all App functionality.
 /// Any functionality which is unavailable in App Extensions must be added / overriden in this class.
 ///
+@objc(AEPMobileAnalytics)
 @available(iOSApplicationExtension, unavailable)
 public class Analytics: AnalyticsBase {
-    override func processAnalyticsVars(trackData: [String: Any]?, timestamp: TimeInterval) -> [String: String] {
-        var analyticsVars: [String: String] = [:]
 
-        guard let trackData = trackData else {
-            Log.debug(label: LOG_TAG, "processAnalyticsVars - track event data is nil.")
-            return analyticsVars
-        }
-
-        if let actionName = trackData[AnalyticsConstants.EventDataKeys.TRACK_ACTION] as? String {
-            analyticsVars[AnalyticsConstants.Request.IGNORE_PAGE_NAME_KEY] = AnalyticsConstants.IGNORE_PAGE_NAME_VALUE
-            let isInternal = trackData[AnalyticsConstants.EventDataKeys.TRACK_INTERNAL] as? Bool ?? false
-            let actionNameWithPrefix = "\(isInternal ? AnalyticsConstants.INTERNAL_ACTION_PREFIX : AnalyticsConstants.ACTION_PREFIX)\(actionName)"
-            analyticsVars[AnalyticsConstants.Request.ACTION_NAME_KEY] = actionNameWithPrefix
-        }
-        analyticsVars[AnalyticsConstants.Request.PAGE_NAME_KEY] = analyticsState.applicationId
-        if let stateName = trackData[AnalyticsConstants.EventDataKeys.TRACK_STATE] as? String {
-            analyticsVars[AnalyticsConstants.Request.PAGE_NAME_KEY] = stateName
-        }
-
-        if let aid = analyticsProperties.getAnalyticsIdentifier() {
-            analyticsVars[AnalyticsConstants.Request.ANALYTICS_ID_KEY] = aid
-        }
-
-        if let vid = analyticsProperties.getVisitorIdentifier() {
-            analyticsVars[AnalyticsConstants.Request.VISITOR_ID_KEY] = vid
-        }
-
-        analyticsVars[AnalyticsConstants.Request.CHARSET_KEY] = AnalyticsProperties.CHARSET
-        analyticsVars[AnalyticsConstants.Request.FORMATTED_TIMESTAMP_KEY] = analyticsProperties.timezoneOffset
-
-        if analyticsState.offlineEnabled {
-            analyticsVars[AnalyticsConstants.Request.STRING_TIMESTAMP_KEY] = String(Int64(timestamp))
-        }
-
-        if analyticsState.isVisitorIdServiceEnabled() {
-            analyticsVars.merge(analyticsState.getAnalyticsIdVisitorParameters()) { _, newValue in
-                newValue
-            }
-        }
-
-        if let appState = AnalyticsHelper.getApplicationState() {
-            analyticsVars[AnalyticsConstants.Request.CUSTOMER_PERSPECTIVE_KEY] =
-                (appState == .background) ? AnalyticsConstants.APP_STATE_BACKGROUND : AnalyticsConstants.APP_STATE_FOREGROUND
-        }
-
-        return analyticsVars
+    override func getApplicationStateVar() -> UIApplication.State? {
+        return AnalyticsHelper.getApplicationState()
     }
 }
 
+///
+/// Analytics extension for the Adobe Experience Platform SDK to be used in App Extensions (e.g: Action Extension).
+/// Any functionality specific to App Extension support should be added to this class
+///
+@objc(AEPMobileAppExtAnalytics)
+public class AnalyticsAppExt: AnalyticsBase {}
+
+///
 /// Analytics extension for the Adobe Experience Platform SDK base class which holds all base functionality.
 /// Base functionality in this case means all functionality which can be used in both Apps and App Extensions.
-@objc(AEPMobileAnalytics)
+/// 
 public class AnalyticsBase: NSObject, Extension {
-    fileprivate let LOG_TAG = "Analytics"
+    private let LOG_TAG = "Analytics"
 
     public let runtime: ExtensionRuntime
     public let name = AnalyticsConstants.EXTENSION_NAME
@@ -86,8 +52,8 @@ public class AnalyticsBase: NSObject, Extension {
     private var analyticsTimer: AnalyticsTimer
     private var analyticsDatabase: AnalyticsDatabase?
 
-    fileprivate var analyticsProperties: AnalyticsProperties
-    fileprivate var analyticsState: AnalyticsState
+    private var analyticsProperties: AnalyticsProperties
+    private var analyticsState: AnalyticsState
 
     private let analyticsHardDependencies: [String] = [
         AnalyticsConstants.Configuration.EventDataKeys.SHARED_STATE_NAME,
@@ -652,6 +618,10 @@ public class AnalyticsBase: NSObject, Extension {
             }
         }
 
+        if let appState = getApplicationStateVar() {
+            analyticsVars[AnalyticsConstants.Request.CUSTOMER_PERSPECTIVE_KEY] = (appState == .background) ? AnalyticsConstants.APP_STATE_BACKGROUND : AnalyticsConstants.APP_STATE_FOREGROUND
+        }
+
         return analyticsVars
     }
 
@@ -732,6 +702,12 @@ public class AnalyticsBase: NSObject, Extension {
             self?.analyticsDatabase?.cancelWaitForAdditionalData(type: .referrer)
         }
     }
+
+    // Provide a function to override for App Extension support
+    fileprivate func getApplicationStateVar() -> UIApplication.State? {
+        return nil
+    }
+
 }
 
 extension AnalyticsBase {
