@@ -1,5 +1,5 @@
 /*
- Copyright 2021 Adobe. All rights reserved.
+ Copyright 2022 Adobe. All rights reserved.
  This file is licensed to you under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License. You may obtain a copy
  of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -15,10 +15,10 @@ import AEPServices
 @testable import AEPAnalytics
 @testable import AEPCore
 
-class AnalyticsTrack_PlacesTests : AnalyticsFunctionalTestBase {
+class AnalyticsAppExtTrack_PlacesTests : AnalyticsFunctionalTestBase {
     
-    override func setUp() {        
-        super.setupBase(forApp: true)
+    override func setUp() {
+        super.setupBase(forApp: false)
         dispatchDefaultConfigAndIdentityStates()
     }
     
@@ -48,7 +48,6 @@ class AnalyticsTrack_PlacesTests : AnalyticsFunctionalTestBase {
         
         let expectedVars = [
             "ce": "UTF-8",
-            "cp": "foreground",
             "pev2" : "AMACTION:testActionName",
             "pe" : "lnk_o",
             "mid" : "mid",
@@ -106,7 +105,6 @@ class AnalyticsTrack_PlacesTests : AnalyticsFunctionalTestBase {
         
         let expectedVars = [
             "ce": "UTF-8",
-            "cp": "foreground",
             "pev2" : "AMACTION:testActionName",
             "pe" : "lnk_o",
             "mid" : "mid",

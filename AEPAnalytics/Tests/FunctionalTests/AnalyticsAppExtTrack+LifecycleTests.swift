@@ -1,5 +1,5 @@
 /*
- Copyright 2021 Adobe. All rights reserved.
+ Copyright 2022 Adobe. All rights reserved.
  This file is licensed to you under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License. You may obtain a copy
  of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -15,10 +15,10 @@ import AEPServices
 @testable import AEPAnalytics
 @testable import AEPCore
 
-class AnalyticsTrack_LifecycleTests : AnalyticsFunctionalTestBase {
+class AnalyticsAppExtTrack_LifecycleTests : AnalyticsFunctionalTestBase {
     
     override func setUp() {
-        super.setupBase(forApp: true)
+        super.setupBase(forApp: false)
     }
     
     //If Lifecycle shared state is available then analytics hits contain lifecycle vars
@@ -53,7 +53,6 @@ class AnalyticsTrack_LifecycleTests : AnalyticsFunctionalTestBase {
         
         let expectedVars = [
             "ce": "UTF-8",
-            "cp": "foreground",
             "pev2" : "AMACTION:testActionName",
             "pe" : "lnk_o",
             "mid" : "mid",
@@ -87,7 +86,7 @@ class AnalyticsTrack_LifecycleTests : AnalyticsFunctionalTestBase {
         let ts:TimeInterval = 12345678
         let dataStore = NamedCollectionDataStore(name: AnalyticsTestConstants.DATASTORE_NAME)
         dataStore.set(key: AnalyticsTestConstants.DataStoreKeys.MOST_RECENT_HIT_TIMESTAMP, value: ts)
-        resetExtension(forApp: true)
+        resetExtension(forApp: false)
         
         dispatchDefaultConfigAndIdentityStates()
 
@@ -122,7 +121,6 @@ class AnalyticsTrack_LifecycleTests : AnalyticsFunctionalTestBase {
         // Lifecycle crash hit
         let crashVars = [
             "ce": "UTF-8",
-            "cp": "foreground",
             "pev2" : "ADBINTERNAL:Crash",
             "pe" : "lnk_o",
             "mid" : "mid",
@@ -151,7 +149,6 @@ class AnalyticsTrack_LifecycleTests : AnalyticsFunctionalTestBase {
         // Lifecycle hit
         let lifecycleVars = [
             "ce": "UTF-8",
-            "cp": "foreground",
             "pev2" : "ADBINTERNAL:Lifecycle",
             "pe" : "lnk_o",
             "mid" : "mid",
@@ -208,7 +205,7 @@ class AnalyticsTrack_LifecycleTests : AnalyticsFunctionalTestBase {
             AnalyticsTestConstants.Lifecycle.EventDataKeys.SESSION_START_TIMESTAMP : sessionStartTs,
             AnalyticsTestConstants.Lifecycle.EventDataKeys.PREVIOUS_SESSION_PAUSE_TIMESTAMP : previousSessionPauseTs
         ]
-        let lifecycleResponse = Event(name: "", type: EventType.lifecycle, source: EventSource.responseContent, data: lifecycleEventData)      
+        let lifecycleResponse = Event(name: "", type: EventType.lifecycle, source: EventSource.responseContent, data: lifecycleEventData)
         simulateLifecycleState(data: lifecycleEventData)
         mockRuntime.simulateComingEvent(event: lifecycleResponse)
         
@@ -219,7 +216,6 @@ class AnalyticsTrack_LifecycleTests : AnalyticsFunctionalTestBase {
         // Lifecycle session hit
         let sessionInfoVars = [
             "ce": "UTF-8",
-            "cp": "foreground",
             "pev2" : "ADBINTERNAL:SessionInfo",
             "pe" : "lnk_o",
             "mid" : "mid",
@@ -248,7 +244,6 @@ class AnalyticsTrack_LifecycleTests : AnalyticsFunctionalTestBase {
         // Lifecycle hit
         let lifecycleVars = [
             "ce": "UTF-8",
-            "cp": "foreground",
             "pev2" : "ADBINTERNAL:Lifecycle",
             "pe" : "lnk_o",
             "mid" : "mid",
@@ -315,7 +310,6 @@ class AnalyticsTrack_LifecycleTests : AnalyticsFunctionalTestBase {
         
         let expectedVars = [
             "ce": "UTF-8",
-            "cp": "foreground",
             "pev2" : "AMACTION:testActionName",
             "pe" : "lnk_o",
             "mid" : "mid",

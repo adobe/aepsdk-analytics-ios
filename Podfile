@@ -31,3 +31,10 @@ target 'AnalyticsSampleApp' do
   pod 'AEPIdentity', :path => '~/code/MobileSDK/Forks/aepsdk-core-ios'
   #pod 'AEPAssurance', '~> 3.0.0'
 end
+
+target 'AnalyticsSampleAppExt' do
+  pod 'AEPServices', :path => '~/code/MobileSDK/Forks/aepsdk-core-ios'
+  pod 'AEPCore', :path => '~/code/MobileSDK/Forks/aepsdk-core-ios'
+  pod 'AEPLifecycle', :path => '~/code/MobileSDK/Forks/aepsdk-core-ios'
+  pod 'AEPIdentity', :path => '~/code/MobileSDK/Forks/aepsdk-core-ios'
+end

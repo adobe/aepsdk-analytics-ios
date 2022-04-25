@@ -1,5 +1,5 @@
 /*
- Copyright 2021 Adobe. All rights reserved.
+ Copyright 2022 Adobe. All rights reserved.
  This file is licensed to you under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License. You may obtain a copy
  of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -15,10 +15,10 @@ import AEPServices
 @testable import AEPAnalytics
 @testable import AEPCore
 
-class AnalyticsTrackTests : AnalyticsFunctionalTestBase {
+class AnalyticsAppExtTrackTests : AnalyticsFunctionalTestBase {
 
-    override func setUp() {        
-        super.setupBase(forApp: true)
+    override func setUp() {
+        super.setupBase(forApp: false)
         dispatchDefaultConfigAndIdentityStates()
     }
 
@@ -37,7 +37,6 @@ class AnalyticsTrackTests : AnalyticsFunctionalTestBase {
 
         let expectedVars = [
             "ce": "UTF-8",
-            "cp": "foreground",
             "pageName" : "testState",
             "mid" : "mid",
             "aamb" : "blob",
@@ -72,7 +71,6 @@ class AnalyticsTrackTests : AnalyticsFunctionalTestBase {
 
         let expectedVars = [
             "ce": "UTF-8",
-            "cp": "foreground",
             "pev2" : "AMACTION:testAction",
             "pe" : "lnk_o",
             "mid" : "mid",
@@ -110,7 +108,6 @@ class AnalyticsTrackTests : AnalyticsFunctionalTestBase {
 
         let expectedVars = [
             "ce": "UTF-8",
-            "cp": "foreground",
             "pev2" : "ADBINTERNAL:testAction",
             "pe" : "lnk_o",
             "mid" : "mid",
@@ -145,7 +142,6 @@ class AnalyticsTrackTests : AnalyticsFunctionalTestBase {
 
         let expectedVars = [
             "ce": "UTF-8",
-            "cp": "foreground",
             "mid" : "mid",
             "aamb" : "blob",
             "aamlh" : "lochint",
@@ -188,7 +184,6 @@ class AnalyticsTrackTests : AnalyticsFunctionalTestBase {
 
         let expectedVars = [
             "ce": "UTF-8",
-            "cp": "foreground",
             "mid" : "mid",
             "aamb" : "blob",
             "aamlh" : "lochint",
@@ -227,7 +222,6 @@ class AnalyticsTrackTests : AnalyticsFunctionalTestBase {
 
         let expectedVars = [
             "ce": "UTF-8",
-            "cp": "foreground",
             "pageName" : "testState",
             "pev2" : "AMACTION:testAction",
             "pe" : "lnk_o",
@@ -268,7 +262,6 @@ class AnalyticsTrackTests : AnalyticsFunctionalTestBase {
 
         let expectedVars = [
             "ce": "UTF-8",
-            "cp": "foreground",
             "pageName" : "~!@#$%^&*()_.-+",
             "pev2" : "AMACTION:网页",
             "pe" : "lnk_o",
@@ -318,7 +311,6 @@ class AnalyticsTrackTests : AnalyticsFunctionalTestBase {
 
         let expectedVars = [
             "ce": "UTF-8",
-            "cp": "foreground",
             "mid" : "mid",
             "aamb" : "blob",
             "aamlh" : "lochint",

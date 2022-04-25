@@ -1,5 +1,5 @@
 /*
- Copyright 2021 Adobe. All rights reserved.
+ Copyright 2022 Adobe. All rights reserved.
  This file is licensed to you under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License. You may obtain a copy
  of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -14,13 +14,14 @@ import XCTest
 import AEPServices
 @testable import AEPAnalytics
 @testable import AEPCore
-class AnalyticsConsequenceTests : AnalyticsFunctionalTestBase {
-    
-    override func setUp() {        
-        super.setupBase(forApp: true)
+
+class AnalyticsAppExtConsequenceTests: AnalyticsFunctionalTestBase {
+    override func setUp() {
+        super.setupBase(forApp: false)
         dispatchDefaultConfigAndIdentityStates()
     }
     
+
     func testHandleAnalyticsConsequence() {
         MobileCore.setLogLevel(.trace)
         let eventData: [String: Any] = [
@@ -39,7 +40,6 @@ class AnalyticsConsequenceTests : AnalyticsFunctionalTestBase {
         
         let expectedVars = [
             "ce": "UTF-8",
-            "cp": "foreground",            
             "pev2" : "AMACTION:testActionName",
             "pe" : "lnk_o",
             "mid" : "mid",

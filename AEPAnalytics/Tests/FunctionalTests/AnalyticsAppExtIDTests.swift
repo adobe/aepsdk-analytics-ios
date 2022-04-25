@@ -15,10 +15,10 @@ import AEPServices
 @testable import AEPAnalytics
 @testable import AEPCore
 
-class AnalyticsIDTests : AnalyticsFunctionalTestBase {
+class AnalyticsAppExtIDTests : AnalyticsFunctionalTestBase {
     
     override func setUp() {
-        super.setupBase(forApp: true)
+        super.setupBase(forApp: false)
     }
     
     //If Visitor ID Service is enabled then analytics hits contain visitor ID vars
@@ -40,7 +40,6 @@ class AnalyticsIDTests : AnalyticsFunctionalTestBase {
         
         let expectedVars = [
             "ce": "UTF-8",
-            "cp": "foreground",
             "pev2" : "AMACTION:testActionName",
             "pe" : "lnk_o",
             "mid" : "mid",
@@ -67,7 +66,7 @@ class AnalyticsIDTests : AnalyticsFunctionalTestBase {
         dataStore.set(key: AnalyticsTestConstants.DataStoreKeys.VID, value: "testvid")
         
         mockNetworkService?.reset()
-        resetExtension(forApp: true)
+        resetExtension(forApp: false)
         
         dispatchDefaultConfigAndIdentityStates()
         waitForProcessing()
@@ -89,7 +88,6 @@ class AnalyticsIDTests : AnalyticsFunctionalTestBase {
         
         let expectedVars = [
             "ce": "UTF-8",
-            "cp": "foreground",
             "pev2" : "AMACTION:testActionName",
             "pe" : "lnk_o",
             "mid" : "mid",
@@ -127,7 +125,7 @@ class AnalyticsIDTests : AnalyticsFunctionalTestBase {
     }
     
     // Set visitor id should dispatch event
-    func testVisitorId() {        
+    func testVisitorId() {
         dispatchDefaultConfigAndIdentityStates()
 
         // Set VID
