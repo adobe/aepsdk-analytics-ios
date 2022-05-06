@@ -7,34 +7,34 @@ project 'AEPAnalytics.xcodeproj'
 pod 'SwiftLint', '0.44.0'
 
 target 'AEPAnalytics' do
-  pod 'AEPServices', :path => '~/code/MobileSDK/Forks/aepsdk-core-ios'
-  pod 'AEPCore', :path => '~/code/MobileSDK/Forks/aepsdk-core-ios'
+  pod 'AEPServices'
+  pod 'AEPCore'
   pod 'AEPRulesEngine'
 end
 
 target 'AEPAnalyticsUnitTests' do
-  pod 'AEPServices', :path => '~/code/MobileSDK/Forks/aepsdk-core-ios'
-  pod 'AEPCore', :path => '~/code/MobileSDK/Forks/aepsdk-core-ios'
+  pod 'AEPServices'
+  pod 'AEPCore'
   pod 'AEPRulesEngine'
 end
 
 target 'AEPAnalyticsFunctionalTests' do
-  pod 'AEPServices', :path => '~/code/MobileSDK/Forks/aepsdk-core-ios'
-  pod 'AEPCore', :path => '~/code/MobileSDK/Forks/aepsdk-core-ios'
+  pod 'AEPServices'
+  pod 'AEPCore'
   pod 'AEPRulesEngine'
 end
 
 target 'AnalyticsSampleApp' do
-  pod 'AEPServices', :path => '~/code/MobileSDK/Forks/aepsdk-core-ios'
-  pod 'AEPCore', :path => '~/code/MobileSDK/Forks/aepsdk-core-ios'
-  pod 'AEPLifecycle', :path => '~/code/MobileSDK/Forks/aepsdk-core-ios'
-  pod 'AEPIdentity', :path => '~/code/MobileSDK/Forks/aepsdk-core-ios'
-  #pod 'AEPAssurance', '~> 3.0.0'
+  pod 'AEPServices'
+  pod 'AEPCore'
+  pod 'AEPLifecycle'
+  pod 'AEPIdentity'
+  pod 'AEPAssurance', '~> 3.0.0'
 end
 
 target 'AnalyticsSampleAppExt' do
-  pod 'AEPServices', :path => '~/code/MobileSDK/Forks/aepsdk-core-ios'
-  pod 'AEPCore', :path => '~/code/MobileSDK/Forks/aepsdk-core-ios'
-  pod 'AEPLifecycle', :path => '~/code/MobileSDK/Forks/aepsdk-core-ios'
-  pod 'AEPIdentity', :path => '~/code/MobileSDK/Forks/aepsdk-core-ios'
+  pod 'AEPServices'
+  pod 'AEPCore'
+  pod 'AEPLifecycle'
+  pod 'AEPIdentity'
 end

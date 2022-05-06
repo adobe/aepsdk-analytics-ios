@@ -1,4 +1,7 @@
 PODS:
+  - AEPAssurance (3.0.1):
+    - AEPCore (>= 3.1.0)
+    - AEPServices (>= 3.1.0)
   - AEPCore (3.5.0):
     - AEPRulesEngine (>= 1.1.0)
     - AEPServices (>= 3.5.0)
@@ -11,29 +14,26 @@ PODS:
   - SwiftLint (0.44.0)
 
 DEPENDENCIES:
-  - AEPCore (from `~/code/MobileSDK/Forks/aepsdk-core-ios`)
-  - AEPIdentity (from `~/code/MobileSDK/Forks/aepsdk-core-ios`)
-  - AEPLifecycle (from `~/code/MobileSDK/Forks/aepsdk-core-ios`)
+  - AEPAssurance (~> 3.0.0)
+  - AEPCore
+  - AEPIdentity
+  - AEPLifecycle
   - AEPRulesEngine
-  - AEPServices (from `~/code/MobileSDK/Forks/aepsdk-core-ios`)
+  - AEPServices
   - SwiftLint (= 0.44.0)
 
 SPEC REPOS:
   trunk:
+    - AEPAssurance
+    - AEPCore
+    - AEPIdentity
+    - AEPLifecycle
     - AEPRulesEngine
+    - AEPServices
     - SwiftLint
 
-EXTERNAL SOURCES:
-  AEPCore:
-    :path: "~/code/MobileSDK/Forks/aepsdk-core-ios"
-  AEPIdentity:
-    :path: "~/code/MobileSDK/Forks/aepsdk-core-ios"
-  AEPLifecycle:
-    :path: "~/code/MobileSDK/Forks/aepsdk-core-ios"
-  AEPServices:
-    :path: "~/code/MobileSDK/Forks/aepsdk-core-ios"
-
 SPEC CHECKSUMS:
+  AEPAssurance: b25880cd4b14f22c61a1dce19807bd0ca0fe9b17
   AEPCore: a3b4159038df33b63ebdab227342cd57d8ded1b0
   AEPIdentity: d7745fc4df403b7281b18fa7df917e68f061c9b2
   AEPLifecycle: d3ff90c661c4452fb1c619e7f02dad8ba49a8fd2
@@ -41,6 +41,6 @@ SPEC CHECKSUMS:
   AEPServices: 2e869a387b67c04ab5f3f647026412ff410efbb0
   SwiftLint: e96c0a8c770c7ebbc4d36c55baf9096bb65c4584
 
-PODFILE CHECKSUM: 08be11bac373a932e9865e1fd94b90351d17842e
+PODFILE CHECKSUM: 82835d7afa044655eceb872de0676ae057d020c2
 
 COCOAPODS: 1.11.2

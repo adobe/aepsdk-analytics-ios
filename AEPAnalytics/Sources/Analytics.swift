@@ -32,8 +32,8 @@ public class Analytics: AnalyticsBase {
 /// Analytics extension for the Adobe Experience Platform SDK to be used in App Extensions (e.g: Action Extension).
 /// Any functionality specific to App Extension support should be added to this class
 ///
-@objc(AEPMobileAppExtAnalytics)
-public class AnalyticsAppExt: AnalyticsBase {}
+@objc(AEPMobileAnalyticsAppExtension)
+public class AnalyticsAppExtension: AnalyticsBase {}
 
 ///
 /// Analytics extension for the Adobe Experience Platform SDK base class which holds all base functionality.

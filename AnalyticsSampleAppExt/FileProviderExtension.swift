@@ -27,7 +27,7 @@ class FileProviderExtension: NSFileProviderExtension {
         MobileCore.setLogLevel(.trace)
         let extensions = [Identity.self,
                           Lifecycle.self,
-                          AnalyticsAppExt.self]
+                          AnalyticsAppExtension.self]
 
         MobileCore.registerExtensions(extensions, {
             MobileCore.configureWith(appId: self.LAUNCH_ENVIRONMENT_FILE_ID)
