@@ -578,7 +578,7 @@ public class AnalyticsBase: NSObject, Extension {
     ///     - trackData: Dictionary containing tracking data
     ///     - timestamp: timestamp to use for tracking
     ///     - Returns a `Dictionary` containing the vars data
-    fileprivate func processAnalyticsVars(trackData: [String: Any]?, timestamp: TimeInterval) -> [String: String] {
+    private func processAnalyticsVars(trackData: [String: Any]?, timestamp: TimeInterval) -> [String: String] {
         var analyticsVars: [String: String] = [:]
 
         guard let trackData = trackData else {

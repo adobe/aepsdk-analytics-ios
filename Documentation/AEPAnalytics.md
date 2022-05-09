@@ -85,12 +85,12 @@ func application(_ application: UIApplication, didFinishLaunchingWithOptions lau
 
 ### App Extension Support
 
-If you are using AEPAnalytics from within an App Extension, make sure that you register the `AnalyticsAppExt` class with MobileCore instead of the `Analytics` class. 
+If you are using AEPAnalytics from within an App Extension, make sure that you register the `AnalyticsAppExtension` class with MobileCore instead of the `Analytics` class. 
 
 **Swift**
 
 ```swift
- MobileCore.registerExtensions([AnalyticsAppExt.self, Identity.self], {
+ MobileCore.registerExtensions([AnalyticsAppExtension.self, Identity.self], {
  // Use the App id assigned to this application via Adobe Launch
  MobileCore.configureWith(appId: "appId") 
  })  
