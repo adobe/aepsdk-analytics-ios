@@ -48,7 +48,7 @@ class AnalyticsFunctionalTestBase : XCTestCase {
         if forApp {
             analytics = Analytics(runtime: mockRuntime)
         } else {
-            analytics = AnalyticsAppExt(runtime: mockRuntime)
+            analytics = AnalyticsAppExtension(runtime: mockRuntime)
         }
         analytics.onRegistered()
     }
