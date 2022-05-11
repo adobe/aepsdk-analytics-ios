@@ -15,207 +15,41 @@ import AEPServices
 @testable import AEPAnalytics
 @testable import AEPCore
 
-class AnalyticsIDTests : AnalyticsFunctionalTestBase {
+class AnalyticsIDTests: AnalyticsIDTestBase {
     
     override func setUp() {
+        runningForApp = true
         super.setupBase(forApp: true)
     }
     
     //If Visitor ID Service is enabled then analytics hits contain visitor ID vars
     func testHitsContainVisitorIDVars() {
-        dispatchDefaultConfigAndIdentityStates()
-        
-        let trackData: [String: Any] = [
-            CoreConstants.Keys.ACTION : "testActionName",
-            CoreConstants.Keys.CONTEXT_DATA : [
-                "k1": "v1",
-                "k2": "v2"
-            ]
-        ]
-        let trackEvent = Event(name: "Generic track event", type: EventType.genericTrack, source: EventSource.requestContent, data: trackData)
-        
-        mockRuntime.simulateComingEvent(event: trackEvent)
-                
-        waitForProcessing()
-        
-        let expectedVars = [
-            "ce": "UTF-8",
-            "cp": "foreground",
-            "pev2" : "AMACTION:testActionName",
-            "pe" : "lnk_o",
-            "mid" : "mid",
-            "aamb" : "blob",
-            "aamlh" : "lochint",
-            "ts" : String(trackEvent.timestamp.getUnixTimeInSeconds()),
-        ]
-        let expectedContextData = [
-            "k1" : "v1",
-            "k2" : "v2",
-            "a.action" : "testActionName"
-        ]
-                
-        XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 1)
-        verifyHit(request: mockNetworkService?.calledNetworkRequests[0],
-                  host: "https://test.com/b/ss/rsid/0/",
-                  vars: expectedVars,
-                  contextData: expectedContextData)
+        hitsContainVisitorIDVarsTester()
     }
-        
+
     func testHitsContainAIDandVID() {
-        let dataStore = NamedCollectionDataStore(name: AnalyticsTestConstants.DATASTORE_NAME)
-        dataStore.set(key: AnalyticsTestConstants.DataStoreKeys.AID, value: "testaid")
-        dataStore.set(key: AnalyticsTestConstants.DataStoreKeys.VID, value: "testvid")
-        
-        mockNetworkService?.reset()
-        resetExtension(forApp: true)
-        
-        dispatchDefaultConfigAndIdentityStates()
-        waitForProcessing()
-        
-        verifyIdentityChange(aid: "testaid", vid: "testvid")
-
-        let trackData: [String: Any] = [
-            CoreConstants.Keys.ACTION : "testActionName",
-            CoreConstants.Keys.CONTEXT_DATA : [
-                "k1": "v1",
-                "k2": "v2"
-            ]
-        ]
-        let trackEvent = Event(name: "Generic track event", type: EventType.genericTrack, source: EventSource.requestContent, data: trackData)
-        
-        mockRuntime.simulateComingEvent(event: trackEvent)
-                
-        waitForProcessing()
-        
-        let expectedVars = [
-            "ce": "UTF-8",
-            "cp": "foreground",
-            "pev2" : "AMACTION:testActionName",
-            "pe" : "lnk_o",
-            "mid" : "mid",
-            "aid" : "testaid",
-            "vid" : "testvid",
-            "aamb" : "blob",
-            "aamlh" : "lochint",
-            "ts" : String(trackEvent.timestamp.getUnixTimeInSeconds()),
-        ]
-        let expectedContextData = [
-            "k1" : "v1",
-            "k2" : "v2",
-            "a.action" : "testActionName"
-        ]
-                
-        XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 1)
-        verifyHit(request: mockNetworkService?.calledNetworkRequests[0],
-                  host: "https://test.com/b/ss/rsid/0/",
-                  vars: expectedVars,
-                  contextData: expectedContextData)
+        hitsContainAIDandVIDTester()
     }
-    
+
     func testOptOut_ShouldNotReadAidVid() {
-        let dataStore = NamedCollectionDataStore(name: AnalyticsTestConstants.DATASTORE_NAME)
-        dataStore.set(key: AnalyticsTestConstants.DataStoreKeys.AID, value: "testaid")
-        dataStore.set(key: AnalyticsTestConstants.DataStoreKeys.VID, value: "testvid")
-        
-        dispatchDefaultConfigAndIdentityStates(configData: [
-            AnalyticsTestConstants.Configuration.EventDataKeys.GLOBAL_PRIVACY : "optedout"
-        ])
-        
-        waitForProcessing()
-
-        verifyIdentityChange(aid: nil, vid: nil)
+        optOut_ShouldNotReadAidVidTester()
     }
-    
+
     // Set visitor id should dispatch event
-    func testVisitorId() {        
-        dispatchDefaultConfigAndIdentityStates()
-
-        // Set VID
-        let data = [AnalyticsTestConstants.EventDataKeys.VISITOR_IDENTIFIER : "myvid"]
-        let event = Event(name: "", type: EventType.analytics, source: EventSource.requestIdentity, data: data)
-        mockRuntime.simulateComingEvent(event: event)
-        
-        waitForProcessing()
-        
-        verifyIdentityChange(aid: nil, vid: "myvid")
+    func testVisitorId() {
+        visitorIdTester()
     }
-    
+
     // Set visitor id should dispatch event
     func testOptOut_ShouldNotUpdateVid() {
-        dispatchDefaultConfigAndIdentityStates(configData: [
-            AnalyticsTestConstants.Configuration.EventDataKeys.GLOBAL_PRIVACY : "optedout"
-        ])
-
-        // Set VID
-        let data = [AnalyticsTestConstants.EventDataKeys.VISITOR_IDENTIFIER : "myvid"]
-        let event = Event(name: "", type: EventType.analytics, source: EventSource.requestIdentity, data: data)
-        mockRuntime.simulateComingEvent(event: event)
-        
-        waitForProcessing()
-        
-        verifyIdentityChange(aid: nil, vid: nil)
+        optOut_ShouldNotUpdateVidTester()
     }
-    
+
     func testAIDandVIDShouldBeClearedAfterOptOut() {
-        let dataStore = NamedCollectionDataStore(name: AnalyticsTestConstants.DATASTORE_NAME)
-        dataStore.set(key: AnalyticsTestConstants.DataStoreKeys.AID, value: "testaid")
-        dataStore.set(key: AnalyticsTestConstants.DataStoreKeys.VID, value: "testvid")
-        
-        mockNetworkService?.reset()
-        resetExtension(forApp: true)
-        
-        dispatchDefaultConfigAndIdentityStates()
-        waitForProcessing()
-        
-        verifyIdentityChange(aid: "testaid", vid: "testvid")
-
-        dispatchDefaultConfigAndIdentityStates(configData: [
-            AnalyticsTestConstants.Configuration.EventDataKeys.GLOBAL_PRIVACY : "optedout"
-        ])
-        
-        waitForProcessing()
-        verifyIdentityChange(aid: nil, vid: nil)
+        aIDandVIDShouldBeClearedAfterOptOutTester()
     }
-    
+
     func testHandleRequestResetEvent() {
-        let placesSharedState: [String: Any] = [
-            AnalyticsTestConstants.Places.EventDataKeys.CURRENT_POI : [
-                AnalyticsTestConstants.Places.EventDataKeys.REGION_ID : "myRegionId",
-                AnalyticsTestConstants.Places.EventDataKeys.REGION_NAME : "myRegionName"
-            ]
-        ]
-        let lifecycleSharedState: [String: Any] = [
-            AnalyticsTestConstants.Lifecycle.EventDataKeys.LIFECYCLE_CONTEXT_DATA : [
-                AnalyticsTestConstants.Lifecycle.EventDataKeys.OPERATING_SYSTEM : "mockOSName",
-                AnalyticsTestConstants.Lifecycle.EventDataKeys.APP_ID : "mockAppName",
-            ]
-        ]
-        
-        let dataStore = NamedCollectionDataStore(name: AnalyticsTestConstants.DATASTORE_NAME)
-        dataStore.set(key: AnalyticsTestConstants.DataStoreKeys.MOST_RECENT_HIT_TIMESTAMP, value: TimeInterval(100))
-        dataStore.set(key: AnalyticsTestConstants.DataStoreKeys.AID, value: "testaid")
-        dataStore.set(key: AnalyticsTestConstants.DataStoreKeys.VID, value: "testvid")
-        
-        mockNetworkService?.reset()
-        resetExtension(forApp: true)
-        
-        
-        simulateLifecycleState(data: lifecycleSharedState)
-        simulatePlacesState(data: placesSharedState)
-        dispatchDefaultConfigAndIdentityStates()
-        waitForProcessing()
-        
-        
-        verifyIdentityChange(aid: "testaid", vid: "testvid")
-
-        // test
-        let resetEvent = Event(name: "test reset event", type: EventType.genericIdentity, source: EventSource.requestReset, data: nil)
-
-        mockRuntime.simulateComingEvent(event: resetEvent)
-        
-        waitForProcessing()
-        
-        //verify
-        verifyIdentityChange(aid: nil, vid: nil)
+        handleRequestResetEventTester()
     }
 }

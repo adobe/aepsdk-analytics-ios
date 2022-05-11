@@ -14,13 +14,14 @@ import XCTest
 import AEPServices
 @testable import AEPAnalytics
 @testable import AEPCore
-class AnalyticsConsequenceTests : AnalyticsFunctionalTestBase {
-    
-    override func setUp() {        
+
+class AnalyticsConsequenceTests: AnalyticsConsequenceTestBase {
+
+    override func setUp() {
         super.setupBase(forApp: true)
         dispatchDefaultConfigAndIdentityStates()
     }
-    
+
     func testHandleAnalyticsConsequence() {
         MobileCore.setLogLevel(.trace)
         let eventData: [String: Any] = [
@@ -36,10 +37,10 @@ class AnalyticsConsequenceTests : AnalyticsFunctionalTestBase {
         let ruleEngineEvent = Event(name: "Rule event", type: EventType.rulesEngine, source: EventSource.responseContent, data: eventData)
         mockRuntime.simulateComingEvent(event: ruleEngineEvent)
         waitForProcessing()
-        
+
         let expectedVars = [
             "ce": "UTF-8",
-            "cp": "foreground",            
+            "cp": "foreground",
             "pev2" : "AMACTION:testActionName",
             "pe" : "lnk_o",
             "mid" : "mid",
@@ -52,31 +53,16 @@ class AnalyticsConsequenceTests : AnalyticsFunctionalTestBase {
             "k2" : "v2",
             "a.action" : "testActionName",
         ]
-                
+
         XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 1)
         verifyHit(request: mockNetworkService?.calledNetworkRequests[0],
                   host: "https://test.com/b/ss/rsid/0/",
                   vars: expectedVars,
                   contextData: expectedContextData)
     }
-    
-    
-    // Do not process non "an" consequence types
+
     func testSkipNonAnalyticsConsequence() {
-        let eventData: [String: Any] = [
-            AnalyticsConstants.EventDataKeys.TRIGGERED_CONSEQUENCE: [
-                AnalyticsConstants.EventDataKeys.ID: "id",
-                AnalyticsConstants.EventDataKeys.TYPE: "me", // Type should be "an" for this extension to process
-                AnalyticsConstants.EventDataKeys.DETAIL : [
-                    "action" : "testActionName",
-                    "contextdata": ["k1" : "v1" , "k2" : "v2"]
-                ]
-            ]
-        ]
-        let ruleEngineEvent = Event(name: "Rule event", type: EventType.rulesEngine, source: EventSource.responseContent, data: eventData)
-        mockRuntime.simulateComingEvent(event: ruleEngineEvent)
-        waitForProcessing()
-        
-        XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 0)
+        skipNonAnalyticsConsequence()
     }
 }
+

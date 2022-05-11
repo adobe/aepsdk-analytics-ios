@@ -1,3 +1,4 @@
+
 /*
  Copyright 2022 Adobe. All rights reserved.
  This file is licensed to you under the Apache License, Version 2.0 (the "License");
@@ -15,19 +16,17 @@ import AEPServices
 @testable import AEPAnalytics
 @testable import AEPCore
 
-class AnalyticsAppExtConsequenceTests: AnalyticsConsequenceTestBase {
-    override func setUp() {
-        super.setupBase(forApp: false)
-        dispatchDefaultConfigAndIdentityStates()
-    }
-    
+///
+/// A base for AnalyticsAppExtension and Analytics classes to test. Shared tests without different results live in the base
+///
+class AnalyticsConsequenceTestBase : AnalyticsFunctionalTestBase {
 
-    func testHandleAnalyticsConsequence() {
-        MobileCore.setLogLevel(.trace)
+    // Do not process non "an" consequence types
+    func skipNonAnalyticsConsequence() {
         let eventData: [String: Any] = [
             AnalyticsConstants.EventDataKeys.TRIGGERED_CONSEQUENCE: [
                 AnalyticsConstants.EventDataKeys.ID: "id",
-                AnalyticsConstants.EventDataKeys.TYPE: "an",
+                AnalyticsConstants.EventDataKeys.TYPE: "me", // Type should be "an" for this extension to process
                 AnalyticsConstants.EventDataKeys.DETAIL : [
                     "action" : "testActionName",
                     "contextdata": ["k1" : "v1" , "k2" : "v2"]
@@ -37,30 +36,7 @@ class AnalyticsAppExtConsequenceTests: AnalyticsConsequenceTestBase {
         let ruleEngineEvent = Event(name: "Rule event", type: EventType.rulesEngine, source: EventSource.responseContent, data: eventData)
         mockRuntime.simulateComingEvent(event: ruleEngineEvent)
         waitForProcessing()
-        
-        let expectedVars = [
-            "ce": "UTF-8",
-            "pev2" : "AMACTION:testActionName",
-            "pe" : "lnk_o",
-            "mid" : "mid",
-            "aamb" : "blob",
-            "aamlh" : "lochint",
-            "ts" : String(ruleEngineEvent.timestamp.getUnixTimeInSeconds())
-        ]
-        let expectedContextData = [
-            "k1" : "v1",
-            "k2" : "v2",
-            "a.action" : "testActionName",
-        ]
-                
-        XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 1)
-        verifyHit(request: mockNetworkService?.calledNetworkRequests[0],
-                  host: "https://test.com/b/ss/rsid/0/",
-                  vars: expectedVars,
-                  contextData: expectedContextData)
-    }
-    
-    func testSkipNonAnalyticsConsequence() {
-        skipNonAnalyticsConsequence()
+
+        XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 0)
     }
 }

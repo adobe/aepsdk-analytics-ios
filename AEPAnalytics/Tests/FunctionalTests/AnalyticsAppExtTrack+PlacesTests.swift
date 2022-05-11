@@ -15,115 +15,22 @@ import AEPServices
 @testable import AEPAnalytics
 @testable import AEPCore
 
-class AnalyticsAppExtTrack_PlacesTests : AnalyticsFunctionalTestBase {
+class AnalyticsAppExtTrack_PlacesTests : AnalyticsTrack_PlacesTestBase {
     
     override func setUp() {
+        runningForApp = false
         super.setupBase(forApp: false)
         dispatchDefaultConfigAndIdentityStates()
     }
     
     //If Places shared state is available then analytics hits contain places data
     func testAnalyticsHitsContainPlacesData() {
-        let placesSharedState: [String: Any] = [
-            AnalyticsTestConstants.Places.EventDataKeys.CURRENT_POI : [
-                AnalyticsTestConstants.Places.EventDataKeys.REGION_ID : "myRegionId",
-                AnalyticsTestConstants.Places.EventDataKeys.REGION_NAME : "myRegionName"
-            ]
-        ]
-        simulatePlacesState(data: placesSharedState)
-        
-        
-        let trackData: [String: Any] = [
-            CoreConstants.Keys.ACTION : "testActionName",
-            CoreConstants.Keys.CONTEXT_DATA : [
-                "k1": "v1",
-                "k2": "v2"
-            ]
-        ]
-        let trackEvent = Event(name: "Generic track event", type: EventType.genericTrack, source: EventSource.requestContent, data: trackData)
-        
-        mockRuntime.simulateComingEvent(event: trackEvent)
-                
-        waitForProcessing()
-        
-        let expectedVars = [
-            "ce": "UTF-8",
-            "pev2" : "AMACTION:testActionName",
-            "pe" : "lnk_o",
-            "mid" : "mid",
-            "aamb" : "blob",
-            "aamlh" : "lochint",
-            "ts" : String(trackEvent.timestamp.getUnixTimeInSeconds())
-        ]
-        let expectedContextData = [
-            "k1" : "v1",
-            "k2" : "v2",
-            "a.action" : "testActionName",
-            "a.loc.poi.id" : "myRegionId",
-            "a.loc.poi" : "myRegionName"
-        ]
-                
-        XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 1)
-        verifyHit(request: mockNetworkService?.calledNetworkRequests[0],
-                  host: "https://test.com/b/ss/rsid/0/",
-                  vars: expectedVars,
-                  contextData: expectedContextData)
+        analyticsHitsContainPlacesDataTester()
     }
     
     
     // If Places shared state is updated then analytics hits contain updated places data
     func testAnalyticsHitsContainUpdatePlacesData() {
-        let placesSharedState: [String: Any] = [
-            AnalyticsTestConstants.Places.EventDataKeys.CURRENT_POI : [
-                AnalyticsTestConstants.Places.EventDataKeys.REGION_ID : "myRegionId",
-                AnalyticsTestConstants.Places.EventDataKeys.REGION_NAME : "myRegionName"
-            ]
-        ]
-        simulatePlacesState(data: placesSharedState)
-        
-        
-        let trackData: [String: Any] = [
-            CoreConstants.Keys.ACTION : "testActionName",
-            CoreConstants.Keys.CONTEXT_DATA : [
-                "k1": "v1",
-                "k2": "v2"
-            ]
-        ]
-        let trackEvent = Event(name: "Generic track event", type: EventType.genericTrack, source: EventSource.requestContent, data: trackData)
-        
-        let updatedPlacesState: [String: Any] = [
-            AnalyticsTestConstants.Places.EventDataKeys.CURRENT_POI : [
-                AnalyticsTestConstants.Places.EventDataKeys.REGION_ID : "myRegionId2",
-                AnalyticsTestConstants.Places.EventDataKeys.REGION_NAME : "myRegionName2"
-            ]
-        ]
-        simulatePlacesState(data: updatedPlacesState)
-        
-        mockRuntime.simulateComingEvent(event: trackEvent)
-                
-        waitForProcessing()
-        
-        let expectedVars = [
-            "ce": "UTF-8",
-            "pev2" : "AMACTION:testActionName",
-            "pe" : "lnk_o",
-            "mid" : "mid",
-            "aamb" : "blob",
-            "aamlh" : "lochint",
-            "ts" : String(trackEvent.timestamp.getUnixTimeInSeconds())
-        ]
-        let expectedContextData = [
-            "k1" : "v1",
-            "k2" : "v2",
-            "a.action" : "testActionName",
-            "a.loc.poi.id" : "myRegionId2",
-            "a.loc.poi" : "myRegionName2"
-        ]
-                
-        XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 1)
-        verifyHit(request: mockNetworkService?.calledNetworkRequests[0],
-                  host: "https://test.com/b/ss/rsid/0/",
-                  vars: expectedVars,
-                  contextData: expectedContextData)
+        analyticsHitsContainUpdatePlacesDataTester()
     }
 }
