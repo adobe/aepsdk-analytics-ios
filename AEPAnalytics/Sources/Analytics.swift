@@ -13,6 +13,7 @@
 import AEPCore
 import AEPServices
 import Foundation
+import UIKit
 
 ///
 /// Analytics extension for the Adobe Experience Platform SDK to be used in iOS Apps.
