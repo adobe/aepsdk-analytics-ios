@@ -13,7 +13,6 @@
 import AEPCore
 import AEPServices
 import Foundation
-import UIKit
 
 ///
 /// Analytics extension for the Adobe Experience Platform SDK to be used in iOS Apps.
@@ -24,8 +23,8 @@ import UIKit
 @available(iOSApplicationExtension, unavailable)
 public class Analytics: AnalyticsBase {
 
-    override func getApplicationStateVar() -> UIApplication.State? {
-        return AnalyticsHelper.getApplicationState()
+    override func getApplicationStateVar() -> String? {
+        return (AnalyticsHelper.getApplicationState() == .background) ? AnalyticsConstants.APP_STATE_BACKGROUND : AnalyticsConstants.APP_STATE_FOREGROUND
     }
 }
 
@@ -620,7 +619,7 @@ public class AnalyticsBase: NSObject, Extension {
         }
 
         if let appState = getApplicationStateVar() {
-            analyticsVars[AnalyticsConstants.Request.CUSTOMER_PERSPECTIVE_KEY] = (appState == .background) ? AnalyticsConstants.APP_STATE_BACKGROUND : AnalyticsConstants.APP_STATE_FOREGROUND
+            analyticsVars[AnalyticsConstants.Request.CUSTOMER_PERSPECTIVE_KEY] = appState
         }
 
         return analyticsVars
@@ -705,7 +704,7 @@ public class AnalyticsBase: NSObject, Extension {
     }
 
     // Provide a function to override for App Extension support
-    fileprivate func getApplicationStateVar() -> UIApplication.State? {
+    fileprivate func getApplicationStateVar() -> String? {
         return nil
     }
 
