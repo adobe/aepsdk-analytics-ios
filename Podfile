@@ -7,26 +7,34 @@ project 'AEPAnalytics.xcodeproj'
 pod 'SwiftLint', '0.44.0'
 
 target 'AEPAnalytics' do
-  pod 'AEPCore'
   pod 'AEPServices'
+  pod 'AEPCore'
   pod 'AEPRulesEngine'
 end
 
 target 'AEPAnalyticsUnitTests' do
-  pod 'AEPCore'
   pod 'AEPServices'
+  pod 'AEPCore'
   pod 'AEPRulesEngine'
 end
 
 target 'AEPAnalyticsFunctionalTests' do
-  pod 'AEPCore'
   pod 'AEPServices'
+  pod 'AEPCore'
   pod 'AEPRulesEngine'
 end
 
 target 'AnalyticsSampleApp' do
+  pod 'AEPServices'
   pod 'AEPCore'
-  pod 'AEPIdentity'
   pod 'AEPLifecycle'
+  pod 'AEPIdentity'
   pod 'AEPAssurance', '~> 3.0.0'
+end
+
+target 'AnalyticsSampleAppExt' do
+  pod 'AEPServices'
+  pod 'AEPCore'
+  pod 'AEPLifecycle'
+  pod 'AEPIdentity'
 end

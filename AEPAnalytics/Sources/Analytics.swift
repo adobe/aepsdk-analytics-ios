@@ -14,9 +14,32 @@ import AEPCore
 import AEPServices
 import Foundation
 
-/// Analytics extension for the Adobe Experience Platform SDK
+///
+/// Analytics extension for the Adobe Experience Platform SDK to be used in iOS Apps.
+/// This has full support for all App functionality.
+/// Any functionality which is unavailable in App Extensions must be added / overriden in this class.
+///
 @objc(AEPMobileAnalytics)
-public class Analytics: NSObject, Extension {
+@available(iOSApplicationExtension, unavailable)
+public class Analytics: AnalyticsBase {
+
+    override func getApplicationStateVar() -> UIApplication.State? {
+        return AnalyticsHelper.getApplicationState()
+    }
+}
+
+///
+/// Analytics extension for the Adobe Experience Platform SDK to be used in App Extensions (e.g: Action Extension).
+/// Any functionality specific to App Extension support should be added to this class
+///
+@objc(AEPMobileAnalyticsAppExtension)
+public class AnalyticsAppExtension: AnalyticsBase {}
+
+///
+/// Analytics extension for the Adobe Experience Platform SDK base class which holds all base functionality.
+/// Base functionality in this case means all functionality which can be used in both Apps and App Extensions.
+/// 
+public class AnalyticsBase: NSObject, Extension {
     private let LOG_TAG = "Analytics"
 
     public let runtime: ExtensionRuntime
@@ -595,9 +618,8 @@ public class Analytics: NSObject, Extension {
             }
         }
 
-        if let appState = AnalyticsHelper.getApplicationState() {
-            analyticsVars[AnalyticsConstants.Request.CUSTOMER_PERSPECTIVE_KEY] =
-                (appState == .background) ? AnalyticsConstants.APP_STATE_BACKGROUND : AnalyticsConstants.APP_STATE_FOREGROUND
+        if let appState = getApplicationStateVar() {
+            analyticsVars[AnalyticsConstants.Request.CUSTOMER_PERSPECTIVE_KEY] = (appState == .background) ? AnalyticsConstants.APP_STATE_BACKGROUND : AnalyticsConstants.APP_STATE_FOREGROUND
         }
 
         return analyticsVars
@@ -680,10 +702,16 @@ public class Analytics: NSObject, Extension {
             self?.analyticsDatabase?.cancelWaitForAdditionalData(type: .referrer)
         }
     }
+
+    // Provide a function to override for App Extension support
+    fileprivate func getApplicationStateVar() -> UIApplication.State? {
+        return nil
+    }
+
 }
 
-extension Analytics {
-    /// Remove keys with value other than String, Character or a type convertable to NSNumber.    
+extension AnalyticsBase {
+    /// Remove keys with value other than String, Character or a type convertable to NSNumber.
     /// - Parameter data: Analytics context data from track event.
     /// - Returns: Cleaned context data converted to [String: String] dictionary
     func cleanContextData(_ data: [String: Any?]?) -> [String: String]? {
