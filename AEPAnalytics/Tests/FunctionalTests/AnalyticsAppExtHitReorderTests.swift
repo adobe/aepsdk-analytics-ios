@@ -1,5 +1,5 @@
 /*
- Copyright 2021 Adobe. All rights reserved.
+ Copyright 2022 Adobe. All rights reserved.
  This file is licensed to you under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License. You may obtain a copy
  of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -15,17 +15,18 @@ import AEPServices
 @testable import AEPAnalytics
 @testable import AEPCore
 
-class AnlyticsHitReorderTests: AnalyticsHitReorderTestBase {
+class AnalyticsAppExtHitReorderTests : AnalyticsHitReorderTestBase {
+
     override func setUp() {
-        runningForAppTests = true
-        super.setupBase(forApp: true)
+        runningForAppTests = false
+        super.setupBase(forApp: false)
     }
     
     //Lifecycle data and acquisition data appended to the first custom analytics hit
     func testDataAppendedToFirstCustomHit() {
         dataAppendedToFirstCustomHitTester()
     }
-
+    
     // Verify acquisition data sent out on second hit if referrer timer is exceeded
     func testAcquisitionDataTimeOutForInstall() {
         acquisitionDataTimeOutForInstallTester()
@@ -35,16 +36,14 @@ class AnlyticsHitReorderTests: AnalyticsHitReorderTestBase {
     func testAnalyticsRequestMadePriorToCollectionOfLifecycleAndAcquisition() {
         analyticsRequestMadePriorToCollectionOfLifecycleAndAcquisitionTester()
     }
-
+    
     // Verify no custom track occurs until lifecycle and acquisition data are processed
     func testCustomTrackWaitsForProcessingOfLifecycleAndAcquisition() {
         customTrackWaitsForProcessingOfLifecycleAndAcquisitionTester()
     }
-
+    
     // Acquisition as seperate hit
     func testAcquisitionSentAsSeperateHit() {
         acquisitionSentAsSeperateHitTester()
     }
-
 }
-

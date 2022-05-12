@@ -15,52 +15,15 @@ import AEPServices
 @testable import AEPAnalytics
 @testable import AEPCore
 
-class AnalyticsTrack_TargetTests : AnalyticsFunctionalTestBase {
+class AnalyticsTrack_TargetTests : AnalyticsTrack_TargetTestBase {
 
     override func setUp() {
-        super.setupBase()
+        runningForApp = true
+        super.setupBase(forApp: true)
     }
 
     // Analytics for target event triggers an internal analytics track action request
     func testAnalyticsForTargetRequestEventTriggersA4TTrackAction() {
-        dispatchDefaultConfigAndIdentityStates()
-
-        let trackData: [String: Any] = [
-            AnalyticsConstants.EventDataKeys.TRACK_ACTION : "AnalyticsForTarget",
-            AnalyticsConstants.EventDataKeys.TRACK_INTERNAL: true,
-            AnalyticsConstants.EventDataKeys.CONTEXT_DATA : [
-                "&&tnta": "285408:0:0|2",
-                "&&pe": "tnt",
-                "a.target.sessionId" : "8E0988F2-57C7-42CA-B5A6-6458D370F315"
-            ]
-        ]
-        let event1 = Event(name: "A4T track action event", type: EventType.analytics, source: EventSource.requestContent, data: trackData)
-        mockRuntime.simulateComingEvent(event: event1)
-
-        waitForProcessing()
-
-        let expectedVars = [
-            "ce": "UTF-8",
-            "cp": "foreground",
-            "mid" : "mid",
-            "aamb" : "blob",
-            "aamlh" : "lochint",
-            "tnta" : "285408:0:0|2",
-            "pe" : "tnt",
-            "pev2" : "ADBINTERNAL:AnalyticsForTarget",
-            "ts" : String(event1.timestamp.getUnixTimeInSeconds())
-        ]
-
-        let expectedContextData = [
-            "a.internalaction" : "AnalyticsForTarget",
-            "a.target.sessionId" : "8E0988F2-57C7-42CA-B5A6-6458D370F315"
-        ]
-
-        // verify
-        XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 1)
-        verifyHit(request: mockNetworkService?.calledNetworkRequests[0],
-                  host: "https://test.com/b/ss/rsid/0/",
-                  vars: expectedVars,
-                  contextData: expectedContextData)
+        analyticsForTargetRequestEventTriggersA4TTrackActionTester()
     }
 }

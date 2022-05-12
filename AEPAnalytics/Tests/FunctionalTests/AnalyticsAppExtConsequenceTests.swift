@@ -1,5 +1,5 @@
 /*
- Copyright 2021 Adobe. All rights reserved.
+ Copyright 2022 Adobe. All rights reserved.
  This file is licensed to you under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License. You may obtain a copy
  of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -15,12 +15,12 @@ import AEPServices
 @testable import AEPAnalytics
 @testable import AEPCore
 
-class AnalyticsConsequenceTests: AnalyticsConsequenceTestBase {
-
+class AnalyticsAppExtConsequenceTests: AnalyticsConsequenceTestBase {
     override func setUp() {
-        super.setupBase(forApp: true)
+        super.setupBase(forApp: false)
         dispatchDefaultConfigAndIdentityStates()
     }
+    
 
     func testHandleAnalyticsConsequence() {
         MobileCore.setLogLevel(.trace)
@@ -37,10 +37,9 @@ class AnalyticsConsequenceTests: AnalyticsConsequenceTestBase {
         let ruleEngineEvent = Event(name: "Rule event", type: EventType.rulesEngine, source: EventSource.responseContent, data: eventData)
         mockRuntime.simulateComingEvent(event: ruleEngineEvent)
         waitForProcessing()
-
+        
         let expectedVars = [
             "ce": "UTF-8",
-            "cp": "foreground",
             "pev2" : "AMACTION:testActionName",
             "pe" : "lnk_o",
             "mid" : "mid",
@@ -53,16 +52,15 @@ class AnalyticsConsequenceTests: AnalyticsConsequenceTestBase {
             "k2" : "v2",
             "a.action" : "testActionName",
         ]
-
+                
         XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 1)
         verifyHit(request: mockNetworkService?.calledNetworkRequests[0],
                   host: "https://test.com/b/ss/rsid/0/",
                   vars: expectedVars,
                   contextData: expectedContextData)
     }
-
+    
     func testSkipNonAnalyticsConsequence() {
         skipNonAnalyticsConsequence()
     }
 }
-
