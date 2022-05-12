@@ -18,7 +18,7 @@ import AEPServices
 class AnalyticsQueueTests : AnalyticsFunctionalTestBase {
     
     override func setUp() {        
-        super.setupBase()
+        super.setupBase(forApp: true)
     }
     
     func dispatchForceHitProcessing() {

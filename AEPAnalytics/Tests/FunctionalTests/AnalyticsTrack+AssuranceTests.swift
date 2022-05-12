@@ -18,7 +18,7 @@ import AEPServices
 class AnalyticsTrack_AssuranceTests : AnalyticsFunctionalTestBase {
 
     override func setUp() {        
-        super.setupBase()
+        super.setupBase(forApp: true)
     }
     
     //Track with non null assurance session id should append debug flag.

@@ -17,7 +17,7 @@ class AnalyticsVersion {
     /// Returns the built Analytics version string.
     /// - Returns a `String` containing the built Analytics version string.
     static func getVersion() -> String {
-        let builtVersionString = buildVersionString(osType: getOSType(), analyticsVersion: Analytics.extensionVersion, coreVersion: MobileCore.extensionVersion)
+        let builtVersionString = buildVersionString(osType: getOSType(), analyticsVersion: AnalyticsBase.extensionVersion, coreVersion: MobileCore.extensionVersion)
         return builtVersionString
     }
 

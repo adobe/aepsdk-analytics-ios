@@ -15,7 +15,7 @@ import AEPServices
 import Foundation
 
 /// Defines the public interface for the Analytics extension
-@objc public extension Analytics {
+@objc public extension AnalyticsBase {
 
     /// Clears all hits from the tracking queue and removes them from the database.
     @objc(clearQueue)

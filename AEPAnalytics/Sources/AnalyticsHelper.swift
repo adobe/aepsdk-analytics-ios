@@ -16,6 +16,7 @@ import AEPServices
 class AnalyticsHelper {
     /// The app’s current state, or that of its most active scene.
     /// - Returns: The app's current state
+    @available(iOSApplicationExtension, unavailable)
     static func getApplicationState() -> UIApplication.State? {
         var ret: UIApplication.State?
         if Thread.isMainThread {

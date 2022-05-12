@@ -17,7 +17,7 @@ import AEPServices
 
 
 class AnalyticsFunctionalTestBase : XCTestCase {
-    var analytics:Analytics!
+    var analytics:AnalyticsBase!
     var mockRuntime: TestableExtensionRuntime!
     
     var mockDataStore: MockDataStore {
@@ -28,7 +28,8 @@ class AnalyticsFunctionalTestBase : XCTestCase {
         return ServiceProvider.shared.networkService as? MockNetworking
     }
             
-    func setupBase() {
+    // If you are testing Analytics for App pass true, if testing for App Extension pass false
+    func setupBase(forApp: Bool) {
         UserDefaults.clear()        
         
         ServiceProvider.shared.namedKeyValueService = MockDataStore()
@@ -38,12 +39,17 @@ class AnalyticsFunctionalTestBase : XCTestCase {
         // Setup default network response.
         mockNetworkService?.expectedResponse = HttpConnection(data: nil, response: HTTPURLResponse(url: URL(string: "test.com")!, statusCode: 200, httpVersion: nil, headerFields: nil), error: nil)
         
-        resetExtension()
+        resetExtension(forApp: forApp)
     }
     
-    func resetExtension() {        
+    // If you are testing Analytics for App pass true, if testing for App Extension pass false
+    func resetExtension(forApp: Bool) {
         mockRuntime = TestableExtensionRuntime()
-        analytics = Analytics(runtime: mockRuntime)
+        if forApp {
+            analytics = Analytics(runtime: mockRuntime)
+        } else {
+            analytics = AnalyticsAppExtension(runtime: mockRuntime)
+        }
         analytics.onRegistered()
     }
     

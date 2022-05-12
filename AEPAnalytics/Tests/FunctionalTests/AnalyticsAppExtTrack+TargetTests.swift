@@ -1,5 +1,5 @@
 /*
- Copyright 2021 Adobe. All rights reserved.
+ Copyright 2022 Adobe. All rights reserved.
  This file is licensed to you under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License. You may obtain a copy
  of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -15,22 +15,15 @@ import AEPServices
 @testable import AEPAnalytics
 @testable import AEPCore
 
-class AnalyticsTrack_PlacesTests : AnalyticsTrack_PlacesTestBase {
-    
+class AnalyticsAppExtTrack_TargetTests : AnalyticsTrack_TargetTestBase {
+
     override func setUp() {
-        runningForApp = true
-        super.setupBase(forApp: true)
-        dispatchDefaultConfigAndIdentityStates()
+        runningForApp = false
+        super.setupBase(forApp: false)
     }
-    
-    //If Places shared state is available then analytics hits contain places data
-    func testAnalyticsHitsContainPlacesData() {
-        analyticsHitsContainPlacesDataTester()
-    }
-    
-    
-    // If Places shared state is updated then analytics hits contain updated places data
-    func testAnalyticsHitsContainUpdatePlacesData() {
-        analyticsHitsContainUpdatePlacesDataTester()
+
+    // Analytics for target event triggers an internal analytics track action request
+    func testAnalyticsForTargetRequestEventTriggersA4TTrackAction() {
+        analyticsForTargetRequestEventTriggersA4TTrackActionTester()
     }
 }
