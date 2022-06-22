@@ -16,6 +16,7 @@ import AEPServices
 
 @testable import AEPAnalytics
 
+@available(tvOSApplicationExtension, unavailable)
 class AnalyticsAPITests: XCTestCase {
     override func setUp() {
         EventHub.reset()
