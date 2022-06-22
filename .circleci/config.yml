@@ -57,7 +57,7 @@ jobs:
 
       - run:
           name: Run Tests
-          command: make test
+          command: make unit-test-ios
 
       # code coverage
       - run:
@@ -74,6 +74,22 @@ jobs:
               shasum -a $i -c <(curl -s "https://raw.githubusercontent.com/codecov/codecov-bash/${VERSION}/SHA${i}SUM" | head -n 1)
             done
             bash ./codecov -v -X s3 -c -D "./build/out" -J "AEPAnalytics"
+
+      - run:
+          name: Pre-start tvOS Simulator
+          command: xcrun instruments -w "Apple TV (15.0) [" || true
+
+      - run:
+          name: Run AEPCore tvOS Tests
+          command: make unit-test-tvos
+
+      - run:
+          name: Upload Code Coverage Reports for AEPAnalytics tvOS
+          command: bash ./codecov -v -X s3 -c -D "./build/out" -J "AEPAnalytics tvOS"
+
+      - run:
+          name: Run Integration tvOS Tests
+          command: make integration-tvos-test
 
       # verify XCFramework archive builds
       - run:
