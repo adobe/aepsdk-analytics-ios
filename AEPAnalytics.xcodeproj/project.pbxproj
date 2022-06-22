@@ -209,9 +209,7 @@
 		1B6B860580EBEC36F0ED3532 /* Pods_AEPAnalyticsUnitTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AEPAnalyticsUnitTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		22B730D86DB3BB65E61850CD /* Pods-AEPAnalyticsUnitTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AEPAnalyticsUnitTests.debug.xcconfig"; path = "Target Support Files/Pods-AEPAnalyticsUnitTests/Pods-AEPAnalyticsUnitTests.debug.xcconfig"; sourceTree = "<group>"; };
 		2E0B4C04252BA10800ABBE57 /* AEPCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = AEPCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		2E1046152862404200FC6096 /* AnalyticsSampleApp copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "AnalyticsSampleApp copy-Info.plist"; path = "/Users/abhadra/Documents/git/forked/aepsdk/aepsdk-analytics-ios/AnalyticsSampleApp copy-Info.plist"; sourceTree = "<absolute>"; };
 		2E1046632862542500FC6096 /* AnalyticsSampleApp (tvOS).app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "AnalyticsSampleApp (tvOS).app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		2E1046642862542500FC6096 /* AnalyticsSampleApp copy2-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "AnalyticsSampleApp copy2-Info.plist"; path = "/Users/abhadra/Documents/git/forked/aepsdk/aepsdk-analytics-ios/AnalyticsSampleApp copy2-Info.plist"; sourceTree = "<absolute>"; };
 		2EBEE7702525A35400880E72 /* AEPAnalytics.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AEPAnalytics.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2EBEE7792525A35400880E72 /* AEPAnalyticsUnitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AEPAnalyticsUnitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2ED53FE8255F37A4000F0B23 /* AnalyticsHit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsHit.swift; sourceTree = "<group>"; };
@@ -407,8 +405,6 @@
 				2EBEE7712525A35400880E72 /* Products */,
 				CEBDCEF550A14091A479F5C5 /* Frameworks */,
 				13AC300B194721A7FF402F99 /* Pods */,
-				2E1046152862404200FC6096 /* AnalyticsSampleApp copy-Info.plist */,
-				2E1046642862542500FC6096 /* AnalyticsSampleApp copy2-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1231,7 +1227,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"AnalyticsSampleApp/Preview Content\"";
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
-				INFOPLIST_FILE = "AnalyticsSampleApp copy2-Info.plist";
+				INFOPLIST_FILE = AnalyticsSampleApp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1261,7 +1257,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"AnalyticsSampleApp/Preview Content\"";
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
-				INFOPLIST_FILE = "AnalyticsSampleApp copy2-Info.plist";
+				INFOPLIST_FILE = AnalyticsSampleApp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
