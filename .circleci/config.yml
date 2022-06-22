@@ -52,11 +52,11 @@ jobs:
 
       # pre-start the simulator to prevent timeouts
       - run:
-          name: Pre-start Simulator
+          name: Pre-start iOS Simulator
           command: xcrun instruments -w "iPhone 8 (13.1) [" || true
 
       - run:
-          name: Run Tests
+          name: Run iOS Tests
           command: make unit-test-ios
 
       # code coverage
@@ -80,16 +80,12 @@ jobs:
           command: xcrun instruments -w "Apple TV (15.0) [" || true
 
       - run:
-          name: Run AEPCore tvOS Tests
+          name: Run tvOS Tests
           command: make unit-test-tvos
 
       - run:
           name: Upload Code Coverage Reports for AEPAnalytics tvOS
           command: bash ./codecov -v -X s3 -c -D "./build/out" -J "AEPAnalytics tvOS"
-
-      - run:
-          name: Run Integration tvOS Tests
-          command: make integration-tvos-test
 
       # verify XCFramework archive builds
       - run:
