@@ -61,19 +61,19 @@ jobs:
 
       # code coverage
       - run:
-          name: Upload Code Coverage Report
+          name: Download Codecov Uploader
           command: |
             curl -s https://codecov.io/bash > codecov;
-            VERSION=$(grep 'VERSION=\".*\"' codecov | cut -d'"' -f2);
-            SHAVERSION=$(shasum -v);
-            echo "Using CodeCov version '$VERSION'"
-            echo "Using shasum '$SHAVERSION'"
+            VERSION=$(grep 'VERSION=\"[0-9\.]*\"' codecov | cut -d'"' -f2);
             for i in 1 256 512
             do
               shasum -a $i -c --ignore-missing <(curl -s "https://raw.githubusercontent.com/codecov/codecov-bash/${VERSION}/SHA${i}SUM") ||
-              shasum -a $i -c <(curl -s "https://raw.githubusercontent.com/codecov/codecov-bash/${VERSION}/SHA${i}SUM" | head -n 1)
+              shasum -a $i -c <(curl -s "https://raw.githubusercontent.com/codecov/codecov-bash/${VERSION}/SHA${i}SUM" | grep -w "codecov")
             done
-            bash ./codecov -v -X s3 -c -D "./build/out" -J "AEPAnalytics"
+
+      - run:
+          name: Upload Code Coverage Report for iOS
+          command: bash ./codecov -v -X s3 -c -D "./build/out" -J "AEPAnalytics"
 
       - run:
           name: Pre-start tvOS Simulator
