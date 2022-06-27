@@ -28,15 +28,15 @@ pod-update: pod-repo-update
 open:
 	open $(PROJECT_NAME).xcworkspace
 
-unit-test-ios:
+test-ios:
 	@echo "######################################################################"
-	@echo "### Unit Testing iOS"
+	@echo "### Testing iOS"
 	@echo "######################################################################"
 	xcodebuild test -workspace $(PROJECT_NAME).xcworkspace -scheme $(PROJECT_NAME) -destination 'platform=iOS Simulator,name=iPhone 8' -derivedDataPath build/out -enableCodeCoverage YES
 
-unit-test-tvos:
+test-tvos:
 	@echo "######################################################################"
-	@echo "### Unit Testing tvOS"
+	@echo "### Testing tvOS"
 	@echo "######################################################################"
 	xcodebuild test -workspace $(PROJECT_NAME).xcworkspace -scheme $(PROJECT_NAME) -destination 'platform=tvOS Simulator,name=Apple TV' -derivedDataPath build/out -enableCodeCoverage YES
 

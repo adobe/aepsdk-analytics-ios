@@ -54,7 +54,7 @@ jobs:
 
       - run:
           name: Run iOS Tests
-          command: make unit-test-ios
+          command: make test-ios
 
       # code coverage
       - run:
@@ -78,7 +78,7 @@ jobs:
 
       - run:
           name: Run tvOS Tests
-          command: make unit-test-tvos
+          command: make test-tvos
 
       - run:
           name: Upload Code Coverage Reports for AEPAnalytics tvOS

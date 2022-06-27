@@ -29,7 +29,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 
         MobileCore.setLogLevel(.trace)
-        var extensions = [Identity.self, AnalyticsAppExtension.self, Lifecycle.self]
+        var extensions = [Identity.self, Analytics.self, Lifecycle.self]
 
         // MARK: TODO remove this once Assurance has tvOS support.
         #if os(iOS)

@@ -31,19 +31,18 @@ target 'AEPAnalyticsFunctionalTests' do
   core_pods
 end
 
-target 'AnalyticsSampleApp' do
+target 'SampleAppiOS' do
   test_pods
   pod 'AEPAssurance', '~> 3.0.0'
 end
 
-target 'AnalyticsSampleAppExt' do
+target 'SampleAppExt' do
   test_pods
 end
 
-target 'AnalyticsSampleApp (tvOS)' do
+target 'SampleApptvOS' do
   test_pods
 end
-
 
 post_install do |pi|
   pi.pods_project.targets.each do |t|
