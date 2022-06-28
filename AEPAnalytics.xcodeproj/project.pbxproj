@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -14,6 +14,7 @@
 		2E1046592862542500FC6096 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D6D5F36125C88070008148B3 /* Preview Assets.xcassets */; };
 		2E10465A2862542500FC6096 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D6D5F35E25C88070008148B3 /* Assets.xcassets */; };
 		2E10465C2862542500FC6096 /* AEPAnalytics.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2EBEE7702525A35400880E72 /* AEPAnalytics.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		2E104685286B5F6A00FC6096 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6D5F35825C8806D008148B3 /* AppDelegate.swift */; };
 		2EC615AE2DFA7712AD5B1421 /* Pods_SampleApptvOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF949604BD14F4460A4AA8C /* Pods_SampleApptvOS.framework */; };
 		2ED53FE9255F37A4000F0B23 /* AnalyticsHit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ED53FE8255F37A4000F0B23 /* AnalyticsHit.swift */; };
 		2ED53FED255F37B1000F0B23 /* AnalyticsHitProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ED53FEC255F37B1000F0B23 /* AnalyticsHitProcessor.swift */; };
@@ -37,7 +38,7 @@
 		784185E82816FE7700B04CDB /* FileProviderExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784185E72816FE7700B04CDB /* FileProviderExtension.swift */; };
 		784185EA2816FE7700B04CDB /* FileProviderItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784185E92816FE7700B04CDB /* FileProviderItem.swift */; };
 		784185EC2816FE7700B04CDB /* FileProviderEnumerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784185EB2816FE7700B04CDB /* FileProviderEnumerator.swift */; };
-		784185F12816FE7700B04CDB /* SampleAppExt.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 784185E32816FE7700B04CDB /* SampleAppExt.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		784185F12816FE7700B04CDB /* TestAppExt.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 784185E32816FE7700B04CDB /* TestAppExt.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		784186062817333F00B04CDB /* AEPAnalytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2EBEE7702525A35400880E72 /* AEPAnalytics.framework */; };
 		784186072817333F00B04CDB /* AEPAnalytics.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2EBEE7702525A35400880E72 /* AEPAnalytics.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		7841DD19282C25B9006B5E72 /* AnalyticsConsequenceTestBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7841DD18282C25B9006B5E72 /* AnalyticsConsequenceTestBase.swift */; };
@@ -105,7 +106,6 @@
 		D639E23625B8B25600955FBA /* AnalyticsVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = D639E23525B8B25600955FBA /* AnalyticsVersion.swift */; };
 		D67AC98C2578285F000FA306 /* AnalyticsHitResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67AC98B2578285F000FA306 /* AnalyticsHitResponse.swift */; };
 		D6C7406625E6C5C100D1040C /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = D6C7406525E6C5C100D1040C /* README.md */; };
-		D6D5F35925C8806D008148B3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6D5F35825C8806D008148B3 /* AppDelegate.swift */; };
 		D6D5F35B25C8806D008148B3 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6D5F35A25C8806D008148B3 /* SceneDelegate.swift */; };
 		D6D5F35D25C8806D008148B3 /* AnalyticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6D5F35C25C8806D008148B3 /* AnalyticsView.swift */; };
 		D6D5F35F25C88070008148B3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D6D5F35E25C88070008148B3 /* Assets.xcassets */; };
@@ -176,7 +176,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				784185F12816FE7700B04CDB /* SampleAppExt.appex in Embed App Extensions */,
+				784185F12816FE7700B04CDB /* TestAppExt.appex in Embed App Extensions */,
 			);
 			name = "Embed App Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -211,7 +211,7 @@
 		23BFA8BD6618F925983AABFD /* Pods_SampleAppExt.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SampleAppExt.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2AE78B89CCEF45D319CF7FE8 /* Pods-SampleAppExt.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SampleAppExt.release.xcconfig"; path = "Target Support Files/Pods-SampleAppExt/Pods-SampleAppExt.release.xcconfig"; sourceTree = "<group>"; };
 		2E0B4C04252BA10800ABBE57 /* AEPCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = AEPCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		2E1046632862542500FC6096 /* SampleApptvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SampleApptvOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		2E1046632862542500FC6096 /* TestApptvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestApptvOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2EBEE7702525A35400880E72 /* AEPAnalytics.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AEPAnalytics.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2EBEE7792525A35400880E72 /* AEPAnalyticsUnitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AEPAnalyticsUnitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2ED53FE8255F37A4000F0B23 /* AnalyticsHit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsHit.swift; sourceTree = "<group>"; };
@@ -234,13 +234,13 @@
 		784185D928135D4F00B04CDB /* AnalyticsAppExtTrack+PlacesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AnalyticsAppExtTrack+PlacesTests.swift"; sourceTree = "<group>"; };
 		784185DB28135DA400B04CDB /* AnalyticsAppExtTrackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsAppExtTrackTests.swift; sourceTree = "<group>"; };
 		784185DD28135E1100B04CDB /* AnalyticsAppExtTrack+TargetTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AnalyticsAppExtTrack+TargetTests.swift"; sourceTree = "<group>"; };
-		784185E32816FE7700B04CDB /* SampleAppExt.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = SampleAppExt.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		784185E32816FE7700B04CDB /* TestAppExt.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = TestAppExt.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		784185E42816FE7700B04CDB /* UniformTypeIdentifiers.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UniformTypeIdentifiers.framework; path = System/Library/Frameworks/UniformTypeIdentifiers.framework; sourceTree = SDKROOT; };
 		784185E72816FE7700B04CDB /* FileProviderExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileProviderExtension.swift; sourceTree = "<group>"; };
 		784185E92816FE7700B04CDB /* FileProviderItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileProviderItem.swift; sourceTree = "<group>"; };
 		784185EB2816FE7700B04CDB /* FileProviderEnumerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileProviderEnumerator.swift; sourceTree = "<group>"; };
 		784185ED2816FE7700B04CDB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		784185EE2816FE7700B04CDB /* AnalyticsSampleAppExt.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = AnalyticsSampleAppExt.entitlements; sourceTree = "<group>"; };
+		784185EE2816FE7700B04CDB /* TestAppExt.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TestAppExt.entitlements; sourceTree = "<group>"; };
 		784185F628172B9100B04CDB /* AEPCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = AEPCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		784185F728172B9100B04CDB /* AEPIdentity.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = AEPIdentity.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		784185F828172B9100B04CDB /* AEPLifecycle.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = AEPLifecycle.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -307,7 +307,7 @@
 		D67AC98B2578285F000FA306 /* AnalyticsHitResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsHitResponse.swift; sourceTree = "<group>"; };
 		D6C7406525E6C5C100D1040C /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		D6C7406B25E6C70C00D1040C /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
-		D6D5F35625C8806D008148B3 /* SampleAppiOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SampleAppiOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D6D5F35625C8806D008148B3 /* TestAppiOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestAppiOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D6D5F35825C8806D008148B3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D6D5F35A25C8806D008148B3 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		D6D5F35C25C8806D008148B3 /* AnalyticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsView.swift; sourceTree = "<group>"; };
@@ -400,8 +400,8 @@
 				D6C7406B25E6C70C00D1040C /* Package.swift */,
 				D6C7406525E6C5C100D1040C /* README.md */,
 				AC277CEC252C23E600987C67 /* AEPAnalytics */,
-				D6D5F35725C8806D008148B3 /* AnalyticsSampleApp */,
-				784185E62816FE7700B04CDB /* AnalyticsSampleAppExt */,
+				D6D5F35725C8806D008148B3 /* TestApp */,
+				784185E62816FE7700B04CDB /* TestAppExt */,
 				2EBEE7712525A35400880E72 /* Products */,
 				CEBDCEF550A14091A479F5C5 /* Frameworks */,
 				13AC300B194721A7FF402F99 /* Pods */,
@@ -413,24 +413,24 @@
 			children = (
 				2EBEE7702525A35400880E72 /* AEPAnalytics.framework */,
 				2EBEE7792525A35400880E72 /* AEPAnalyticsUnitTests.xctest */,
-				D6D5F35625C8806D008148B3 /* SampleAppiOS.app */,
+				D6D5F35625C8806D008148B3 /* TestAppiOS.app */,
 				AC73D3B625E6F4E50068AB96 /* AEPAnalyticsFunctionalTests.xctest */,
-				784185E32816FE7700B04CDB /* SampleAppExt.appex */,
-				2E1046632862542500FC6096 /* SampleApptvOS.app */,
+				784185E32816FE7700B04CDB /* TestAppExt.appex */,
+				2E1046632862542500FC6096 /* TestApptvOS.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		784185E62816FE7700B04CDB /* AnalyticsSampleAppExt */ = {
+		784185E62816FE7700B04CDB /* TestAppExt */ = {
 			isa = PBXGroup;
 			children = (
 				784185E72816FE7700B04CDB /* FileProviderExtension.swift */,
 				784185E92816FE7700B04CDB /* FileProviderItem.swift */,
 				784185EB2816FE7700B04CDB /* FileProviderEnumerator.swift */,
 				784185ED2816FE7700B04CDB /* Info.plist */,
-				784185EE2816FE7700B04CDB /* AnalyticsSampleAppExt.entitlements */,
+				784185EE2816FE7700B04CDB /* TestAppExt.entitlements */,
 			);
-			path = AnalyticsSampleAppExt;
+			path = TestAppExt;
 			sourceTree = "<group>";
 		};
 		AC277CEC252C23E600987C67 /* AEPAnalytics */ = {
@@ -569,7 +569,7 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		D6D5F35725C8806D008148B3 /* AnalyticsSampleApp */ = {
+		D6D5F35725C8806D008148B3 /* TestApp */ = {
 			isa = PBXGroup;
 			children = (
 				D6D5F35825C8806D008148B3 /* AppDelegate.swift */,
@@ -579,7 +579,7 @@
 				D6D5F36625C88070008148B3 /* Info.plist */,
 				D6D5F36025C88070008148B3 /* Preview Content */,
 			);
-			path = AnalyticsSampleApp;
+			path = TestApp;
 			sourceTree = "<group>";
 		};
 		D6D5F36025C88070008148B3 /* Preview Content */ = {
@@ -604,9 +604,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		2E10464B2862542500FC6096 /* SampleApptvOS */ = {
+		2E10464B2862542500FC6096 /* TestApptvOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 2E1046602862542500FC6096 /* Build configuration list for PBXNativeTarget "SampleApptvOS" */;
+			buildConfigurationList = 2E1046602862542500FC6096 /* Build configuration list for PBXNativeTarget "TestApptvOS" */;
 			buildPhases = (
 				22CB7FB9A742A0AF4D4F3457 /* [CP] Check Pods Manifest.lock */,
 				2E1046512862542500FC6096 /* Sources */,
@@ -620,9 +620,9 @@
 			dependencies = (
 				2E10464C2862542500FC6096 /* PBXTargetDependency */,
 			);
-			name = SampleApptvOS;
+			name = TestApptvOS;
 			productName = AnalyticsSampleApp;
-			productReference = 2E1046632862542500FC6096 /* SampleApptvOS.app */;
+			productReference = 2E1046632862542500FC6096 /* TestApptvOS.app */;
 			productType = "com.apple.product-type.application";
 		};
 		2EBEE76F2525A35300880E72 /* AEPAnalytics */ = {
@@ -665,9 +665,9 @@
 			productReference = 2EBEE7792525A35400880E72 /* AEPAnalyticsUnitTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		784185E22816FE7700B04CDB /* SampleAppExt */ = {
+		784185E22816FE7700B04CDB /* TestAppExt */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 784185F22816FE7700B04CDB /* Build configuration list for PBXNativeTarget "SampleAppExt" */;
+			buildConfigurationList = 784185F22816FE7700B04CDB /* Build configuration list for PBXNativeTarget "TestAppExt" */;
 			buildPhases = (
 				ECA4D1016B21A599E338013D /* [CP] Check Pods Manifest.lock */,
 				784185DF2816FE7700B04CDB /* Sources */,
@@ -680,9 +680,9 @@
 			dependencies = (
 				784186092817333F00B04CDB /* PBXTargetDependency */,
 			);
-			name = SampleAppExt;
+			name = TestAppExt;
 			productName = AnalyticsSampleAppExt;
-			productReference = 784185E32816FE7700B04CDB /* SampleAppExt.appex */;
+			productReference = 784185E32816FE7700B04CDB /* TestAppExt.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
 		AC73D3B525E6F4E50068AB96 /* AEPAnalyticsFunctionalTests */ = {
@@ -705,9 +705,9 @@
 			productReference = AC73D3B625E6F4E50068AB96 /* AEPAnalyticsFunctionalTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		D6D5F35525C8806D008148B3 /* SampleAppiOS */ = {
+		D6D5F35525C8806D008148B3 /* TestAppiOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = D6D5F36925C88070008148B3 /* Build configuration list for PBXNativeTarget "SampleAppiOS" */;
+			buildConfigurationList = D6D5F36925C88070008148B3 /* Build configuration list for PBXNativeTarget "TestAppiOS" */;
 			buildPhases = (
 				E9862EF72E0C21DFA6CBB832 /* [CP] Check Pods Manifest.lock */,
 				D6D5F35225C8806D008148B3 /* Sources */,
@@ -723,9 +723,9 @@
 				D6D5F38525C88465008148B3 /* PBXTargetDependency */,
 				784185F02816FE7700B04CDB /* PBXTargetDependency */,
 			);
-			name = SampleAppiOS;
+			name = TestAppiOS;
 			productName = AnalyticsSampleApp;
-			productReference = D6D5F35625C8806D008148B3 /* SampleAppiOS.app */;
+			productReference = D6D5F35625C8806D008148B3 /* TestAppiOS.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -772,9 +772,9 @@
 				2EBEE76F2525A35300880E72 /* AEPAnalytics */,
 				2EBEE7782525A35400880E72 /* AEPAnalyticsUnitTests */,
 				AC73D3B525E6F4E50068AB96 /* AEPAnalyticsFunctionalTests */,
-				D6D5F35525C8806D008148B3 /* SampleAppiOS */,
-				784185E22816FE7700B04CDB /* SampleAppExt */,
-				2E10464B2862542500FC6096 /* SampleApptvOS */,
+				D6D5F35525C8806D008148B3 /* TestAppiOS */,
+				784185E22816FE7700B04CDB /* TestAppExt */,
+				2E10464B2862542500FC6096 /* TestApptvOS */,
 			);
 		};
 /* End PBXProject section */
@@ -1172,7 +1172,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D6D5F35925C8806D008148B3 /* AppDelegate.swift in Sources */,
+				2E104685286B5F6A00FC6096 /* AppDelegate.swift in Sources */,
 				D6D5F35B25C8806D008148B3 /* SceneDelegate.swift in Sources */,
 				D6D5F35D25C8806D008148B3 /* AnalyticsView.swift in Sources */,
 			);
@@ -1193,7 +1193,7 @@
 		};
 		784185F02816FE7700B04CDB /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 784185E22816FE7700B04CDB /* SampleAppExt */;
+			target = 784185E22816FE7700B04CDB /* TestAppExt */;
 			targetProxy = 784185EF2816FE7700B04CDB /* PBXContainerItemProxy */;
 		};
 		784186092817333F00B04CDB /* PBXTargetDependency */ = {
@@ -1224,17 +1224,17 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_ASSET_PATHS = "\"AnalyticsSampleApp/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
-				INFOPLIST_FILE = AnalyticsSampleApp/Info.plist;
+				INFOPLIST_FILE = TestApp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MACH_O_TYPE = mh_execute;
-				PRODUCT_BUNDLE_IDENTIFIER = com.adobe.AnalyticsSampleApptvOS;
+				PRODUCT_BUNDLE_IDENTIFIER = com.adobe.AnalyticsTestApptvOS;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
@@ -1254,17 +1254,17 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_ASSET_PATHS = "\"AnalyticsSampleApp/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
-				INFOPLIST_FILE = AnalyticsSampleApp/Info.plist;
+				INFOPLIST_FILE = TestApp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MACH_O_TYPE = mh_execute;
-				PRODUCT_BUNDLE_IDENTIFIER = com.adobe.AnalyticsSampleApptvOS;
+				PRODUCT_BUNDLE_IDENTIFIER = com.adobe.AnalyticsTestApptvOS;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
@@ -1515,14 +1515,14 @@
 			baseConfigurationReference = 57852F176D6EF52736FD37C3 /* Pods-SampleAppExt.debug.xcconfig */;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
-				CODE_SIGN_ENTITLEMENTS = AnalyticsSampleAppExt/AnalyticsSampleAppExt.entitlements;
+				CODE_SIGN_ENTITLEMENTS = TestAppExt/TestAppExt.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = AnalyticsSampleAppExt/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = AnalyticsSampleAppExt;
+				INFOPLIST_FILE = TestAppExt/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = AnalyticsTestAppExt;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Adobe. All rights reserved.";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1531,7 +1531,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.adobe.AnalyticsSampleApp.AnalyticsSampleAppExt;
+				PRODUCT_BUNDLE_IDENTIFIER = com.adobe.AnalyticsTestApp.AnalyticsTestAppExt;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1545,14 +1545,14 @@
 			baseConfigurationReference = 2AE78B89CCEF45D319CF7FE8 /* Pods-SampleAppExt.release.xcconfig */;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
-				CODE_SIGN_ENTITLEMENTS = AnalyticsSampleAppExt/AnalyticsSampleAppExt.entitlements;
+				CODE_SIGN_ENTITLEMENTS = TestAppExt/TestAppExt.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = AnalyticsSampleAppExt/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = AnalyticsSampleAppExt;
+				INFOPLIST_FILE = TestAppExt/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = AnalyticsTestAppExt;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Adobe. All rights reserved.";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1561,7 +1561,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.adobe.AnalyticsSampleApp.AnalyticsSampleAppExt;
+				PRODUCT_BUNDLE_IDENTIFIER = com.adobe.AnalyticsTestApp.AnalyticsTestAppExt;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1619,17 +1619,17 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_ASSET_PATHS = "\"AnalyticsSampleApp/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
-				INFOPLIST_FILE = AnalyticsSampleApp/Info.plist;
+				INFOPLIST_FILE = TestApp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MACH_O_TYPE = mh_execute;
-				PRODUCT_BUNDLE_IDENTIFIER = com.adobe.AnalyticsSampleApp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.adobe.AnalyticsTestApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
@@ -1646,17 +1646,17 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_ASSET_PATHS = "\"AnalyticsSampleApp/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
-				INFOPLIST_FILE = AnalyticsSampleApp/Info.plist;
+				INFOPLIST_FILE = TestApp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MACH_O_TYPE = mh_execute;
-				PRODUCT_BUNDLE_IDENTIFIER = com.adobe.AnalyticsSampleApp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.adobe.AnalyticsTestApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
@@ -1667,7 +1667,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		2E1046602862542500FC6096 /* Build configuration list for PBXNativeTarget "SampleApptvOS" */ = {
+		2E1046602862542500FC6096 /* Build configuration list for PBXNativeTarget "TestApptvOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				2E1046612862542500FC6096 /* Debug */,
@@ -1703,7 +1703,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		784185F22816FE7700B04CDB /* Build configuration list for PBXNativeTarget "SampleAppExt" */ = {
+		784185F22816FE7700B04CDB /* Build configuration list for PBXNativeTarget "TestAppExt" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				784185F32816FE7700B04CDB /* Debug */,
@@ -1721,7 +1721,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		D6D5F36925C88070008148B3 /* Build configuration list for PBXNativeTarget "SampleAppiOS" */ = {
+		D6D5F36925C88070008148B3 /* Build configuration list for PBXNativeTarget "TestAppiOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D6D5F36725C88070008148B3 /* Debug */,

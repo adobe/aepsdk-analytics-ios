@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
    LastUpgradeVersion = "1340"
-   version = "1.3">
+   wasCreatedForAppExtension = "YES"
+   version = "2.0">
    <BuildAction
       parallelizeBuildables = "YES"
       buildImplicitDependencies = "YES">
@@ -14,9 +15,23 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "2E10464B2862542500FC6096"
-               BuildableName = "SampleApptvOS.app"
-               BlueprintName = "SampleApptvOS"
+               BlueprintIdentifier = "784185E22816FE7700B04CDB"
+               BuildableName = "SampleAppExt.appex"
+               BlueprintName = "SampleAppExt"
+               ReferencedContainer = "container:AEPAnalytics.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "D6D5F35525C8806D008148B3"
+               BuildableName = "SampleAppiOS.app"
+               BlueprintName = "SampleAppiOS"
                ReferencedContainer = "container:AEPAnalytics.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -32,21 +47,23 @@
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"
-      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
-      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+      selectedDebuggerIdentifier = ""
+      selectedLauncherIdentifier = "Xcode.IDEFoundation.Launcher.PosixSpawn"
       launchStyle = "0"
+      askForAppToLaunch = "Yes"
       useCustomWorkingDirectory = "NO"
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
-      allowLocationSimulation = "YES">
+      allowLocationSimulation = "YES"
+      launchAutomaticallySubstyle = "2">
       <BuildableProductRunnable
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "2E10464B2862542500FC6096"
-            BuildableName = "SampleApptvOS.app"
-            BlueprintName = "SampleApptvOS"
+            BlueprintIdentifier = "D6D5F35525C8806D008148B3"
+            BuildableName = "SampleAppiOS.app"
+            BlueprintName = "SampleAppiOS"
             ReferencedContainer = "container:AEPAnalytics.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -56,14 +73,15 @@
       shouldUseLaunchSchemeArgsEnv = "YES"
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
-      debugDocumentVersioning = "YES">
+      debugDocumentVersioning = "YES"
+      launchAutomaticallySubstyle = "2">
       <BuildableProductRunnable
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "2E10464B2862542500FC6096"
-            BuildableName = "SampleApptvOS.app"
-            BlueprintName = "SampleApptvOS"
+            BlueprintIdentifier = "D6D5F35525C8806D008148B3"
+            BuildableName = "SampleAppiOS.app"
+            BlueprintName = "SampleAppiOS"
             ReferencedContainer = "container:AEPAnalytics.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
