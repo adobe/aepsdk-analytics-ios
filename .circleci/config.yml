@@ -13,7 +13,7 @@ workflows:
 jobs:
   build-and-test:
     macos:
-      xcode: 12.0.1 # Specify the Xcode version to use
+      xcode: 13.0.0 # Specify the Xcode version to use
 
     steps:
       - checkout
