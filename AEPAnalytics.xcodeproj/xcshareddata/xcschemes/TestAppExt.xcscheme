@@ -16,8 +16,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "784185E22816FE7700B04CDB"
-               BuildableName = "SampleAppExt.appex"
-               BlueprintName = "SampleAppExt"
+               BuildableName = "TestAppExt.appex"
+               BlueprintName = "TestAppExt"
                ReferencedContainer = "container:AEPAnalytics.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -30,8 +30,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "D6D5F35525C8806D008148B3"
-               BuildableName = "SampleAppiOS.app"
-               BlueprintName = "SampleAppiOS"
+               BuildableName = "TestAppiOS.app"
+               BlueprintName = "TestAppiOS"
                ReferencedContainer = "container:AEPAnalytics.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -62,8 +62,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "D6D5F35525C8806D008148B3"
-            BuildableName = "SampleAppiOS.app"
-            BlueprintName = "SampleAppiOS"
+            BuildableName = "TestAppiOS.app"
+            BlueprintName = "TestAppiOS"
             ReferencedContainer = "container:AEPAnalytics.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -80,8 +80,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "D6D5F35525C8806D008148B3"
-            BuildableName = "SampleAppiOS.app"
-            BlueprintName = "SampleAppiOS"
+            BuildableName = "TestAppiOS.app"
+            BlueprintName = "TestAppiOS"
             ReferencedContainer = "container:AEPAnalytics.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

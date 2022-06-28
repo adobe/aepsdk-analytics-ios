@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "2E10464B2862542500FC6096"
-               BuildableName = "SampleApptvOS.app"
+               BuildableName = "TestApptvOS.app"
                BlueprintName = "TestApptvOS"
                ReferencedContainer = "container:AEPAnalytics.xcodeproj">
             </BuildableReference>
@@ -45,7 +45,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "2E10464B2862542500FC6096"
-            BuildableName = "SampleApptvOS.app"
+            BuildableName = "TestApptvOS.app"
             BlueprintName = "TestApptvOS"
             ReferencedContainer = "container:AEPAnalytics.xcodeproj">
          </BuildableReference>
@@ -62,7 +62,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "2E10464B2862542500FC6096"
-            BuildableName = "SampleApptvOS.app"
+            BuildableName = "TestApptvOS.app"
             BlueprintName = "TestApptvOS"
             ReferencedContainer = "container:AEPAnalytics.xcodeproj">
          </BuildableReference>

@@ -23,24 +23,24 @@ target 'AEPAnalytics' do
   core_pods
 end
 
-target 'AEPAnalyticsUnitTests' do
+target 'UnitTests' do
   core_pods
 end
 
-target 'AEPAnalyticsFunctionalTests' do
+target 'FunctionalTests' do
   core_pods
 end
 
-target 'SampleAppiOS' do
+target 'TestAppiOS' do
   test_pods
   pod 'AEPAssurance', '~> 3.0.0'
 end
 
-target 'SampleAppExt' do
+target 'TestAppExt' do
   test_pods
 end
 
-target 'SampleApptvOS' do
+target 'TestApptvOS' do
   test_pods
 end
 
