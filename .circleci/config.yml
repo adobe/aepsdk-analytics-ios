@@ -81,7 +81,7 @@ jobs:
           command: make test-tvos
 
       - run:
-          name: Upload Code Coverage Reports for AEPAnalytics tvOS
+          name: Upload Code Coverage Reports for tvOS
           command: bash ./codecov -v -X s3 -c -D "./build/out" -J "AEPAnalytics tvOS"
 
       # verify XCFramework archive builds
