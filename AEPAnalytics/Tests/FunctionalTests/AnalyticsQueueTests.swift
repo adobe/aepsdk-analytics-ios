@@ -15,6 +15,7 @@ import AEPServices
 @testable import AEPAnalytics
 @testable import AEPCore
 
+@available(tvOSApplicationExtension, unavailable)
 class AnalyticsQueueTests : AnalyticsFunctionalTestBase {
     
     override func setUp() {        

@@ -15,6 +15,7 @@ import AEPServices
 @testable import AEPAnalytics
 @testable import AEPCore
 
+@available(tvOSApplicationExtension, unavailable)
 class AnalyticsAppExtHitReorderTests : AnalyticsHitReorderTestBase {
 
     override func setUp() {
