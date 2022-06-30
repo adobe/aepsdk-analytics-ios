@@ -14,19 +14,31 @@ import UIKit
 import AEPCore
 import AEPIdentity
 import AEPAnalytics
-import AEPAssurance
 import AEPLifecycle
 
+// MARK: TODO remove this once Assurance has tvOS support.
+#if os(iOS)
+import AEPAssurance
+#endif
+
 @UIApplicationMain
+@available(tvOSApplicationExtension, unavailable)
 class AppDelegate: UIResponder, UIApplicationDelegate {
-    private let LAUNCH_ENVIRONMENT_FILE_ID = "YOUR-APP-ID"
+    private let ENVIRONMENT_FILE_ID = ""
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 
         MobileCore.setLogLevel(.trace)
-        MobileCore.registerExtensions([Identity.self, Analytics.self, Lifecycle.self, Assurance.self], {
+        var extensions = [Identity.self, Analytics.self, Lifecycle.self]
+
+        // MARK: TODO remove this once Assurance has tvOS support.
+        #if os(iOS)
+        extensions.append(Assurance.self)
+        #endif
+
+        MobileCore.registerExtensions(extensions, {
             // Use the App id assigned to this application via Adobe Launch
-            MobileCore.configureWith(appId: self.LAUNCH_ENVIRONMENT_FILE_ID)
+            MobileCore.configureWith(appId: self.ENVIRONMENT_FILE_ID)
         })
 
         return true

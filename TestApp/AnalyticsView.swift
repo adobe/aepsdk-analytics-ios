@@ -14,8 +14,12 @@ import UIKit
 import SwiftUI
 import AEPAnalytics
 import AEPCore
-import AEPAssurance
 
+#if os(iOS)
+import AEPAssurance
+#endif
+
+@available(tvOSApplicationExtension, unavailable)
 struct AnalyticsView: View {
     let LOG_TAG = "AnalyticsTestApp::AnalyticsView"
 
@@ -33,6 +37,7 @@ struct AnalyticsView: View {
         ScrollView {
             VStack(alignment: HorizontalAlignment.leading, spacing: 12) {
                 VStack {
+                    #if os(iOS)
                     Group {
                         /// Assurance API
                         Text("Assurance API").bold()
@@ -52,6 +57,7 @@ struct AnalyticsView: View {
                                 .font(.caption)
                         }.cornerRadius(5)
                     }
+                    #endif
                     Group {
                         /// Core Privacy API
                         Text("Core Privacy API").bold()
@@ -231,6 +237,7 @@ struct AnalyticsView: View {
     }
 }
 
+@available(tvOSApplicationExtension, unavailable)
 struct AunalyticsView_Previews: PreviewProvider {
     static var previews: some View {
         AnalyticsView()
