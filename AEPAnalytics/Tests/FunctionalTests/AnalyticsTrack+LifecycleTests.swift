@@ -15,6 +15,7 @@ import AEPServices
 @testable import AEPAnalytics
 @testable import AEPCore
 
+@available(tvOSApplicationExtension, unavailable)
 class AnalyticsTrack_LifecycleTests : AnalyticsTrack_LifecycleTestBase {
     override func setUp() {
         runningForApp = true

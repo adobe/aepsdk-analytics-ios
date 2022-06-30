@@ -21,11 +21,13 @@ import Foundation
 ///
 @objc(AEPMobileAnalytics)
 @available(iOSApplicationExtension, unavailable)
+@available(tvOSApplicationExtension, unavailable)
 public class Analytics: AnalyticsBase {
 
     override func getApplicationStateVar() -> String? {
         return (AnalyticsHelper.getApplicationState() == .background) ? AnalyticsConstants.APP_STATE_BACKGROUND : AnalyticsConstants.APP_STATE_FOREGROUND
     }
+
 }
 
 ///

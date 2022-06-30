@@ -15,7 +15,7 @@ import AEPServices
 @testable import AEPAnalytics
 @testable import AEPCore
 
-
+@available(tvOSApplicationExtension, unavailable)
 class AnalyticsFunctionalTestBase : XCTestCase {
     var analytics:AnalyticsBase!
     var mockRuntime: TestableExtensionRuntime!

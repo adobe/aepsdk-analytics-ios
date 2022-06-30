@@ -9,7 +9,6 @@
  OF ANY KIND, either express or implied. See the License for the specific language
  governing permissions and limitations under the License.
  */
-
 import UIKit
 import AEPServices
 
@@ -17,6 +16,7 @@ class AnalyticsHelper {
     /// The app’s current state, or that of its most active scene.
     /// - Returns: The app's current state
     @available(iOSApplicationExtension, unavailable)
+    @available(tvOSApplicationExtension, unavailable)
     static func getApplicationState() -> UIApplication.State? {
         var ret: UIApplication.State?
         if Thread.isMainThread {
