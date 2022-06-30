@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = "AEPAnalytics"
-  s.version          = "3.1.0"
+  s.version          = "3.2.0"
   s.summary          = "Analytics library for Adobe Experience Platform SDK. Written and maintained by Adobe."
   s.description      = <<-DESC
                         The Analytics library provides APIs that allow use of the Analytics product in the Adobe Experience Platform SDK.
