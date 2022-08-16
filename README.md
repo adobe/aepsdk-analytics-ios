@@ -43,9 +43,12 @@ $ pod install
 
 ### [Swift Package Manager](https://github.com/apple/swift-package-manager)
 
-To add the AEPAnalytics Package to your application, from the Xcode menu select:
+To add the AEPAnalytics Package to your application, from the Xcode 13.x menu select:
 
-`File > Swift Packages > Add Package Dependency...`
+`File > Add Packages...`
+
+> **Note** 
+> the menu options may vary depending on the version of Xcode being used.
 
 Enter the URL for the AEPAnalytics package repository: `https://github.com/adobe/aepsdk-analytics-ios.git`.
 
