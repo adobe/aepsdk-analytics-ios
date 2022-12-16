@@ -114,7 +114,7 @@ public class AnalyticsBase: NSObject, Extension {
         registerListener(type: EventType.lifecycle, source: EventSource.responseContent, listener: handleIncomingEvent)
         registerListener(type: EventType.genericLifecycle, source: EventSource.requestContent, listener: handleIncomingEvent)
         registerListener(type: EventType.hub, source: EventSource.sharedState, listener: handleIncomingEvent)
-        registerListener(type: EventType.genericIdentity, source: EventSource.requestReset, listener: handleResetIdentitiesEvent)
+        registerListener(type: EventType.genericIdentity, source: EventSource.requestReset, listener: handleIncomingEvent)
     }
 
     /// Invoked when the Analytics extension has been unregistered by the `EventHub`, currently a no-op.
@@ -164,6 +164,10 @@ public class AnalyticsBase: NSObject, Extension {
                     self.handleAnalyticsRequestIdentityEvent(event)
                 } else if event.source == EventSource.requestContent {
                     self.handleAnalyticsRequestContentEvent(event)
+                }
+            case EventType.genericIdentity:
+                if event.source == EventSource.requestReset {
+                    self.handleResetIdentitiesEvent(event)
                 }
             default:
                 break
