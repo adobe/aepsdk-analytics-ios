@@ -166,7 +166,9 @@ public class AnalyticsBase: NSObject, Extension {
                     self.handleAnalyticsRequestContentEvent(event)
                 }
             case EventType.genericIdentity:
-                self.handleResetIdentitiesEvent(event)
+                if event.source == EventSource.requestReset {
+                    self.handleResetIdentitiesEvent(event)
+                }
             default:
                 break
             }
