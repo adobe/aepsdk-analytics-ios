@@ -2,15 +2,15 @@ PODS:
   - AEPAssurance (3.0.1):
     - AEPCore (>= 3.1.0)
     - AEPServices (>= 3.1.0)
-  - AEPCore (3.7.3):
-    - AEPRulesEngine (>= 1.1.0)
-    - AEPServices (>= 3.7.3)
-  - AEPIdentity (3.7.3):
-    - AEPCore (>= 3.7.3)
-  - AEPLifecycle (3.7.3):
-    - AEPCore (>= 3.7.3)
-  - AEPRulesEngine (1.2.0)
-  - AEPServices (3.7.3)
+  - AEPCore (3.8.2):
+    - AEPRulesEngine (>= 1.2.2)
+    - AEPServices (>= 3.8.2)
+  - AEPIdentity (3.8.2):
+    - AEPCore (>= 3.8.2)
+  - AEPLifecycle (3.8.2):
+    - AEPCore (>= 3.8.2)
+  - AEPRulesEngine (1.2.3)
+  - AEPServices (3.8.2)
   - SwiftLint (0.44.0)
 
 DEPENDENCIES:
@@ -34,13 +34,13 @@ SPEC REPOS:
 
 SPEC CHECKSUMS:
   AEPAssurance: b25880cd4b14f22c61a1dce19807bd0ca0fe9b17
-  AEPCore: 30a98ef716b06958a7b6a9ba1ab74b8fb9a9a1a7
-  AEPIdentity: f87b3f038d9e2869550de716a24b93953e735aac
-  AEPLifecycle: f5a0917fc46b90801bd9c438df5b05bfa83c6aa2
-  AEPRulesEngine: 71228dfdac24c9ded09be13e3257a7eb22468ccc
-  AEPServices: b71815dfa69d572f5975137c81e17bd80888b449
+  AEPCore: 52249635f856d5ee4b1042059cd5d55656f368d1
+  AEPIdentity: fc074644d0b5e9561a05b3881159aacacb25b944
+  AEPLifecycle: 7392d3df030bfbd81166334e88e0b1160d05a43f
+  AEPRulesEngine: f8d6eb0fa5a83d791f57867ed02f25fdf99894ec
+  AEPServices: 46df834256a392e67f5a24c894eff770bb05d678
   SwiftLint: e96c0a8c770c7ebbc4d36c55baf9096bb65c4584
 
 PODFILE CHECKSUM: 80a4850d62c58ff839224461b574fc780e6a0a01
 
-COCOAPODS: 1.11.3
+COCOAPODS: 1.12.1

@@ -28,6 +28,7 @@ class AnalyticsTrack_LifecycleTestBase : AnalyticsFunctionalTestBase {
             AnalyticsTestConstants.Lifecycle.EventDataKeys.LIFECYCLE_CONTEXT_DATA : [
                 AnalyticsTestConstants.Lifecycle.EventDataKeys.OPERATING_SYSTEM : "mockOSName",
                 AnalyticsTestConstants.Lifecycle.EventDataKeys.LOCALE : "en-US",
+                AnalyticsTestConstants.Lifecycle.EventDataKeys.SYSTEM_LOCALE : "pt-US",
                 AnalyticsTestConstants.Lifecycle.EventDataKeys.DEVICE_RESOLUTION : "0x0",
                 AnalyticsTestConstants.Lifecycle.EventDataKeys.CARRIER_NAME : "mockMobileCarrier",
                 AnalyticsTestConstants.Lifecycle.EventDataKeys.DEVICE_NAME : "mockDeviceBuildId",
@@ -115,6 +116,7 @@ class AnalyticsTrack_LifecycleTestBase : AnalyticsFunctionalTestBase {
             AnalyticsTestConstants.Lifecycle.EventDataKeys.LIFECYCLE_CONTEXT_DATA : [
                 AnalyticsTestConstants.Lifecycle.EventDataKeys.OPERATING_SYSTEM : "mockOSName",
                 AnalyticsTestConstants.Lifecycle.EventDataKeys.LOCALE : "en-US",
+                AnalyticsTestConstants.Lifecycle.EventDataKeys.SYSTEM_LOCALE : "pt-US",
                 AnalyticsTestConstants.Lifecycle.EventDataKeys.DEVICE_RESOLUTION : "0x0",
                 AnalyticsTestConstants.Lifecycle.EventDataKeys.CARRIER_NAME : "mockMobileCarrier",
                 AnalyticsTestConstants.Lifecycle.EventDataKeys.DEVICE_NAME : "mockDeviceBuildId",
@@ -214,7 +216,8 @@ class AnalyticsTrack_LifecycleTestBase : AnalyticsFunctionalTestBase {
             "a.OSVersion" :  "mockOSName",
             "a.Resolution" : "0x0",
             "a.RunMode" : "Application",
-            "a.locale" : "en-US"
+            "a.locale" : "en-US",
+            "a.systemLocale": "pt-US"
         ]
 
         verifyHit(request: mockNetworkService?.calledNetworkRequests[1],
@@ -241,6 +244,7 @@ class AnalyticsTrack_LifecycleTestBase : AnalyticsFunctionalTestBase {
             AnalyticsTestConstants.Lifecycle.EventDataKeys.LIFECYCLE_CONTEXT_DATA : [
                 AnalyticsTestConstants.Lifecycle.EventDataKeys.OPERATING_SYSTEM : "mockOSName",
                 AnalyticsTestConstants.Lifecycle.EventDataKeys.LOCALE : "en-US",
+                AnalyticsTestConstants.Lifecycle.EventDataKeys.SYSTEM_LOCALE : "pt-US",
                 AnalyticsTestConstants.Lifecycle.EventDataKeys.DEVICE_RESOLUTION : "0x0",
                 AnalyticsTestConstants.Lifecycle.EventDataKeys.CARRIER_NAME : "mockMobileCarrier",
                 AnalyticsTestConstants.Lifecycle.EventDataKeys.DEVICE_NAME : "mockDeviceBuildId",
@@ -344,7 +348,8 @@ class AnalyticsTrack_LifecycleTestBase : AnalyticsFunctionalTestBase {
             "a.OSVersion" :  "mockOSName",
             "a.Resolution" : "0x0",
             "a.RunMode" : "Application",
-            "a.locale" : "en-US"
+            "a.locale" : "en-US",
+            "a.systemLocale" : "pt-US"
         ]
 
         verifyHit(request: mockNetworkService?.calledNetworkRequests[1],
@@ -364,6 +369,7 @@ class AnalyticsTrack_LifecycleTestBase : AnalyticsFunctionalTestBase {
             AnalyticsTestConstants.Lifecycle.EventDataKeys.LIFECYCLE_CONTEXT_DATA : [
                 AnalyticsTestConstants.Lifecycle.EventDataKeys.OPERATING_SYSTEM : "mockOSName",
                 AnalyticsTestConstants.Lifecycle.EventDataKeys.LOCALE : "en-US",
+                AnalyticsTestConstants.Lifecycle.EventDataKeys.SYSTEM_LOCALE : "pt-US",
                 AnalyticsTestConstants.Lifecycle.EventDataKeys.DEVICE_RESOLUTION : "0x0",
                 AnalyticsTestConstants.Lifecycle.EventDataKeys.CARRIER_NAME : "mockMobileCarrier",
                 AnalyticsTestConstants.Lifecycle.EventDataKeys.DEVICE_NAME : "mockDeviceBuildId",
