@@ -592,14 +592,14 @@ public class AnalyticsBase: NSObject, Extension {
             return analyticsVars
         }
 
-        if let actionName = trackData[AnalyticsConstants.EventDataKeys.TRACK_ACTION] as? String {
+        if let actionName = trackData[AnalyticsConstants.EventDataKeys.TRACK_ACTION] as? String, !actionName.isEmpty {
             analyticsVars[AnalyticsConstants.Request.IGNORE_PAGE_NAME_KEY] = AnalyticsConstants.IGNORE_PAGE_NAME_VALUE
             let isInternal = trackData[AnalyticsConstants.EventDataKeys.TRACK_INTERNAL] as? Bool ?? false
             let actionNameWithPrefix = "\(isInternal ? AnalyticsConstants.INTERNAL_ACTION_PREFIX : AnalyticsConstants.ACTION_PREFIX)\(actionName)"
             analyticsVars[AnalyticsConstants.Request.ACTION_NAME_KEY] = actionNameWithPrefix
         }
         analyticsVars[AnalyticsConstants.Request.PAGE_NAME_KEY] = analyticsState.applicationId
-        if let stateName = trackData[AnalyticsConstants.EventDataKeys.TRACK_STATE] as? String {
+        if let stateName = trackData[AnalyticsConstants.EventDataKeys.TRACK_STATE] as? String, !stateName.isEmpty {
             analyticsVars[AnalyticsConstants.Request.PAGE_NAME_KEY] = stateName
         }
 
