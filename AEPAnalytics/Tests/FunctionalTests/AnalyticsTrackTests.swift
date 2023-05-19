@@ -29,7 +29,7 @@ class AnalyticsTrackTests : AnalyticsTrackTestBase {
     }
 
     func testTrackEmptyState() {
-    trackStateEmptyTester()
+        trackStateEmptyTester()
     }
 
     func testTrackAction() {
@@ -43,7 +43,7 @@ class AnalyticsTrackTests : AnalyticsTrackTestBase {
     func testTrackInternalAction() {
         trackInternalActionTester()
     }
-
+    
     func testTrackOnlyContextData() {
         trackOnlyContextDataTester()
     }
