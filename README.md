@@ -1,17 +1,17 @@
 # Adobe Experience Platform Analytics SDK
 
-[![Cocoapods](https://img.shields.io/cocoapods/v/AEPAnalytics.svg?color=orange&label=AEPAnalytics&logo=apple&logoColor=white)](https://cocoapods.org/pods/AEPAnalytics)
-[![SPM](https://img.shields.io/badge/SPM-Supported-orange.svg?logo=apple&logoColor=white)](https://swift.org/package-manager/)
-[![CircleCI](https://img.shields.io/circleci/project/github/adobe/aepsdk-analytics-ios/main.svg?logo=circleci)](https://circleci.com/gh/adobe/workflows/aepsdk-analytics-ios)
-[![Code Coverage](https://img.shields.io/codecov/c/github/adobe/aepsdk-analytics-ios/main.svg?logo=codecov)](https://codecov.io/gh/adobe/aepsdk-analytics-ios/branch/main)
+[![CocoaPods](https://img.shields.io/github/v/release/adobe/aepsdk-analytics-ios?label=CocoaPods&logo=apple&logoColor=white&color=orange)](https://cocoapods.org/pods/AEPAnalytics) 
+[![SPM](https://img.shields.io/github/v/release/adobe/aepsdk-edgeconsent-ios?label=SPM&logo=apple&logoColor=white&color=orange)](https://github.com/adobe/aepsdk-analytics-ios/releases) 
+[![CircleCI](https://img.shields.io/circleci/project/github/adobe/aepsdk-edgeconsent-ios/main.svg?logo=circleci&label=Build)](https://circleci.com/gh/adobe/workflows/aepsdk-analytics-ios) 
+[![Code Coverage](https://img.shields.io/codecov/c/github/adobe/aepsdk-edgeconsent-ios/main.svg?logo=codecov&label=Coverage)](https://codecov.io/gh/adobe/aepsdk-analytics-ios/branch/main)
 
 ## About this project
 
-The AEPAnalytics extension represents the Analytics Adobe Experience Platform SDK that is required for sending mobile interaction data from your app to Adobe Analytics.
+The AEPAnalytics extension enables sending mobile application interaction data to Adobe Analytics when using the [Adobe Experience Platform SDK](https://developer.adobe.com/client-sdks).
 
 ## Requirements
-- Xcode 11.x
-- Swift 5.x
+- Xcode 14.1
+- Swift 5.1
 
 ## Installation
 These are currently the supported installation options:
@@ -58,7 +58,7 @@ Alternatively, if your project has a `Package.swift` file, you can add AEPAnalyt
 
 ```
 dependencies: [
-    .package(url: "https://github.com/adobe/aepsdk-analytics-ios.git", .upToNextMajor(from: "3.0.0"))
+    .package(url: "https://github.com/adobe/aepsdk-analytics-ios.git", .upToNextMajor(from: "4.0.0"))
 ]
 ```
 
