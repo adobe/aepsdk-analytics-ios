@@ -63,11 +63,9 @@ class AnalyticsRequestSerializer {
 
         var data: [String: String] = data ?? [:]
         if !data.isEmpty {
-            for (key, value) in data {
-                if key.hasPrefix(AnalyticsConstants.VAR_ESCAPE_PREFIX) {
-                    analyticsVars[String(key.suffix(from: AnalyticsConstants.VAR_ESCAPE_PREFIX.endIndex))] = value
-                    data.removeValue(forKey: key)
-                }
+            for (key, value) in data where key.hasPrefix(AnalyticsConstants.VAR_ESCAPE_PREFIX) {
+                analyticsVars[String(key.suffix(from: AnalyticsConstants.VAR_ESCAPE_PREFIX.endIndex))] = value
+                data.removeValue(forKey: key)
             }
         }
 
