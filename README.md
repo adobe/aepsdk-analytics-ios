@@ -1,9 +1,9 @@
 # Adobe Experience Platform Analytics SDK
 
 [![CocoaPods](https://img.shields.io/github/v/release/adobe/aepsdk-analytics-ios?label=CocoaPods&logo=apple&logoColor=white&color=orange)](https://cocoapods.org/pods/AEPAnalytics) 
-[![SPM](https://img.shields.io/github/v/release/adobe/aepsdk-edgeconsent-ios?label=SPM&logo=apple&logoColor=white&color=orange)](https://github.com/adobe/aepsdk-analytics-ios/releases) 
-[![CircleCI](https://img.shields.io/circleci/project/github/adobe/aepsdk-edgeconsent-ios/main.svg?logo=circleci&label=Build)](https://circleci.com/gh/adobe/workflows/aepsdk-analytics-ios) 
-[![Code Coverage](https://img.shields.io/codecov/c/github/adobe/aepsdk-edgeconsent-ios/main.svg?logo=codecov&label=Coverage)](https://codecov.io/gh/adobe/aepsdk-analytics-ios/branch/main)
+[![SPM](https://img.shields.io/github/v/release/adobe/aepsdk-analytics-ios?label=SPM&logo=apple&logoColor=white&color=orange)](https://github.com/adobe/aepsdk-analytics-ios/releases) 
+[![CircleCI](https://img.shields.io/circleci/project/github/adobe/aepsdk-analytics-ios/main.svg?logo=circleci&label=Build)](https://circleci.com/gh/adobe/workflows/aepsdk-analytics-ios) 
+[![Code Coverage](https://img.shields.io/codecov/c/github/adobe/aepsdk-analytics-ios/main.svg?logo=codecov&label=Coverage)](https://codecov.io/gh/adobe/aepsdk-analytics-ios/branch/main)
 
 ## About this project
 
