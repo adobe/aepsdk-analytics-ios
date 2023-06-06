@@ -99,7 +99,7 @@ lint-autocorrect:
 	./Pods/SwiftLint/swiftlint --fix
 
 lint:
-	./Pods/SwiftLint/swiftlint lint
+	./Pods/SwiftLint/swiftlint lint AEPAnalytics/Sources
 
 # release checks
 # make check-version VERSION=4.0.0
