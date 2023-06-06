@@ -20,7 +20,7 @@ This section walks through how to get up and running with the AEP Swift Analytic
 
 ## Set up a Mobile Property
 
-Set up a mobile property as outlined in the Adobe Experience Platform [docs](https://aep-sdks.gitbook.io/docs/getting-started/create-a-mobile-property)
+Set up a mobile property as outlined in the Adobe Experience Platform [docs](https://developer.adobe.com/client-sdks/documentation/getting-started/create-a-mobile-property/)
 
 ## Get the Swift Mobile Analytics
 
@@ -217,7 +217,7 @@ Analytics.sendQueuedHits()
 
 ℹ️ Before using this API, see [Identify unique visitors](https://experienceleague.adobe.com/docs/analytics/components/metrics/unique-visitors.html).
 
-Retrieves the Analytics tracking identifier. The identifier is only returned for existing users who had AID persisted and migrated from earlier versions of SDK. For new users, no AID is generated and should instead use [Experience Cloud ID](https://aep-sdks.gitbook.io/docs/foundation-extensions/mobile-core/identity/identity-api-reference#getexperiencecloudid) to identify visitors.
+Retrieves the Analytics tracking identifier. The identifier is only returned for existing users who had AID persisted and migrated from earlier versions of SDK. For new users, no AID is generated and should instead use [Experience Cloud ID](https://developer.adobe.com/client-sdks/documentation/mobile-core/identity/api-reference/#getexperiencecloudid) to identify visitors.
 
 **Syntax**
 
