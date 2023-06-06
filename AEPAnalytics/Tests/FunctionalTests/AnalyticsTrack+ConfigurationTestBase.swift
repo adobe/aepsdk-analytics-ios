@@ -16,7 +16,7 @@ import AEPServices
 @testable import AEPCore
 
 @available(tvOSApplicationExtension, unavailable)
-class AnalyticsTrack_ConfigurationTestBase : AnalyticsFunctionalTestBase {
+class AnalyticsTrack_ConfigurationTestBase: AnalyticsFunctionalTestBase {
 
     var runningForApp = true
 
@@ -30,8 +30,8 @@ class AnalyticsTrack_ConfigurationTestBase : AnalyticsFunctionalTestBase {
         dispatchDefaultConfigAndIdentityStates(configData: [AnalyticsTestConstants.Configuration.EventDataKeys.GLOBAL_PRIVACY: "unknown"])
         // dispatch 3 track events
         let trackData: [String: Any] = [
-            CoreConstants.Keys.STATE : "testState",
-            CoreConstants.Keys.CONTEXT_DATA : [
+            CoreConstants.Keys.STATE: "testState",
+            CoreConstants.Keys.CONTEXT_DATA: [
                 "k1": "v1",
                 "k2": "v2"
             ]
@@ -56,22 +56,22 @@ class AnalyticsTrack_ConfigurationTestBase : AnalyticsFunctionalTestBase {
         XCTAssertNil(dataStore.getString(key: AnalyticsTestConstants.DataStoreKeys.AID))
         XCTAssertNil(dataStore.getString(key: AnalyticsTestConstants.DataStoreKeys.VID))
         // verify no hits are sent
-        XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count , 0)
+        XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 0)
         // verify 0 hits queued
         dispatchGetQueueSize()
         waitForProcessing()
         verifyQueueSize(size: 0)
     }
 
-    //Track hits queued when Privacy Status is unknown will be sent with unknown param
+    // Track hits queued when Privacy Status is unknown will be sent with unknown param
     func sendTrackAfterPrivacyStatusIsUnknownToOptedInTester() {
         // set privacy status to unknown
         dispatchDefaultConfigAndIdentityStates(configData: [AnalyticsTestConstants.Configuration.EventDataKeys.GLOBAL_PRIVACY: "unknown"])
 
         // dispatch track event
         let trackData: [String: Any] = [
-            CoreConstants.Keys.STATE : "testState",
-            CoreConstants.Keys.CONTEXT_DATA : [
+            CoreConstants.Keys.STATE: "testState",
+            CoreConstants.Keys.CONTEXT_DATA: [
                 "k1": "v1",
                 "k2": "v2"
             ]
@@ -88,27 +88,27 @@ class AnalyticsTrack_ConfigurationTestBase : AnalyticsFunctionalTestBase {
             expectedVars = [
                 "ce": "UTF-8",
                 "cp": "foreground",
-                "pageName" : "testState",
-                "mid" : "mid",
-                "aamb" : "blob",
-                "aamlh" : "lochint",
-                "ts" : String(trackEvent.timestamp.getUnixTimeInSeconds())
+                "pageName": "testState",
+                "mid": "mid",
+                "aamb": "blob",
+                "aamlh": "lochint",
+                "ts": String(trackEvent.timestamp.getUnixTimeInSeconds())
             ]
         } else {
             expectedVars = [
                 "ce": "UTF-8",
-                "pageName" : "testState",
-                "mid" : "mid",
-                "aamb" : "blob",
-                "aamlh" : "lochint",
-                "ts" : String(trackEvent.timestamp.getUnixTimeInSeconds())
+                "pageName": "testState",
+                "mid": "mid",
+                "aamb": "blob",
+                "aamlh": "lochint",
+                "ts": String(trackEvent.timestamp.getUnixTimeInSeconds())
             ]
         }
 
         let expectedContextData = [
-            "k1" : "v1",
-            "k2" : "v2",
-            "a.privacy.mode" : "unknown"
+            "k1": "v1",
+            "k2": "v2",
+            "a.privacy.mode": "unknown"
         ]
 
         // verify
@@ -119,16 +119,15 @@ class AnalyticsTrack_ConfigurationTestBase : AnalyticsFunctionalTestBase {
                   contextData: expectedContextData)
     }
 
-
-    //Track hits sent only when configuration contains valid server and rsid(s)
+    // Track hits sent only when configuration contains valid server and rsid(s)
     func trackHitsOnlySentOnValidConfigurationTester() {
         // setup config without analytics server and rsid
         dispatchDefaultConfigAndIdentityStates(configData: [AnalyticsTestConstants.Configuration.EventDataKeys.ANALYTICS_REPORT_SUITES: "", AnalyticsTestConstants.Configuration.EventDataKeys.ANALYTICS_SERVER: ""])
 
         // dispatch track event
         let trackData: [String: Any] = [
-            CoreConstants.Keys.STATE : "testState",
-            CoreConstants.Keys.CONTEXT_DATA : [
+            CoreConstants.Keys.STATE: "testState",
+            CoreConstants.Keys.CONTEXT_DATA: [
                 "k1": "v1",
                 "k2": "v2"
             ]
@@ -149,26 +148,26 @@ class AnalyticsTrack_ConfigurationTestBase : AnalyticsFunctionalTestBase {
             expectedVars = [
                 "ce": "UTF-8",
                 "cp": "foreground",
-                "pageName" : "testState",
-                "mid" : "mid",
-                "aamb" : "blob",
-                "aamlh" : "lochint",
-                "ts" : String(trackEvent.timestamp.getUnixTimeInSeconds())
+                "pageName": "testState",
+                "mid": "mid",
+                "aamb": "blob",
+                "aamlh": "lochint",
+                "ts": String(trackEvent.timestamp.getUnixTimeInSeconds())
             ]
         } else {
             expectedVars = [
                 "ce": "UTF-8",
-                "pageName" : "testState",
-                "mid" : "mid",
-                "aamb" : "blob",
-                "aamlh" : "lochint",
-                "ts" : String(trackEvent.timestamp.getUnixTimeInSeconds())
+                "pageName": "testState",
+                "mid": "mid",
+                "aamb": "blob",
+                "aamlh": "lochint",
+                "ts": String(trackEvent.timestamp.getUnixTimeInSeconds())
             ]
         }
 
         let expectedContextData = [
-            "k1" : "v1",
-            "k2" : "v2",
+            "k1": "v1",
+            "k2": "v2",
         ]
         XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 1)
         verifyHit(request: mockNetworkService?.calledNetworkRequests[0],
@@ -179,12 +178,12 @@ class AnalyticsTrack_ConfigurationTestBase : AnalyticsFunctionalTestBase {
 
     // Offline hits should not contain timestamp
     func trackHitsOfflineDisabledTester() {
-        dispatchDefaultConfigAndIdentityStates(configData: ["analytics.offlineEnabled" : false])
+        dispatchDefaultConfigAndIdentityStates(configData: ["analytics.offlineEnabled": false])
         waitForProcessing()
 
         let trackData: [String: Any] = [
-            CoreConstants.Keys.STATE : "testState",
-            CoreConstants.Keys.CONTEXT_DATA : [
+            CoreConstants.Keys.STATE: "testState",
+            CoreConstants.Keys.CONTEXT_DATA: [
                 "k1": "v1",
                 "k2": "v2"
             ]
@@ -198,24 +197,24 @@ class AnalyticsTrack_ConfigurationTestBase : AnalyticsFunctionalTestBase {
             expectedVars = [
                 "ce": "UTF-8",
                 "cp": "foreground",
-                "pageName" : "testState",
-                "mid" : "mid",
-                "aamb" : "blob",
-                "aamlh" : "lochint",
+                "pageName": "testState",
+                "mid": "mid",
+                "aamb": "blob",
+                "aamlh": "lochint",
             ]
         } else {
             expectedVars = [
                 "ce": "UTF-8",
-                "pageName" : "testState",
-                "mid" : "mid",
-                "aamb" : "blob",
-                "aamlh" : "lochint",
+                "pageName": "testState",
+                "mid": "mid",
+                "aamb": "blob",
+                "aamlh": "lochint",
             ]
         }
 
         let expectedContextData = [
-            "k1" : "v1",
-            "k2" : "v2",
+            "k1": "v1",
+            "k2": "v2",
         ]
 
         XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 1)
@@ -227,12 +226,12 @@ class AnalyticsTrack_ConfigurationTestBase : AnalyticsFunctionalTestBase {
 
     // Offline hits should be dropped after 60 sec
     func trackHitsOfflineDroppedAfterTimeoutTester() {
-        dispatchDefaultConfigAndIdentityStates(configData: ["analytics.offlineEnabled" : false])
+        dispatchDefaultConfigAndIdentityStates(configData: ["analytics.offlineEnabled": false])
         waitForProcessing()
 
         let trackData: [String: Any] = [
-            CoreConstants.Keys.STATE : "testState",
-            CoreConstants.Keys.CONTEXT_DATA : [
+            CoreConstants.Keys.STATE: "testState",
+            CoreConstants.Keys.CONTEXT_DATA: [
                 "k1": "v1",
                 "k2": "v2"
             ]
@@ -240,7 +239,6 @@ class AnalyticsTrack_ConfigurationTestBase : AnalyticsFunctionalTestBase {
         let trackEvent = Event(name: "Generic track event", type: EventType.genericTrack, source: EventSource.requestContent, data: trackData)
 
         let trackEventBefore60secs = trackEvent.copyWithNewTimeStamp(Date().addingTimeInterval(-61))
-
 
         mockRuntime.simulateComingEvent(event: trackEventBefore60secs)
 

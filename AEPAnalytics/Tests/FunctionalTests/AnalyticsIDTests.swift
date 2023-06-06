@@ -17,13 +17,13 @@ import AEPServices
 
 @available(tvOSApplicationExtension, unavailable)
 class AnalyticsIDTests: AnalyticsIDTestBase {
-    
+
     override func setUp() {
         runningForApp = true
         super.setupBase(forApp: true)
     }
-    
-    //If Visitor ID Service is enabled then analytics hits contain visitor ID vars
+
+    // If Visitor ID Service is enabled then analytics hits contain visitor ID vars
     func testHitsContainVisitorIDVars() {
         hitsContainVisitorIDVarsTester()
     }

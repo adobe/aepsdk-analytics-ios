@@ -16,14 +16,14 @@ import AEPServices
 @testable import AEPCore
 
 @available(tvOSApplicationExtension, unavailable)
-class AnalyticsTrackTestBase : AnalyticsFunctionalTestBase {
+class AnalyticsTrackTestBase: AnalyticsFunctionalTestBase {
 
     var runningForApp = true
 
     func trackStateTester() {
         let trackData: [String: Any] = [
-            CoreConstants.Keys.STATE : "testState",
-            CoreConstants.Keys.CONTEXT_DATA : [
+            CoreConstants.Keys.STATE: "testState",
+            CoreConstants.Keys.CONTEXT_DATA: [
                 "k1": "v1",
                 "k2": "v2"
             ]
@@ -37,26 +37,26 @@ class AnalyticsTrackTestBase : AnalyticsFunctionalTestBase {
             expectedVars = [
                 "ce": "UTF-8",
                 "cp": "foreground",
-                "pageName" : "testState",
-                "mid" : "mid",
-                "aamb" : "blob",
-                "aamlh" : "lochint",
-                "ts" : String(trackEvent.timestamp.getUnixTimeInSeconds())
+                "pageName": "testState",
+                "mid": "mid",
+                "aamb": "blob",
+                "aamlh": "lochint",
+                "ts": String(trackEvent.timestamp.getUnixTimeInSeconds())
             ]
         } else {
             expectedVars = [
                 "ce": "UTF-8",
-                "pageName" : "testState",
-                "mid" : "mid",
-                "aamb" : "blob",
-                "aamlh" : "lochint",
-                "ts" : String(trackEvent.timestamp.getUnixTimeInSeconds())
+                "pageName": "testState",
+                "mid": "mid",
+                "aamb": "blob",
+                "aamlh": "lochint",
+                "ts": String(trackEvent.timestamp.getUnixTimeInSeconds())
             ]
         }
 
         let expectedContextData = [
-            "k1" : "v1",
-            "k2" : "v2",
+            "k1": "v1",
+            "k2": "v2",
         ]
 
         XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 1)
@@ -68,16 +68,16 @@ class AnalyticsTrackTestBase : AnalyticsFunctionalTestBase {
 
      func trackStateEmptyTester() {
         let lifecycleSharedState: [String: Any] = [
-            AnalyticsTestConstants.Lifecycle.EventDataKeys.LIFECYCLE_CONTEXT_DATA : [
-                AnalyticsTestConstants.Lifecycle.EventDataKeys.APP_ID : "mockAppName",
+            AnalyticsTestConstants.Lifecycle.EventDataKeys.LIFECYCLE_CONTEXT_DATA: [
+                AnalyticsTestConstants.Lifecycle.EventDataKeys.APP_ID: "mockAppName",
             ]
         ]
 
         simulateLifecycleState(data: lifecycleSharedState)
-        
+
         let trackData: [String: Any] = [
-            CoreConstants.Keys.STATE : CoreConstants.Keys.STATE.isEmpty,
-            CoreConstants.Keys.CONTEXT_DATA : [
+            CoreConstants.Keys.STATE: CoreConstants.Keys.STATE.isEmpty,
+            CoreConstants.Keys.CONTEXT_DATA: [
                 "k1": "v1",
                 "k2": "v2"
             ]
@@ -91,27 +91,27 @@ class AnalyticsTrackTestBase : AnalyticsFunctionalTestBase {
             expectedVars = [
                 "ce": "UTF-8",
                 "cp": "foreground",
-                "pageName" : "mockAppName",
-                "mid" : "mid",
-                "aamb" : "blob",
-                "aamlh" : "lochint",
-                "ts" : String(trackEvent.timestamp.getUnixTimeInSeconds())
+                "pageName": "mockAppName",
+                "mid": "mid",
+                "aamb": "blob",
+                "aamlh": "lochint",
+                "ts": String(trackEvent.timestamp.getUnixTimeInSeconds())
             ]
         } else {
             expectedVars = [
                 "ce": "UTF-8",
-                "pageName" : "mockAppName",
-                "mid" : "mid",
-                "aamb" : "blob",
-                "aamlh" : "lochint",
-                "ts" : String(trackEvent.timestamp.getUnixTimeInSeconds())
+                "pageName": "mockAppName",
+                "mid": "mid",
+                "aamb": "blob",
+                "aamlh": "lochint",
+                "ts": String(trackEvent.timestamp.getUnixTimeInSeconds())
             ]
         }
 
         let expectedContextData = [
-            "k1" : "v1",
-            "k2" : "v2",
-            "a.AppID" : "mockAppName"
+            "k1": "v1",
+            "k2": "v2",
+            "a.AppID": "mockAppName"
         ]
 
         XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 1)
@@ -123,8 +123,8 @@ class AnalyticsTrackTestBase : AnalyticsFunctionalTestBase {
 
     func trackActionTester() {
         let trackData: [String: Any] = [
-            CoreConstants.Keys.ACTION : "testAction",
-            CoreConstants.Keys.CONTEXT_DATA : [
+            CoreConstants.Keys.ACTION: "testAction",
+            CoreConstants.Keys.CONTEXT_DATA: [
                 "k1": "v1",
                 "k2": "v2"
             ]
@@ -138,29 +138,29 @@ class AnalyticsTrackTestBase : AnalyticsFunctionalTestBase {
             expectedVars = [
                 "ce": "UTF-8",
                 "cp": "foreground",
-                "pev2" : "AMACTION:testAction",
-                "pe" : "lnk_o",
-                "mid" : "mid",
-                "aamb" : "blob",
-                "aamlh" : "lochint",
-                "ts" : String(trackEvent.timestamp.getUnixTimeInSeconds())
+                "pev2": "AMACTION:testAction",
+                "pe": "lnk_o",
+                "mid": "mid",
+                "aamb": "blob",
+                "aamlh": "lochint",
+                "ts": String(trackEvent.timestamp.getUnixTimeInSeconds())
             ]
         } else {
             expectedVars = [
                 "ce": "UTF-8",
-                "pev2" : "AMACTION:testAction",
-                "pe" : "lnk_o",
-                "mid" : "mid",
-                "aamb" : "blob",
-                "aamlh" : "lochint",
-                "ts" : String(trackEvent.timestamp.getUnixTimeInSeconds())
+                "pev2": "AMACTION:testAction",
+                "pe": "lnk_o",
+                "mid": "mid",
+                "aamb": "blob",
+                "aamlh": "lochint",
+                "ts": String(trackEvent.timestamp.getUnixTimeInSeconds())
             ]
         }
 
         let expectedContextData = [
-            "k1" : "v1",
-            "k2" : "v2",
-            "a.action" : "testAction",
+            "k1": "v1",
+            "k2": "v2",
+            "a.action": "testAction",
         ]
 
         XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 1)
@@ -171,18 +171,18 @@ class AnalyticsTrackTestBase : AnalyticsFunctionalTestBase {
     }
 
     func trackActionEmptyTester() {
-        
+
         let lifecycleSharedState: [String: Any] = [
-            AnalyticsTestConstants.Lifecycle.EventDataKeys.LIFECYCLE_CONTEXT_DATA : [
-                AnalyticsTestConstants.Lifecycle.EventDataKeys.APP_ID : "mockAppName",
+            AnalyticsTestConstants.Lifecycle.EventDataKeys.LIFECYCLE_CONTEXT_DATA: [
+                AnalyticsTestConstants.Lifecycle.EventDataKeys.APP_ID: "mockAppName",
             ]
         ]
 
         simulateLifecycleState(data: lifecycleSharedState)
-                      
+
         let trackData: [String: Any] = [
-            CoreConstants.Keys.ACTION : CoreConstants.Keys.ACTION.isEmpty,
-            CoreConstants.Keys.CONTEXT_DATA : [
+            CoreConstants.Keys.ACTION: CoreConstants.Keys.ACTION.isEmpty,
+            CoreConstants.Keys.CONTEXT_DATA: [
                 "k1": "v1",
                 "k2": "v2"
             ]
@@ -194,30 +194,30 @@ class AnalyticsTrackTestBase : AnalyticsFunctionalTestBase {
         let expectedVars: [String: String]
         if runningForApp {
             expectedVars = [
-                //no pev2 and pe
+                // no pev2 and pe
                 "ce": "UTF-8",
                 "cp": "foreground",
-                "pageName" : "mockAppName",
-                "mid" : "mid",
-                "aamb" : "blob",
-                "aamlh" : "lochint",
-                "ts" : String(trackEvent.timestamp.getUnixTimeInSeconds())
+                "pageName": "mockAppName",
+                "mid": "mid",
+                "aamb": "blob",
+                "aamlh": "lochint",
+                "ts": String(trackEvent.timestamp.getUnixTimeInSeconds())
             ]
         } else {
             expectedVars = [
                 "ce": "UTF-8",
-                "mid" : "mid",
-                "pageName" : "mockAppName",
-                "aamb" : "blob",
-                "aamlh" : "lochint",
-                "ts" : String(trackEvent.timestamp.getUnixTimeInSeconds())
+                "mid": "mid",
+                "pageName": "mockAppName",
+                "aamb": "blob",
+                "aamlh": "lochint",
+                "ts": String(trackEvent.timestamp.getUnixTimeInSeconds())
             ]
         }
 
         let expectedContextData = [
-            "k1" : "v1",
-            "k2" : "v2",
-            "a.AppID" : "mockAppName"
+            "k1": "v1",
+            "k2": "v2",
+            "a.AppID": "mockAppName"
         ]
 
         XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 1)
@@ -229,9 +229,9 @@ class AnalyticsTrackTestBase : AnalyticsFunctionalTestBase {
 
     func trackInternalActionTester() {
         let trackData: [String: Any] = [
-            CoreConstants.Keys.ACTION : "testAction",
-            AnalyticsConstants.EventDataKeys.TRACK_INTERNAL : true,
-            CoreConstants.Keys.CONTEXT_DATA : [
+            CoreConstants.Keys.ACTION: "testAction",
+            AnalyticsConstants.EventDataKeys.TRACK_INTERNAL: true,
+            CoreConstants.Keys.CONTEXT_DATA: [
                 "k1": "v1",
                 "k2": "v2"
             ]
@@ -245,29 +245,29 @@ class AnalyticsTrackTestBase : AnalyticsFunctionalTestBase {
             expectedVars = [
                 "ce": "UTF-8",
                 "cp": "foreground",
-                "pev2" : "ADBINTERNAL:testAction",
-                "pe" : "lnk_o",
-                "mid" : "mid",
-                "aamb" : "blob",
-                "aamlh" : "lochint",
-                "ts" : String(trackEvent.timestamp.getUnixTimeInSeconds())
+                "pev2": "ADBINTERNAL:testAction",
+                "pe": "lnk_o",
+                "mid": "mid",
+                "aamb": "blob",
+                "aamlh": "lochint",
+                "ts": String(trackEvent.timestamp.getUnixTimeInSeconds())
             ]
         } else {
             expectedVars = [
                 "ce": "UTF-8",
-                "pev2" : "ADBINTERNAL:testAction",
-                "pe" : "lnk_o",
-                "mid" : "mid",
-                "aamb" : "blob",
-                "aamlh" : "lochint",
-                "ts" : String(trackEvent.timestamp.getUnixTimeInSeconds())
+                "pev2": "ADBINTERNAL:testAction",
+                "pe": "lnk_o",
+                "mid": "mid",
+                "aamb": "blob",
+                "aamlh": "lochint",
+                "ts": String(trackEvent.timestamp.getUnixTimeInSeconds())
             ]
         }
 
         let expectedContextData = [
-            "k1" : "v1",
-            "k2" : "v2",
-            "a.internalaction" : "testAction",
+            "k1": "v1",
+            "k2": "v2",
+            "a.internalaction": "testAction",
         ]
 
         XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 1)
@@ -279,7 +279,7 @@ class AnalyticsTrackTestBase : AnalyticsFunctionalTestBase {
 
     func trackOnlyContextDataTester() {
         let trackData: [String: Any] = [
-            CoreConstants.Keys.CONTEXT_DATA : [
+            CoreConstants.Keys.CONTEXT_DATA: [
                 "k1": "v1",
                 "k2": "v2"
             ]
@@ -293,24 +293,24 @@ class AnalyticsTrackTestBase : AnalyticsFunctionalTestBase {
             expectedVars = [
                 "ce": "UTF-8",
                 "cp": "foreground",
-                "mid" : "mid",
-                "aamb" : "blob",
-                "aamlh" : "lochint",
-                "ts" : String(trackEvent.timestamp.getUnixTimeInSeconds())
+                "mid": "mid",
+                "aamb": "blob",
+                "aamlh": "lochint",
+                "ts": String(trackEvent.timestamp.getUnixTimeInSeconds())
             ]
         } else {
             expectedVars = [
                 "ce": "UTF-8",
-                "mid" : "mid",
-                "aamb" : "blob",
-                "aamlh" : "lochint",
-                "ts" : String(trackEvent.timestamp.getUnixTimeInSeconds())
+                "mid": "mid",
+                "aamb": "blob",
+                "aamlh": "lochint",
+                "ts": String(trackEvent.timestamp.getUnixTimeInSeconds())
             ]
         }
 
         let expectedContextData = [
-            "k1" : "v1",
-            "k2" : "v2",
+            "k1": "v1",
+            "k2": "v2",
         ]
 
         XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 1)
@@ -322,19 +322,19 @@ class AnalyticsTrackTestBase : AnalyticsFunctionalTestBase {
 
     func trackOverrideExistingContextDataTester() {
         let lifecycleData = [
-            AnalyticsConstants.Lifecycle.EventDataKeys.APP_ID : "originalAppID",
-            AnalyticsConstants.Lifecycle.EventDataKeys.DEVICE_NAME : "originalDeviceName",
-            AnalyticsConstants.Lifecycle.EventDataKeys.OPERATING_SYSTEM : "originalOS"
+            AnalyticsConstants.Lifecycle.EventDataKeys.APP_ID: "originalAppID",
+            AnalyticsConstants.Lifecycle.EventDataKeys.DEVICE_NAME: "originalDeviceName",
+            AnalyticsConstants.Lifecycle.EventDataKeys.OPERATING_SYSTEM: "originalOS"
         ]
         simulateLifecycleState(data: lifecycleData)
 
         let trackData: [String: Any] = [
-            CoreConstants.Keys.CONTEXT_DATA : [
+            CoreConstants.Keys.CONTEXT_DATA: [
                 "k1": "v1",
                 "k2": "v2",
-                "a.AppID" : "overwrittenApp",
-                "a.DeviceName" : "overwrittenDevice",
-                "a.OSVersion" : "overwrittenOS",
+                "a.AppID": "overwrittenApp",
+                "a.DeviceName": "overwrittenDevice",
+                "a.OSVersion": "overwrittenOS",
             ]
         ]
 
@@ -347,26 +347,26 @@ class AnalyticsTrackTestBase : AnalyticsFunctionalTestBase {
             expectedVars = [
                 "ce": "UTF-8",
                 "cp": "foreground",
-                "mid" : "mid",
-                "aamb" : "blob",
-                "aamlh" : "lochint",
-                "ts" : String(trackEvent.timestamp.getUnixTimeInSeconds())
+                "mid": "mid",
+                "aamb": "blob",
+                "aamlh": "lochint",
+                "ts": String(trackEvent.timestamp.getUnixTimeInSeconds())
             ]
         } else {
             expectedVars = [
                 "ce": "UTF-8",
-                "mid" : "mid",
-                "aamb" : "blob",
-                "aamlh" : "lochint",
-                "ts" : String(trackEvent.timestamp.getUnixTimeInSeconds())
+                "mid": "mid",
+                "aamb": "blob",
+                "aamlh": "lochint",
+                "ts": String(trackEvent.timestamp.getUnixTimeInSeconds())
             ]
         }
         let expectedContextData = [
-            "k1" : "v1",
-            "k2" : "v2",
-            "a.AppID" : "overwrittenApp",
-            "a.DeviceName" : "overwrittenDevice",
-            "a.OSVersion" : "overwrittenOS"
+            "k1": "v1",
+            "k2": "v2",
+            "a.AppID": "overwrittenApp",
+            "a.DeviceName": "overwrittenDevice",
+            "a.OSVersion": "overwrittenOS"
         ]
 
         XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 1)
@@ -379,9 +379,9 @@ class AnalyticsTrackTestBase : AnalyticsFunctionalTestBase {
     // TrackState and Action should populate linkTrackVars
     func trackStateAndActionTester() {
         let trackData: [String: Any] = [
-            CoreConstants.Keys.ACTION : "testAction",
-            CoreConstants.Keys.STATE : "testState",
-            CoreConstants.Keys.CONTEXT_DATA : [
+            CoreConstants.Keys.ACTION: "testAction",
+            CoreConstants.Keys.STATE: "testState",
+            CoreConstants.Keys.CONTEXT_DATA: [
                 "k1": "v1",
                 "k2": "v2",
             ]
@@ -396,30 +396,30 @@ class AnalyticsTrackTestBase : AnalyticsFunctionalTestBase {
             expectedVars = [
                 "ce": "UTF-8",
                 "cp": "foreground",
-                "pageName" : "testState",
-                "pev2" : "AMACTION:testAction",
-                "pe" : "lnk_o",
-                "mid" : "mid",
-                "aamb" : "blob",
-                "aamlh" : "lochint",
-                "ts" : String(trackEvent.timestamp.getUnixTimeInSeconds())
+                "pageName": "testState",
+                "pev2": "AMACTION:testAction",
+                "pe": "lnk_o",
+                "mid": "mid",
+                "aamb": "blob",
+                "aamlh": "lochint",
+                "ts": String(trackEvent.timestamp.getUnixTimeInSeconds())
             ]
         } else {
             expectedVars = [
                 "ce": "UTF-8",
-                "pageName" : "testState",
-                "pev2" : "AMACTION:testAction",
-                "pe" : "lnk_o",
-                "mid" : "mid",
-                "aamb" : "blob",
-                "aamlh" : "lochint",
-                "ts" : String(trackEvent.timestamp.getUnixTimeInSeconds())
+                "pageName": "testState",
+                "pev2": "AMACTION:testAction",
+                "pe": "lnk_o",
+                "mid": "mid",
+                "aamb": "blob",
+                "aamlh": "lochint",
+                "ts": String(trackEvent.timestamp.getUnixTimeInSeconds())
             ]
         }
         let expectedContextData = [
-            "k1" : "v1",
-            "k2" : "v2",
-            "a.action" : "testAction",
+            "k1": "v1",
+            "k2": "v2",
+            "a.action": "testAction",
         ]
 
         XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 1)
@@ -432,12 +432,12 @@ class AnalyticsTrackTestBase : AnalyticsFunctionalTestBase {
     // Track special characters
     func trackSpecialCharactersTester() {
         let trackData: [String: Any] = [
-            CoreConstants.Keys.ACTION : "网页",
-            CoreConstants.Keys.STATE : "~!@#$%^&*()_.-+",
-            CoreConstants.Keys.CONTEXT_DATA : [
+            CoreConstants.Keys.ACTION: "网页",
+            CoreConstants.Keys.STATE: "~!@#$%^&*()_.-+",
+            CoreConstants.Keys.CONTEXT_DATA: [
                 "~!@#$%^&*()_.-+": "~!@#$%^&*()_.-+", // Characters other than _ are ignored
                 "网页": "网页", // This key is ignored
-                "k1" : "网页"
+                "k1": "网页"
             ]
         ]
 
@@ -450,31 +450,31 @@ class AnalyticsTrackTestBase : AnalyticsFunctionalTestBase {
             expectedVars = [
                 "ce": "UTF-8",
                 "cp": "foreground",
-                "pageName" : "~!@#$%^&*()_.-+",
-                "pev2" : "AMACTION:网页",
-                "pe" : "lnk_o",
-                "mid" : "mid",
-                "aamb" : "blob",
-                "aamlh" : "lochint",
-                "ts" : String(trackEvent.timestamp.getUnixTimeInSeconds())
+                "pageName": "~!@#$%^&*()_.-+",
+                "pev2": "AMACTION:网页",
+                "pe": "lnk_o",
+                "mid": "mid",
+                "aamb": "blob",
+                "aamlh": "lochint",
+                "ts": String(trackEvent.timestamp.getUnixTimeInSeconds())
             ]
         } else {
             expectedVars = [
                 "ce": "UTF-8",
-                "pageName" : "~!@#$%^&*()_.-+",
-                "pev2" : "AMACTION:网页",
-                "pe" : "lnk_o",
-                "mid" : "mid",
-                "aamb" : "blob",
-                "aamlh" : "lochint",
-                "ts" : String(trackEvent.timestamp.getUnixTimeInSeconds())
+                "pageName": "~!@#$%^&*()_.-+",
+                "pev2": "AMACTION:网页",
+                "pe": "lnk_o",
+                "mid": "mid",
+                "aamb": "blob",
+                "aamlh": "lochint",
+                "ts": String(trackEvent.timestamp.getUnixTimeInSeconds())
             ]
         }
 
         let expectedContextData = [
             "_": "~!@#$%^&*()_.-+",
-            "a.action" : "网页",
-            "k1" : "网页"
+            "a.action": "网页",
+            "k1": "网页"
         ]
 
         XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 1)
@@ -487,7 +487,7 @@ class AnalyticsTrackTestBase : AnalyticsFunctionalTestBase {
     func trackContextDataWithNonStringValuesTester() {
         MobileCore.setLogLevel(.trace)
         let trackData: [String: Any] = [
-            CoreConstants.Keys.CONTEXT_DATA : [
+            CoreConstants.Keys.CONTEXT_DATA: [
                 "StringValue": "v1",
                 "IntValue": 1,
                 "UIntValue": UInt(2),
@@ -502,7 +502,7 @@ class AnalyticsTrackTestBase : AnalyticsFunctionalTestBase {
                 "Nil": nil,
                 "ArrayValue": [String](),
                 "ObjValue": NSObject(),
-                "DictValue": [String:String]()
+                "DictValue": [String: String]()
             ]
         ]
         let trackEvent = Event(name: "Generic track event", type: EventType.genericTrack, source: EventSource.requestContent, data: trackData)
@@ -514,18 +514,18 @@ class AnalyticsTrackTestBase : AnalyticsFunctionalTestBase {
             expectedVars = [
                 "ce": "UTF-8",
                 "cp": "foreground",
-                "mid" : "mid",
-                "aamb" : "blob",
-                "aamlh" : "lochint",
-                "ts" : String(trackEvent.timestamp.getUnixTimeInSeconds())
+                "mid": "mid",
+                "aamb": "blob",
+                "aamlh": "lochint",
+                "ts": String(trackEvent.timestamp.getUnixTimeInSeconds())
             ]
         } else {
             expectedVars = [
                 "ce": "UTF-8",
-                "mid" : "mid",
-                "aamb" : "blob",
-                "aamlh" : "lochint",
-                "ts" : String(trackEvent.timestamp.getUnixTimeInSeconds())
+                "mid": "mid",
+                "aamb": "blob",
+                "aamlh": "lochint",
+                "ts": String(trackEvent.timestamp.getUnixTimeInSeconds())
             ]
         }
         let expectedContextData = [

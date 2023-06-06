@@ -16,20 +16,19 @@ import AEPServices
 @testable import AEPCore
 
 @available(tvOSApplicationExtension, unavailable)
-class AnalyticsAppExtTrack_PlacesTests : AnalyticsTrack_PlacesTestBase {
-    
+class AnalyticsAppExtTrack_PlacesTests: AnalyticsTrack_PlacesTestBase {
+
     override func setUp() {
         runningForApp = false
         super.setupBase(forApp: false)
         dispatchDefaultConfigAndIdentityStates()
     }
-    
-    //If Places shared state is available then analytics hits contain places data
+
+    // If Places shared state is available then analytics hits contain places data
     func testAnalyticsHitsContainPlacesData() {
         analyticsHitsContainPlacesDataTester()
     }
-    
-    
+
     // If Places shared state is updated then analytics hits contain updated places data
     func testAnalyticsHitsContainUpdatePlacesData() {
         analyticsHitsContainUpdatePlacesDataTester()

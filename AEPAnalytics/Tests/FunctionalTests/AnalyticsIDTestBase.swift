@@ -16,17 +16,17 @@ import AEPServices
 @testable import AEPCore
 
 @available(tvOSApplicationExtension, unavailable)
-class AnalyticsIDTestBase : AnalyticsFunctionalTestBase {
+class AnalyticsIDTestBase: AnalyticsFunctionalTestBase {
 
     var runningForApp = true
 
-    //If Visitor ID Service is enabled then analytics hits contain visitor ID vars
+    // If Visitor ID Service is enabled then analytics hits contain visitor ID vars
     func hitsContainVisitorIDVarsTester() {
         dispatchDefaultConfigAndIdentityStates()
 
         let trackData: [String: Any] = [
-            CoreConstants.Keys.ACTION : "testActionName",
-            CoreConstants.Keys.CONTEXT_DATA : [
+            CoreConstants.Keys.ACTION: "testActionName",
+            CoreConstants.Keys.CONTEXT_DATA: [
                 "k1": "v1",
                 "k2": "v2"
             ]
@@ -41,28 +41,28 @@ class AnalyticsIDTestBase : AnalyticsFunctionalTestBase {
             expectedVars = [
                 "ce": "UTF-8",
                 "cp": "foreground",
-                "pev2" : "AMACTION:testActionName",
-                "pe" : "lnk_o",
-                "mid" : "mid",
-                "aamb" : "blob",
-                "aamlh" : "lochint",
-                "ts" : String(trackEvent.timestamp.getUnixTimeInSeconds()),
+                "pev2": "AMACTION:testActionName",
+                "pe": "lnk_o",
+                "mid": "mid",
+                "aamb": "blob",
+                "aamlh": "lochint",
+                "ts": String(trackEvent.timestamp.getUnixTimeInSeconds()),
             ]
         } else {
             expectedVars = [
                 "ce": "UTF-8",
-                "pev2" : "AMACTION:testActionName",
-                "pe" : "lnk_o",
-                "mid" : "mid",
-                "aamb" : "blob",
-                "aamlh" : "lochint",
-                "ts" : String(trackEvent.timestamp.getUnixTimeInSeconds()),
+                "pev2": "AMACTION:testActionName",
+                "pe": "lnk_o",
+                "mid": "mid",
+                "aamb": "blob",
+                "aamlh": "lochint",
+                "ts": String(trackEvent.timestamp.getUnixTimeInSeconds()),
             ]
         }
         let expectedContextData = [
-            "k1" : "v1",
-            "k2" : "v2",
-            "a.action" : "testActionName"
+            "k1": "v1",
+            "k2": "v2",
+            "a.action": "testActionName"
         ]
 
         XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 1)
@@ -86,8 +86,8 @@ class AnalyticsIDTestBase : AnalyticsFunctionalTestBase {
         verifyIdentityChange(aid: "testaid", vid: "testvid")
 
         let trackData: [String: Any] = [
-            CoreConstants.Keys.ACTION : "testActionName",
-            CoreConstants.Keys.CONTEXT_DATA : [
+            CoreConstants.Keys.ACTION: "testActionName",
+            CoreConstants.Keys.CONTEXT_DATA: [
                 "k1": "v1",
                 "k2": "v2"
             ]
@@ -102,32 +102,32 @@ class AnalyticsIDTestBase : AnalyticsFunctionalTestBase {
             expectedVars = [
                 "ce": "UTF-8",
                 "cp": "foreground",
-                "pev2" : "AMACTION:testActionName",
-                "pe" : "lnk_o",
-                "mid" : "mid",
-                "aid" : "testaid",
-                "vid" : "testvid",
-                "aamb" : "blob",
-                "aamlh" : "lochint",
-                "ts" : String(trackEvent.timestamp.getUnixTimeInSeconds()),
+                "pev2": "AMACTION:testActionName",
+                "pe": "lnk_o",
+                "mid": "mid",
+                "aid": "testaid",
+                "vid": "testvid",
+                "aamb": "blob",
+                "aamlh": "lochint",
+                "ts": String(trackEvent.timestamp.getUnixTimeInSeconds()),
             ]
         } else {
             expectedVars = [
                 "ce": "UTF-8",
-                "pev2" : "AMACTION:testActionName",
-                "pe" : "lnk_o",
-                "mid" : "mid",
-                "aid" : "testaid",
-                "vid" : "testvid",
-                "aamb" : "blob",
-                "aamlh" : "lochint",
-                "ts" : String(trackEvent.timestamp.getUnixTimeInSeconds()),
+                "pev2": "AMACTION:testActionName",
+                "pe": "lnk_o",
+                "mid": "mid",
+                "aid": "testaid",
+                "vid": "testvid",
+                "aamb": "blob",
+                "aamlh": "lochint",
+                "ts": String(trackEvent.timestamp.getUnixTimeInSeconds()),
             ]
         }
         let expectedContextData = [
-            "k1" : "v1",
-            "k2" : "v2",
-            "a.action" : "testActionName"
+            "k1": "v1",
+            "k2": "v2",
+            "a.action": "testActionName"
         ]
 
         XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 1)
@@ -143,7 +143,7 @@ class AnalyticsIDTestBase : AnalyticsFunctionalTestBase {
         dataStore.set(key: AnalyticsTestConstants.DataStoreKeys.VID, value: "testvid")
 
         dispatchDefaultConfigAndIdentityStates(configData: [
-            AnalyticsTestConstants.Configuration.EventDataKeys.GLOBAL_PRIVACY : "optedout"
+            AnalyticsTestConstants.Configuration.EventDataKeys.GLOBAL_PRIVACY: "optedout"
         ])
 
         waitForProcessing()
@@ -156,7 +156,7 @@ class AnalyticsIDTestBase : AnalyticsFunctionalTestBase {
         dispatchDefaultConfigAndIdentityStates()
 
         // Set VID
-        let data = [AnalyticsTestConstants.EventDataKeys.VISITOR_IDENTIFIER : "myvid"]
+        let data = [AnalyticsTestConstants.EventDataKeys.VISITOR_IDENTIFIER: "myvid"]
         let event = Event(name: "", type: EventType.analytics, source: EventSource.requestIdentity, data: data)
         mockRuntime.simulateComingEvent(event: event)
 
@@ -168,11 +168,11 @@ class AnalyticsIDTestBase : AnalyticsFunctionalTestBase {
     // Set visitor id should dispatch event
     func optOut_ShouldNotUpdateVidTester() {
         dispatchDefaultConfigAndIdentityStates(configData: [
-            AnalyticsTestConstants.Configuration.EventDataKeys.GLOBAL_PRIVACY : "optedout"
+            AnalyticsTestConstants.Configuration.EventDataKeys.GLOBAL_PRIVACY: "optedout"
         ])
 
         // Set VID
-        let data = [AnalyticsTestConstants.EventDataKeys.VISITOR_IDENTIFIER : "myvid"]
+        let data = [AnalyticsTestConstants.EventDataKeys.VISITOR_IDENTIFIER: "myvid"]
         let event = Event(name: "", type: EventType.analytics, source: EventSource.requestIdentity, data: data)
         mockRuntime.simulateComingEvent(event: event)
 
@@ -195,7 +195,7 @@ class AnalyticsIDTestBase : AnalyticsFunctionalTestBase {
         verifyIdentityChange(aid: "testaid", vid: "testvid")
 
         dispatchDefaultConfigAndIdentityStates(configData: [
-            AnalyticsTestConstants.Configuration.EventDataKeys.GLOBAL_PRIVACY : "optedout"
+            AnalyticsTestConstants.Configuration.EventDataKeys.GLOBAL_PRIVACY: "optedout"
         ])
 
         waitForProcessing()
@@ -204,15 +204,15 @@ class AnalyticsIDTestBase : AnalyticsFunctionalTestBase {
 
     func handleRequestResetEventTester() {
         let placesSharedState: [String: Any] = [
-            AnalyticsTestConstants.Places.EventDataKeys.CURRENT_POI : [
-                AnalyticsTestConstants.Places.EventDataKeys.REGION_ID : "myRegionId",
-                AnalyticsTestConstants.Places.EventDataKeys.REGION_NAME : "myRegionName"
+            AnalyticsTestConstants.Places.EventDataKeys.CURRENT_POI: [
+                AnalyticsTestConstants.Places.EventDataKeys.REGION_ID: "myRegionId",
+                AnalyticsTestConstants.Places.EventDataKeys.REGION_NAME: "myRegionName"
             ]
         ]
         let lifecycleSharedState: [String: Any] = [
-            AnalyticsTestConstants.Lifecycle.EventDataKeys.LIFECYCLE_CONTEXT_DATA : [
-                AnalyticsTestConstants.Lifecycle.EventDataKeys.OPERATING_SYSTEM : "mockOSName",
-                AnalyticsTestConstants.Lifecycle.EventDataKeys.APP_ID : "mockAppName",
+            AnalyticsTestConstants.Lifecycle.EventDataKeys.LIFECYCLE_CONTEXT_DATA: [
+                AnalyticsTestConstants.Lifecycle.EventDataKeys.OPERATING_SYSTEM: "mockOSName",
+                AnalyticsTestConstants.Lifecycle.EventDataKeys.APP_ID: "mockAppName",
             ]
         ]
 
@@ -224,12 +224,10 @@ class AnalyticsIDTestBase : AnalyticsFunctionalTestBase {
         mockNetworkService?.reset()
         resetExtension(forApp: runningForApp)
 
-
         simulateLifecycleState(data: lifecycleSharedState)
         simulatePlacesState(data: placesSharedState)
         dispatchDefaultConfigAndIdentityStates()
         waitForProcessing()
-
 
         verifyIdentityChange(aid: "testaid", vid: "testvid")
 
@@ -240,7 +238,7 @@ class AnalyticsIDTestBase : AnalyticsFunctionalTestBase {
 
         waitForProcessing()
 
-        //verify
+        // verify
         verifyIdentityChange(aid: nil, vid: nil)
     }
 }
