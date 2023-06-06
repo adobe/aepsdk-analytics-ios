@@ -16,7 +16,7 @@ import AEPServices
 @testable import AEPCore
 
 @available(tvOSApplicationExtension, unavailable)
-class AnalyticsTrack_TargetTestBase : AnalyticsFunctionalTestBase {
+class AnalyticsTrack_TargetTestBase: AnalyticsFunctionalTestBase {
 
     var runningForApp = true
 
@@ -25,12 +25,12 @@ class AnalyticsTrack_TargetTestBase : AnalyticsFunctionalTestBase {
         dispatchDefaultConfigAndIdentityStates()
 
         let trackData: [String: Any] = [
-            AnalyticsConstants.EventDataKeys.TRACK_ACTION : "AnalyticsForTarget",
+            AnalyticsConstants.EventDataKeys.TRACK_ACTION: "AnalyticsForTarget",
             AnalyticsConstants.EventDataKeys.TRACK_INTERNAL: true,
-            AnalyticsConstants.EventDataKeys.CONTEXT_DATA : [
+            AnalyticsConstants.EventDataKeys.CONTEXT_DATA: [
                 "&&tnta": "285408:0:0|2",
                 "&&pe": "tnt",
-                "a.target.sessionId" : "8E0988F2-57C7-42CA-B5A6-6458D370F315"
+                "a.target.sessionId": "8E0988F2-57C7-42CA-B5A6-6458D370F315"
             ]
         ]
         let event1 = Event(name: "A4T track action event", type: EventType.analytics, source: EventSource.requestContent, data: trackData)
@@ -42,30 +42,30 @@ class AnalyticsTrack_TargetTestBase : AnalyticsFunctionalTestBase {
             expectedVars = [
                 "ce": "UTF-8",
                 "cp": "foreground",
-                "mid" : "mid",
-                "aamb" : "blob",
-                "aamlh" : "lochint",
-                "tnta" : "285408:0:0|2",
-                "pe" : "tnt",
-                "pev2" : "ADBINTERNAL:AnalyticsForTarget",
-                "ts" : String(event1.timestamp.getUnixTimeInSeconds())
+                "mid": "mid",
+                "aamb": "blob",
+                "aamlh": "lochint",
+                "tnta": "285408:0:0|2",
+                "pe": "tnt",
+                "pev2": "ADBINTERNAL:AnalyticsForTarget",
+                "ts": String(event1.timestamp.getUnixTimeInSeconds())
             ]
         } else {
             expectedVars = [
                 "ce": "UTF-8",
-                "mid" : "mid",
-                "aamb" : "blob",
-                "aamlh" : "lochint",
-                "tnta" : "285408:0:0|2",
-                "pe" : "tnt",
-                "pev2" : "ADBINTERNAL:AnalyticsForTarget",
-                "ts" : String(event1.timestamp.getUnixTimeInSeconds())
+                "mid": "mid",
+                "aamb": "blob",
+                "aamlh": "lochint",
+                "tnta": "285408:0:0|2",
+                "pe": "tnt",
+                "pev2": "ADBINTERNAL:AnalyticsForTarget",
+                "ts": String(event1.timestamp.getUnixTimeInSeconds())
             ]
         }
 
         let expectedContextData = [
-            "a.internalaction" : "AnalyticsForTarget",
-            "a.target.sessionId" : "8E0988F2-57C7-42CA-B5A6-6458D370F315"
+            "a.internalaction": "AnalyticsForTarget",
+            "a.target.sessionId": "8E0988F2-57C7-42CA-B5A6-6458D370F315"
         ]
 
         // verify

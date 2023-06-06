@@ -19,8 +19,8 @@ import Foundation
 @available(tvOSApplicationExtension, unavailable)
 class AnalyticsMigratorTests: XCTestCase {
 
-    var analytics:Analytics!
-    var dataStore:NamedCollectionDataStore!
+    var analytics: Analytics!
+    var dataStore: NamedCollectionDataStore!
 
     private var mockDataStore: MockDataStore {
         return ServiceProvider.shared.namedKeyValueService as! MockDataStore
@@ -37,7 +37,7 @@ class AnalyticsMigratorTests: XCTestCase {
     override func setUp() {
         UserDefaults.clear()
 
-        ServiceProvider.shared.namedKeyValueService = MockDataStore()        
+        ServiceProvider.shared.namedKeyValueService = MockDataStore()
         dataStore = NamedCollectionDataStore(name: AnalyticsConstants.DATASTORE_NAME)
     }
 
@@ -78,7 +78,7 @@ class AnalyticsMigratorTests: XCTestCase {
 
     func testAnalyticsMigrationFromV5() {
         // Migrate
-        userDefaults.set("aid", forKey: AnalyticsConstants.V5Migration.AID)        
+        userDefaults.set("aid", forKey: AnalyticsConstants.V5Migration.AID)
         userDefaults.set(true, forKey: AnalyticsConstants.V5Migration.IGNORE_AID)
         userDefaults.set("vid", forKey: AnalyticsConstants.V5Migration.VID)
 
@@ -143,6 +143,6 @@ class AnalyticsMigratorTests: XCTestCase {
         XCTAssertNil(userDefaults.object(forKey: AnalyticsConstants.V5Migration.AID))
         XCTAssertNil(userDefaults.object(forKey: AnalyticsConstants.V5Migration.IGNORE_AID))
         XCTAssertNil(userDefaults.object(forKey: AnalyticsConstants.V5Migration.VID))
-        XCTAssertNil(userDefaults.object(forKey: AnalyticsConstants.V5Migration.MOST_RECENT_HIT_TIMESTAMP))        
+        XCTAssertNil(userDefaults.object(forKey: AnalyticsConstants.V5Migration.MOST_RECENT_HIT_TIMESTAMP))
     }
 }

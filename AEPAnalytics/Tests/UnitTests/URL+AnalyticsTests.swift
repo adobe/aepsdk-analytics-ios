@@ -26,7 +26,7 @@ class URL_AnalyticsTests: XCTestCase {
     }
 
     func testGetBaseUrlNilWhenAnalyticsNotConfiguredEmpty() {
-        XCTAssertNil(URL.getAnalyticsBaseUrl(state: analyticsState))        
+        XCTAssertNil(URL.getAnalyticsBaseUrl(state: analyticsState))
     }
 
     func testGetBaseUrlWhenAnalyticsForwarding() {

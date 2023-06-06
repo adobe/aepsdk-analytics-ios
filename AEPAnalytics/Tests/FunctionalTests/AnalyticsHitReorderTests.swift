@@ -21,8 +21,8 @@ class AnlyticsHitReorderTests: AnalyticsHitReorderTestBase {
         runningForAppTests = true
         super.setupBase(forApp: true)
     }
-    
-    //Lifecycle data and acquisition data appended to the first custom analytics hit
+
+    // Lifecycle data and acquisition data appended to the first custom analytics hit
     func testDataAppendedToFirstCustomHit() {
         dataAppendedToFirstCustomHitTester()
     }
@@ -48,4 +48,3 @@ class AnlyticsHitReorderTests: AnalyticsHitReorderTestBase {
     }
 
 }
-

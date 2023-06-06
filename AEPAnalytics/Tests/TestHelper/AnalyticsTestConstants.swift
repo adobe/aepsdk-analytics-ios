@@ -122,7 +122,7 @@ enum AnalyticsTestConstants {
         static let LIFECYCLE_RESPONSE_WAIT_TIMEOUT = TimeInterval.init(1)
         static let LAUNCH_DEEPLINK_DATA_WAIT_TIMEOUT = TimeInterval.init(0.5)
         static let LIFECYCLE_MAX_SESSION_LENGTH = TimeInterval.init(0)
-        static let LIFECYCLE_SESSION_START_TIMESTAMP = TimeInterval.init(0)        
+        static let LIFECYCLE_SESSION_START_TIMESTAMP = TimeInterval.init(0)
         static let TIMESTAMP_DISABLED_WAIT_THRESHOLD_SECONDS = TimeInterval.init(60)
     }
 

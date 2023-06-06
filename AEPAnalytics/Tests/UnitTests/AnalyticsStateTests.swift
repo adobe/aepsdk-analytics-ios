@@ -15,8 +15,7 @@ import Foundation
 @testable import AEPAnalytics
 @testable import AEPCore
 
-
-class AnalyticsStateTest : XCTestCase {
+class AnalyticsStateTest: XCTestCase {
 
     private var analyticsState: AnalyticsState!
 
@@ -30,7 +29,7 @@ class AnalyticsStateTest : XCTestCase {
         let rsids = "rsid1, rsid2"
         let marketingCloudOrgId = "marketingserver"
         let privacyStatusString = "optedin"
-        let launchHitDelay : Int = 300
+        let launchHitDelay: Int = 300
 
         var configurationData = [String: Any]()
         configurationData[AnalyticsTestConstants.Configuration.EventDataKeys.ANALYTICS_SERVER] = server
@@ -50,7 +49,7 @@ class AnalyticsStateTest : XCTestCase {
         XCTAssertEqual(analyticsState.rsids, rsids)
         XCTAssertTrue(analyticsState.analyticForwardingEnabled)
         XCTAssertTrue(analyticsState.offlineEnabled)
-        XCTAssertEqual(analyticsState.launchHitDelay, 300.0 , accuracy: 0)
+        XCTAssertEqual(analyticsState.launchHitDelay, 300.0, accuracy: 0)
         XCTAssertEqual(analyticsState.marketingCloudOrganizationId, marketingCloudOrgId)
         XCTAssertTrue(analyticsState.backDateSessionInfoEnabled)
         XCTAssertEqual(analyticsState.privacyStatus, PrivacyStatus.optedIn)
@@ -61,7 +60,7 @@ class AnalyticsStateTest : XCTestCase {
         let rsids = "rsid1, rsid2"
         let marketingCloudOrgId = "marketingserver"
         let privacyStatusString = "optedin"
-        let launchHitDelay : Int = 300
+        let launchHitDelay: Int = 300
 
         var configurationData = [String: Any]()
         configurationData[AnalyticsTestConstants.Configuration.EventDataKeys.ANALYTICS_SERVER] = server
@@ -184,7 +183,7 @@ class AnalyticsStateTest : XCTestCase {
         identityData[IdentityEventDataKeys.VISITOR_ID_BLOB] = blob
         identityData[IdentityEventDataKeys.VISITOR_ID_LOCATION_HINT] = locationHint
         identityData[IdentityEventDataKeys.ADVERTISING_IDENTIFIER] = advertisingId
-        //MARK: TODO update the unit test below.
+        // MARK: TODO update the unit test below.
 //        if let identifiableArray = identityData[IdentityEventDataKeys.VISITOR_IDS_LIST] as? [Identifiable] {
 //            serializedVisitorIdsList = analyticsRequestSerializer.generateAnalyticsCustomerIdString(from: identifiableArray)
 //        }
