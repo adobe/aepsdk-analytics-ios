@@ -16,7 +16,7 @@ import AEPServices
 
 @testable import AEPAnalytics
 
-class URL_AnalyticsTests: XCTestCase {
+class AnalyticsURLTests: XCTestCase {
 
     let version = AnalyticsVersion.getVersion()
     var analyticsState: AnalyticsState!

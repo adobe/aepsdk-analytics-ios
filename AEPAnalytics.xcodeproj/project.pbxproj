@@ -933,7 +933,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if which ${PODS_ROOT}/SwiftLint/swiftlint >/dev/null; then\n    ${PODS_ROOT}/SwiftLint/swiftlint lint --config ${SRCROOT}/.swiftlint.yml --lenient AEPAnalytics/Tests/UnitTests Tests/TestHelpers\nelse\n    echo \"warning: SwiftLint is not installed, please run the pod install command from the project root directory.\"\nfi\n";
+			shellScript = "if which ${PODS_ROOT}/SwiftLint/swiftlint >/dev/null; then\n    ${PODS_ROOT}/SwiftLint/swiftlint lint --config ${SRCROOT}/AEPAnalytics/Tests/TestHelper/.swiftlint.yml --lenient AEPAnalytics/Tests/UnitTests Tests/TestHelper\nelse\n    echo \"warning: SwiftLint is not installed, please run the pod install command from the project root directory.\"\nfi\n";
 		};
 		2EF8BE4E2A2EC1AE0022C892 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -951,7 +951,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if which ${PODS_ROOT}/SwiftLint/swiftlint >/dev/null; then\n    ${PODS_ROOT}/SwiftLint/swiftlint lint --config ${SRCROOT}/.swiftlint.yml --lenient AEPAnalytics/Tests/FunctionalTests Tests/TestHelpers\nelse\n    echo \"warning: SwiftLint is not installed, please run the pod install command from the project root directory.\"\nfi\n";
+			shellScript = "if which ${PODS_ROOT}/SwiftLint/swiftlint >/dev/null; then\n    ${PODS_ROOT}/SwiftLint/swiftlint lint --config ${SRCROOT}/AEPAnalytics/Tests/TestHelper/.swiftlint.yml --lenient AEPAnalytics/Tests/FunctionalTests Tests/TestHelpers\nelse\n    echo \"warning: SwiftLint is not installed, please run the pod install command from the project root directory.\"\nfi\n";
 		};
 		2EF8BE4F2A2EC1B90022C892 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;

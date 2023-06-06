@@ -61,8 +61,8 @@ class AnalyticsDatabaseTest: XCTestCase {
 
     private func getHitFromDataQueue(label: String) -> [AnalyticsHit] {
         if let queue = mockDataQueueService?.getDataQueue(label: label) {
-            let n = queue.count()
-            if n > 0, let hits = queue.peek(n: n) {
+            let hitCount = queue.count()
+            if hitCount > 0, let hits = queue.peek(n: hitCount) {
                 return getHitFromDataEntityArray(hits: hits)
             }
         }
@@ -89,8 +89,8 @@ class AnalyticsDatabaseTest: XCTestCase {
 
     private func assertHits(_ expected: [AnalyticsHit], _ actual: [AnalyticsHit]) {
         XCTAssertEqual(expected.count, actual.count)
-        for (e1, e2) in zip(expected, actual) {
-            assertHit(e1, e2)
+        for (hit1, hit2) in zip(expected, actual) {
+            assertHit(hit1, hit2)
         }
     }
 

@@ -128,7 +128,11 @@ class ContextDataUtilTests: XCTestCase {
     func testAppendContextData_When_SourceIsARealHit() {
         let data: [String: String] = ["key1.new1": "value1", "key2.new2": "value2"]
 
-        let result = ContextDataUtil.appendContextData(contextData: data, source: "ndh=1&pe=lnk_o&pev2=ADBINTERNAL%3ALifecycle&pageName=My%20Application%201.0%20%281%29&t=00%2F00%2F0000%2000%3A00%3A00%200%20360&ts=1432159549&c.&a.&DeviceName=SAMSUNG-SGH-I337&Resolution=1080x1920&OSVersion=Android%204.3&CarrierName=&internalaction=Lifecycle&AppID=My%20Application%201.0%20%281%29&Launches=1&InstallEvent=InstallEvent&DayOfWeek=4&InstallDate=5%2F20%2F2015&LaunchEvent=LaunchEvent&DailyEngUserEvent=DailyEngUserEvent&RunMode=Application&HourOfDay=16&MonthlyEngUserEvent=MonthlyEngUserEvent&.a&.c&mid=45872199741202307594993613744306256830&ce=UTF-8")
+        let payload = "ndh=1&pe=lnk_o&pev2=ADBINTERNAL%3ALifecycle&pageName=My%20Application%201.0%20%281%29&t=00%2F00%2F0000%2000%3A00%3A00%200%20360&ts=1432159549&c.&a.&DeviceName=SAMSUNG-SGH-I337&Resolution=1080x1920&"
+        + "OSVersion=Android%204.3&CarrierName=&internalaction=Lifecycle&AppID=My%20Application%201.0%20%281%29&Launches=1&InstallEvent=InstallEvent&DayOfWeek=4&InstallDate=5%2F20%2F2015&LaunchEvent=LaunchEvent&DailyEngUserEvent=DailyEngUserEvent"
+        + "&RunMode=Application&HourOfDay=16&MonthlyEngUserEvent=MonthlyEngUserEvent&.a&.c&mid=45872199741202307594993613744306256830&ce=UTF-8"
+
+        let result = ContextDataUtil.appendContextData(contextData: data, source: payload)
 
         XCTAssertTrue(contextDataInCorrectSequence(source: result, target: "new1=value1", start: "&key1.", end: "&.key1"))
         XCTAssertTrue(contextDataInCorrectSequence(source: result, target: "new2=value2", start: "&key2.", end: "&.key2"))

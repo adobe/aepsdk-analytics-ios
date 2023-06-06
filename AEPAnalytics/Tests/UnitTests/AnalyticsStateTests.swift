@@ -121,7 +121,7 @@ class AnalyticsStateTest: XCTestCase {
 
         let sessionStartTimestamp: TimeInterval = 1000
         let lifecycleMaxSessionLength: TimeInterval = 2000
-        let os = "Android"
+        let osName = "Android"
         let deviceName = "Pixel"
         let deviceResolution = "1024 * 1024"
         let carrierName = "Verizon"
@@ -129,7 +129,7 @@ class AnalyticsStateTest: XCTestCase {
         let appId = "1234"
 
         var lifecycleContextData = [String: String]()
-        lifecycleContextData[AnalyticsTestConstants.Lifecycle.EventDataKeys.OPERATING_SYSTEM] = os
+        lifecycleContextData[AnalyticsTestConstants.Lifecycle.EventDataKeys.OPERATING_SYSTEM] = osName
         lifecycleContextData[AnalyticsTestConstants.Lifecycle.EventDataKeys.DEVICE_NAME] = deviceName
         lifecycleContextData[AnalyticsTestConstants.Lifecycle.EventDataKeys.DEVICE_RESOLUTION] = deviceResolution
         lifecycleContextData[AnalyticsTestConstants.Lifecycle.EventDataKeys.CARRIER_NAME] = carrierName
@@ -150,7 +150,7 @@ class AnalyticsStateTest: XCTestCase {
         XCTAssertEqual(analyticsState.lifecycleSessionStartTimestamp, sessionStartTimestamp)
 
         XCTAssertEqual(analyticsState.lifecycleMaxSessionLength, lifecycleMaxSessionLength)
-        XCTAssertEqual(analyticsState.defaultData[AnalyticContextDataKeys.OPERATING_SYSTEM], os)
+        XCTAssertEqual(analyticsState.defaultData[AnalyticContextDataKeys.OPERATING_SYSTEM], osName)
         XCTAssertEqual(analyticsState.defaultData[AnalyticContextDataKeys.DEVICE_NAME], deviceName)
         XCTAssertEqual(analyticsState.defaultData[AnalyticContextDataKeys.DEVICE_RESOLUTION], deviceResolution)
         XCTAssertEqual(analyticsState.defaultData[AnalyticContextDataKeys.CARRIER_NAME], carrierName)
