@@ -22,7 +22,7 @@ public class MockHitProcessor: HitProcessing {
         return TimeInterval(30)
     }
     public func processHit(entity: DataEntity, completion: @escaping (Bool) -> Void) {
-        if (processResult) {
+        if processResult {
             processedEntities.append(entity)
         }
         completion(processResult)

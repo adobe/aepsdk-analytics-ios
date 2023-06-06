@@ -16,40 +16,40 @@ import AEPServices
 @testable import AEPCore
 
 @available(tvOSApplicationExtension, unavailable)
-class AnalyticsAppExtIDTests : AnalyticsIDTestBase {
-    
+class AnalyticsAppExtIDTests: AnalyticsIDTestBase {
+
     override func setUp() {
         runningForApp = false
         super.setupBase(forApp: false)
     }
-    
-    //If Visitor ID Service is enabled then analytics hits contain visitor ID vars
+
+    // If Visitor ID Service is enabled then analytics hits contain visitor ID vars
     func testHitsContainVisitorIDVars() {
         hitsContainVisitorIDVarsTester()
     }
-        
+
     func testHitsContainAIDandVID() {
         hitsContainAIDandVIDTester()
     }
-    
+
     func testOptOut_ShouldNotReadAidVid() {
         optOut_ShouldNotReadAidVidTester()
     }
-    
+
     // Set visitor id should dispatch event
     func testVisitorId() {
         visitorIdTester()
     }
-    
+
     // Set visitor id should dispatch event
     func testOptOut_ShouldNotUpdateVid() {
         optOut_ShouldNotUpdateVidTester()
     }
-    
+
     func testAIDandVIDShouldBeClearedAfterOptOut() {
         aIDandVIDShouldBeClearedAfterOptOutTester()
     }
-    
+
     func testHandleRequestResetEvent() {
         handleRequestResetEventTester()
     }

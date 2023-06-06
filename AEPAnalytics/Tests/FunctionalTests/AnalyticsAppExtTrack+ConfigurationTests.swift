@@ -16,7 +16,7 @@ import AEPServices
 @testable import AEPCore
 
 @available(tvOSApplicationExtension, unavailable)
-class AnalyticsAppExtTrack_ConfigurationTests : AnalyticsTrack_ConfigurationTestBase {
+class AnalyticsAppExtTrack_ConfigurationTests: AnalyticsTrack_ConfigurationTestBase {
 
     override func setUp() {
         runningForApp = false
@@ -27,13 +27,12 @@ class AnalyticsAppExtTrack_ConfigurationTests : AnalyticsTrack_ConfigurationTest
         clearQueuedHitsAndDatastoreOnOptOutTester()
     }
 
-    //Track hits queued when Privacy Status is unknown will be sent with unknown param
+    // Track hits queued when Privacy Status is unknown will be sent with unknown param
     func testSendTrackAfterPrivacyStatusIsUnknownToOptedIn() {
         sendTrackAfterPrivacyStatusIsUnknownToOptedInTester()
     }
 
-
-    //Track hits sent only when configuration contains valid server and rsid(s)
+    // Track hits sent only when configuration contains valid server and rsid(s)
     func testTrackHitsOnlySentOnValidConfiguration() {
         trackHitsOnlySentOnValidConfigurationTester()
     }

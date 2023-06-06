@@ -15,7 +15,7 @@ import AEPServices
 @testable import AEPAnalytics
 @testable import AEPCore
 
-class AnalyticsVersionTest : XCTestCase {
+class AnalyticsVersionTest: XCTestCase {
 
     override func setUp() {
     }

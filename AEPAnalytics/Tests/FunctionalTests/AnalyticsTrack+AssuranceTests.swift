@@ -16,49 +16,49 @@ import AEPServices
 @testable import AEPCore
 
 @available(tvOSApplicationExtension, unavailable)
-class AnalyticsTrack_AssuranceTests : AnalyticsFunctionalTestBase {
+class AnalyticsTrack_AssuranceTests: AnalyticsFunctionalTestBase {
 
-    override func setUp() {        
+    override func setUp() {
         super.setupBase(forApp: true)
     }
-    
-    //Track with non null assurance session id should append debug flag.
+
+    // Track with non null assurance session id should append debug flag.
     func testAppendDebugParamInHit() {
         dispatchDefaultConfigAndIdentityStates()
         simulateAssuranceState()
-        
+
         let trackData: [String: Any] = [
-            CoreConstants.Keys.ACTION : "testActionName"
+            CoreConstants.Keys.ACTION: "testActionName"
         ]
         let event1 = Event(name: "Generic track event", type: EventType.genericTrack, source: EventSource.requestContent, data: trackData)
         mockRuntime.simulateComingEvent(event: event1)
-        
+
         waitForProcessing()
-        
+
         XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 1)
         let payload = mockNetworkService?.calledNetworkRequests[0]?.payloadAsString()
         XCTAssertTrue(payload?.contains("&p.&debug=true&.p") ?? false)
     }
-    
-    //Track with non null assurance session id should append debug flag to queued hits.
+
+    // Track with non null assurance session id should append debug flag to queued hits.
     func testAppendDebugParamInQueuedHit() {
         dispatchDefaultConfigAndIdentityStates(configData: [
-            AnalyticsTestConstants.Configuration.EventDataKeys.ANALYTICS_BATCH_LIMIT : 1
+            AnalyticsTestConstants.Configuration.EventDataKeys.ANALYTICS_BATCH_LIMIT: 1
         ])
-                
+
         let trackData: [String: Any] = [
-            CoreConstants.Keys.ACTION : "testActionName"
+            CoreConstants.Keys.ACTION: "testActionName"
         ]
         let event1 = Event(name: "Generic track event", type: EventType.genericTrack, source: EventSource.requestContent, data: trackData)
         mockRuntime.simulateComingEvent(event: event1)
-        
+
         waitForProcessing()
-        
+
         simulateAssuranceState()
         let event2 = Event(name: "Generic track event", type: EventType.genericTrack, source: EventSource.requestContent, data: trackData)
         mockRuntime.simulateComingEvent(event: event2)
         waitForProcessing()
-                
+
         XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 2)
         let payload1 = mockNetworkService?.calledNetworkRequests[0]?.payloadAsString()
         XCTAssertTrue(payload1?.contains("&p.&debug=true&.p") ?? false)

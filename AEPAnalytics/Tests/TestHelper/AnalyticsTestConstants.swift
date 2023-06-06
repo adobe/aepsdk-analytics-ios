@@ -93,6 +93,7 @@ enum AnalyticsTestConstants {
         static let DEVICE_RESOLUTION = "a.Resolution"
         static let CARRIER_NAME = "a.CarrierName"
         static let LOCALE = "a.locale"
+        static let SYSTEM_LOCALE = "a.systemLocale"
         static let RUN_MODE = "a.RunMode"
         static let IGNORED_SESSION_LENGTH = "a.ignoredSessionLength"
         static let ACTION_KEY = "a.action"
@@ -121,7 +122,7 @@ enum AnalyticsTestConstants {
         static let LIFECYCLE_RESPONSE_WAIT_TIMEOUT = TimeInterval.init(1)
         static let LAUNCH_DEEPLINK_DATA_WAIT_TIMEOUT = TimeInterval.init(0.5)
         static let LIFECYCLE_MAX_SESSION_LENGTH = TimeInterval.init(0)
-        static let LIFECYCLE_SESSION_START_TIMESTAMP = TimeInterval.init(0)        
+        static let LIFECYCLE_SESSION_START_TIMESTAMP = TimeInterval.init(0)
         static let TIMESTAMP_DISABLED_WAIT_THRESHOLD_SECONDS = TimeInterval.init(60)
     }
 
@@ -204,6 +205,7 @@ enum AnalyticsTestConstants {
         Lifecycle.EventDataKeys.LAUNCHES: ContextDataKeys.LAUNCHES,
         Lifecycle.EventDataKeys.LAUNCHES_SINCE_UPGRADE: ContextDataKeys.LAUNCHES_SINCE_UPGRADE,
         Lifecycle.EventDataKeys.LOCALE: ContextDataKeys.LOCALE,
+        Lifecycle.EventDataKeys.SYSTEM_LOCALE: ContextDataKeys.SYSTEM_LOCALE,
         Lifecycle.EventDataKeys.MONTHLY_ENGAGED_EVENT: ContextDataKeys.MONTHLY_ENGAGED_EVENT_KEY,
         Lifecycle.EventDataKeys.OPERATING_SYSTEM: ContextDataKeys.OPERATING_SYSTEM,
         Lifecycle.EventDataKeys.PREVIOUS_SESSION_LENGTH: ContextDataKeys.PREVIOUS_SESSION_LENGTH,
@@ -278,6 +280,7 @@ enum AnalyticsTestConstants {
             static let LIFECYCLE_PAUSE = "pause"
             static let LIFECYCLE_START = "start"
             static let LOCALE = "locale"
+            static let SYSTEM_LOCALE = "systemlocale"
             static let MAX_SESSION_LENGTH = "maxsessionlength"
             static let MONTHLY_ENGAGED_EVENT = "monthlyenguserevent"
             static let OPERATING_SYSTEM = "osversion"
