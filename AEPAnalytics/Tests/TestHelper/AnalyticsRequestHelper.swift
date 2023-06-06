@@ -50,7 +50,7 @@ class AnalyticsRequestHelper {
                 ret[key] = value.removingPercentEncoding
             }
         }
-        return ret            
+        return ret
     }
 
     static func getAdditionalData(source: String) -> String {

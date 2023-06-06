@@ -16,7 +16,7 @@ import AEPServices
 @testable import AEPCore
 
 @available(tvOSApplicationExtension, unavailable)
-class AnalyticsAppExtTrackTests : AnalyticsTrackTestBase {
+class AnalyticsAppExtTrackTests: AnalyticsTrackTestBase {
 
     override func setUp() {
         runningForApp = false
@@ -28,10 +28,17 @@ class AnalyticsAppExtTrackTests : AnalyticsTrackTestBase {
         trackStateTester()
     }
 
+    func testTrackEmptyState() {
+        trackStateEmptyTester()
+    }
+
     func testTrackAction() {
         trackActionTester()
     }
 
+    func testTrackEmptyAction() {
+        trackActionEmptyTester()
+    }
 
     func testTrackInternalAction() {
         trackInternalActionTester()

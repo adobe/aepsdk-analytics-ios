@@ -21,7 +21,6 @@ class AnalyticsAppExtConsequenceTests: AnalyticsConsequenceTestBase {
         super.setupBase(forApp: false)
         dispatchDefaultConfigAndIdentityStates()
     }
-    
 
     func testHandleAnalyticsConsequence() {
         MobileCore.setLogLevel(.trace)
@@ -29,38 +28,38 @@ class AnalyticsAppExtConsequenceTests: AnalyticsConsequenceTestBase {
             AnalyticsConstants.EventDataKeys.TRIGGERED_CONSEQUENCE: [
                 AnalyticsConstants.EventDataKeys.ID: "id",
                 AnalyticsConstants.EventDataKeys.TYPE: "an",
-                AnalyticsConstants.EventDataKeys.DETAIL : [
-                    "action" : "testActionName",
-                    "contextdata": ["k1" : "v1" , "k2" : "v2"]
+                AnalyticsConstants.EventDataKeys.DETAIL: [
+                    "action": "testActionName",
+                    "contextdata": ["k1": "v1", "k2": "v2"]
                 ]
             ]
         ]
         let ruleEngineEvent = Event(name: "Rule event", type: EventType.rulesEngine, source: EventSource.responseContent, data: eventData)
         mockRuntime.simulateComingEvent(event: ruleEngineEvent)
         waitForProcessing()
-        
+
         let expectedVars = [
             "ce": "UTF-8",
-            "pev2" : "AMACTION:testActionName",
-            "pe" : "lnk_o",
-            "mid" : "mid",
-            "aamb" : "blob",
-            "aamlh" : "lochint",
-            "ts" : String(ruleEngineEvent.timestamp.getUnixTimeInSeconds())
+            "pev2": "AMACTION:testActionName",
+            "pe": "lnk_o",
+            "mid": "mid",
+            "aamb": "blob",
+            "aamlh": "lochint",
+            "ts": String(ruleEngineEvent.timestamp.getUnixTimeInSeconds())
         ]
         let expectedContextData = [
-            "k1" : "v1",
-            "k2" : "v2",
-            "a.action" : "testActionName",
+            "k1": "v1",
+            "k2": "v2",
+            "a.action": "testActionName",
         ]
-                
+
         XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 1)
         verifyHit(request: mockNetworkService?.calledNetworkRequests[0],
                   host: "https://test.com/b/ss/rsid/0/",
                   vars: expectedVars,
                   contextData: expectedContextData)
     }
-    
+
     func testSkipNonAnalyticsConsequence() {
         skipNonAnalyticsConsequence()
     }

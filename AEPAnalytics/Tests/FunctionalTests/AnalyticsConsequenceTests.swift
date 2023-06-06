@@ -29,9 +29,9 @@ class AnalyticsConsequenceTests: AnalyticsConsequenceTestBase {
             AnalyticsConstants.EventDataKeys.TRIGGERED_CONSEQUENCE: [
                 AnalyticsConstants.EventDataKeys.ID: "id",
                 AnalyticsConstants.EventDataKeys.TYPE: "an",
-                AnalyticsConstants.EventDataKeys.DETAIL : [
-                    "action" : "testActionName",
-                    "contextdata": ["k1" : "v1" , "k2" : "v2"]
+                AnalyticsConstants.EventDataKeys.DETAIL: [
+                    "action": "testActionName",
+                    "contextdata": ["k1": "v1", "k2": "v2"]
                 ]
             ]
         ]
@@ -42,17 +42,17 @@ class AnalyticsConsequenceTests: AnalyticsConsequenceTestBase {
         let expectedVars = [
             "ce": "UTF-8",
             "cp": "foreground",
-            "pev2" : "AMACTION:testActionName",
-            "pe" : "lnk_o",
-            "mid" : "mid",
-            "aamb" : "blob",
-            "aamlh" : "lochint",
-            "ts" : String(ruleEngineEvent.timestamp.getUnixTimeInSeconds())
+            "pev2": "AMACTION:testActionName",
+            "pe": "lnk_o",
+            "mid": "mid",
+            "aamb": "blob",
+            "aamlh": "lochint",
+            "ts": String(ruleEngineEvent.timestamp.getUnixTimeInSeconds())
         ]
         let expectedContextData = [
-            "k1" : "v1",
-            "k2" : "v2",
-            "a.action" : "testActionName",
+            "k1": "v1",
+            "k2": "v2",
+            "a.action": "testActionName",
         ]
 
         XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 1)
@@ -66,4 +66,3 @@ class AnalyticsConsequenceTests: AnalyticsConsequenceTestBase {
         skipNonAnalyticsConsequence()
     }
 }
-

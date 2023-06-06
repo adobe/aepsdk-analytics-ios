@@ -20,7 +20,7 @@ let package = Package(
     name: \"TestProject\",
     defaultLocalization: \"en-US\",
     platforms: [
-        .iOS(.v10), .tvOS(.v10)
+        .iOS(.v11), .tvOS(.v11)
     ],
     products: [
         .library(
@@ -56,10 +56,6 @@ xcodebuild archive -scheme TestProject -destination 'generic/platform=iOS'
 # Build for generic iOS device
 echo '############# Build for generic iOS device ###############'
 xcodebuild build -scheme TestProject -destination 'generic/platform=iOS'
-
-# Build for i386 simulator
-echo '############# Build for i386 iOS simulator ###############'
-xcodebuild build -scheme TestProject -destination 'generic/platform=iOS Simulator' ARCHS=i386
 
 # Build for x86_64 simulator
 echo '############# Build for x86_64 iOS simulator ###############'

@@ -14,11 +14,10 @@ import XCTest
 import AEPServices
 @testable import AEPAnalytics
 
-
 class AnalyticsPropertiesTest: XCTestCase {
 
-    var analyticsProperties:AnalyticsProperties!
-    var dataStore:NamedCollectionDataStore!
+    var analyticsProperties: AnalyticsProperties!
+    var dataStore: NamedCollectionDataStore!
 
     override func setUp() {
         ServiceProvider.shared.namedKeyValueService = MockDataStore()
@@ -42,10 +41,10 @@ class AnalyticsPropertiesTest: XCTestCase {
         XCTAssertEqual("testaid", analyticsProperties.getAnalyticsIdentifier())
         XCTAssertEqual(100, analyticsProperties.getMostRecentHitTimestamp())
 
-        //test
+        // test
         analyticsProperties.reset()
 
-        //verify
+        // verify
         XCTAssertNil(analyticsProperties.getVisitorIdentifier())
         XCTAssertNil(analyticsProperties.getAnalyticsIdentifier())
         XCTAssertEqual(0, analyticsProperties.getMostRecentHitTimestamp())

@@ -16,30 +16,31 @@ import AEPServices
 @testable import AEPCore
 
 @available(tvOSApplicationExtension, unavailable)
-class AnalyticsTrack_LifecycleTestBase : AnalyticsFunctionalTestBase {
+class AnalyticsTrack_LifecycleTestBase: AnalyticsFunctionalTestBase {
 
     var runningForApp = true
 
-    //If Lifecycle shared state is available then analytics hits contain lifecycle vars
+    // If Lifecycle shared state is available then analytics hits contain lifecycle vars
     func hitsContainLifecycleVarsTester() {
         dispatchDefaultConfigAndIdentityStates()
 
         let lifecycleSharedState: [String: Any] = [
-            AnalyticsTestConstants.Lifecycle.EventDataKeys.LIFECYCLE_CONTEXT_DATA : [
-                AnalyticsTestConstants.Lifecycle.EventDataKeys.OPERATING_SYSTEM : "mockOSName",
-                AnalyticsTestConstants.Lifecycle.EventDataKeys.LOCALE : "en-US",
-                AnalyticsTestConstants.Lifecycle.EventDataKeys.DEVICE_RESOLUTION : "0x0",
-                AnalyticsTestConstants.Lifecycle.EventDataKeys.CARRIER_NAME : "mockMobileCarrier",
-                AnalyticsTestConstants.Lifecycle.EventDataKeys.DEVICE_NAME : "mockDeviceBuildId",
-                AnalyticsTestConstants.Lifecycle.EventDataKeys.APP_ID : "mockAppName",
-                AnalyticsTestConstants.Lifecycle.EventDataKeys.RUN_MODE : "Application"
+            AnalyticsTestConstants.Lifecycle.EventDataKeys.LIFECYCLE_CONTEXT_DATA: [
+                AnalyticsTestConstants.Lifecycle.EventDataKeys.OPERATING_SYSTEM: "mockOSName",
+                AnalyticsTestConstants.Lifecycle.EventDataKeys.LOCALE: "en-US",
+                AnalyticsTestConstants.Lifecycle.EventDataKeys.SYSTEM_LOCALE: "pt-US",
+                AnalyticsTestConstants.Lifecycle.EventDataKeys.DEVICE_RESOLUTION: "0x0",
+                AnalyticsTestConstants.Lifecycle.EventDataKeys.CARRIER_NAME: "mockMobileCarrier",
+                AnalyticsTestConstants.Lifecycle.EventDataKeys.DEVICE_NAME: "mockDeviceBuildId",
+                AnalyticsTestConstants.Lifecycle.EventDataKeys.APP_ID: "mockAppName",
+                AnalyticsTestConstants.Lifecycle.EventDataKeys.RUN_MODE: "Application"
             ]
         ]
         simulateLifecycleState(data: lifecycleSharedState)
 
         let trackData: [String: Any] = [
-            CoreConstants.Keys.ACTION : "testActionName",
-            CoreConstants.Keys.CONTEXT_DATA : [
+            CoreConstants.Keys.ACTION: "testActionName",
+            CoreConstants.Keys.CONTEXT_DATA: [
                 "k1": "v1",
                 "k2": "v2"
             ]
@@ -54,38 +55,38 @@ class AnalyticsTrack_LifecycleTestBase : AnalyticsFunctionalTestBase {
             expectedVars = [
                 "ce": "UTF-8",
                 "cp": "foreground",
-                "pev2" : "AMACTION:testActionName",
-                "pe" : "lnk_o",
-                "mid" : "mid",
-                "aamb" : "blob",
-                "aamlh" : "lochint",
-                "ts" : String(trackEvent.timestamp.getUnixTimeInSeconds()),
-                "pageName" : "mockAppName",
-                "t" : TimeZone.current.getOffsetFromGmtInMinutes()
+                "pev2": "AMACTION:testActionName",
+                "pe": "lnk_o",
+                "mid": "mid",
+                "aamb": "blob",
+                "aamlh": "lochint",
+                "ts": String(trackEvent.timestamp.getUnixTimeInSeconds()),
+                "pageName": "mockAppName",
+                "t": TimeZone.current.getOffsetFromGmtInMinutes()
             ]
         } else {
             expectedVars = [
                 "ce": "UTF-8",
-                "pev2" : "AMACTION:testActionName",
-                "pe" : "lnk_o",
-                "mid" : "mid",
-                "aamb" : "blob",
-                "aamlh" : "lochint",
-                "ts" : String(trackEvent.timestamp.getUnixTimeInSeconds()),
-                "pageName" : "mockAppName",
-                "t" : TimeZone.current.getOffsetFromGmtInMinutes()
+                "pev2": "AMACTION:testActionName",
+                "pe": "lnk_o",
+                "mid": "mid",
+                "aamb": "blob",
+                "aamlh": "lochint",
+                "ts": String(trackEvent.timestamp.getUnixTimeInSeconds()),
+                "pageName": "mockAppName",
+                "t": TimeZone.current.getOffsetFromGmtInMinutes()
             ]
         }
         let expectedContextData = [
-            "k1" : "v1",
-            "k2" : "v2",
-            "a.action" : "testActionName",
-            "a.AppID" : "mockAppName",
-            "a.CarrierName" : "mockMobileCarrier",
-            "a.DeviceName"  : "mockDeviceBuildId",
-            "a.OSVersion" :  "mockOSName",
-            "a.Resolution" : "0x0",
-            "a.RunMode" : "Application"
+            "k1": "v1",
+            "k2": "v2",
+            "a.action": "testActionName",
+            "a.AppID": "mockAppName",
+            "a.CarrierName": "mockMobileCarrier",
+            "a.DeviceName": "mockDeviceBuildId",
+            "a.OSVersion": "mockOSName",
+            "a.Resolution": "0x0",
+            "a.RunMode": "Application"
         ]
 
         XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 1)
@@ -95,9 +96,9 @@ class AnalyticsTrack_LifecycleTestBase : AnalyticsFunctionalTestBase {
                   contextData: expectedContextData)
     }
 
-    //Lifecycle sends a crash event with previous OS version and previous app version if present in response
+    // Lifecycle sends a crash event with previous OS version and previous app version if present in response
     func lifecycleBackdatedCrashHitTester() {
-        let ts:TimeInterval = 12345678
+        let ts: TimeInterval = 12345678
         let dataStore = NamedCollectionDataStore(name: AnalyticsTestConstants.DATASTORE_NAME)
         dataStore.set(key: AnalyticsTestConstants.DataStoreKeys.MOST_RECENT_HIT_TIMESTAMP, value: ts)
         resetExtension(forApp: runningForApp)
@@ -112,17 +113,18 @@ class AnalyticsTrack_LifecycleTestBase : AnalyticsFunctionalTestBase {
         mockRuntime.simulateComingEvent(event: lifecycleStartEvent)
 
         let lifecycleSharedState: [String: Any] = [
-            AnalyticsTestConstants.Lifecycle.EventDataKeys.LIFECYCLE_CONTEXT_DATA : [
-                AnalyticsTestConstants.Lifecycle.EventDataKeys.OPERATING_SYSTEM : "mockOSName",
-                AnalyticsTestConstants.Lifecycle.EventDataKeys.LOCALE : "en-US",
-                AnalyticsTestConstants.Lifecycle.EventDataKeys.DEVICE_RESOLUTION : "0x0",
-                AnalyticsTestConstants.Lifecycle.EventDataKeys.CARRIER_NAME : "mockMobileCarrier",
-                AnalyticsTestConstants.Lifecycle.EventDataKeys.DEVICE_NAME : "mockDeviceBuildId",
-                AnalyticsTestConstants.Lifecycle.EventDataKeys.APP_ID : "mockAppName",
-                AnalyticsTestConstants.Lifecycle.EventDataKeys.RUN_MODE : "Application",
-                AnalyticsTestConstants.Lifecycle.EventDataKeys.CRASH_EVENT : "CrashEvent",
-                AnalyticsTestConstants.Lifecycle.EventDataKeys.PREVIOUS_OS_VERSION : "previousOSVersion",
-                AnalyticsTestConstants.Lifecycle.EventDataKeys.PREVIOUS_APP_ID : "previousAppId"
+            AnalyticsTestConstants.Lifecycle.EventDataKeys.LIFECYCLE_CONTEXT_DATA: [
+                AnalyticsTestConstants.Lifecycle.EventDataKeys.OPERATING_SYSTEM: "mockOSName",
+                AnalyticsTestConstants.Lifecycle.EventDataKeys.LOCALE: "en-US",
+                AnalyticsTestConstants.Lifecycle.EventDataKeys.SYSTEM_LOCALE: "pt-US",
+                AnalyticsTestConstants.Lifecycle.EventDataKeys.DEVICE_RESOLUTION: "0x0",
+                AnalyticsTestConstants.Lifecycle.EventDataKeys.CARRIER_NAME: "mockMobileCarrier",
+                AnalyticsTestConstants.Lifecycle.EventDataKeys.DEVICE_NAME: "mockDeviceBuildId",
+                AnalyticsTestConstants.Lifecycle.EventDataKeys.APP_ID: "mockAppName",
+                AnalyticsTestConstants.Lifecycle.EventDataKeys.RUN_MODE: "Application",
+                AnalyticsTestConstants.Lifecycle.EventDataKeys.CRASH_EVENT: "CrashEvent",
+                AnalyticsTestConstants.Lifecycle.EventDataKeys.PREVIOUS_OS_VERSION: "previousOSVersion",
+                AnalyticsTestConstants.Lifecycle.EventDataKeys.PREVIOUS_APP_ID: "previousAppId"
             ]
         ]
         simulateLifecycleState(data: lifecycleSharedState)
@@ -137,39 +139,39 @@ class AnalyticsTrack_LifecycleTestBase : AnalyticsFunctionalTestBase {
             crashVars = [
                 "ce": "UTF-8",
                 "cp": "foreground",
-                "pev2" : "ADBINTERNAL:Crash",
-                "pe" : "lnk_o",
-                "mid" : "mid",
-                "aamb" : "blob",
-                "aamlh" : "lochint",
-                "ts" : "12345679", //Most recent timestamp + 1
-                "pageName" : "mockAppName",
-                "t" : TimeZone.current.getOffsetFromGmtInMinutes()
+                "pev2": "ADBINTERNAL:Crash",
+                "pe": "lnk_o",
+                "mid": "mid",
+                "aamb": "blob",
+                "aamlh": "lochint",
+                "ts": "12345679", // Most recent timestamp + 1
+                "pageName": "mockAppName",
+                "t": TimeZone.current.getOffsetFromGmtInMinutes()
             ]
         } else {
             // Lifecycle crash hit
             crashVars = [
                 "ce": "UTF-8",
-                "pev2" : "ADBINTERNAL:Crash",
-                "pe" : "lnk_o",
-                "mid" : "mid",
-                "aamb" : "blob",
-                "aamlh" : "lochint",
-                "ts" : "12345679", //Most recent timestamp + 1
-                "pageName" : "mockAppName",
-                "t" : TimeZone.current.getOffsetFromGmtInMinutes()
+                "pev2": "ADBINTERNAL:Crash",
+                "pe": "lnk_o",
+                "mid": "mid",
+                "aamb": "blob",
+                "aamlh": "lochint",
+                "ts": "12345679", // Most recent timestamp + 1
+                "pageName": "mockAppName",
+                "t": TimeZone.current.getOffsetFromGmtInMinutes()
             ]
         }
 
         let crashContextData = [
-            "a.CrashEvent" : "CrashEvent",
-            "a.internalaction" : "Crash",
-            "a.AppID" : "previousAppId",
-            "a.CarrierName" : "mockMobileCarrier",
-            "a.DeviceName"  : "mockDeviceBuildId",
-            "a.OSVersion" :  "previousOSVersion",
-            "a.Resolution" : "0x0",
-            "a.RunMode" : "Application"
+            "a.CrashEvent": "CrashEvent",
+            "a.internalaction": "Crash",
+            "a.AppID": "previousAppId",
+            "a.CarrierName": "mockMobileCarrier",
+            "a.DeviceName": "mockDeviceBuildId",
+            "a.OSVersion": "previousOSVersion",
+            "a.Resolution": "0x0",
+            "a.RunMode": "Application"
         ]
 
         verifyHit(request: mockNetworkService?.calledNetworkRequests[0],
@@ -182,39 +184,40 @@ class AnalyticsTrack_LifecycleTestBase : AnalyticsFunctionalTestBase {
             lifecycleVars = [
                 "ce": "UTF-8",
                 "cp": "foreground",
-                "pev2" : "ADBINTERNAL:Lifecycle",
-                "pe" : "lnk_o",
-                "mid" : "mid",
-                "aamb" : "blob",
-                "aamlh" : "lochint",
-                "ts" : String(lifecycleResponse.timestamp.getUnixTimeInSeconds()),
-                "pageName" : "mockAppName",
-                "t" : TimeZone.current.getOffsetFromGmtInMinutes()
+                "pev2": "ADBINTERNAL:Lifecycle",
+                "pe": "lnk_o",
+                "mid": "mid",
+                "aamb": "blob",
+                "aamlh": "lochint",
+                "ts": String(lifecycleResponse.timestamp.getUnixTimeInSeconds()),
+                "pageName": "mockAppName",
+                "t": TimeZone.current.getOffsetFromGmtInMinutes()
             ]
         } else {
             // Lifecycle hit
             lifecycleVars = [
                 "ce": "UTF-8",
-                "pev2" : "ADBINTERNAL:Lifecycle",
-                "pe" : "lnk_o",
-                "mid" : "mid",
-                "aamb" : "blob",
-                "aamlh" : "lochint",
-                "ts" : String(lifecycleResponse.timestamp.getUnixTimeInSeconds()),
-                "pageName" : "mockAppName",
-                "t" : TimeZone.current.getOffsetFromGmtInMinutes()
+                "pev2": "ADBINTERNAL:Lifecycle",
+                "pe": "lnk_o",
+                "mid": "mid",
+                "aamb": "blob",
+                "aamlh": "lochint",
+                "ts": String(lifecycleResponse.timestamp.getUnixTimeInSeconds()),
+                "pageName": "mockAppName",
+                "t": TimeZone.current.getOffsetFromGmtInMinutes()
             ]
         }
 
         let lifecycleContextData = [
-            "a.internalaction" : "Lifecycle",
-            "a.AppID" : "mockAppName",
-            "a.CarrierName" : "mockMobileCarrier",
-            "a.DeviceName"  : "mockDeviceBuildId",
-            "a.OSVersion" :  "mockOSName",
-            "a.Resolution" : "0x0",
-            "a.RunMode" : "Application",
-            "a.locale" : "en-US"
+            "a.internalaction": "Lifecycle",
+            "a.AppID": "mockAppName",
+            "a.CarrierName": "mockMobileCarrier",
+            "a.DeviceName": "mockDeviceBuildId",
+            "a.OSVersion": "mockOSName",
+            "a.Resolution": "0x0",
+            "a.RunMode": "Application",
+            "a.locale": "en-US",
+            "a.systemLocale": "pt-US"
         ]
 
         verifyHit(request: mockNetworkService?.calledNetworkRequests[1],
@@ -238,20 +241,21 @@ class AnalyticsTrack_LifecycleTestBase : AnalyticsFunctionalTestBase {
         let previousSessionPauseTs = Date().timeIntervalSince1970 - 20
 
         let lifecycleEventData: [String: Any] = [
-            AnalyticsTestConstants.Lifecycle.EventDataKeys.LIFECYCLE_CONTEXT_DATA : [
-                AnalyticsTestConstants.Lifecycle.EventDataKeys.OPERATING_SYSTEM : "mockOSName",
-                AnalyticsTestConstants.Lifecycle.EventDataKeys.LOCALE : "en-US",
-                AnalyticsTestConstants.Lifecycle.EventDataKeys.DEVICE_RESOLUTION : "0x0",
-                AnalyticsTestConstants.Lifecycle.EventDataKeys.CARRIER_NAME : "mockMobileCarrier",
-                AnalyticsTestConstants.Lifecycle.EventDataKeys.DEVICE_NAME : "mockDeviceBuildId",
-                AnalyticsTestConstants.Lifecycle.EventDataKeys.APP_ID : "mockAppName",
-                AnalyticsTestConstants.Lifecycle.EventDataKeys.RUN_MODE : "Application",
-                AnalyticsTestConstants.Lifecycle.EventDataKeys.PREVIOUS_SESSION_LENGTH : "100",
-                AnalyticsTestConstants.Lifecycle.EventDataKeys.PREVIOUS_OS_VERSION : "previousOSVersion",
-                AnalyticsTestConstants.Lifecycle.EventDataKeys.PREVIOUS_APP_ID : "previousAppId"
+            AnalyticsTestConstants.Lifecycle.EventDataKeys.LIFECYCLE_CONTEXT_DATA: [
+                AnalyticsTestConstants.Lifecycle.EventDataKeys.OPERATING_SYSTEM: "mockOSName",
+                AnalyticsTestConstants.Lifecycle.EventDataKeys.LOCALE: "en-US",
+                AnalyticsTestConstants.Lifecycle.EventDataKeys.SYSTEM_LOCALE: "pt-US",
+                AnalyticsTestConstants.Lifecycle.EventDataKeys.DEVICE_RESOLUTION: "0x0",
+                AnalyticsTestConstants.Lifecycle.EventDataKeys.CARRIER_NAME: "mockMobileCarrier",
+                AnalyticsTestConstants.Lifecycle.EventDataKeys.DEVICE_NAME: "mockDeviceBuildId",
+                AnalyticsTestConstants.Lifecycle.EventDataKeys.APP_ID: "mockAppName",
+                AnalyticsTestConstants.Lifecycle.EventDataKeys.RUN_MODE: "Application",
+                AnalyticsTestConstants.Lifecycle.EventDataKeys.PREVIOUS_SESSION_LENGTH: "100",
+                AnalyticsTestConstants.Lifecycle.EventDataKeys.PREVIOUS_OS_VERSION: "previousOSVersion",
+                AnalyticsTestConstants.Lifecycle.EventDataKeys.PREVIOUS_APP_ID: "previousAppId"
             ],
-            AnalyticsTestConstants.Lifecycle.EventDataKeys.SESSION_START_TIMESTAMP : sessionStartTs,
-            AnalyticsTestConstants.Lifecycle.EventDataKeys.PREVIOUS_SESSION_PAUSE_TIMESTAMP : previousSessionPauseTs
+            AnalyticsTestConstants.Lifecycle.EventDataKeys.SESSION_START_TIMESTAMP: sessionStartTs,
+            AnalyticsTestConstants.Lifecycle.EventDataKeys.PREVIOUS_SESSION_PAUSE_TIMESTAMP: previousSessionPauseTs
         ]
         let lifecycleResponse = Event(name: "", type: EventType.lifecycle, source: EventSource.responseContent, data: lifecycleEventData)
         simulateLifecycleState(data: lifecycleEventData)
@@ -266,38 +270,38 @@ class AnalyticsTrack_LifecycleTestBase : AnalyticsFunctionalTestBase {
             sessionInfoVars = [
                 "ce": "UTF-8",
                 "cp": "foreground",
-                "pev2" : "ADBINTERNAL:SessionInfo",
-                "pe" : "lnk_o",
-                "mid" : "mid",
-                "aamb" : "blob",
-                "aamlh" : "lochint",
-                "ts" : String(Int64(previousSessionPauseTs + 1)),
-                "pageName" : "mockAppName",
-                "t" : TimeZone.current.getOffsetFromGmtInMinutes()
+                "pev2": "ADBINTERNAL:SessionInfo",
+                "pe": "lnk_o",
+                "mid": "mid",
+                "aamb": "blob",
+                "aamlh": "lochint",
+                "ts": String(Int64(previousSessionPauseTs + 1)),
+                "pageName": "mockAppName",
+                "t": TimeZone.current.getOffsetFromGmtInMinutes()
             ]
         } else {
             // Lifecycle session hit
             sessionInfoVars = [
                 "ce": "UTF-8",
-                "pev2" : "ADBINTERNAL:SessionInfo",
-                "pe" : "lnk_o",
-                "mid" : "mid",
-                "aamb" : "blob",
-                "aamlh" : "lochint",
-                "ts" : String(Int64(previousSessionPauseTs + 1)),
-                "pageName" : "mockAppName",
-                "t" : TimeZone.current.getOffsetFromGmtInMinutes()
+                "pev2": "ADBINTERNAL:SessionInfo",
+                "pe": "lnk_o",
+                "mid": "mid",
+                "aamb": "blob",
+                "aamlh": "lochint",
+                "ts": String(Int64(previousSessionPauseTs + 1)),
+                "pageName": "mockAppName",
+                "t": TimeZone.current.getOffsetFromGmtInMinutes()
             ]
         }
         let sessionInfoContextData = [
-            "a.internalaction" : "SessionInfo",
-            "a.AppID" : "previousAppId",
-            "a.CarrierName" : "mockMobileCarrier",
-            "a.DeviceName"  : "mockDeviceBuildId",
-            "a.OSVersion" :  "previousOSVersion",
-            "a.Resolution" : "0x0",
-            "a.RunMode" : "Application",
-            "a.PrevSessionLength" : "100"
+            "a.internalaction": "SessionInfo",
+            "a.AppID": "previousAppId",
+            "a.CarrierName": "mockMobileCarrier",
+            "a.DeviceName": "mockDeviceBuildId",
+            "a.OSVersion": "previousOSVersion",
+            "a.Resolution": "0x0",
+            "a.RunMode": "Application",
+            "a.PrevSessionLength": "100"
         ]
 
         verifyHit(request: mockNetworkService?.calledNetworkRequests[0],
@@ -310,41 +314,42 @@ class AnalyticsTrack_LifecycleTestBase : AnalyticsFunctionalTestBase {
             lifecycleVars = [
                 "ce": "UTF-8",
                 "cp": "foreground",
-                "pev2" : "ADBINTERNAL:Lifecycle",
-                "pe" : "lnk_o",
-                "mid" : "mid",
-                "aamb" : "blob",
-                "aamlh" : "lochint",
-                "ts" : String(lifecycleResponse.timestamp.getUnixTimeInSeconds()),
+                "pev2": "ADBINTERNAL:Lifecycle",
+                "pe": "lnk_o",
+                "mid": "mid",
+                "aamb": "blob",
+                "aamlh": "lochint",
+                "ts": String(lifecycleResponse.timestamp.getUnixTimeInSeconds()),
 
-                "pageName" : "mockAppName",
-                "t" : TimeZone.current.getOffsetFromGmtInMinutes()
+                "pageName": "mockAppName",
+                "t": TimeZone.current.getOffsetFromGmtInMinutes()
             ]
         } else {
             // Lifecycle hit
             lifecycleVars = [
                 "ce": "UTF-8",
-                "pev2" : "ADBINTERNAL:Lifecycle",
-                "pe" : "lnk_o",
-                "mid" : "mid",
-                "aamb" : "blob",
-                "aamlh" : "lochint",
-                "ts" : String(lifecycleResponse.timestamp.getUnixTimeInSeconds()),
+                "pev2": "ADBINTERNAL:Lifecycle",
+                "pe": "lnk_o",
+                "mid": "mid",
+                "aamb": "blob",
+                "aamlh": "lochint",
+                "ts": String(lifecycleResponse.timestamp.getUnixTimeInSeconds()),
 
-                "pageName" : "mockAppName",
-                "t" : TimeZone.current.getOffsetFromGmtInMinutes()
+                "pageName": "mockAppName",
+                "t": TimeZone.current.getOffsetFromGmtInMinutes()
             ]
         }
 
         let lifecycleContextData = [
-            "a.internalaction" : "Lifecycle",
-            "a.AppID" : "mockAppName",
-            "a.CarrierName" : "mockMobileCarrier",
-            "a.DeviceName"  : "mockDeviceBuildId",
-            "a.OSVersion" :  "mockOSName",
-            "a.Resolution" : "0x0",
-            "a.RunMode" : "Application",
-            "a.locale" : "en-US"
+            "a.internalaction": "Lifecycle",
+            "a.AppID": "mockAppName",
+            "a.CarrierName": "mockMobileCarrier",
+            "a.DeviceName": "mockDeviceBuildId",
+            "a.OSVersion": "mockOSName",
+            "a.Resolution": "0x0",
+            "a.RunMode": "Application",
+            "a.locale": "en-US",
+            "a.systemLocale": "pt-US"
         ]
 
         verifyHit(request: mockNetworkService?.calledNetworkRequests[1],
@@ -354,30 +359,31 @@ class AnalyticsTrack_LifecycleTestBase : AnalyticsFunctionalTestBase {
 
     }
 
-    //If Lifecycle shared state is available then analytics hits contain lifecycle vars
+    // If Lifecycle shared state is available then analytics hits contain lifecycle vars
     func hitsContainTimeSinceLaunchTester() {
         dispatchDefaultConfigAndIdentityStates()
 
         let now = Date().timeIntervalSince1970
 
         let lifecycleSharedState: [String: Any] = [
-            AnalyticsTestConstants.Lifecycle.EventDataKeys.LIFECYCLE_CONTEXT_DATA : [
-                AnalyticsTestConstants.Lifecycle.EventDataKeys.OPERATING_SYSTEM : "mockOSName",
-                AnalyticsTestConstants.Lifecycle.EventDataKeys.LOCALE : "en-US",
-                AnalyticsTestConstants.Lifecycle.EventDataKeys.DEVICE_RESOLUTION : "0x0",
-                AnalyticsTestConstants.Lifecycle.EventDataKeys.CARRIER_NAME : "mockMobileCarrier",
-                AnalyticsTestConstants.Lifecycle.EventDataKeys.DEVICE_NAME : "mockDeviceBuildId",
-                AnalyticsTestConstants.Lifecycle.EventDataKeys.APP_ID : "mockAppName",
-                AnalyticsTestConstants.Lifecycle.EventDataKeys.RUN_MODE : "Application"
+            AnalyticsTestConstants.Lifecycle.EventDataKeys.LIFECYCLE_CONTEXT_DATA: [
+                AnalyticsTestConstants.Lifecycle.EventDataKeys.OPERATING_SYSTEM: "mockOSName",
+                AnalyticsTestConstants.Lifecycle.EventDataKeys.LOCALE: "en-US",
+                AnalyticsTestConstants.Lifecycle.EventDataKeys.SYSTEM_LOCALE: "pt-US",
+                AnalyticsTestConstants.Lifecycle.EventDataKeys.DEVICE_RESOLUTION: "0x0",
+                AnalyticsTestConstants.Lifecycle.EventDataKeys.CARRIER_NAME: "mockMobileCarrier",
+                AnalyticsTestConstants.Lifecycle.EventDataKeys.DEVICE_NAME: "mockDeviceBuildId",
+                AnalyticsTestConstants.Lifecycle.EventDataKeys.APP_ID: "mockAppName",
+                AnalyticsTestConstants.Lifecycle.EventDataKeys.RUN_MODE: "Application"
             ],
-            AnalyticsTestConstants.Lifecycle.EventDataKeys.SESSION_START_TIMESTAMP : now,
-            AnalyticsTestConstants.Lifecycle.EventDataKeys.MAX_SESSION_LENGTH : 300.0
+            AnalyticsTestConstants.Lifecycle.EventDataKeys.SESSION_START_TIMESTAMP: now,
+            AnalyticsTestConstants.Lifecycle.EventDataKeys.MAX_SESSION_LENGTH: 300.0
         ]
         simulateLifecycleState(data: lifecycleSharedState)
 
         let trackData: [String: Any] = [
-            CoreConstants.Keys.ACTION : "testActionName",
-            CoreConstants.Keys.CONTEXT_DATA : [
+            CoreConstants.Keys.ACTION: "testActionName",
+            CoreConstants.Keys.CONTEXT_DATA: [
                 "k1": "v1",
                 "k2": "v2"
             ]
@@ -393,39 +399,39 @@ class AnalyticsTrack_LifecycleTestBase : AnalyticsFunctionalTestBase {
             expectedVars = [
                 "ce": "UTF-8",
                 "cp": "foreground",
-                "pev2" : "AMACTION:testActionName",
-                "pe" : "lnk_o",
-                "mid" : "mid",
-                "aamb" : "blob",
-                "aamlh" : "lochint",
-                "ts" : String(trackEventAfter10Sec.timestamp.getUnixTimeInSeconds()),
-                "pageName" : "mockAppName",
-                "t" : TimeZone.current.getOffsetFromGmtInMinutes()
+                "pev2": "AMACTION:testActionName",
+                "pe": "lnk_o",
+                "mid": "mid",
+                "aamb": "blob",
+                "aamlh": "lochint",
+                "ts": String(trackEventAfter10Sec.timestamp.getUnixTimeInSeconds()),
+                "pageName": "mockAppName",
+                "t": TimeZone.current.getOffsetFromGmtInMinutes()
             ]
         } else {
             expectedVars = [
                 "ce": "UTF-8",
-                "pev2" : "AMACTION:testActionName",
-                "pe" : "lnk_o",
-                "mid" : "mid",
-                "aamb" : "blob",
-                "aamlh" : "lochint",
-                "ts" : String(trackEventAfter10Sec.timestamp.getUnixTimeInSeconds()),
-                "pageName" : "mockAppName",
-                "t" : TimeZone.current.getOffsetFromGmtInMinutes()
+                "pev2": "AMACTION:testActionName",
+                "pe": "lnk_o",
+                "mid": "mid",
+                "aamb": "blob",
+                "aamlh": "lochint",
+                "ts": String(trackEventAfter10Sec.timestamp.getUnixTimeInSeconds()),
+                "pageName": "mockAppName",
+                "t": TimeZone.current.getOffsetFromGmtInMinutes()
             ]
         }
         let expectedContextData = [
-            "k1" : "v1",
-            "k2" : "v2",
-            "a.action" : "testActionName",
-            "a.AppID" : "mockAppName",
-            "a.CarrierName" : "mockMobileCarrier",
-            "a.DeviceName"  : "mockDeviceBuildId",
-            "a.OSVersion" :  "mockOSName",
-            "a.Resolution" : "0x0",
-            "a.RunMode" : "Application",
-            "a.TimeSinceLaunch" : "10"
+            "k1": "v1",
+            "k2": "v2",
+            "a.action": "testActionName",
+            "a.AppID": "mockAppName",
+            "a.CarrierName": "mockMobileCarrier",
+            "a.DeviceName": "mockDeviceBuildId",
+            "a.OSVersion": "mockOSName",
+            "a.Resolution": "0x0",
+            "a.RunMode": "Application",
+            "a.TimeSinceLaunch": "10"
         ]
 
         XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 1)

@@ -36,7 +36,6 @@ class AnalyticsAPITests: XCTestCase {
         semaphore.wait()
     }
 
-
     func testClearQueue() {
         // setup
         let expectation = XCTestExpectation(description: "clearQueue should dispatch an event")
@@ -82,7 +81,7 @@ class AnalyticsAPITests: XCTestCase {
         }
 
         // test
-        Analytics.getQueueSize(){ (queueSize, error) in }
+        Analytics.getQueueSize { (_, _) in }
 
         // verify
         wait(for: [expectation], timeout: 1.0)
@@ -102,7 +101,7 @@ class AnalyticsAPITests: XCTestCase {
         }
 
         // test
-        Analytics.getQueueSize(){ (queueSize, error) in
+        Analytics.getQueueSize { (queueSize, error) in
             XCTAssertEqual(queueSize, 10)
             XCTAssertNil(error)
             expectation.fulfill()
@@ -123,7 +122,7 @@ class AnalyticsAPITests: XCTestCase {
         }
 
         // test
-        Analytics.getQueueSize(){ (queueSize, error) in
+        Analytics.getQueueSize { (queueSize, error) in
             XCTAssertEqual(queueSize, 0)
             XCTAssertEqual(error as? AEPError, .unexpected)
             expectation.fulfill()
@@ -139,7 +138,7 @@ class AnalyticsAPITests: XCTestCase {
         expectation.assertForOverFulfill = true
 
         // test
-        Analytics.getQueueSize(){ (queueSize, error) in
+        Analytics.getQueueSize { (queueSize, error) in
             XCTAssertEqual(queueSize, 0)
             XCTAssertEqual(error as? AEPError, .callbackTimeout)
             expectation.fulfill()
@@ -154,12 +153,12 @@ class AnalyticsAPITests: XCTestCase {
         let expectation = XCTestExpectation(description: "getTrackingIdentifier should dispatch an event")
         expectation.assertForOverFulfill = true
 
-        EventHub.shared.getExtensionContainer(MockExtension.self)?.registerListener(type: EventType.analytics, source: EventSource.requestIdentity) { (event) in
+        EventHub.shared.getExtensionContainer(MockExtension.self)?.registerListener(type: EventType.analytics, source: EventSource.requestIdentity) { (_) in
             expectation.fulfill()
         }
 
         // test
-        Analytics.getTrackingIdentifier(){(identifier, error) in }
+        Analytics.getTrackingIdentifier {(_, _) in }
 
         // verify
         wait(for: [expectation], timeout: 1.0)
@@ -178,9 +177,8 @@ class AnalyticsAPITests: XCTestCase {
             EventHub.shared.dispatch(event: responseEvent)
         }
 
-
         // test
-        Analytics.getTrackingIdentifier(){(identifier, error) in
+        Analytics.getTrackingIdentifier {(identifier, error) in
             XCTAssertEqual(identifier, "aidvalue")
             XCTAssertNil(error)
             expectation.fulfill()
@@ -201,7 +199,7 @@ class AnalyticsAPITests: XCTestCase {
         }
 
         // test
-        Analytics.getTrackingIdentifier(){(identifier, error) in
+        Analytics.getTrackingIdentifier {(identifier, error) in
             XCTAssertNil(identifier)
             XCTAssertNil(error)
             expectation.fulfill()
@@ -225,7 +223,7 @@ class AnalyticsAPITests: XCTestCase {
         }
 
         // test
-        Analytics.getTrackingIdentifier(){(identifier, error) in
+        Analytics.getTrackingIdentifier {(identifier, error) in
             XCTAssertNil(identifier)
             XCTAssertEqual(error as? AEPError, .unexpected)
             expectation.fulfill()
@@ -241,7 +239,7 @@ class AnalyticsAPITests: XCTestCase {
         expectation.assertForOverFulfill = true
 
         // test
-        Analytics.getTrackingIdentifier(){(identifier, error) in
+        Analytics.getTrackingIdentifier {(identifier, error) in
             XCTAssertNil(identifier)
             XCTAssertEqual(error as? AEPError, .callbackTimeout)
             expectation.fulfill()
@@ -273,12 +271,12 @@ class AnalyticsAPITests: XCTestCase {
         let expectation = XCTestExpectation(description: "getVisitoridentifier should dispatch an event")
         expectation.assertForOverFulfill = true
 
-        EventHub.shared.getExtensionContainer(MockExtension.self)?.registerListener(type: EventType.analytics, source: EventSource.requestIdentity) { (event) in
+        EventHub.shared.getExtensionContainer(MockExtension.self)?.registerListener(type: EventType.analytics, source: EventSource.requestIdentity) { (_) in
             expectation.fulfill()
         }
 
         // test
-        Analytics.getVisitorIdentifier(){(identifier, error) in }
+        Analytics.getVisitorIdentifier {(_, _) in }
 
         // verify
         wait(for: [expectation], timeout: 1.0)
@@ -298,7 +296,7 @@ class AnalyticsAPITests: XCTestCase {
         }
 
         // test
-        Analytics.getVisitorIdentifier(){(identifier, error) in
+        Analytics.getVisitorIdentifier {(identifier, error) in
             XCTAssertEqual(identifier, "vidvalue")
             XCTAssertNil(error)
             expectation.fulfill()
@@ -319,7 +317,7 @@ class AnalyticsAPITests: XCTestCase {
         }
 
         // test
-        Analytics.getVisitorIdentifier(){(identifier, error) in
+        Analytics.getVisitorIdentifier {(identifier, error) in
             XCTAssertNil(identifier)
             XCTAssertNil(error)
             expectation.fulfill()
@@ -343,7 +341,7 @@ class AnalyticsAPITests: XCTestCase {
         }
 
         // test
-        Analytics.getVisitorIdentifier(){(identifier, error) in
+        Analytics.getVisitorIdentifier {(identifier, error) in
             XCTAssertNil(identifier)
             XCTAssertEqual(error as? AEPError, .unexpected)
             expectation.fulfill()
@@ -353,14 +351,13 @@ class AnalyticsAPITests: XCTestCase {
         wait(for: [expectation], timeout: 1.0)
     }
 
-
     func testGetVisitorIdentifier_Timeout() {
         // setup
         let expectation = XCTestExpectation(description: "getVisitoridentifier should timeout without response")
         expectation.assertForOverFulfill = true
 
         // test
-        Analytics.getVisitorIdentifier(){(identifier, error) in
+        Analytics.getVisitorIdentifier {(identifier, error) in
             XCTAssertNil(identifier)
             XCTAssertEqual(error as? AEPError, .callbackTimeout)
             expectation.fulfill()
@@ -369,7 +366,5 @@ class AnalyticsAPITests: XCTestCase {
         // verify
         wait(for: [expectation], timeout: 1.5)
     }
-
-
 
 }

@@ -1,4 +1,3 @@
-
 /*
  Copyright 2022 Adobe. All rights reserved.
  This file is licensed to you under the Apache License, Version 2.0 (the "License");
@@ -20,7 +19,7 @@ import AEPServices
 /// A base for AnalyticsAppExtension and Analytics classes to test. Shared tests without different results live in the base
 ///
 @available(tvOSApplicationExtension, unavailable)
-class AnalyticsConsequenceTestBase : AnalyticsFunctionalTestBase {
+class AnalyticsConsequenceTestBase: AnalyticsFunctionalTestBase {
 
     // Do not process non "an" consequence types
     func skipNonAnalyticsConsequence() {
@@ -28,9 +27,9 @@ class AnalyticsConsequenceTestBase : AnalyticsFunctionalTestBase {
             AnalyticsConstants.EventDataKeys.TRIGGERED_CONSEQUENCE: [
                 AnalyticsConstants.EventDataKeys.ID: "id",
                 AnalyticsConstants.EventDataKeys.TYPE: "me", // Type should be "an" for this extension to process
-                AnalyticsConstants.EventDataKeys.DETAIL : [
-                    "action" : "testActionName",
-                    "contextdata": ["k1" : "v1" , "k2" : "v2"]
+                AnalyticsConstants.EventDataKeys.DETAIL: [
+                    "action": "testActionName",
+                    "contextdata": ["k1": "v1", "k2": "v2"]
                 ]
             ]
         ]

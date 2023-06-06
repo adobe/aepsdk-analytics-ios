@@ -16,18 +16,18 @@ import AEPServices
 @testable import AEPCore
 
 @available(tvOSApplicationExtension, unavailable)
-class AnalyticsAppExtHitReorderTests : AnalyticsHitReorderTestBase {
+class AnalyticsAppExtHitReorderTests: AnalyticsHitReorderTestBase {
 
     override func setUp() {
         runningForAppTests = false
         super.setupBase(forApp: false)
     }
-    
-    //Lifecycle data and acquisition data appended to the first custom analytics hit
+
+    // Lifecycle data and acquisition data appended to the first custom analytics hit
     func testDataAppendedToFirstCustomHit() {
         dataAppendedToFirstCustomHitTester()
     }
-    
+
     // Verify acquisition data sent out on second hit if referrer timer is exceeded
     func testAcquisitionDataTimeOutForInstall() {
         acquisitionDataTimeOutForInstallTester()
@@ -37,12 +37,12 @@ class AnalyticsAppExtHitReorderTests : AnalyticsHitReorderTestBase {
     func testAnalyticsRequestMadePriorToCollectionOfLifecycleAndAcquisition() {
         analyticsRequestMadePriorToCollectionOfLifecycleAndAcquisitionTester()
     }
-    
+
     // Verify no custom track occurs until lifecycle and acquisition data are processed
     func testCustomTrackWaitsForProcessingOfLifecycleAndAcquisition() {
         customTrackWaitsForProcessingOfLifecycleAndAcquisitionTester()
     }
-    
+
     // Acquisition as seperate hit
     func testAcquisitionSentAsSeperateHit() {
         acquisitionSentAsSeperateHitTester()

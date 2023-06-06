@@ -16,7 +16,7 @@ import AEPServices
 
 @testable import AEPAnalytics
 
-class URL_AnalyticsTests: XCTestCase {
+class AnalyticsURLTests: XCTestCase {
 
     let version = AnalyticsVersion.getVersion()
     var analyticsState: AnalyticsState!
@@ -26,7 +26,7 @@ class URL_AnalyticsTests: XCTestCase {
     }
 
     func testGetBaseUrlNilWhenAnalyticsNotConfiguredEmpty() {
-        XCTAssertNil(URL.getAnalyticsBaseUrl(state: analyticsState))        
+        XCTAssertNil(URL.getAnalyticsBaseUrl(state: analyticsState))
     }
 
     func testGetBaseUrlWhenAnalyticsForwarding() {

@@ -114,7 +114,7 @@ public class AnalyticsBase: NSObject, Extension {
         registerListener(type: EventType.lifecycle, source: EventSource.responseContent, listener: handleIncomingEvent)
         registerListener(type: EventType.genericLifecycle, source: EventSource.requestContent, listener: handleIncomingEvent)
         registerListener(type: EventType.hub, source: EventSource.sharedState, listener: handleIncomingEvent)
-        registerListener(type: EventType.genericIdentity, source: EventSource.requestReset, listener: handleResetIdentitiesEvent)
+        registerListener(type: EventType.genericIdentity, source: EventSource.requestReset, listener: handleIncomingEvent)
     }
 
     /// Invoked when the Analytics extension has been unregistered by the `EventHub`, currently a no-op.
@@ -164,6 +164,10 @@ public class AnalyticsBase: NSObject, Extension {
                     self.handleAnalyticsRequestIdentityEvent(event)
                 } else if event.source == EventSource.requestContent {
                     self.handleAnalyticsRequestContentEvent(event)
+                }
+            case EventType.genericIdentity:
+                if event.source == EventSource.requestReset {
+                    self.handleResetIdentitiesEvent(event)
                 }
             default:
                 break
@@ -588,14 +592,14 @@ public class AnalyticsBase: NSObject, Extension {
             return analyticsVars
         }
 
-        if let actionName = trackData[AnalyticsConstants.EventDataKeys.TRACK_ACTION] as? String {
+        if let actionName = trackData[AnalyticsConstants.EventDataKeys.TRACK_ACTION] as? String, !actionName.isEmpty {
             analyticsVars[AnalyticsConstants.Request.IGNORE_PAGE_NAME_KEY] = AnalyticsConstants.IGNORE_PAGE_NAME_VALUE
             let isInternal = trackData[AnalyticsConstants.EventDataKeys.TRACK_INTERNAL] as? Bool ?? false
             let actionNameWithPrefix = "\(isInternal ? AnalyticsConstants.INTERNAL_ACTION_PREFIX : AnalyticsConstants.ACTION_PREFIX)\(actionName)"
             analyticsVars[AnalyticsConstants.Request.ACTION_NAME_KEY] = actionNameWithPrefix
         }
         analyticsVars[AnalyticsConstants.Request.PAGE_NAME_KEY] = analyticsState.applicationId
-        if let stateName = trackData[AnalyticsConstants.EventDataKeys.TRACK_STATE] as? String {
+        if let stateName = trackData[AnalyticsConstants.EventDataKeys.TRACK_STATE] as? String, !stateName.isEmpty {
             analyticsVars[AnalyticsConstants.Request.PAGE_NAME_KEY] = stateName
         }
 

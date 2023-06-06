@@ -16,24 +16,23 @@ import AEPServices
 @testable import AEPCore
 
 @available(tvOSApplicationExtension, unavailable)
-class AnalyticsTrack_PlacesTestBase : AnalyticsFunctionalTestBase {
+class AnalyticsTrack_PlacesTestBase: AnalyticsFunctionalTestBase {
 
     var runningForApp = true
-    
-    //If Places shared state is available then analytics hits contain places data
+
+    // If Places shared state is available then analytics hits contain places data
     func analyticsHitsContainPlacesDataTester() {
         let placesSharedState: [String: Any] = [
-            AnalyticsTestConstants.Places.EventDataKeys.CURRENT_POI : [
-                AnalyticsTestConstants.Places.EventDataKeys.REGION_ID : "myRegionId",
-                AnalyticsTestConstants.Places.EventDataKeys.REGION_NAME : "myRegionName"
+            AnalyticsTestConstants.Places.EventDataKeys.CURRENT_POI: [
+                AnalyticsTestConstants.Places.EventDataKeys.REGION_ID: "myRegionId",
+                AnalyticsTestConstants.Places.EventDataKeys.REGION_NAME: "myRegionName"
             ]
         ]
         simulatePlacesState(data: placesSharedState)
 
-
         let trackData: [String: Any] = [
-            CoreConstants.Keys.ACTION : "testActionName",
-            CoreConstants.Keys.CONTEXT_DATA : [
+            CoreConstants.Keys.ACTION: "testActionName",
+            CoreConstants.Keys.CONTEXT_DATA: [
                 "k1": "v1",
                 "k2": "v2"
             ]
@@ -48,30 +47,30 @@ class AnalyticsTrack_PlacesTestBase : AnalyticsFunctionalTestBase {
             expectedVars = [
                 "ce": "UTF-8",
                 "cp": "foreground",
-                "pev2" : "AMACTION:testActionName",
-                "pe" : "lnk_o",
-                "mid" : "mid",
-                "aamb" : "blob",
-                "aamlh" : "lochint",
-                "ts" : String(trackEvent.timestamp.getUnixTimeInSeconds())
+                "pev2": "AMACTION:testActionName",
+                "pe": "lnk_o",
+                "mid": "mid",
+                "aamb": "blob",
+                "aamlh": "lochint",
+                "ts": String(trackEvent.timestamp.getUnixTimeInSeconds())
             ]
         } else {
             expectedVars = [
                 "ce": "UTF-8",
-                "pev2" : "AMACTION:testActionName",
-                "pe" : "lnk_o",
-                "mid" : "mid",
-                "aamb" : "blob",
-                "aamlh" : "lochint",
-                "ts" : String(trackEvent.timestamp.getUnixTimeInSeconds())
+                "pev2": "AMACTION:testActionName",
+                "pe": "lnk_o",
+                "mid": "mid",
+                "aamb": "blob",
+                "aamlh": "lochint",
+                "ts": String(trackEvent.timestamp.getUnixTimeInSeconds())
             ]
         }
         let expectedContextData = [
-            "k1" : "v1",
-            "k2" : "v2",
-            "a.action" : "testActionName",
-            "a.loc.poi.id" : "myRegionId",
-            "a.loc.poi" : "myRegionName"
+            "k1": "v1",
+            "k2": "v2",
+            "a.action": "testActionName",
+            "a.loc.poi.id": "myRegionId",
+            "a.loc.poi": "myRegionName"
         ]
 
         XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 1)
@@ -81,21 +80,19 @@ class AnalyticsTrack_PlacesTestBase : AnalyticsFunctionalTestBase {
                   contextData: expectedContextData)
     }
 
-
     // If Places shared state is updated then analytics hits contain updated places data
     func analyticsHitsContainUpdatePlacesDataTester() {
         let placesSharedState: [String: Any] = [
-            AnalyticsTestConstants.Places.EventDataKeys.CURRENT_POI : [
-                AnalyticsTestConstants.Places.EventDataKeys.REGION_ID : "myRegionId",
-                AnalyticsTestConstants.Places.EventDataKeys.REGION_NAME : "myRegionName"
+            AnalyticsTestConstants.Places.EventDataKeys.CURRENT_POI: [
+                AnalyticsTestConstants.Places.EventDataKeys.REGION_ID: "myRegionId",
+                AnalyticsTestConstants.Places.EventDataKeys.REGION_NAME: "myRegionName"
             ]
         ]
         simulatePlacesState(data: placesSharedState)
 
-
         let trackData: [String: Any] = [
-            CoreConstants.Keys.ACTION : "testActionName",
-            CoreConstants.Keys.CONTEXT_DATA : [
+            CoreConstants.Keys.ACTION: "testActionName",
+            CoreConstants.Keys.CONTEXT_DATA: [
                 "k1": "v1",
                 "k2": "v2"
             ]
@@ -103,9 +100,9 @@ class AnalyticsTrack_PlacesTestBase : AnalyticsFunctionalTestBase {
         let trackEvent = Event(name: "Generic track event", type: EventType.genericTrack, source: EventSource.requestContent, data: trackData)
 
         let updatedPlacesState: [String: Any] = [
-            AnalyticsTestConstants.Places.EventDataKeys.CURRENT_POI : [
-                AnalyticsTestConstants.Places.EventDataKeys.REGION_ID : "myRegionId2",
-                AnalyticsTestConstants.Places.EventDataKeys.REGION_NAME : "myRegionName2"
+            AnalyticsTestConstants.Places.EventDataKeys.CURRENT_POI: [
+                AnalyticsTestConstants.Places.EventDataKeys.REGION_ID: "myRegionId2",
+                AnalyticsTestConstants.Places.EventDataKeys.REGION_NAME: "myRegionName2"
             ]
         ]
         simulatePlacesState(data: updatedPlacesState)
@@ -118,30 +115,30 @@ class AnalyticsTrack_PlacesTestBase : AnalyticsFunctionalTestBase {
             expectedVars = [
                 "ce": "UTF-8",
                 "cp": "foreground",
-                "pev2" : "AMACTION:testActionName",
-                "pe" : "lnk_o",
-                "mid" : "mid",
-                "aamb" : "blob",
-                "aamlh" : "lochint",
-                "ts" : String(trackEvent.timestamp.getUnixTimeInSeconds())
+                "pev2": "AMACTION:testActionName",
+                "pe": "lnk_o",
+                "mid": "mid",
+                "aamb": "blob",
+                "aamlh": "lochint",
+                "ts": String(trackEvent.timestamp.getUnixTimeInSeconds())
             ]
         } else {
             expectedVars = [
                 "ce": "UTF-8",
-                "pev2" : "AMACTION:testActionName",
-                "pe" : "lnk_o",
-                "mid" : "mid",
-                "aamb" : "blob",
-                "aamlh" : "lochint",
-                "ts" : String(trackEvent.timestamp.getUnixTimeInSeconds())
+                "pev2": "AMACTION:testActionName",
+                "pe": "lnk_o",
+                "mid": "mid",
+                "aamb": "blob",
+                "aamlh": "lochint",
+                "ts": String(trackEvent.timestamp.getUnixTimeInSeconds())
             ]
         }
         let expectedContextData = [
-            "k1" : "v1",
-            "k2" : "v2",
-            "a.action" : "testActionName",
-            "a.loc.poi.id" : "myRegionId2",
-            "a.loc.poi" : "myRegionName2"
+            "k1": "v1",
+            "k2": "v2",
+            "a.action": "testActionName",
+            "a.loc.poi.id": "myRegionId2",
+            "a.loc.poi": "myRegionName2"
         ]
 
         XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 1)

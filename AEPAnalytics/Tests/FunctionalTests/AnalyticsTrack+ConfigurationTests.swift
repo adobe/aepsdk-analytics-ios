@@ -26,13 +26,12 @@ class AnalyticsTrack_ConfigurationTests: AnalyticsTrack_ConfigurationTestBase {
         clearQueuedHitsAndDatastoreOnOptOutTester()
     }
 
-    //Track hits queued when Privacy Status is unknown will be sent with unknown param
+    // Track hits queued when Privacy Status is unknown will be sent with unknown param
     func testSendTrackAfterPrivacyStatusIsUnknownToOptedIn() {
         sendTrackAfterPrivacyStatusIsUnknownToOptedInTester()
     }
 
-
-    //Track hits sent only when configuration contains valid server and rsid(s)
+    // Track hits sent only when configuration contains valid server and rsid(s)
     func testTrackHitsOnlySentOnValidConfiguration() {
         trackHitsOnlySentOnValidConfigurationTester()
     }

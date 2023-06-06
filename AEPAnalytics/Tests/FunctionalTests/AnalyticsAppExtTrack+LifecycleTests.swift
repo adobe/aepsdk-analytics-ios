@@ -16,28 +16,28 @@ import AEPServices
 @testable import AEPCore
 
 @available(tvOSApplicationExtension, unavailable)
-class AnalyticsAppExtTrack_LifecycleTests : AnalyticsTrack_LifecycleTestBase {
-    
+class AnalyticsAppExtTrack_LifecycleTests: AnalyticsTrack_LifecycleTestBase {
+
     override func setUp() {
         runningForApp = false
         super.setupBase(forApp: false)
     }
-    
-    //If Lifecycle shared state is available then analytics hits contain lifecycle vars
+
+    // If Lifecycle shared state is available then analytics hits contain lifecycle vars
     func testHitsContainLifecycleVars() {
         hitsContainLifecycleVarsTester()
     }
-    
-    //Lifecycle sends a crash event with previous OS version and previous app version if present in response
+
+    // Lifecycle sends a crash event with previous OS version and previous app version if present in response
     func testLifecycleBackdatedCrashHit() {
         lifecycleBackdatedCrashHitTester()
     }
-    
+
     func testLifecycleBackdatedSessionInfo() {
         lifecycleBackdatedSessionInfoTester()
     }
-    
-    //If Lifecycle shared state is available then analytics hits contain lifecycle vars
+
+    // If Lifecycle shared state is available then analytics hits contain lifecycle vars
     func testHitsContainTimeSinceLaunch() {
         hitsContainTimeSinceLaunchTester()
     }

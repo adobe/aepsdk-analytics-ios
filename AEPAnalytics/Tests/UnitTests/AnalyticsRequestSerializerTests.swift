@@ -13,7 +13,7 @@
 import XCTest
 @testable import AEPAnalytics
 
-class AnalyticsRequestSerializerTests : XCTestCase {
+class AnalyticsRequestSerializerTests: XCTestCase {
 
     var analyticsRequestSerializer: AnalyticsRequestSerializer!
     var analyticsState: AnalyticsState!
@@ -24,7 +24,7 @@ class AnalyticsRequestSerializerTests : XCTestCase {
     }
 
     func testGenerateAnalyticsCustomerIdString() {
-        var visitorIdArray = [[String:Any]]()
+        var visitorIdArray = [[String: Any]]()
         visitorIdArray.append(["id_origin": "d_cid_ic", "id_type": "loginidhash", "id": "97717", "authentication_state": 0])
         visitorIdArray.append(["id_origin": "d_cid_ic", "id_type": "xboxlivehash", "id": "1629158955", "authentication_state": 1])
         visitorIdArray.append(["id_origin": "d_cid_ic", "id_type": "psnidhash", "id": "1144032295", "authentication_state": 2])
@@ -45,7 +45,7 @@ class AnalyticsRequestSerializerTests : XCTestCase {
     }
 
     func testGenerateAnalyticsCustomerIdStringWithEmptyIdentifiableList() {
-        let visitorIdArray = [[String:Any]]()
+        let visitorIdArray = [[String: Any]]()
 
         let expectedString = ""
         let analyticsIdString = analyticsRequestSerializer.generateAnalyticsCustomerIdString(from: visitorIdArray)
@@ -53,11 +53,11 @@ class AnalyticsRequestSerializerTests : XCTestCase {
     }
 
     func testBuildRequestWhenValidDataAndValidVars() {
-        var vars: [String:String] = [:]
+        var vars: [String: String] = [:]
         vars["v1"] = "evar1Value"
         vars["v2"] = "evar2Value"
 
-        var data: [String:String] = [:]
+        var data: [String: String] = [:]
         data["testKey1"] = "val1"
         data["testKey2"] = "val2"
 
@@ -77,7 +77,7 @@ class AnalyticsRequestSerializerTests : XCTestCase {
     }
 
     func testBuildRequestWhenNullDataAndValidVars() {
-        var vars: [String:String] = [:]
+        var vars: [String: String] = [:]
         vars["v1"] = "evar1Value"
         vars["v2"] = "evar2Value"
         let result = analyticsRequestSerializer.buildRequest(analyticsState: analyticsState, data: nil, vars: vars)
@@ -86,7 +86,7 @@ class AnalyticsRequestSerializerTests : XCTestCase {
     }
 
     func testBuildRequestWhenValidDataAndNullVars() {
-        var data: [String:String] = [:]
+        var data: [String: String] = [:]
         data["testKey1"] = "val1"
         data["testKey2"] = "val2"
         let result = analyticsRequestSerializer.buildRequest(analyticsState: analyticsState, data: data, vars: nil)
@@ -108,14 +108,14 @@ class AnalyticsRequestSerializerTests : XCTestCase {
 
     func testBuildRequestWhenNullVisitorIdList() {
 
-        var data: [String:String] = [:]
+        var data: [String: String] = [:]
         data["testKey1"] = "val1"
         data["testKey2"] = "val2"
 
-        var identityData: [String:Any] = [:]
+        var identityData: [String: Any] = [:]
         identityData["mid"] = "testMID"
 
-        var configurationData: [String:Any] = [:]
+        var configurationData: [String: Any] = [:]
         configurationData["analytics.server"] = "analyticsServer"
         configurationData["experienceCloud.org"] = "marketingServer"
 
@@ -133,11 +133,11 @@ class AnalyticsRequestSerializerTests : XCTestCase {
     }
 
     func testBuildRequestMovesToVarsWhenDataKeysPrefixed() {
-        var data: [String:String] = [:]
+        var data: [String: String] = [:]
         data["&&key1"] = "val1"
         data["key2"] = "val2"
 
-        var vars = [String:String]()
+        var vars = [String: String]()
         vars["v1"] = "evar1Value"
 
         let result = analyticsRequestSerializer.buildRequest(analyticsState: analyticsState, data: data, vars: vars)
@@ -146,22 +146,22 @@ class AnalyticsRequestSerializerTests : XCTestCase {
         XCTAssertTrue(splitAddionalData.count == 3)
         XCTAssertTrue(additionalData.starts(with: "ndh=1"))
         XCTAssertTrue(additionalData.contains("&key1=val1"))
-        XCTAssertTrue(additionalData.contains("&v1=evar1Value"))        
+        XCTAssertTrue(additionalData.contains("&v1=evar1Value"))
         XCTAssertEqual("&c.&key2=val2&.c", AnalyticsRequestHelper.getContextDataString(source: result))
         XCTAssertTrue(AnalyticsRequestHelper.getCidData(source: result).isEmpty)
     }
 
     func testBuildRequestWithVisitorIdList() {
 
-        var vars = [String:String]()
+        var vars = [String: String]()
         vars["v1"] = "evar1Value"
 
-        var data: [String:String] = [:]
+        var data: [String: String] = [:]
         data["key1"] = "val1"
         var visitorIdList = [[String: Any]]()
         visitorIdList.append(["id_origin": "orig1", "id_type": "type1", "id": "97717", "authentication_state": 1])
 
-        var identityData: [String:Any] = [:]
+        var identityData: [String: Any] = [:]
         identityData["visitoridslist"] = visitorIdList
 
         var sharedStates = [String: [String: Any]]()
