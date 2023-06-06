@@ -634,6 +634,7 @@
 				2E1046572862542500FC6096 /* Resources */,
 				2E10465B2862542500FC6096 /* CopyFiles */,
 				CAAF3157F67E65E789ADAC19 /* [CP] Embed Pods Frameworks */,
+				2EF8BE512A2EC1C90022C892 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -674,6 +675,7 @@
 				2EBEE7762525A35400880E72 /* Frameworks */,
 				2EBEE7772525A35400880E72 /* Resources */,
 				D98FF1E14B2E1F27B89FEDCC /* [CP] Embed Pods Frameworks */,
+				2EF8BE4D2A2EC1A50022C892 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -694,6 +696,7 @@
 				784185E02816FE7700B04CDB /* Frameworks */,
 				784185E12816FE7700B04CDB /* Resources */,
 				7841860528172B9100B04CDB /* Embed Frameworks */,
+				2EF8BE502A2EC1C30022C892 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -714,6 +717,7 @@
 				AC73D3B325E6F4E50068AB96 /* Frameworks */,
 				AC73D3B425E6F4E50068AB96 /* Resources */,
 				87F279EAFC22DC082EC170E8 /* [CP] Embed Pods Frameworks */,
+				2EF8BE4E2A2EC1AE0022C892 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -736,6 +740,7 @@
 				9598E5DE262E9C73000BF31A /* CopyFiles */,
 				784185F52816FE7700B04CDB /* Embed App Extensions */,
 				28503372A0D8F6B3E9550F74 /* [CP] Embed Pods Frameworks */,
+				2EF8BE4F2A2EC1B90022C892 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -911,6 +916,95 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TestAppiOS/Pods-TestAppiOS-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
+		};
+		2EF8BE4D2A2EC1A50022C892 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if which ${PODS_ROOT}/SwiftLint/swiftlint >/dev/null; then\n    ${PODS_ROOT}/SwiftLint/swiftlint lint --config ${SRCROOT}/.swiftlint.yml --lenient AEPAnalytics/Tests/UnitTests Tests/TestHelpers\nelse\n    echo \"warning: SwiftLint is not installed, please run the pod install command from the project root directory.\"\nfi\n";
+		};
+		2EF8BE4E2A2EC1AE0022C892 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if which ${PODS_ROOT}/SwiftLint/swiftlint >/dev/null; then\n    ${PODS_ROOT}/SwiftLint/swiftlint lint --config ${SRCROOT}/.swiftlint.yml --lenient AEPAnalytics/Tests/FunctionalTests Tests/TestHelpers\nelse\n    echo \"warning: SwiftLint is not installed, please run the pod install command from the project root directory.\"\nfi\n";
+		};
+		2EF8BE4F2A2EC1B90022C892 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if which ${PODS_ROOT}/SwiftLint/swiftlint >/dev/null; then\n    ${PODS_ROOT}/SwiftLint/swiftlint lint --config ${SRCROOT}/.swiftlint.yml --lenient TestApp\nelse\n    echo \"warning: SwiftLint is not installed, please run the pod install command from the project root directory.\"\nfi\n";
+		};
+		2EF8BE502A2EC1C30022C892 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if which ${PODS_ROOT}/SwiftLint/swiftlint >/dev/null; then\n    ${PODS_ROOT}/SwiftLint/swiftlint lint --config ${SRCROOT}/.swiftlint.yml --lenient TestAppExt\nelse\n    echo \"warning: SwiftLint is not installed, please run the pod install command from the project root directory.\"\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		2EF8BE512A2EC1C90022C892 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if which ${PODS_ROOT}/SwiftLint/swiftlint >/dev/null; then\n    ${PODS_ROOT}/SwiftLint/swiftlint lint --config ${SRCROOT}/.swiftlint.yml --lenient TestApp\nelse\n    echo \"warning: SwiftLint is not installed, please run the pod install command from the project root directory.\"\nfi\n";
 		};
 		8176FC56C945294ABE1EE1C6 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
