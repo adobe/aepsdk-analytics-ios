@@ -16,7 +16,6 @@
 import XCTest
 import Foundation
 
-@available(tvOSApplicationExtension, unavailable)
 class AnalyticsMigratorTests: XCTestCase {
 
     var analytics: Analytics!
