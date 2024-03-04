@@ -15,7 +15,6 @@ import AEPServices
 @testable import AEPAnalytics
 @testable import AEPCore
 
-@available(tvOSApplicationExtension, unavailable)
 class AnlyticsHitReorderTests: AnalyticsHitReorderTestBase {
     override func setUp() {
         runningForAppTests = true

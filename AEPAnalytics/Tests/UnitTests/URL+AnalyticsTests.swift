@@ -13,7 +13,6 @@
 import XCTest
 import AEPServices
 @testable import AEPCore
-
 @testable import AEPAnalytics
 
 class AnalyticsURLTests: XCTestCase {

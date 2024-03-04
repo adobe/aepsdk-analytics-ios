@@ -10,7 +10,7 @@
 The AEPAnalytics extension enables sending mobile application interaction data to Adobe Analytics when using the [Adobe Experience Platform SDK](https://developer.adobe.com/client-sdks).
 
 ## Requirements
-- Xcode 14.1
+- Xcode 15
 - Swift 5.1
 
 ## Installation
@@ -58,7 +58,7 @@ Alternatively, if your project has a `Package.swift` file, you can add AEPAnalyt
 
 ```
 dependencies: [
-    .package(url: "https://github.com/adobe/aepsdk-analytics-ios.git", .upToNextMajor(from: "4.0.0"))
+    .package(url: "https://github.com/adobe/aepsdk-analytics-ios.git", .upToNextMajor(from: "5.0.0"))
 ]
 ```
 

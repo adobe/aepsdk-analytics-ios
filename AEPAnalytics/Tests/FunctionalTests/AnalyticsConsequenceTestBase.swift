@@ -18,7 +18,6 @@ import AEPServices
 ///
 /// A base for AnalyticsAppExtension and Analytics classes to test. Shared tests without different results live in the base
 ///
-@available(tvOSApplicationExtension, unavailable)
 class AnalyticsConsequenceTestBase: AnalyticsFunctionalTestBase {
 
     // Do not process non "an" consequence types
