@@ -4,7 +4,7 @@
 version: 2.1
 
 orbs:
-  codecov: codecov/codecov@3.2.5
+  # codecov: codecov/codecov@3.2.5
   macos: circleci/macos@2
 
 # Workflows orchestrate a set of jobs to be run;
@@ -68,21 +68,21 @@ commands:
     steps:
       - macos/preboot-simulator:
           platform: "iOS"
-          version: "17.0"
+          version: "17.2"
           device: "iPhone 15"
 
   prestart_tvos_simulator:
     steps:
       - macos/preboot-simulator:
           platform: "tvOS"
-          version: "17.0"
+          version: "17.2"
           device: "Apple TV"
 
 
 jobs:
   validate-code:
     macos:
-      xcode: 15.0.0 # Specify the Xcode version to use
+      xcode: 15.1.0 # Specify the Xcode version to use
 
     steps:
       - checkout
@@ -95,7 +95,7 @@ jobs:
 
   test-ios:
     macos:
-      xcode: 15.0.0 # Specify the Xcode version to use
+      xcode: 15.1.0 # Specify the Xcode version to use
 
     steps:
       - checkout
@@ -110,14 +110,14 @@ jobs:
 
       # Code coverage upload using Codecov
       # See options explanation here: https://docs.codecov.com/docs/codecov-uploader
-      - codecov/upload:
-          flags: ios-tests
-          upload_name: Coverage Report for iOS Tests
-          xtra_args: -c -v --xc --xp iosresults.xcresult
+      # - codecov/upload:
+      #     flags: ios-tests
+      #     upload_name: Coverage Report for iOS Tests
+      #     xtra_args: -c -v --xc --xp iosresults.xcresult
   
   test-tvos:
     macos:
-      xcode: 15.0.0 # Specify the Xcode version to use
+      xcode: 15.1.0 # Specify the Xcode version to use
 
     steps:
       - checkout
@@ -132,14 +132,14 @@ jobs:
 
       # Code coverage upload using Codecov
       # See options explanation here: https://docs.codecov.com/docs/codecov-uploader
-      - codecov/upload:
-          flags: tvos-tests
-          upload_name: Coverage Report for tvOS Tests
-          xtra_args: -c -v --xc --xp tvosresults.xcresult
+      # - codecov/upload:
+      #     flags: tvos-tests
+      #     upload_name: Coverage Report for tvOS Tests
+      #     xtra_args: -c -v --xc --xp tvosresults.xcresult
 
   build_xcframework_and_app:  
     macos:
-      xcode: 15.0.0 # Specify the Xcode version to use
+      xcode: 15.1.0 # Specify the Xcode version to use
     
     steps:
       - checkout
