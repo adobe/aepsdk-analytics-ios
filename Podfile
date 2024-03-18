@@ -1,5 +1,5 @@
 # Uncomment the next line to define a global platform for your project
-platform :ios, '11.0'
+platform :ios, '12.0'
 use_frameworks!
 
 project 'AEPAnalytics.xcodeproj'
@@ -7,16 +7,16 @@ project 'AEPAnalytics.xcodeproj'
 pod 'SwiftLint', '0.52.0'
 
 def core_pods
-  pod 'AEPServices'
-  pod 'AEPCore'
-  pod 'AEPRulesEngine'
+  pod 'AEPServices', :git => 'https://github.com/adobe/aepsdk-core-ios.git', :branch => 'staging'
+  pod 'AEPCore', :git => 'https://github.com/adobe/aepsdk-core-ios.git', :branch => 'staging'
+  pod 'AEPRulesEngine', :git => 'https://github.com/adobe/aepsdk-rulesengine-ios.git', :branch => 'staging'
 end
 
 def test_pods
-  pod 'AEPServices'
-  pod 'AEPCore'
-  pod 'AEPLifecycle'
-  pod 'AEPIdentity'
+  pod 'AEPServices', :git => 'https://github.com/adobe/aepsdk-core-ios.git', :branch => 'staging'
+  pod 'AEPCore', :git => 'https://github.com/adobe/aepsdk-core-ios.git', :branch => 'staging'
+  pod 'AEPLifecycle', :git => 'https://github.com/adobe/aepsdk-core-ios.git', :branch => 'staging'
+  pod 'AEPIdentity', :git => 'https://github.com/adobe/aepsdk-core-ios.git', :branch => 'staging'
 end
 
 target 'AEPAnalytics' do
@@ -33,7 +33,7 @@ end
 
 target 'TestAppiOS' do
   test_pods
-  pod 'AEPAssurance'
+  pod 'AEPAssurance', :git =>'https://github.com/adobe/aepsdk-assurance-ios.git', :branch => 'staging'
 end
 
 target 'TestAppExt' do
@@ -47,7 +47,7 @@ end
 post_install do |pi|
   pi.pods_project.targets.each do |t|
     t.build_configurations.each do |bc|
-        bc.build_settings['TVOS_DEPLOYMENT_TARGET'] = '11.0'
+        bc.build_settings['TVOS_DEPLOYMENT_TARGET'] = '12.0'
         bc.build_settings['SUPPORTED_PLATFORMS'] = 'iphoneos iphonesimulator appletvos appletvsimulator'
         bc.build_settings['TARGETED_DEVICE_FAMILY'] = "1,2,3"
     end

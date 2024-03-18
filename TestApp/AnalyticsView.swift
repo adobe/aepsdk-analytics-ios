@@ -19,7 +19,6 @@ import AEPCore
 import AEPAssurance
 #endif
 
-@available(tvOSApplicationExtension, unavailable)
 struct AnalyticsView: View {
     let LOG_TAG = "AnalyticsTestApp::AnalyticsView"
 
@@ -237,7 +236,6 @@ struct AnalyticsView: View {
     }
 }
 
-@available(tvOSApplicationExtension, unavailable)
 struct AunalyticsView_Previews: PreviewProvider {
     static var previews: some View {
         AnalyticsView()
