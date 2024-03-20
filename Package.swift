@@ -24,9 +24,7 @@ let package = Package(
     ],
     targets: [
         .target(name: "AEPAnalytics",
-                dependencies: [.product(name: "AEPCore", package: "aepsdk-core-ios"),
-                               .product(name: "AEPServices", package: "aepsdk-core-ios")
-                               ]
+                dependencies: [.product(name: "AEPCore", package: "aepsdk-core-ios")],
                 path: "AEPAnalytics/Sources")
     ]
 )
