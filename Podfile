@@ -33,7 +33,7 @@ end
 
 target 'TestAppiOS' do
   test_pods
-  pod 'AEPAssurance', :git =>'https://github.com/adobe/aepsdk-assurance-ios.git', :branch => 'staging'
+  pod 'AEPAssurance'
 end
 
 target 'TestAppExt' do
