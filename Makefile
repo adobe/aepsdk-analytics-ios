@@ -37,7 +37,7 @@ test-ios: clean-ios-test-files
 	@echo "######################################################################"
 	@echo "### Testing iOS"
 	@echo "######################################################################"
-	xcodebuild test -workspace $(PROJECT_NAME).xcworkspace -scheme $(PROJECT_NAME) -destination 'platform=iOS Simulator,name=iPhone 14' -derivedDataPath build/out -resultBundlePath iosresults.xcresult -enableCodeCoverage YES
+	xcodebuild test -workspace $(PROJECT_NAME).xcworkspace -scheme $(PROJECT_NAME) -destination 'platform=iOS Simulator,name=iPhone 15' -derivedDataPath build/out -resultBundlePath iosresults.xcresult -enableCodeCoverage YES
 
 test-tvos: clean-tvos-test-files
 	@echo "######################################################################"
@@ -46,7 +46,7 @@ test-tvos: clean-tvos-test-files
 	xcodebuild test -workspace $(PROJECT_NAME).xcworkspace -scheme $(PROJECT_NAME) -destination 'platform=tvOS Simulator,name=Apple TV' -derivedDataPath build/out -resultBundlePath tvosresults.xcresult -enableCodeCoverage YES
 
 
-archive: clean pod-update build-ios build-tvos
+archive: clean pod-install build-ios build-tvos
 	@echo "######################################################################"
 	@echo "### Generating iOS and tvOS Frameworks for $(PROJECT_NAME)"
 	@echo "######################################################################"
@@ -102,7 +102,7 @@ lint:
 	./Pods/SwiftLint/swiftlint lint AEPAnalytics/Sources
 
 # release checks
-# make check-version VERSION=4.0.0
+# make check-version VERSION=5.0.0
 check-version:
 	sh ./Script/version.sh $(VERSION)
 

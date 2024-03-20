@@ -14,7 +14,6 @@ import UIKit
 import SwiftUI
 import AEPCore
 
-@available(tvOSApplicationExtension, unavailable)
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?

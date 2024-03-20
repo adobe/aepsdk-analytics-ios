@@ -15,7 +15,6 @@ import AEPServices
 @testable import AEPAnalytics
 @testable import AEPCore
 
-@available(tvOSApplicationExtension, unavailable)
 class AnalyticsAppExtTrack_ConfigurationTests: AnalyticsTrack_ConfigurationTestBase {
 
     override func setUp() {

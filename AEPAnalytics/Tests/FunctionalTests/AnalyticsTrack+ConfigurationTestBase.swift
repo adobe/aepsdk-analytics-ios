@@ -15,7 +15,6 @@ import AEPServices
 @testable import AEPAnalytics
 @testable import AEPCore
 
-@available(tvOSApplicationExtension, unavailable)
 class AnalyticsTrack_ConfigurationTestBase: AnalyticsFunctionalTestBase {
 
     var runningForApp = true

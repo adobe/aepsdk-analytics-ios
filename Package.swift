@@ -1,4 +1,4 @@
-// swift-tools-version:5.1
+// swift-tools-version:5.3
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 /*
  Copyright 2021 Adobe. All rights reserved.
@@ -15,16 +15,16 @@ import PackageDescription
 
 let package = Package(
     name: "AEPAnalytics",
-    platforms: [.iOS(.v11), .tvOS(.v11)],
+    platforms: [.iOS(.v12), .tvOS(.v12)],
     products: [
         .library(name: "AEPAnalytics", targets: ["AEPAnalytics"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/adobe/aepsdk-core-ios.git", .upToNextMajor(from: "4.0.0"))
+        .package(url: "https://github.com/adobe/aepsdk-core-ios.git", .upToNextMajor(from: "5.0.0"))
     ],
     targets: [
         .target(name: "AEPAnalytics",
-                dependencies: ["AEPCore", .product(name: "AEPServices", package: "AEPCore")],
+                dependencies: [.product(name: "AEPCore", package: "aepsdk-core-ios")],
                 path: "AEPAnalytics/Sources")
     ]
 )

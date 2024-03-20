@@ -15,7 +15,6 @@ import AEPServices
 @testable import AEPAnalytics
 @testable import AEPCore
 
-@available(tvOSApplicationExtension, unavailable)
 class AnalyticsTrack_ConfigurationTests: AnalyticsTrack_ConfigurationTestBase {
     override func setUp() {
         runningForApp = true
