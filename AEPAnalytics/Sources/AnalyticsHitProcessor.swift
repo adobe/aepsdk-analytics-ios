@@ -21,6 +21,7 @@ class AnalyticsHitProcessor: HitProcessing {
     private var networkService: Networking {
         return ServiceProvider.shared.networkService
     }
+    private let retryInterval = TimeInterval(30)
 
     #if DEBUG
         var lastHitTimestamp: TimeInterval
@@ -39,7 +40,7 @@ class AnalyticsHitProcessor: HitProcessing {
 
     // MARK: HitProcessing
     func retryInterval(for entity: DataEntity) -> TimeInterval {
-        return TimeInterval(30)
+        return retryInterval
     }
 
     func processHit(entity: DataEntity, completion: @escaping (Bool) -> Void) {
@@ -164,14 +165,28 @@ class AnalyticsHitProcessor: HitProcessing {
             // retry this hit later
             Log.warning(label: LOG_TAG, "\(#function) - Retrying Analytics hit, request with url \(url.absoluteString) failed with error \(connection.error?.localizedDescription ?? "") and recoverable status code \(connection.responseCode ?? -1)")
             completion(false)
-        } else if connection.responseCode == nil {
-            // retry this hit later if connection response code is nil (no network connectivity)
-            Log.warning(label: LOG_TAG, "\(#function) - Retrying Analytics hit, there is currently no network connectivity")
-            completion(false)
         } else {
-            // unrecoverable error. delete the hit from the database and continue
-            Log.warning(label: LOG_TAG, "\(#function) - Dropping Analytics hit, request with url \(url.absoluteString) failed with error \(connection.error?.localizedDescription ?? "") and unrecoverable status code \(connection.responseCode ?? -1)")
-            completion(true)
+            if let urlError = connection.error as? URLError {
+                // handle network transport error
+                let urlErrorCode = urlError.code
+
+                if NetworkServiceConstants.RECOVERABLE_URL_ERROR_CODES.contains(urlErrorCode) {
+                    let errorMsg = "recoverable network error:(\(urlError.localizedDescription)) code:(\(urlError.errorCode))"
+
+                    Log.debug(label: LOG_TAG,
+                              "\(#function) - Analytics hit failed with \(errorMsg). Will retry in \(retryInterval) seconds.")
+
+                    completion(false) // failed, but recoverable so retry
+                    return
+                }
+            }
+
+            // handle non-recoverable URLErrors and other non URLErrors
+            let errorMsg = "failed with unrecoverable network error:(\(String(describing: connection.error?.localizedDescription))) code:(\(connection.responseCode ?? -1))"
+
+            Log.warning(label: LOG_TAG, "\(#function) - Dropping Analytics hit, request with url \(url.absoluteString) \(errorMsg)")
+            completion(true) // don't retry
+            return
         }
     }
 

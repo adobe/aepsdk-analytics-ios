@@ -6,15 +6,15 @@ project 'AEPAnalytics.xcodeproj'
 
 pod 'SwiftLint', '0.52.0'
 
+
 def core_pods
-  pod 'AEPServices'
   pod 'AEPCore'
+  # TODO use production version of AEPServices after release
+  pod 'AEPServices', :git => 'https://github.com/adobe/aepsdk-core-ios.git', :branch => 'dev-v5.1.0'
   pod 'AEPRulesEngine'
 end
 
 def test_pods
-  pod 'AEPServices'
-  pod 'AEPCore'
   pod 'AEPLifecycle'
   pod 'AEPIdentity'
 end
@@ -33,15 +33,18 @@ end
 
 target 'TestAppiOS' do
   test_pods
+  core_pods
   pod 'AEPAssurance'
 end
 
 target 'TestAppExt' do
   test_pods
+  core_pods
 end
 
 target 'TestApptvOS' do
   test_pods
+  core_pods
 end
 
 post_install do |pi|
