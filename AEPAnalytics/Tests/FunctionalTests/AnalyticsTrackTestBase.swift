@@ -55,7 +55,7 @@ class AnalyticsTrackTestBase: AnalyticsFunctionalTestBase {
 
         let expectedContextData = [
             "k1": "v1",
-            "k2": "v2",
+            "k2": "v2"
         ]
 
         XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 1)
@@ -68,7 +68,7 @@ class AnalyticsTrackTestBase: AnalyticsFunctionalTestBase {
      func trackStateEmptyTester() {
         let lifecycleSharedState: [String: Any] = [
             AnalyticsTestConstants.Lifecycle.EventDataKeys.LIFECYCLE_CONTEXT_DATA: [
-                AnalyticsTestConstants.Lifecycle.EventDataKeys.APP_ID: "mockAppName",
+                AnalyticsTestConstants.Lifecycle.EventDataKeys.APP_ID: "mockAppName"
             ]
         ]
 
@@ -159,7 +159,7 @@ class AnalyticsTrackTestBase: AnalyticsFunctionalTestBase {
         let expectedContextData = [
             "k1": "v1",
             "k2": "v2",
-            "a.action": "testAction",
+            "a.action": "testAction"
         ]
 
         XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 1)
@@ -173,7 +173,7 @@ class AnalyticsTrackTestBase: AnalyticsFunctionalTestBase {
 
         let lifecycleSharedState: [String: Any] = [
             AnalyticsTestConstants.Lifecycle.EventDataKeys.LIFECYCLE_CONTEXT_DATA: [
-                AnalyticsTestConstants.Lifecycle.EventDataKeys.APP_ID: "mockAppName",
+                AnalyticsTestConstants.Lifecycle.EventDataKeys.APP_ID: "mockAppName"
             ]
         ]
 
@@ -266,7 +266,7 @@ class AnalyticsTrackTestBase: AnalyticsFunctionalTestBase {
         let expectedContextData = [
             "k1": "v1",
             "k2": "v2",
-            "a.internalaction": "testAction",
+            "a.internalaction": "testAction"
         ]
 
         XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 1)
@@ -309,7 +309,7 @@ class AnalyticsTrackTestBase: AnalyticsFunctionalTestBase {
 
         let expectedContextData = [
             "k1": "v1",
-            "k2": "v2",
+            "k2": "v2"
         ]
 
         XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 1)
@@ -333,7 +333,7 @@ class AnalyticsTrackTestBase: AnalyticsFunctionalTestBase {
                 "k2": "v2",
                 "a.AppID": "overwrittenApp",
                 "a.DeviceName": "overwrittenDevice",
-                "a.OSVersion": "overwrittenOS",
+                "a.OSVersion": "overwrittenOS"
             ]
         ]
 
@@ -418,7 +418,7 @@ class AnalyticsTrackTestBase: AnalyticsFunctionalTestBase {
         let expectedContextData = [
             "k1": "v1",
             "k2": "v2",
-            "a.action": "testAction",
+            "a.action": "testAction"
         ]
 
         XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 1)

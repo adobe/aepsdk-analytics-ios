@@ -45,7 +45,7 @@ class AnalyticsIDTestBase: AnalyticsFunctionalTestBase {
                 "mid": "mid",
                 "aamb": "blob",
                 "aamlh": "lochint",
-                "ts": String(trackEvent.timestamp.getUnixTimeInSeconds()),
+                "ts": String(trackEvent.timestamp.getUnixTimeInSeconds())
             ]
         } else {
             expectedVars = [
@@ -55,7 +55,7 @@ class AnalyticsIDTestBase: AnalyticsFunctionalTestBase {
                 "mid": "mid",
                 "aamb": "blob",
                 "aamlh": "lochint",
-                "ts": String(trackEvent.timestamp.getUnixTimeInSeconds()),
+                "ts": String(trackEvent.timestamp.getUnixTimeInSeconds())
             ]
         }
         let expectedContextData = [
@@ -108,7 +108,7 @@ class AnalyticsIDTestBase: AnalyticsFunctionalTestBase {
                 "vid": "testvid",
                 "aamb": "blob",
                 "aamlh": "lochint",
-                "ts": String(trackEvent.timestamp.getUnixTimeInSeconds()),
+                "ts": String(trackEvent.timestamp.getUnixTimeInSeconds())
             ]
         } else {
             expectedVars = [
@@ -120,7 +120,7 @@ class AnalyticsIDTestBase: AnalyticsFunctionalTestBase {
                 "vid": "testvid",
                 "aamb": "blob",
                 "aamlh": "lochint",
-                "ts": String(trackEvent.timestamp.getUnixTimeInSeconds()),
+                "ts": String(trackEvent.timestamp.getUnixTimeInSeconds())
             ]
         }
         let expectedContextData = [
@@ -211,7 +211,7 @@ class AnalyticsIDTestBase: AnalyticsFunctionalTestBase {
         let lifecycleSharedState: [String: Any] = [
             AnalyticsTestConstants.Lifecycle.EventDataKeys.LIFECYCLE_CONTEXT_DATA: [
                 AnalyticsTestConstants.Lifecycle.EventDataKeys.OPERATING_SYSTEM: "mockOSName",
-                AnalyticsTestConstants.Lifecycle.EventDataKeys.APP_ID: "mockAppName",
+                AnalyticsTestConstants.Lifecycle.EventDataKeys.APP_ID: "mockAppName"
             ]
         ]
 

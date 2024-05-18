@@ -110,7 +110,7 @@ class AnalyticsHitReorderTestBase: AnalyticsFunctionalTestBase {
         let trackData: [String: Any] = [
             CoreConstants.Keys.ACTION: "start",
             CoreConstants.Keys.CONTEXT_DATA: [
-                "k1": "v1",
+                "k1": "v1"
             ]
         ]
         let trackEvent = Event(name: "Generic track event", type: EventType.genericTrack, source: EventSource.requestContent, data: trackData)
