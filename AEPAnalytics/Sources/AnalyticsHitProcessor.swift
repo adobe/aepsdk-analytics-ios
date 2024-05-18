@@ -166,19 +166,15 @@ class AnalyticsHitProcessor: HitProcessing {
             Log.warning(label: LOG_TAG, "\(#function) - Retrying Analytics hit, request with url \(url.absoluteString) failed with error \(connection.error?.localizedDescription ?? "") and recoverable status code \(connection.responseCode ?? -1)")
             completion(false)
         } else {
-            if let urlError = connection.error as? URLError {
-                // handle network transport error
-                let urlErrorCode = urlError.code
+            // handle network transport error
+            if let urlError = connection.error as? URLError, urlError.isRecoverable {
+                let errorMsg = "recoverable network error:(\(urlError.localizedDescription)) code:(\(urlError.errorCode))"
 
-                if NetworkServiceConstants.RECOVERABLE_URL_ERROR_CODES.contains(urlErrorCode) {
-                    let errorMsg = "recoverable network error:(\(urlError.localizedDescription)) code:(\(urlError.errorCode))"
+                Log.debug(label: LOG_TAG,
+                          "\(#function) - Analytics hit failed with \(errorMsg). Will retry in \(retryInterval) seconds.")
 
-                    Log.debug(label: LOG_TAG,
-                              "\(#function) - Analytics hit failed with \(errorMsg). Will retry in \(retryInterval) seconds.")
-
-                    completion(false) // failed, but recoverable so retry
-                    return
-                }
+                completion(false) // failed, but recoverable so retry
+                return
             }
 
             // handle non-recoverable URLErrors and other non URLErrors
