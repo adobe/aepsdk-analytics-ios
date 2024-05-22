@@ -176,7 +176,7 @@ class AnalyticsFunctionalTestBase: XCTestCase {
         let identitySharedState: [String: Any] = [
             AnalyticsTestConstants.Identity.EventDataKeys.VISITOR_ID_MID: "mid",
             AnalyticsTestConstants.Identity.EventDataKeys.VISITOR_ID_BLOB: "blob",
-            AnalyticsTestConstants.Identity.EventDataKeys.VISITOR_ID_LOCATION_HINT: "lochint",
+            AnalyticsTestConstants.Identity.EventDataKeys.VISITOR_ID_LOCATION_HINT: "lochint"
         ]
         simulateIdentityState(data: identitySharedState)
 

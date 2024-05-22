@@ -6,15 +6,14 @@ project 'AEPAnalytics.xcodeproj'
 
 pod 'SwiftLint', '0.52.0'
 
+
 def core_pods
-  pod 'AEPServices'
   pod 'AEPCore'
+  pod 'AEPServices'
   pod 'AEPRulesEngine'
 end
 
 def test_pods
-  pod 'AEPServices'
-  pod 'AEPCore'
   pod 'AEPLifecycle'
   pod 'AEPIdentity'
 end
@@ -33,15 +32,18 @@ end
 
 target 'TestAppiOS' do
   test_pods
+  core_pods
   pod 'AEPAssurance'
 end
 
 target 'TestAppExt' do
   test_pods
+  core_pods
 end
 
 target 'TestApptvOS' do
   test_pods
+  core_pods
 end
 
 post_install do |pi|
