@@ -25,5 +25,5 @@ analyzer_rules:
 - unused_import
 
 function_body_length:
-    warning: 60
+    warning: 50
     error: 150

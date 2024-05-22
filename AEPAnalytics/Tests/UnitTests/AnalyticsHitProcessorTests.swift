@@ -81,7 +81,7 @@ class AnalyticsHitProcessorTests: XCTestCase {
     func testProcessHit_recoverableURLError() {
         // setup
         let expectation = XCTestExpectation(description: "Callback should be invoked with false signaling this hit should be retried")
-        let expectedUrl = URL.getAnalyticsBaseUrl(state: analyticsState)
+
         mockNetworkService?.expectedResponse = HttpConnection(data: nil, response: nil, error: URLError(URLError.notConnectedToInternet))
 
         let hit = AnalyticsHit(payload: "payload", timestamp: Date().timeIntervalSince1970, eventIdentifier: UUID().uuidString)
@@ -103,7 +103,7 @@ class AnalyticsHitProcessorTests: XCTestCase {
     func testProcessHit_unrecoverableURLError() {
         // setup
         let expectation = XCTestExpectation(description: "Callback should be invoked with true signaling this hit should not be retried")
-        let expectedUrl = URL.getAnalyticsBaseUrl(state: analyticsState)
+
         mockNetworkService?.expectedResponse = HttpConnection(data: nil, response: nil, error: URLError(URLError.cannotFindHost))
 
         let hit = AnalyticsHit(payload: "payload", timestamp: Date().timeIntervalSince1970, eventIdentifier: UUID().uuidString)

@@ -213,7 +213,7 @@ class AnalyticsHitReorderTestBase: AnalyticsFunctionalTestBase {
             "a.internalaction": "AdobeLink",
             "a.deeplink.id": "test_deeplinkId",
             "test_key_0": "test_value_0",
-            "test_key_1": "test_value_1",
+            "test_key_1": "test_value_1"
         ]
 
         verifyHit(request: mockNetworkService?.calledNetworkRequests[1],
@@ -232,7 +232,7 @@ class AnalyticsHitReorderTestBase: AnalyticsFunctionalTestBase {
         let trackData: [String: Any] = [
             CoreConstants.Keys.ACTION: "start",
             CoreConstants.Keys.CONTEXT_DATA: [
-                "k1": "v1",
+                "k1": "v1"
             ]
         ]
         let trackEvent = Event(name: "Generic track event", type: EventType.genericTrack, source: EventSource.requestContent, data: trackData)
@@ -294,7 +294,7 @@ class AnalyticsHitReorderTestBase: AnalyticsFunctionalTestBase {
         }
         let firstHitContextData = [
             "k1": "v1",
-            "a.action": "start",
+            "a.action": "start"
         ]
         verifyHit(request: mockNetworkService?.calledNetworkRequests[0],
                   host: "https://test.com/b/ss/rsid/0/",
@@ -331,7 +331,7 @@ class AnalyticsHitReorderTestBase: AnalyticsFunctionalTestBase {
             "a.internalaction": "Lifecycle",
             "a.deeplink.id": "test_deeplinkId",
             "test_key_0": "test_value_0",
-            "test_key_1": "test_value_1",
+            "test_key_1": "test_value_1"
         ]
         verifyHit(request: mockNetworkService?.calledNetworkRequests[1],
                   host: "https://test.com/b/ss/rsid/0/",
@@ -379,7 +379,7 @@ class AnalyticsHitReorderTestBase: AnalyticsFunctionalTestBase {
         let trackData: [String: Any] = [
             CoreConstants.Keys.ACTION: "start",
             CoreConstants.Keys.CONTEXT_DATA: [
-                "k1": "v1",
+                "k1": "v1"
             ]
         ]
         let trackEvent = Event(name: "Generic track event", type: EventType.genericTrack, source: EventSource.requestContent, data: trackData)
