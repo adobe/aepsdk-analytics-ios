@@ -9,8 +9,7 @@ pod 'SwiftLint', '0.52.0'
 
 def core_pods
   pod 'AEPCore'
-  # TODO use production version of AEPServices after release
-  pod 'AEPServices', :git => 'https://github.com/adobe/aepsdk-core-ios.git', :branch => 'dev-v5.1.0'
+  pod 'AEPServices'
   pod 'AEPRulesEngine'
 end
 
