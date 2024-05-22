@@ -43,6 +43,23 @@ class AnalyticsHitProcessor: HitProcessing {
         return retryInterval
     }
 
+    private func shouldDropHit(timestamp: TimeInterval) -> Bool {
+        // If reset Identities was called, do not process the hit queued before reset identities was called.
+        if timestamp < self.analyticsState.lastResetIdentitiesTimestamp {
+            Log.debug(label: self.LOG_TAG, "\(#function) - Dropping Analytics hit, resetIdentities API was called after this request.")
+            return true
+        }
+
+        // If offline tracking is disabled, drop hits whose timestamp exceeds the offline disabled wait threshold
+        if !self.analyticsState.offlineEnabled &&
+            timestamp < (Date().timeIntervalSince1970 - AnalyticsConstants.Default.TIMESTAMP_DISABLED_WAIT_THRESHOLD_SECONDS) {
+            Log.debug(label: self.LOG_TAG, "\(#function) - Dropping Analytics hit, timestamp exceeds offline disabled wait threshold")
+            return true
+        }
+
+        return false
+    }
+
     func processHit(entity: DataEntity, completion: @escaping (Bool) -> Void) {
         guard let data = entity.data, let analyticsHit = try? JSONDecoder().decode(AnalyticsHit.self, from: data) else {
             // Failed to convert data to hit, unrecoverable error, move to next hit
@@ -57,17 +74,7 @@ class AnalyticsHitProcessor: HitProcessing {
             var payload = analyticsHit.payload
             var timestamp = analyticsHit.timestamp
 
-            // If reset Identities was called, do not process the hit queued before reset identities was called.
-            if timestamp < self.analyticsState.lastResetIdentitiesTimestamp {
-                Log.debug(label: self.LOG_TAG, "\(#function) - Dropping Analytics hit, resetIdentities API was called after this request.")
-                completion(true)
-                return
-            }
-
-            // If offline tracking is disabled, drop hits whose timestamp exceeds the offline disabled wait threshold
-            if !self.analyticsState.offlineEnabled &&
-                timestamp < (Date().timeIntervalSince1970 - AnalyticsConstants.Default.TIMESTAMP_DISABLED_WAIT_THRESHOLD_SECONDS) {
-                Log.debug(label: self.LOG_TAG, "\(#function) - Dropping Analytics hit, timestamp exceeds offline disabled wait threshold")
+            if shouldDropHit(timestamp: timestamp) {
                 completion(true)
                 return
             }
@@ -121,7 +128,8 @@ class AnalyticsHitProcessor: HitProcessing {
 
     /// Handles the network response after a hit has been sent to the server
     /// - Parameters:
-    ///   - entity: the data entity responsible for the hit
+    ///   - url: the url of the hit that was sent
+    ///   - hit: instance of the `AnalyticsHit` that was sent
     ///   - connection: the connection returned after we make the network request
     ///   - completion: a completion block to invoke after we have handled the network response with true for success and false for failure (retry)
     private func handleNetworkResponse(url: URL, hit: AnalyticsHit, connection: HttpConnection, completion: @escaping (Bool) -> Void) {
@@ -129,23 +137,7 @@ class AnalyticsHitProcessor: HitProcessing {
             // Hit sent successfully
             Log.debug(label: LOG_TAG, "\(#function) - Analytics hit request with url \(url.absoluteString) and payload \(hit.payload) sent successfully")
 
-            let contentType = connection.responseHttpHeader(forKey: AnalyticsConstants.Assurance.EventDataKeys.CONTENT_TYPE_HEADER)
-            let eTag = connection.responseHttpHeader(forKey: AnalyticsConstants.Assurance.EventDataKeys.ETAG_HEADER)
-            let serverHeader = connection.responseHttpHeader(forKey: AnalyticsConstants.Assurance.EventDataKeys.SERVER_HEADER)
-
-            let httpHeaders = [
-                AnalyticsConstants.EventDataKeys.CONTENT_TYPE_HEADER: contentType,
-                AnalyticsConstants.EventDataKeys.ETAG_HEADER: eTag,
-                AnalyticsConstants.EventDataKeys.SERVER_HEADER: serverHeader
-            ]
-
-            let eventData: [String: Any] = [
-                AnalyticsConstants.EventDataKeys.ANALYTICS_SERVER_RESPONSE: (connection.responseString ?? ""),
-                AnalyticsConstants.EventDataKeys.HEADERS_RESPONSE: httpHeaders,
-                AnalyticsConstants.EventDataKeys.HIT_URL: hit.payload,
-                AnalyticsConstants.EventDataKeys.HIT_HOST: url.absoluteString,
-                AnalyticsConstants.EventDataKeys.REQUEST_EVENT_IDENTIFIER: hit.eventIdentifier
-            ]
+            let eventData: [String: Any] = getResponseEventData(url: url, hit: hit, connection: connection)
 
             dispatchQueue.async { [weak self] in
                 guard let self = self else { return }
@@ -184,6 +176,34 @@ class AnalyticsHitProcessor: HitProcessing {
             completion(true) // don't retry
             return
         }
+    }
+
+    /// Create event data for Analytics response event from server
+    /// - Parameters:
+    ///   - url: the url of the hit that was sent
+    ///   - hit: instance of the `AnalyticsHit` that was sent
+    ///   - connection: the connection returned after we make the network request
+    /// - Returns: a dictionary containing the event data for the response event
+    private func getResponseEventData(url: URL, hit: AnalyticsHit, connection: HttpConnection) -> [String: Any] {
+        let contentType = connection.responseHttpHeader(forKey: AnalyticsConstants.Assurance.EventDataKeys.CONTENT_TYPE_HEADER)
+        let eTag = connection.responseHttpHeader(forKey: AnalyticsConstants.Assurance.EventDataKeys.ETAG_HEADER)
+        let serverHeader = connection.responseHttpHeader(forKey: AnalyticsConstants.Assurance.EventDataKeys.SERVER_HEADER)
+
+        let httpHeaders = [
+            AnalyticsConstants.EventDataKeys.CONTENT_TYPE_HEADER: contentType,
+            AnalyticsConstants.EventDataKeys.ETAG_HEADER: eTag,
+            AnalyticsConstants.EventDataKeys.SERVER_HEADER: serverHeader
+        ]
+
+        let eventData: [String: Any] = [
+            AnalyticsConstants.EventDataKeys.ANALYTICS_SERVER_RESPONSE: (connection.responseString ?? ""),
+            AnalyticsConstants.EventDataKeys.HEADERS_RESPONSE: httpHeaders,
+            AnalyticsConstants.EventDataKeys.HIT_URL: hit.payload,
+            AnalyticsConstants.EventDataKeys.HIT_HOST: url.absoluteString,
+            AnalyticsConstants.EventDataKeys.REQUEST_EVENT_IDENTIFIER: hit.eventIdentifier
+        ]
+
+        return eventData
     }
 
     private func replaceTimestampInPayload(payload: String, oldTs: TimeInterval, newTs: TimeInterval) -> String {
