@@ -302,7 +302,6 @@ class AnalyticsTrack_LifecycleTestBase: AnalyticsFunctionalTestBase {
             "a.RunMode": "Application",
             "a.PrevSessionLength": "100"
         ]
-
         verifyHit(request: mockNetworkService?.calledNetworkRequests[0],
                   host: "https://test.com/b/ss/rsid/0/",
                   vars: sessionInfoVars,

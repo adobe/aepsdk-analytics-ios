@@ -49,7 +49,7 @@ class AnalyticsAppExtConsequenceTests: AnalyticsConsequenceTestBase {
         let expectedContextData = [
             "k1": "v1",
             "k2": "v2",
-            "a.action": "testActionName",
+            "a.action": "testActionName"
         ]
 
         XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 1)

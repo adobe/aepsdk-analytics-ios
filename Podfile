@@ -6,15 +6,13 @@ project 'AEPAnalytics.xcodeproj'
 
 pod 'SwiftLint', '0.52.0'
 
+
 def core_pods
-  pod 'AEPServices'
   pod 'AEPCore'
   pod 'AEPRulesEngine'
 end
 
 def test_pods
-  pod 'AEPServices'
-  pod 'AEPCore'
   pod 'AEPLifecycle'
   pod 'AEPIdentity'
 end
@@ -33,15 +31,18 @@ end
 
 target 'TestAppiOS' do
   test_pods
-  pod 'AEPAssurance', :git =>'https://github.com/adobe/aepsdk-assurance-ios.git', :branch => 'staging'
+  core_pods
+  pod 'AEPAssurance'
 end
 
 target 'TestAppExt' do
   test_pods
+  core_pods
 end
 
 target 'TestApptvOS' do
   test_pods
+  core_pods
 end
 
 post_install do |pi|
