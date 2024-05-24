@@ -88,7 +88,7 @@ if [ "$DEPENDENCIES" != "none" ]; then
 fi
 
 # Replace version in Constants file
-CONSTANTS_FILE=$ROOT_DIR"/AEP$NAME/Sources/$NAMEConstants.swift"
+CONSTANTS_FILE=$ROOT_DIR"/AEP$NAME/Sources/"$NAME"Constants.swift"
 echo "Changing value of 'EXTENSION_VERSION' to '$NEW_VERSION' in '$CONSTANTS_FILE'"
 sed -i '' -E "/^ +static let EXTENSION_VERSION/{s/$VERSION_REGEX/$NEW_VERSION/;}" $CONSTANTS_FILE
 
