@@ -37,7 +37,7 @@ do
    case "$opt" in
       n ) NAME="$OPTARG" ;;
       v ) NEW_VERSION="$OPTARG" ;;
-      d ) DEPENDENCIES="$OPTARG" ;;      
+      d ) DEPENDENCIES="$OPTARG" ;;
       ? ) help ;; # Print help in case parameter is non-existent
    esac
 done
@@ -65,7 +65,7 @@ sed -i '' -E "/^ *s.version/{s/$VERSION_REGEX/$NEW_VERSION/;}" $PODSPEC_FILE
 
 # Replace dependencies in podspec and Package.swift
 if [ "$DEPENDENCIES" != "none" ]; then
-    IFS="," 
+    IFS=","
     dependenciesArray=($(echo "$DEPENDENCIES"))
 
     IFS=" "
@@ -73,7 +73,7 @@ if [ "$DEPENDENCIES" != "none" ]; then
         dependencyArray=(${dependency// / })
         dependencyName=${dependencyArray[0]}
         dependencyVersion=${dependencyArray[1]}
-        
+
         if [ "$dependencyVersion" != "" ]; then
             echo "Changing value of 's.dependency' for '$dependencyName' to '>= $dependencyVersion' in '$PODSPEC_FILE'"
             sed -i '' -E "/^ *s.dependency +'$dependencyName'/{s/$VERSION_REGEX/$dependencyVersion/;}" $PODSPEC_FILE
@@ -88,7 +88,7 @@ if [ "$DEPENDENCIES" != "none" ]; then
 fi
 
 # Replace version in Constants file
-CONSTANTS_FILE=$ROOT_DIR"/Sources/"$NAME"Constants.swift"
+CONSTANTS_FILE=$ROOT_DIR"/AEP$NAME/Sources/$NAMEConstants.swift"
 echo "Changing value of 'EXTENSION_VERSION' to '$NEW_VERSION' in '$CONSTANTS_FILE'"
 sed -i '' -E "/^ +static let EXTENSION_VERSION/{s/$VERSION_REGEX/$NEW_VERSION/;}" $CONSTANTS_FILE
 
