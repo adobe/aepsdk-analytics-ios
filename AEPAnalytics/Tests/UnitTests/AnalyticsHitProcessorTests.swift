@@ -58,7 +58,7 @@ class AnalyticsHitProcessorTests: XCTestCase {
 
     func testProcessHit_NetworkFailureRecoverableError() {
         // setup
-        let expectation = XCTestExpectation(description: "Callback should be invoked with true signaling this hit should not be retried")
+        let expectation = XCTestExpectation(description: "Callback should be invoked with false signaling this hit should be retried")
         let expectedUrl = URL.getAnalyticsBaseUrl(state: analyticsState)
         mockNetworkService?.expectedResponse = HttpConnection(data: nil, response: HTTPURLResponse(url: expectedUrl!, statusCode: 408, httpVersion: nil, headerFields: nil), error: nil)
 
@@ -69,6 +69,50 @@ class AnalyticsHitProcessorTests: XCTestCase {
         // test
         hitProcessor.processHit(entity: entity) { success in
             XCTAssertFalse(success)
+            expectation.fulfill()
+        }
+
+        // verify
+        wait(for: [expectation], timeout: 0.5)
+
+        XCTAssertTrue(mockNetworkService?.connectAsyncCalled ?? false) // network request should have been made
+    }
+
+    func testProcessHit_recoverableURLError() {
+        // setup
+        let expectation = XCTestExpectation(description: "Callback should be invoked with false signaling this hit should be retried")
+
+        mockNetworkService?.expectedResponse = HttpConnection(data: nil, response: nil, error: URLError(URLError.notConnectedToInternet))
+
+        let hit = AnalyticsHit(payload: "payload", timestamp: Date().timeIntervalSince1970, eventIdentifier: UUID().uuidString)
+
+        let entity = DataEntity(uniqueIdentifier: "test-uuid", timestamp: Date(), data: try! JSONEncoder().encode(hit))
+
+        // test
+        hitProcessor.processHit(entity: entity) { success in
+            XCTAssertFalse(success)
+            expectation.fulfill()
+        }
+
+        // verify
+        wait(for: [expectation], timeout: 0.5)
+
+        XCTAssertTrue(mockNetworkService?.connectAsyncCalled ?? false) // network request should have been made
+    }
+
+    func testProcessHit_unrecoverableURLError() {
+        // setup
+        let expectation = XCTestExpectation(description: "Callback should be invoked with true signaling this hit should not be retried")
+
+        mockNetworkService?.expectedResponse = HttpConnection(data: nil, response: nil, error: URLError(URLError.cannotFindHost))
+
+        let hit = AnalyticsHit(payload: "payload", timestamp: Date().timeIntervalSince1970, eventIdentifier: UUID().uuidString)
+
+        let entity = DataEntity(uniqueIdentifier: "test-uuid", timestamp: Date(), data: try! JSONEncoder().encode(hit))
+
+        // test
+        hitProcessor.processHit(entity: entity) { success in
+            XCTAssertTrue(success)
             expectation.fulfill()
         }
 
