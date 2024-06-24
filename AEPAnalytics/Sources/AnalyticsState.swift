@@ -208,11 +208,11 @@ class AnalyticsState {
             return
         }
         if let placesContextData = placesData[PlacesEventDataKeys.CURRENT_POI] as? [String: Any] {
-            if let regionId = placesContextData[PlacesEventDataKeys.REGION_ID] {
-                defaultData[AnalyticsConstants.ContextDataKeys.REGION_ID] = regionId as? String
+            if let regionId = placesContextData[PlacesEventDataKeys.REGION_ID] as? String {
+                defaultData[AnalyticsConstants.ContextDataKeys.REGION_ID] = regionId
             }
-            if let regionName = placesContextData[PlacesEventDataKeys.REGION_NAME] {
-                defaultData[AnalyticsConstants.ContextDataKeys.REGION_NAME] = regionName as? String
+            if let regionName = placesContextData[PlacesEventDataKeys.REGION_NAME] as? String {
+                defaultData[AnalyticsConstants.ContextDataKeys.REGION_NAME] = regionName
             }
         }
     }
