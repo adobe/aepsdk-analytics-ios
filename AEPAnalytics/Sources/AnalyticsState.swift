@@ -207,11 +207,11 @@ class AnalyticsState {
             Log.trace(label: LOG_TAG, "ExtractPlacesInfo - Failed to extract places data (event data was null).")
             return
         }
-        if let placesContextData = placesData[PlacesEventDataKeys.CURRENT_POI] as? [String: String] {
-            if let regionId = placesContextData[PlacesEventDataKeys.REGION_ID] {
+        if let placesContextData = placesData[PlacesEventDataKeys.CURRENT_POI] as? [String: Any] {
+            if let regionId = placesContextData[PlacesEventDataKeys.REGION_ID] as? String {
                 defaultData[AnalyticsConstants.ContextDataKeys.REGION_ID] = regionId
             }
-            if let regionName = placesContextData[PlacesEventDataKeys.REGION_NAME] {
+            if let regionName = placesContextData[PlacesEventDataKeys.REGION_NAME] as? String {
                 defaultData[AnalyticsConstants.ContextDataKeys.REGION_NAME] = regionName
             }
         }

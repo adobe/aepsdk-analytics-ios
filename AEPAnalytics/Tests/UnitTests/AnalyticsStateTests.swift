@@ -230,6 +230,59 @@ class AnalyticsStateTest: XCTestCase {
 
     }
 
+    func testExtractPlacesInfo_returnsRegionNameAndID_whenStateContainsOtherTypes() {
+        var dataMap = [AnalyticsTestConstants.Places.EventDataKeys.SHARED_STATE_NAME: [
+            "currentpoi": [
+                "regionid": "99306680-a0e5-49f1-b0eb-c52c6e05ce01",
+                "regionname": "Adobe 100",
+                "useriswithin": true,
+                "latitude": 37.3309257,
+                "libraryid": "311cbfb0-ac5e-436a-b22d-4a917426880d",
+                "weight": 1,
+                "regionmetadata": [
+                    "country": "Adobe 100",
+                    "city": "Adobe 100",
+                    "street": "Adobe 100",
+                    "state": "Adobe 100",
+                    "category": "Adobe 100"
+                ],
+                "radius": 100,
+                "longitude": -121.8939791
+            ]
+        ]]
+
+        analyticsState.update(dataMap: dataMap)
+        XCTAssertEqual(analyticsState.defaultData[AnalyticsTestConstants.ContextDataKeys.REGION_ID], "99306680-a0e5-49f1-b0eb-c52c6e05ce01")
+        XCTAssertEqual(analyticsState.defaultData[AnalyticsTestConstants.ContextDataKeys.REGION_NAME], "Adobe 100")
+
+    }
+
+    func testExtractPlacesInfo_returnsDefaultValuesAndDoesNotCrash_when_regionname_invalidType() {
+        var dataMap = [AnalyticsTestConstants.Places.EventDataKeys.SHARED_STATE_NAME: [
+            "currentpoi": [
+                "regionid": "sampleRegionId",
+                "regionname": true,
+            ]
+        ]]
+
+        analyticsState.update(dataMap: dataMap)
+        XCTAssertEqual(analyticsState.defaultData[AnalyticsTestConstants.ContextDataKeys.REGION_ID], "sampleRegionId")
+        XCTAssertNil(analyticsState.defaultData[AnalyticsTestConstants.ContextDataKeys.REGION_NAME])
+    }
+
+    func testExtractPlacesInfo_returnsDefaultValuesAndDoesNotCrash_when_regionid_invalidType() {
+        var dataMap = [AnalyticsTestConstants.Places.EventDataKeys.SHARED_STATE_NAME: [
+            "currentpoi": [
+                "regionid": 1234,
+                "regionname": "sampleRegionName",
+            ]
+        ]]
+
+        analyticsState.update(dataMap: dataMap)
+        XCTAssertNil(analyticsState.defaultData[AnalyticsTestConstants.ContextDataKeys.REGION_ID])
+        XCTAssertEqual(analyticsState.defaultData[AnalyticsTestConstants.ContextDataKeys.REGION_NAME], "sampleRegionName")
+    }
+
     func testAnalyticsStateReturnsDefaultPlacesValueWhenPlacesInfoIsEmpty() {
 
         var dataMap = [String: [String: Any]]()
