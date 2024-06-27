@@ -79,6 +79,80 @@ class AnalyticsTrack_PlacesTestBase: AnalyticsFunctionalTestBase {
                   contextData: expectedContextData)
     }
 
+    // If Places shared state is available then analytics hits contain places data
+    // Test uses full Places current POI shared state to validate parsing of shared state data
+    func analyticsHitsContainPlacesDataFullTester() {
+        let placesSharedState: [String: Any] = [
+            AnalyticsTestConstants.Places.EventDataKeys.CURRENT_POI: [
+                AnalyticsTestConstants.Places.EventDataKeys.REGION_ID: "99306680-a0e5-49f1-b0eb-c52c6e05ce01",
+                AnalyticsTestConstants.Places.EventDataKeys.REGION_NAME: "Adobe 100",
+                "useriswithin": true,
+                "latitude": 37.3309257,
+                "libraryid": "311cbfb0-ac5e-436a-b22d-4a917426880d",
+                "weight": 1,
+                "regionmetadata": [
+                    "country": "Adobe 100",
+                    "city": "Adobe 100",
+                    "street": "Adobe 100",
+                    "state": "Adobe 100",
+                    "category": "Adobe 100"
+                ],
+                "radius": 100,
+                "longitude": -121.8939791
+            ]
+        ]
+        simulatePlacesState(data: placesSharedState)
+
+        let trackData: [String: Any] = [
+            CoreConstants.Keys.ACTION: "testActionName",
+            CoreConstants.Keys.CONTEXT_DATA: [
+                "k1": "v1",
+                "k2": "v2"
+            ]
+        ]
+        let trackEvent = Event(name: "Generic track event", type: EventType.genericTrack, source: EventSource.requestContent, data: trackData)
+
+        mockRuntime.simulateComingEvent(event: trackEvent)
+
+        waitForProcessing()
+        let expectedVars: [String: String]
+        if runningForApp {
+            expectedVars = [
+                "ce": "UTF-8",
+                "cp": "foreground",
+                "pev2": "AMACTION:testActionName",
+                "pe": "lnk_o",
+                "mid": "mid",
+                "aamb": "blob",
+                "aamlh": "lochint",
+                "ts": String(trackEvent.timestamp.getUnixTimeInSeconds())
+            ]
+        } else {
+            expectedVars = [
+                "ce": "UTF-8",
+                "pev2": "AMACTION:testActionName",
+                "pe": "lnk_o",
+                "mid": "mid",
+                "aamb": "blob",
+                "aamlh": "lochint",
+                "ts": String(trackEvent.timestamp.getUnixTimeInSeconds())
+            ]
+        }
+        let expectedContextData = [
+            "k1": "v1",
+            "k2": "v2",
+            "a.action": "testActionName",
+            "a.loc.poi.id": "99306680-a0e5-49f1-b0eb-c52c6e05ce01",
+            "a.loc.poi": "Adobe 100"
+        ]
+
+        XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 1)
+        verifyHit(request: mockNetworkService?.calledNetworkRequests[0],
+                  host: "https://test.com/b/ss/rsid/0/",
+                  vars: expectedVars,
+                  contextData: expectedContextData)
+    }
+
     // If Places shared state is updated then analytics hits contain updated places data
     func analyticsHitsContainUpdatePlacesDataTester() {
         let placesSharedState: [String: Any] = [

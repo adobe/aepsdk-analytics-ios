@@ -32,4 +32,9 @@ class AnalyticsTrack_PlacesTests: AnalyticsTrack_PlacesTestBase {
     func testAnalyticsHitsContainUpdatePlacesData() {
         analyticsHitsContainUpdatePlacesDataTester()
     }
+
+    // If Places shared state contains multiple value types, Analytics should parse the data correctly and add to hit
+    func testAnalyticsHitsContainPlacesDataWhenSharedStateContainsMultipleTypes() {
+        analyticsHitsContainPlacesDataFullTester()
+    }
 }
