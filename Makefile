@@ -113,7 +113,7 @@ test-podspec:
 	sh ./Script/test-podspec.sh
 
 pod-lint:
-	pod lib lint --allow-warnings --verbose --swift-version=5.1
+	pod lib lint --allow-warnings --verbose --swift-version=5.10
 
 # make bump-versions from='3\.1\.0' to=3.1.1
 bump-versions:
