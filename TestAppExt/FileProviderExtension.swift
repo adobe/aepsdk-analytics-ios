@@ -29,8 +29,10 @@ class FileProviderExtension: NSFileProviderExtension {
                           Lifecycle.self,
                           AnalyticsAppExtension.self]
 
+        // Copy the app ID before the closure so only a Sendable String is captured instead of self.
+        let appId = self.LAUNCH_ENVIRONMENT_FILE_ID
         MobileCore.registerExtensions(extensions, {
-            MobileCore.configureWith(appId: self.LAUNCH_ENVIRONMENT_FILE_ID)
+            MobileCore.configureWith(appId: appId)
             MobileCore.lifecycleStart(additionalContextData: nil)
         })
 

@@ -144,7 +144,8 @@ struct AnalyticsView: View {
                         /// Analytics Queue API
                         Button(action: {
                             Analytics.getQueueSize { (queueSize, _) in
-                                retrievedQueueSize = String(queueSize)
+                                // SDK callbacks run on a background queue so UI state is updated on main.
+                                DispatchQueue.main.async { retrievedQueueSize = String(queueSize) }
                             }
                         }
                         ) {
@@ -186,7 +187,8 @@ struct AnalyticsView: View {
                         /// Analytics Identifier API
                         Button(action: {
                             Analytics.getTrackingIdentifier { (trackingId, _) in
-                                retrievedTrackingId = trackingId ?? "No tracking identifier."
+                                // SDK callbacks run on a background queue so UI state is updated on main.
+                                DispatchQueue.main.async { retrievedTrackingId = trackingId ?? "No tracking identifier." }
                             }
                         }
                         ) {
@@ -202,7 +204,8 @@ struct AnalyticsView: View {
 
                         Button(action: {
                             Analytics.getVisitorIdentifier { (visitorId, _) in
-                                retrievedVisitorId = visitorId ?? "No visitor identifier."
+                                // SDK callbacks run on a background queue so UI state is updated on main.
+                                DispatchQueue.main.async { retrievedVisitorId = visitorId ?? "No visitor identifier." }
                             }
                         }
                         ) {
