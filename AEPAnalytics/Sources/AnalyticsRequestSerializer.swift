@@ -13,7 +13,8 @@
 import Foundation
 import AEPServices
 
-class AnalyticsRequestSerializer {
+// Swift 6 rejects sharing this as a static unless it is Sendable. It only holds an immutable tag, so it is marked final and Sendable.
+final class AnalyticsRequestSerializer: Sendable {
 
     private let TAG = "AnalyticsRequestSerializer"
 

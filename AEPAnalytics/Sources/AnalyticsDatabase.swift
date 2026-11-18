@@ -36,7 +36,8 @@ class AnalyticsDatabase {
     }
 
     // Override this for tests.
-    static var dataQueueService = ServiceProvider.shared.dataQueueService
+    // Swift 6 flags this mutable static as unsafe. It is only replaced by tests before the extension starts, so we mark it nonisolated(unsafe).
+    nonisolated(unsafe) static var dataQueueService = ServiceProvider.shared.dataQueueService
 
     private let LOG_TAG = "AnalyticsDatabase"
 
