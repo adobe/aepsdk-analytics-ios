@@ -17,12 +17,14 @@ import Foundation
 class MockExtension: NSObject, Extension {
     var name = "mockExtension"
     var friendlyName = "mockExtension"
-    static var extensionVersion = "0.0.1"
+    // Swift 6 flags mutable statics as unsafe. Tests set these on the test thread before events flow, so we mark them nonisolated(unsafe).
+    nonisolated(unsafe) static var extensionVersion = "0.0.1"
     var metadata: [String: String]?
 
-    static var registrationClosure: (() -> Void)?
-    static var unregistrationClosure: (() -> Void)?
-    static var eventReceivedClosure: ((Event) -> Void)?
+    // Swift 6 flags mutable statics as unsafe. Tests set these on the test thread before events flow, so we mark them nonisolated(unsafe).
+    nonisolated(unsafe) static var registrationClosure: (() -> Void)?
+    nonisolated(unsafe) static var unregistrationClosure: (() -> Void)?
+    nonisolated(unsafe) static var eventReceivedClosure: ((Event) -> Void)?
 
     let runtime: ExtensionRuntime
 
