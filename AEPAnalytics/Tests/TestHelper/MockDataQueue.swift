@@ -23,4 +23,9 @@ public class MockDataQueueService: DataQueuing {
         }
         return queueMap[label]
     }
+
+    // Newer AEPServices added a config based getDataQueue to DataQueuing, so the mock reuses the label based queue.
+    public func getDataQueue(label: String, config _: DataQueueConfig) -> DataQueue? {
+        return getDataQueue(label: label)
+    }
 }
