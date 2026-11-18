@@ -21,7 +21,7 @@ import AEPLifecycle
 import AEPAssurance
 #endif
 
-@UIApplicationMain
+@main
 class AppDelegate: UIResponder, UIApplicationDelegate {
     private let ENVIRONMENT_FILE_ID = ""
 

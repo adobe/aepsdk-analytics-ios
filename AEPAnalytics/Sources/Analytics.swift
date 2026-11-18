@@ -145,33 +145,40 @@ public class AnalyticsBase: NSObject, Extension {
     /// be done on the Analytics Extension's `DispatchQueue`.
     ///  - Parameter event: the `Event` to be processed
     private func handleIncomingEvent(event: Event) {
+        // Event and self are only used on the serial analytics queue, so handing them to the Sendable closure as nonisolated(unsafe) is safe.
+        nonisolated(unsafe) let event = event
+        nonisolated(unsafe) let analytics = self
         dispatchQueue.async {
-            switch event.type {
-            case EventType.genericTrack:
-                self.handleGenericTrackEvent(event)
-            case EventType.rulesEngine:
-                self.handleRuleEngineResponse(event)
-            case EventType.configuration:
-                self.handleConfigurationResponseEvent(event)
-            case EventType.lifecycle:
-                self.handleLifecycleEvents(event)
-            case EventType.genericLifecycle:
-                self.handleLifecycleEvents(event)
-            case EventType.acquisition:
-                self.handleAcquisitionEvent(event)
-            case EventType.analytics:
-                if event.source == EventSource.requestIdentity {
-                    self.handleAnalyticsRequestIdentityEvent(event)
-                } else if event.source == EventSource.requestContent {
-                    self.handleAnalyticsRequestContentEvent(event)
-                }
-            case EventType.genericIdentity:
-                if event.source == EventSource.requestReset {
-                    self.handleResetIdentitiesEvent(event)
-                }
-            default:
-                break
+            analytics.processIncomingEvent(event)
+        }
+    }
+
+    private func processIncomingEvent(_ event: Event) {
+        switch event.type {
+        case EventType.genericTrack:
+            self.handleGenericTrackEvent(event)
+        case EventType.rulesEngine:
+            self.handleRuleEngineResponse(event)
+        case EventType.configuration:
+            self.handleConfigurationResponseEvent(event)
+        case EventType.lifecycle:
+            self.handleLifecycleEvents(event)
+        case EventType.genericLifecycle:
+            self.handleLifecycleEvents(event)
+        case EventType.acquisition:
+            self.handleAcquisitionEvent(event)
+        case EventType.analytics:
+            if event.source == EventSource.requestIdentity {
+                self.handleAnalyticsRequestIdentityEvent(event)
+            } else if event.source == EventSource.requestContent {
+                self.handleAnalyticsRequestContentEvent(event)
             }
+        case EventType.genericIdentity:
+            if event.source == EventSource.requestReset {
+                self.handleResetIdentitiesEvent(event)
+            }
+        default:
+            break
         }
     }
 

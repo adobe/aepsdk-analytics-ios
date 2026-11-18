@@ -18,14 +18,12 @@ class AnalyticsHelper {
     @available(iOSApplicationExtension, unavailable)
     @available(tvOSApplicationExtension, unavailable)
     static func getApplicationState() -> UIApplication.State? {
-        var ret: UIApplication.State?
+        // UIApplication is main actor only in Swift 6. Both paths already run on the main thread, so assumeIsolated reads the state safely.
         if Thread.isMainThread {
-            ret = UIApplication.shared.applicationState
-        } else {
-            DispatchQueue.main.sync {
-                ret = UIApplication.shared.applicationState
-            }
+            return MainActor.assumeIsolated { UIApplication.shared.applicationState }
         }
-        return ret
+        return DispatchQueue.main.sync {
+            MainActor.assumeIsolated { UIApplication.shared.applicationState }
+        }
     }
 }

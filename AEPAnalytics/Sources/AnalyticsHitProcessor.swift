@@ -67,42 +67,43 @@ class AnalyticsHitProcessor: HitProcessing {
             return
         }
 
-        self.dispatchQueue.async { [weak self] in
-            guard let self = self else { return }
-
+        // Hits are processed on the serial analytics queue and the hit queue waits for completion, so passing these non Sendable values as nonisolated(unsafe) is safe.
+        nonisolated(unsafe) let completion = completion
+        nonisolated(unsafe) let processor = self
+        self.dispatchQueue.async {
             let eventIdentifier = analyticsHit.eventIdentifier
             var payload = analyticsHit.payload
             var timestamp = analyticsHit.timestamp
 
-            if shouldDropHit(timestamp: timestamp) {
+            if processor.shouldDropHit(timestamp: timestamp) {
                 completion(true)
                 return
             }
 
             // If offline tracking is enabled, adjust timestamp for out of order hits.
-            if self.analyticsState.offlineEnabled &&
-                (timestamp - self.lastHitTimestamp) < 0 {
+            if processor.analyticsState.offlineEnabled &&
+                (timestamp - processor.lastHitTimestamp) < 0 {
 
-                let newTimestamp = self.lastHitTimestamp + 1
-                Log.debug(label: self.LOG_TAG, "\(#function) - Adjusting out of order hit timestamp \(analyticsHit.timestamp) -> \(newTimestamp)")
+                let newTimestamp = processor.lastHitTimestamp + 1
+                Log.debug(label: processor.LOG_TAG, "\(#function) - Adjusting out of order hit timestamp \(analyticsHit.timestamp) -> \(newTimestamp)")
 
-                payload = self.replaceTimestampInPayload(payload: payload, oldTs: timestamp, newTs: newTimestamp)
+                payload = processor.replaceTimestampInPayload(payload: payload, oldTs: timestamp, newTs: newTimestamp)
                 timestamp = newTimestamp
             }
 
-            guard let baseUrl = URL.getAnalyticsBaseUrl(state: self.analyticsState) else {
-                Log.debug(label: self.LOG_TAG, "\(#function) - Retrying Analytics hit, error generating base url.")
+            guard let baseUrl = URL.getAnalyticsBaseUrl(state: processor.analyticsState) else {
+                Log.debug(label: processor.LOG_TAG, "\(#function) - Retrying Analytics hit, error generating base url.")
                 completion(false)
                 return
             }
 
             guard let url = URL(string: "\(baseUrl.absoluteString)\(Int.random(in: 0...100000000))") else {
-                Log.debug(label: self.LOG_TAG, "\(#function) - Retrying Analytics hit, error generating url.")
+                Log.debug(label: processor.LOG_TAG, "\(#function) - Retrying Analytics hit, error generating url.")
                 completion(false)
                 return
             }
 
-            if self.analyticsState.assuranceSessionActive {
+            if processor.analyticsState.assuranceSessionActive {
                 payload += AnalyticsConstants.Request.DEBUG_API_PAYLOAD
             }
 
@@ -114,11 +115,11 @@ class AnalyticsHitProcessor: HitProcessing {
                                                 connectTimeout: AnalyticsConstants.Default.CONNECTION_TIMEOUT,
                                                 readTimeout: AnalyticsConstants.Default.CONNECTION_TIMEOUT)
 
-            self.networkService.connectAsync(networkRequest: networkRequest) { [weak self] connection in
-                self?.handleNetworkResponse(url: url,
-                                            hit: AnalyticsHit(payload: payload, timestamp: timestamp, eventIdentifier: eventIdentifier),
-                                            connection: connection,
-                                            completion: completion
+            processor.networkService.connectAsync(networkRequest: networkRequest) { connection in
+                processor.handleNetworkResponse(url: url,
+                                                 hit: AnalyticsHit(payload: payload, timestamp: timestamp, eventIdentifier: eventIdentifier),
+                                                 connection: connection,
+                                                 completion: completion
                 )
             }
         }
@@ -137,19 +138,19 @@ class AnalyticsHitProcessor: HitProcessing {
             // Hit sent successfully
             Log.debug(label: LOG_TAG, "\(#function) - Analytics hit request with url \(url.absoluteString) and payload \(hit.payload) sent successfully")
 
-            let eventData: [String: Any] = getResponseEventData(url: url, hit: hit, connection: connection)
-
-            dispatchQueue.async { [weak self] in
-                guard let self = self else { return }
-
+            // The response is handled on the serial analytics queue, so passing these non Sendable values as nonisolated(unsafe) is safe.
+            nonisolated(unsafe) let eventData: [String: Any] = getResponseEventData(url: url, hit: hit, connection: connection)
+            nonisolated(unsafe) let completion = completion
+            nonisolated(unsafe) let processor = self
+            dispatchQueue.async {
                 // Dispatch response only if the hit was sent after the reset Identities was called.
                 // So that we only populate UUID if the hit was sent after reset in case where AAMForwarding is enabled.
-                if hit.timestamp > self.analyticsState.lastResetIdentitiesTimestamp {
-                    Log.debug(label: self.LOG_TAG, "\(#function) - Dispatching Analytics hit response.")
-                    self.responseHandler(eventData)
+                if hit.timestamp > processor.analyticsState.lastResetIdentitiesTimestamp {
+                    Log.debug(label: processor.LOG_TAG, "\(#function) - Dispatching Analytics hit response.")
+                    processor.responseHandler(eventData)
                 }
 
-                self.lastHitTimestamp = hit.timestamp
+                processor.lastHitTimestamp = hit.timestamp
                 completion(true)
             }
 

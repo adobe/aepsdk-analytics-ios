@@ -27,6 +27,11 @@ class TestableExtensionRuntime: ExtensionRuntime {
 
     public func getHistoricalEvents(_ requests: [EventHistoryRequest], enforceOrder: Bool, handler: @escaping ([EventHistoryResult]) -> Void) {}
 
+    // Newer AEPCore added recordHistoricalEvent to ExtensionRuntime, so the mock reports success to keep conforming.
+    public func recordHistoricalEvent(_ event: Event, handler: ((Bool) -> Void)?) {
+        handler?(true)
+    }
+
     func getListener(type: String, source: String) -> EventListener? {
         return listeners["\(type)-\(source)"]
     }
