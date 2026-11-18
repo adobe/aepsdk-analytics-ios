@@ -144,6 +144,24 @@ test-SPM-integration:
 test-podspec:
 	sh ./Script/test-podspec.sh
 
+# Builds the AEPAnalytics target in Swift 6 language mode. AEPANALYTICS_SWIFT_VERSION is
+# only referenced by the AEPAnalytics target, so dependency pods keep their own modes.
+build-swift6:
+	xcodebuild build -workspace $(PROJECT_NAME).xcworkspace -scheme $(PROJECT_NAME) -destination 'generic/platform=iOS Simulator' AEPANALYTICS_SWIFT_VERSION=6.0
+	xcodebuild build -workspace $(PROJECT_NAME).xcworkspace -scheme $(PROJECT_NAME) -destination 'generic/platform=tvOS Simulator' AEPANALYTICS_SWIFT_VERSION=6.0
+
+# Compiles a Swift 6 consumer that calls the public completion-handler APIs with
+# plain closures from @MainActor code (protects the @Sendable contract). The
+# consumer target is built in Swift 6 language mode; AEPAnalytics and its dependencies
+# keep their own declared language modes, matching a real Swift 6 app's build.
+test-swift6-consumer:
+	sh ./Script/test-swift6-consumer.sh
+
+# Compile-only build on the minimum supported toolchain (Xcode 15.3+/Swift 5.10).
+build-min-toolchain:
+	xcodebuild build -workspace $(PROJECT_NAME).xcworkspace -scheme $(PROJECT_NAME) -destination 'generic/platform=iOS Simulator'
+	xcodebuild build -workspace $(PROJECT_NAME).xcworkspace -scheme $(PROJECT_NAME) -destination 'generic/platform=tvOS Simulator'
+
 pod-lint:
 	pod lib lint --allow-warnings --verbose --swift-version=5.10
 
