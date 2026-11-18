@@ -15,6 +15,25 @@ TVOS_ARCHIVE_DSYM_PATH = $(CURR_DIR)/build/tvos.xcarchive/dSYMs/
 TEST_APP_IOS_SCHEME = TestAppiOS
 TEST_APP_TVOS_SCHEME = TestApptvOS
 
+# CI variables - using values with defaults. Set defaults to values that are most useful for local development.
+IOS_DEVICE_NAME ?= iPhone 18 Pro
+# If OS version is not specified, uses the first device name match in the list of available simulators
+IOS_VERSION ?=
+ifeq ($(strip $(IOS_VERSION)),)
+	IOS_DESTINATION = "platform=iOS Simulator,name=$(IOS_DEVICE_NAME)"
+else
+	IOS_DESTINATION = "platform=iOS Simulator,name=$(IOS_DEVICE_NAME),OS=$(IOS_VERSION)"
+endif
+
+TVOS_DEVICE_NAME ?= Apple TV 4K (3rd generation)
+# If OS version is not specified, uses the first device name match in the list of available simulators
+TVOS_VERSION ?=
+ifeq ($(strip $(TVOS_VERSION)),)
+	TVOS_DESTINATION = "platform=tvOS Simulator,name=$(TVOS_DEVICE_NAME)"
+else
+	TVOS_DESTINATION = "platform=tvOS Simulator,name=$(TVOS_DEVICE_NAME),OS=$(TVOS_VERSION)"
+endif
+
 pod-repo-update:
 	pod repo update
 
@@ -31,20 +50,39 @@ pod-update: pod-repo-update
 open:
 	open $(PROJECT_NAME).xcworkspace
 
-test: test-ios test-tvos
+test: unit-test-ios functional-test-ios unit-test-tvos functional-test-tvos
 
-test-ios: clean-ios-test-files
-	@echo "######################################################################"
-	@echo "### Testing iOS"
-	@echo "######################################################################"
-	xcodebuild test -workspace $(PROJECT_NAME).xcworkspace -scheme $(PROJECT_NAME) -destination 'platform=iOS Simulator,name=iPhone 15' -derivedDataPath build/out -resultBundlePath iosresults.xcresult -enableCodeCoverage YES
+test-ios: unit-test-ios functional-test-ios
 
-test-tvos: clean-tvos-test-files
-	@echo "######################################################################"
-	@echo "### Testing tvOS"
-	@echo "######################################################################"
-	xcodebuild test -workspace $(PROJECT_NAME).xcworkspace -scheme $(PROJECT_NAME) -destination 'platform=tvOS Simulator,name=Apple TV' -derivedDataPath build/out -resultBundlePath tvosresults.xcresult -enableCodeCoverage YES
+test-tvos: unit-test-tvos functional-test-tvos
 
+unit-test-ios:
+	@echo "######################################################################"
+	@echo "### Unit Testing iOS"
+	@echo "######################################################################"
+	rm -rf build/reports/iosUnitResults.xcresult
+	xcodebuild test -workspace $(PROJECT_NAME).xcworkspace -scheme "UnitTests" -destination $(IOS_DESTINATION) -derivedDataPath build/out -resultBundlePath build/reports/iosUnitResults.xcresult -enableCodeCoverage YES
+
+functional-test-ios:
+	@echo "######################################################################"
+	@echo "### Functional Testing iOS"
+	@echo "######################################################################"
+	rm -rf build/reports/iosFunctionalResults.xcresult
+	xcodebuild test -workspace $(PROJECT_NAME).xcworkspace -scheme "FunctionalTests" -destination $(IOS_DESTINATION) -derivedDataPath build/out -resultBundlePath build/reports/iosFunctionalResults.xcresult -enableCodeCoverage YES
+
+unit-test-tvos:
+	@echo "######################################################################"
+	@echo "### Unit Testing tvOS"
+	@echo "######################################################################"
+	rm -rf build/reports/tvosUnitResults.xcresult
+	xcodebuild test -workspace $(PROJECT_NAME).xcworkspace -scheme "UnitTests" -destination $(TVOS_DESTINATION) -derivedDataPath build/out -resultBundlePath build/reports/tvosUnitResults.xcresult -enableCodeCoverage YES
+
+functional-test-tvos:
+	@echo "######################################################################"
+	@echo "### Functional Testing tvOS"
+	@echo "######################################################################"
+	rm -rf build/reports/tvosFunctionalResults.xcresult
+	xcodebuild test -workspace $(PROJECT_NAME).xcworkspace -scheme "FunctionalTests" -destination $(TVOS_DESTINATION) -derivedDataPath build/out -resultBundlePath build/reports/tvosFunctionalResults.xcresult -enableCodeCoverage YES
 
 archive: clean pod-install build-ios build-tvos
 	@echo "######################################################################"
@@ -88,12 +126,6 @@ build-app: pod-install
 
 clean:
 	rm -rf ./build
-
-clean-ios-test-files:
-	rm -rf iosresults.xcresult
-
-clean-tvos-test-files:
-	rm -rf tvosresults.xcresult
 
 lint-autocorrect:
 	./Pods/SwiftLint/swiftlint --fix
