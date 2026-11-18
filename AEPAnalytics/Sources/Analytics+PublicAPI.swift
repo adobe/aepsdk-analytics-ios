@@ -28,7 +28,8 @@ import Foundation
     /// - Parameters:
     ///  - completion: closure invoked with the queue size value
     @objc(getQueueSize:)
-    static func getQueueSize(completion: @escaping (Int, Error?) -> Void) {
+    // Completion runs on the SDK queue. Sendable tells Swift 6 apps not to assume main actor, and preconcurrency keeps old callers compiling.
+    @preconcurrency static func getQueueSize(completion: @escaping @Sendable (Int, Error?) -> Void) {
         let data  = [AnalyticsConstants.EventDataKeys.GET_QUEUE_SIZE: true]
         let event = Event(name: "AnalyticsGetQueueSize", type: EventType.analytics, source: EventSource.requestContent, data: data)
 
@@ -56,7 +57,8 @@ import Foundation
     /// - Parameters:
     ///  - completion: closure invoked with the analytics identifier value
     @objc(getTrackingIdentifier:)
-    static func getTrackingIdentifier(completion: @escaping (String?, Error?) -> Void) {
+    // Completion runs on the SDK queue. Sendable tells Swift 6 apps not to assume main actor, and preconcurrency keeps old callers compiling.
+    @preconcurrency static func getTrackingIdentifier(completion: @escaping @Sendable (String?, Error?) -> Void) {
         let event = Event(name: "AnalyticsGetTrackingIdentifier", type: EventType.analytics, source: EventSource.requestIdentity, data: nil)
 
         MobileCore.dispatch(event: event) { responseEvent in
@@ -81,7 +83,8 @@ import Foundation
     /// - Parameters:
     ///  - completion: closure invoked with the visitor identifier value
     @objc(getVisitorIdentifier:)
-    static func getVisitorIdentifier(completion: @escaping (String?, Error?) -> Void) {
+    // Completion runs on the SDK queue. Sendable tells Swift 6 apps not to assume main actor, and preconcurrency keeps old callers compiling.
+    @preconcurrency static func getVisitorIdentifier(completion: @escaping @Sendable (String?, Error?) -> Void) {
         let event = Event(name: "AnalyticsGetVisitorIdentifier", type: EventType.analytics, source: EventSource.requestIdentity, data: nil)
 
         MobileCore.dispatch(event: event) { responseEvent in
